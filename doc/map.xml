@@ -39,6 +39,9 @@
 				y="souradnice umisteni"
 				/>]
 	</creatures>]
+	<!-- v deathmatchi se nastaveni bonusu prekryje nastavenim
+		z menu, cili pro ciste deathmatchove mapy je zbytecne
+		zde jakekoli bonusy nastavovat -->
 	<!-- pro kazdy druh(name) bonusu jeden tag bonuses -->
 	[<bonuses 	name="jmeno bonusu"
 			count="pocet v celem kole"
