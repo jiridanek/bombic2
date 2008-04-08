@@ -1,0 +1,45 @@
+<map 	name="jmeno mapy"
+	height="vyska mapy v polickach"
+	width="sirka mapy v polickach"
+	background="nazev pozadi"
+	>
+<!-- do hranatych zavorek pisu nepovinne tagy a parametry -->
+	<!-- crossing: preletavost, defaultne no -->
+	<!-- hodnoty neuvedenych atributu se podedi z nadrazeneho tagu --> 
+	[<walls 	src="zdrojovy obrazek"
+			[crossing="no|yes"]
+			>
+		<!-- pro kazdou jednu zed musi byt jeden tag wall -->
+		<wall 	x="souradnice umisteni"
+			y="souradnice umisteni"
+			[src="zdroj"]
+			[crossing="no|yes"]
+			/>
+	</walls>]
+	[<boxes 	src="zdrojovy obrazek"
+			count="pocet v celem kole"
+			[crossing="no|yes"]
+			>
+		<!-- pro kazdou pevne umistenou bednu musi byt jeden tag box
+			ostatni se vygeneruji na nahodne misto -->
+		[<box 	x="souradnice umisteni"
+			y="souradnice umisteni"
+			[src="zdroj"]
+			[crossing="no|yes"]
+			/>]
+	</boxes>]
+	<!-- pro kazdy druh(name) prisery jeden tag creatures -->
+	[<creatures 	name="jmeno prisery(druh)"
+			count="pocet v celem kole"
+			>
+		<!-- pro kazdou pevne umistenou potvoru musi byt jeden tag box
+			ostatni se vygeneruji na nahodne misto -->
+		[<creature 	x="souradnice umisteni"
+				y="souradnice umisteni"
+				/>]
+	</creatures>]
+	<!-- pro kazdy druh(name) bonusu jeden tag bonuses -->
+	[<bonuses 	name="jmeno bonusu"
+			count="pocet v celem kole"
+			/>]
+</map>
