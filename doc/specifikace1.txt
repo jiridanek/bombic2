@@ -1,0 +1,35 @@
+ ____                        __                     ___
+/\  _`\                     /\ \      __          /'___`\
+\ \ \L\ \    ___     ___ ___\ \ \____/\_\    ___ /\_\ /\ \
+ \ \  _ <'  / __`\ /' __` __`\ \ '__`\/\ \  /'___\/_/// /__
+  \ \ \L\ \/\ \L\ \/\ \/\ \/\ \ \ \L\ \ \ \/\ \__/  // /_\ \
+   \ \____/\ \____/\ \_\ \_\ \_\ \_,__/\ \_\ \____\/\______/
+    \/___/  \/___/  \/_/\/_/\/_/\/___/  \/_/\/____/\/_____/
+
+Bombic2 je hra na zpusob velice proslule Dyny blaster nebo Bombermana,
+navazuje na hru Bombic.
+Soucasti je jednoduche, uzivatelsky privetive menu, pres ktere se daji 
+nastavit veskere volby hry. V menu se daji take prohlizet nestvury a bonusy,
+se kterymy jste se jiz setkali ve hre. Behem hry ziskavate prenositelne i neprenositelne bonusy.
+Po kazdem kole si muzete hru ulozit a tim dosahnout bezpeci, ze o vase
+prenositelne bonusy jiz neprijdete.
+Mapy a data z ulozene hry jsou reprezentovany textove v xml souborech.
+Je tedy velice jednoduchy prenos mezi jednotlivymi uzivateli.
+Mapy nemusi byt konstantni, do hry Bombic2 bude vnesena mala porce
+nahodneho generovani, coz bude cinit hrani vice variabilnim.
+Generovat se budou bedny, obludy, zdi nikoli, s tim ze se da bedna
+ nebo obluda vzdy vynutit. 
+Bombic2 poskytuje hru pro 1-4 hrace na jedne klavesnici, s moznosti
+prenastaveni klaves pro kazdeho uzivatele.
+Krome tohoto cooperative modu poskytuje take deathmatch, tedy hru vsichni
+proti vsem, ve ktere se uplatni 2-4 hraci. Bombic2 nepodporuje zatim sitovou
+hru ikdyz do budoucna se i tento modul mozna objevi.
+
+V samotne hre se objevi jiz zname, ale i nezname obludy obdarene ruznou
+inteligenci, behajici i letajici zavratnou rychlosti nebo jen tak se plouzici
+slizouni se tremi zivoty. 
+
+Doufam ze se vam Bombic2 zalibi alespon tolik jako Bombic a prinese
+vam nemalo zabavnych chvil.
+
+Karel Fiser (Karl.von.Bahnhof@centrum.cz)
