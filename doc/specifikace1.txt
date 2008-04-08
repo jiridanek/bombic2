@@ -20,7 +20,7 @@ nahodneho generovani, coz bude cinit hrani vice variabilnim.
 Generovat se budou bedny, obludy, zdi nikoli, s tim ze se da bedna
  nebo obluda vzdy vynutit. 
 Bombic2 poskytuje hru pro 1-4 hrace na jedne klavesnici, s moznosti
-prenastaveni klaves pro kazdeho uzivatele.
+prenastaveni klaves pro kazdeho hrace.
 Krome tohoto cooperative modu poskytuje take deathmatch, tedy hru vsichni
 proti vsem, ve ktere se uplatni 2-4 hraci. Bombic2 nepodporuje zatim sitovou
 hru ikdyz do budoucna se i tento modul mozna objevi.
