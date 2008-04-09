@@ -4,44 +4,45 @@
 	width="sirka mapy v polickach"
 	background="nazev pozadi"
 	>
-<!-- s dvojteckou pisu nepovinne tagy a parametry -->
+<!-- s podtrzitkem pisu nepovinne tagy a parametry
+	 		- v realne mape uz podtrzitka nepsat!!-->
 	<!-- hodnoty neuvedenych atributu se podedi z nadrazeneho tagu -->
 	<!-- atributy height a width maji defaultne hodnotu jedna -->
-	:<walls 	:name="jmeno zdi"
-			:height="vyska vlozene zdi"
-			:width="sirska,kolik zabere policek"
+	_<walls 	_name="jmeno zdi"
+			_height="vyska vlozene zdi"
+			_width="sirska,kolik zabere policek"
 				>
 		<!-- pro kazdou jednu zed musi byt jeden tag wall -->
 		<wall 	x="souradnice umisteni"
 			y="souradnice umisteni"
-			:name="jmeno"
-			:height="vyska vlozene zdi"
-			:width="sirska"
+			_name="jmeno"
+			_height="vyska vlozene zdi"
+			_width="sirska"
 			/>
 	</walls>
 	<!-- pripadna rozsahlejsi (height | width >1)
 		bedna bouchne cela najednou -->
-	:<boxes 	name="jmeno bedny"
+	_<boxes 	name="jmeno bedny"
 			count="pocet v celem kole"
-			:height="vyska"
-			:width="sirska"
+			_height="vyska"
+			_width="sirska"
 			>
 		<!-- pro kazdou pevne umistenou bednu musi byt jeden tag box
 			ostatni se vygeneruji na nahodne misto -->
-		:<box 	x="souradnice umisteni"
+		_<box 	x="souradnice umisteni"
 			y="souradnice umisteni"
-			:name="jmeno"
-			:height="vyska"
-			:width="sirska"
+			_name="jmeno"
+			_height="vyska"
+			_width="sirska"
 			/>
 	</boxes>
 	<!-- pro kazdy druh(name) prisery jeden tag creatures -->
-	:<creatures 	name="jmeno prisery(druh)"
+	_<creatures 	name="jmeno prisery(druh)"
 			count="pocet v celem kole"
 			>
 		<!-- pro kazdou pevne umistenou potvoru musi byt jeden tag box
 			ostatni se vygeneruji na nahodne misto -->
-		:<creature 	x="souradnice umisteni"
+		_<creature 	x="souradnice umisteni"
 				y="souradnice umisteni"
 				/>
 	</creatures>
@@ -49,7 +50,7 @@
 		z menu, cili pro ciste deathmatchove mapy je zbytecne
 		zde jakekoli bonusy nastavovat -->
 	<!-- pro kazdy druh(name) bonusu jeden tag bonuses -->
-	:<bonuses 	name="jmeno bonusu"
+	_<bonuses 	name="jmeno bonusu"
 			count="pocet v celem kole"
 			/>
 </map>
