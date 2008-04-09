@@ -4,46 +4,52 @@
 	width="sirka mapy v polickach"
 	background="nazev pozadi"
 	>
-<!-- do hranatych zavorek pisu nepovinne tagy a parametry -->
-	<!-- crossing: preletavost, defaultne no -->
-	<!-- hodnoty neuvedenych atributu se podedi z nadrazeneho tagu --> 
-	[<walls 	src="zdrojovy obrazek"
-			[crossing="no|yes"]
-			>
+<!-- s dvojteckou pisu nepovinne tagy a parametry -->
+	<!-- hodnoty neuvedenych atributu se podedi z nadrazeneho tagu -->
+	<!-- atributy height a width maji defaultne hodnotu jedna -->
+	:<walls 	:name="jmeno zdi"
+			:height="vyska vlozene zdi"
+			:width="sirska,kolik zabere policek"
+				>
 		<!-- pro kazdou jednu zed musi byt jeden tag wall -->
 		<wall 	x="souradnice umisteni"
 			y="souradnice umisteni"
-			[src="zdroj"]
-			[crossing="no|yes"]
+			:name="jmeno"
+			:height="vyska vlozene zdi"
+			:width="sirska"
 			/>
-	</walls>]
-	[<boxes 	src="zdrojovy obrazek"
+	</walls>
+	<!-- pripadna rozsahlejsi (height | width >1)
+		bedna bouchne cela najednou -->
+	:<boxes 	name="jmeno bedny"
 			count="pocet v celem kole"
-			[crossing="no|yes"]
+			:height="vyska"
+			:width="sirska"
 			>
 		<!-- pro kazdou pevne umistenou bednu musi byt jeden tag box
 			ostatni se vygeneruji na nahodne misto -->
-		[<box 	x="souradnice umisteni"
+		:<box 	x="souradnice umisteni"
 			y="souradnice umisteni"
-			[src="zdroj"]
-			[crossing="no|yes"]
-			/>]
-	</boxes>]
+			:name="jmeno"
+			:height="vyska"
+			:width="sirska"
+			/>
+	</boxes>
 	<!-- pro kazdy druh(name) prisery jeden tag creatures -->
-	[<creatures 	name="jmeno prisery(druh)"
+	:<creatures 	name="jmeno prisery(druh)"
 			count="pocet v celem kole"
 			>
 		<!-- pro kazdou pevne umistenou potvoru musi byt jeden tag box
 			ostatni se vygeneruji na nahodne misto -->
-		[<creature 	x="souradnice umisteni"
+		:<creature 	x="souradnice umisteni"
 				y="souradnice umisteni"
-				/>]
-	</creatures>]
+				/>
+	</creatures>
 	<!-- v deathmatchi se nastaveni bonusu prekryje nastavenim
 		z menu, cili pro ciste deathmatchove mapy je zbytecne
 		zde jakekoli bonusy nastavovat -->
 	<!-- pro kazdy druh(name) bonusu jeden tag bonuses -->
-	[<bonuses 	name="jmeno bonusu"
+	:<bonuses 	name="jmeno bonusu"
 			count="pocet v celem kole"
-			/>]
+			/>
 </map>
