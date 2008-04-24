@@ -8,10 +8,10 @@
 	 		- v realne mape uz podtrzitka nepsat!!-->
 	<!-- hodnoty neuvedenych atributu se podedi z nadrazeneho tagu -->
 	<!-- atributy height a width maji defaultne hodnotu jedna -->
-	_<walls 	_name="jmeno zdi"
+	<_walls 	name="jmeno zdi"
 			_height="vyska vlozene zdi"
 			_width="sirska,kolik zabere policek"
-				>
+			>
 		<!-- pro kazdou jednu zed musi byt jeden tag wall -->
 		<wall 	x="souradnice umisteni"
 			y="souradnice umisteni"
@@ -19,38 +19,48 @@
 			_height="vyska vlozene zdi"
 			_width="sirska"
 			/>
-	</walls>
+	</_walls>
+	<!-- floorobject je objekt na zemi po kterem se da chodit,
+		nespali ho plamen a nesmi na nem byt postavena bedna ani zed,
+		jde spise o kosmetickou zalezitost -->
+	<!-- pro kazdy jeden objekt musi byt jeden tag floorobject -->
+	<_floorobject 	name="jmeno objektu"
+			x="souradnice umisteni"
+			y="souradnice umisteni"
+			_height="vyska objektu"
+			_width="sirska objektu"
+			/>
 	<!-- pripadna rozsahlejsi (height | width >1)
 		bedna bouchne cela najednou -->
-	_<boxes 	name="jmeno bedny"
+	<_boxes 	name="jmeno bedny"
 			count="pocet v celem kole"
 			_height="vyska"
 			_width="sirska"
 			>
 		<!-- pro kazdou pevne umistenou bednu musi byt jeden tag box
 			ostatni se vygeneruji na nahodne misto -->
-		_<box 	x="souradnice umisteni"
+		<_box 	x="souradnice umisteni"
 			y="souradnice umisteni"
 			_name="jmeno"
 			_height="vyska"
 			_width="sirska"
 			/>
-	</boxes>
+	</_boxes>
 	<!-- pro kazdy druh(name) prisery jeden tag creatures -->
-	_<creatures 	name="jmeno prisery(druh)"
+	<_creatures 	name="jmeno prisery(druh)"
 			count="pocet v celem kole"
 			>
-		<!-- pro kazdou pevne umistenou potvoru musi byt jeden tag box
+		<!-- pro kazdou pevne umistenou potvoru musi byt jeden tag creature
 			ostatni se vygeneruji na nahodne misto -->
-		_<creature 	x="souradnice umisteni"
+		<_creature 	x="souradnice umisteni"
 				y="souradnice umisteni"
 				/>
-	</creatures>
+	</_creatures>
 	<!-- v deathmatchi se nastaveni bonusu prekryje nastavenim
 		z menu, cili pro ciste deathmatchove mapy je zbytecne
 		zde jakekoli bonusy nastavovat -->
 	<!-- pro kazdy druh(name) bonusu jeden tag bonuses -->
-	_<bonuses 	name="jmeno bonusu"
-			count="pocet v celem kole"
+	<_bonuses 	name="jmeno bonusu"
+			count="maximalni pocet v celem kole"
 			/>
 </map>
