@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- s podtrzitkem pisu nepovinne tagy a parametry
+			- v realnem xml uz podtrzitka nepsat!!-->
+
+<background 	name="jmeno pozadi"
+		src="cesta k souboru s obrazky"
+		>
+	<!-- kazda komponenta pozadi muze obsahovat nepovinne tag animation
+			presne tak, jak je to videt u topleft -->
+	<!-- specifikace obrazku v rohu obrazovky -->
+	<topleft 	x="souradnice obrazku v polickach"
+			y="souradnice"
+			>
+		<_animation 	rate="pocet obrazku za sekundu"
+				>
+			<!-- kazda faze animace ma svuj tag animation_item
+				povinny je alespon jeden, jako prvni obrazek
+				se pouzije x,y z nadrazeneho tagu,
+				potom v poradi jak je uvedeno -->
+			<animation_item 	x="souradnice na ktere je obrazek"
+						y="souradnice na ktere je obrazek"
+						/>
+		</_animation>
+	</topleft>
+	<topright x="sour" y="sour">
+	</topright>
+	<bottomleft x="sour" y="sour">
+	</bottomleft>
+	<bottomright x="sour" y="sour">
+	</bottomright>
+	<!-- specifikace okraju -->
+	<top x="sour" y="sour" width="sirska v polickach">
+	</top>
+	<bottom x="sour" y="sour" width="sirska v polickach"
+			_toplapping="horni presah v polickach,default 0">
+	</bottom>
+	<left x="sour" y="sour" height="vyska v polickach">
+	</left>			
+	<right x="sour" y="sour" height="vyska v polickach">
+	</right>
+	<!-- specifikace pozadi vnitrnich policek -->
+	<clean_bg x="sour" y="sour">
+	</clean_bg>
+	<burned_bg x="sour" y="sour">
+	</burned_bg>
+</background>

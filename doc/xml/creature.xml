@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- s podtrzitkem pisu nepovinne tagy a parametry
+			- v realnem xml uz podtrzitka nepsat!!-->
+
+<creature 	name="jmeno prisery"
+		src="cesta k souboru s obrazky"
+		_shadow_src="cesta k souboru se stiny"
+		speed="rychlost pohybu"
+		lives="pocet zivotu"
+		intelligence="vyse inteligence"
+		_flying="no|yes"
+		>
+	<!-- kazdy smer muze obsahovat nepovinne tag animation
+			presne tak, jak je to videt u <up> -->
+	<!-- specifikace smeru -->
+	<up 	x="souradnice obrazku v polickach"
+		y="souradnice"
+		_shadow_x="souradnice stinu ve zdroji v polickach"
+		_shadow_y="souradnice stinu"
+		>
+		<_animation 	rate="pocet obrazku za sekundu"
+				>
+			<!-- kazda faze animace ma svuj tag animation_item
+				povinny je alespon jeden, jako prvni obrazek
+				se pouzije x,y z nadrazeneho tagu,
+				potom v poradi jak je uvedeno -->
+			<animation_item 	x="souradnice na ktere je obrazek"
+						y="souradnice na ktere je obrazek"
+						_shadow_x="souradnice stinu ve zdroji v polickach"
+						_shadow_y="souradnice stinu"
+						/>
+		</_animation>
+	</up>
+	<left x="sour" y="sour" _shadow_x="sour" _shadow_y="sour">
+		<!-- nepovinny <animation ...> -->
+	</left>
+	<down x="sour" y="sour" _shadow_x="sour" _shadow_y="sour">
+	</down>
+	<right x="sour" y="sour" _shadow_x="sour" _shadow_y="sour">
+	</right>			
+	<!-- specifikace umirani -->
+	<burned x="sour" y="sour" _shadow_x="sour" _shadow_y="sour">
+		<_animation     rate="pocet obrazku za sekundu"
+				>
+			<animation_item         x="souradnice na ktere je obrazek"
+						y="souradnice na ktere je obrazek"
+						_shadow_x="souradnice stinu ve zdroji v polickach"
+						_shadow_y="souradnice stinu"
+						/>
+	</burned>
+</creature>
