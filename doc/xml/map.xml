@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <map 	name="jmeno mapy"
-	height="vyska mapy v polickach"
-	width="sirka mapy v polickach"
+	height="vyska mapy v polickach vcetne okraje"
+	width="sirka mapy v polickach vcetne okraje"
 	background="nazev pozadi"
 	>
 <!-- s podtrzitkem pisu nepovinne tagy a parametry

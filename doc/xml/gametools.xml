@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- s podtrzitkem pisu nepovinne tagy a atributy
+			- v realnem xml uz podtrzitka nepsat!!-->
+<!-- u nekterych gametools definujeme souradnice  v pixelech,
+	u nekterych v polickach, pozor na to -->
+<gametools src="cesta ke zdrojovemu obrazku">
+	<!-- souradnice v polickach -->
+	<!-- obrazek plamene, ruzne smery -->
+	<flame timeperiod="doba v sekundach po kterou hori plameny bomby">
+		<top 	x="souradnice obrazku v polickach"
+			y="souradnice v polickach"
+			>
+			<_animation rate="pocet obrazku za sekundu">
+			<!-- kazda faze animace ma svuj tag animation_item
+				povinny je alespon jeden, jako prvni obrazek
+				se pouzije x,y z nadrazeneho tagu,
+				potom v poradi jak je uvedeno -->
+				<animation_item
+					x="souradnice na ktere je obrazek v polickach"
+					y="souradnice na ktere je obrazek" />
+			</_animation>
+		</top>
+		<bottom x="sour v polickach" y="sour v polickach">
+			<_animation rate="pocet obrazku za sekundu">
+				<animation_item x="sour v polickach" y="sour v polickach" />
+			</_animation>
+		</bottom>
+		<!-- dalsi tagy mohou obsahovat nepovinne <animation ...> -->
+		<topbottom x="sour" y="sour"> </topbottom>
+		<left x="sour" y="sour"> </left>
+		<right x="sour" y="sour"> </right>
+		<leftright x="sour" y="sour"> </leftright>
+		<cross x="sour" y="sour"> </cross>
+	</flame>
+	<!-- obrazek bomb -->
+	<bombs timeperiod="doba v sekundach od polozeni, za kterou bomba bouchne">
+		<normal x="souradnice obrazku v polickach" y="souradnice">
+			<_animation rate="pocet obrazku za sekundu">
+				<animation_item
+					x="souradnice na ktere je obrazek v polickach"
+					y="souradnice na ktere je obrazek" />
+			</_animation>
+		</normal>
+		<mega x="souradnice obrazku v polickach" y="souradnice">
+			<_animation rate="pocet obrazku za sekundu">
+				<animation_item
+					x="souradnice na ktere je obrazek v polickach"
+					y="souradnice na ktere je obrazek" />
+			</_animation>
+		</mega>
+	</bombs>
+	<!-- obrazky zobrazovacich panelu jednotlivych bombicu -->
+	<!-- rozmery a souradnice v pixelech -->
+	<panels height="vyska panelu v pixelech" width="sirska panelu v pixelech">
+		<player1 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
+		<player2 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
+		<player3 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
+		<player4 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
+	</panels>
+</gametools>

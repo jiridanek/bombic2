@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- s podtrzitkem pisu nepovinne tagy a parametry
-                        - v realnem xml uz podtrzitka nepsat!!-->
+			- v realnem xml uz podtrzitka nepsat!!-->
 <bonus 	name="jmeno bonusu"
 	src="cesta k souboru s obrazky"
 	x="souradnice v polickach, na ktere je obrazek"
-	y="souradnice"
+	y="souradnice v polickach"
+	small_src="cesta k souboru s obrazky malych symbolu zobrazovanych v panelu"
+	small_x="souradnice symbolu zobrazovanych v panelu v pixelech"
+	small_y="souradnice symbolu v pixelech"
+	small_height="vyska symbolu v pixelech"
+	small_width="sirska symbolu v pixelech"
 	>
 
 	<_animation 	rate="pocet obrazku za sekundu"

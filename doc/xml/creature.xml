@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- s podtrzitkem pisu nepovinne tagy a parametry
+<!-- s podtrzitkem pisu nepovinne tagy a atributy
 			- v realnem xml uz podtrzitka nepsat!!-->
-
+<!-- u creature definujeme souradnice a velikost obrazku v pixelech -->
+<!-- po vyhozeni atributu speed, lives, intelligence, flying
+	se jedna o specifikaci bombice (playerN)  -->
 <creature 	name="jmeno prisery"
 		src="cesta k souboru s obrazky"
 		_shadow_src="cesta k souboru se stiny"
+		height="vyska v pixelech"
+		width="sirska v pixelech"
 		speed="rychlost pohybu"
 		lives="pocet zivotu"
 		intelligence="vyse inteligence"
@@ -13,10 +17,10 @@
 	<!-- kazdy smer muze obsahovat nepovinne tag animation
 			presne tak, jak je to videt u <up> -->
 	<!-- specifikace smeru -->
-	<up 	x="souradnice obrazku v polickach"
-		y="souradnice"
-		_shadow_x="souradnice stinu ve zdroji v polickach"
-		_shadow_y="souradnice stinu"
+	<up 	x="souradnice obrazku v pixelech"
+		y="souradnice v pixelech"
+		_shadow_x="souradnice stinu ve zdroji v pixelech"
+		_shadow_y="souradnice stinu v pixelech"
 		>
 		<_animation 	rate="pocet obrazku za sekundu"
 				>
@@ -24,14 +28,14 @@
 				povinny je alespon jeden, jako prvni obrazek
 				se pouzije x,y z nadrazeneho tagu,
 				potom v poradi jak je uvedeno -->
-			<animation_item 	x="souradnice na ktere je obrazek"
+			<animation_item 	x="souradnice na ktere je obrazek v pixelech"
 						y="souradnice na ktere je obrazek"
-						_shadow_x="souradnice stinu ve zdroji v polickach"
+						_shadow_x="souradnice stinu ve zdroji v pixelech"
 						_shadow_y="souradnice stinu"
 						/>
 		</_animation>
 	</up>
-	<left x="sour" y="sour" _shadow_x="sour" _shadow_y="sour">
+	<left x="souradnice v pixelech" y="sour" _shadow_x="sour" _shadow_y="sour">
 		<!-- nepovinny <animation ...> -->
 	</left>
 	<down x="sour" y="sour" _shadow_x="sour" _shadow_y="sour">
@@ -44,7 +48,7 @@
 				>
 			<animation_item         x="souradnice na ktere je obrazek"
 						y="souradnice na ktere je obrazek"
-						_shadow_x="souradnice stinu ve zdroji v polickach"
+						_shadow_x="souradnice stinu ve zdroji v pixelech"
 						_shadow_y="souradnice stinu"
 						/>
 		</_animation>

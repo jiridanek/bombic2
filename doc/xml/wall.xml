@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- s podtrzitkem pisu nepovinne tagy a parametry
-                        - v realnem xml uz podtrzitka nepsat!!-->
+		- v realnem xml uz podtrzitka nepsat!!-->
 
 <wall 	name="jmeno zdi"
 	src="cesta k souboru s obrazky"
