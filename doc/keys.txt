@@ -1,0 +1,163 @@
+Pro pouzitelne klavesy ctete nasledujici tabulku
+	klavesa		|	nazev pouzivany v config.cfg
+zvlastni klavesy ( nektere na sve klavesnici ani nemam )
+backspace		|		backspace
+tab			|		tab
+clear			|		clear
+return			|		return
+pause			|		pause
+escape			|		escape
+space			|		space
+klasicke klavesy alfanumericke casti klavesnice
+!			|		exclaim
+"			|		quotedbl
+#			|		hash
+$			|		dollar
+&			|		ampersand
+'			|		quote
+(			|		Lparen
+)			|		Rparen
+*			|		asterisk
++			|		plus
+,			|		comma
+-			|		minus
+.			|		period
+/			|		slash
+0			|		0
+1			|		1
+2			|		2
+3			|		3
+4			|		4
+5			|		5
+6			|		6
+7			|		7
+8			|		8
+9			|		9
+:			|		colon
+;			|		semicolon
+<			|		less
+=			|		equals
+>			|		greater
+?			|		question
+@			|		at
+[			|		Lbracket
+\			|		backslash
+]			|		Rbracket
+^			|		caret
+_			|		underscore
+`			|		backquote
+a			|		a
+b			|		b
+c			|		c
+d			|		d
+e			|		e
+f			|		f
+g			|		g
+h			|		h
+i			|		i
+j			|		j
+k			|		k
+l			|		l
+m			|		m
+n			|		n
+o			|		o
+p			|		p
+q			|		q
+r			|		r
+s			|		s
+t			|		t
+u			|		u
+v			|		v
+w			|		w
+x			|		x
+y			|		y
+z			|		z
+
+tato sekce obsahuje narodni znaky, jako klavesy uvedu jen ty,
+ktere se pod temito znaky vyskytuji na ceske klavesnici.
+
+ì			|		world 76
+¹			|		world 25
+è			|		world 72
+ø			|		world 88
+¾			|		world 30
+ý			|		world 93
+á			|		world 65
+í			|		world 77
+é			|		world 73
+ú			|		world 90
+ù			|		world 89
+§			|		world 7
+
+klavesy numericke casti klavesnice
+0			|		kp_0
+1			|		kp_1
+2			|		kp_2
+3			|		kp_3
+4			|		kp_4
+5			|		kp_5
+6			|		kp_6
+7			|		kp_7
+8			|		kp_8
+9			|		kp_9
+,			|		kp_period
+/			|		kp_divide
+*			|		kp_multiply
+-			|		kp_minus
++			|		kp_plus
+enter			|		kp_enter
+=			|		kp_equals
+
+klavesy navigacni (stredni) casti klavesnice
+up			|		up
+down			|		down
+right			|		right
+left			|		left
+insert			|		insert
+delete			|		delete
+home			|		home
+end			|		end
+pageup			|		pageup
+pagedown		|		pagedown
+
+funkcni klavesy
+f1			|		f1
+f2			|		f2
+f3			|		f3
+f4			|		f4
+f5			|		f5
+f6			|		f6
+f7			|		f7
+f8			|		f8
+f9			|		f9
+f10			|		f10
+f11			|		f11
+f12			|		f12
+f13			|		f13
+f14			|		f14
+f15			|		f15
+
+ostatni metaklavesy
+scrolllock		|		scrolllock
+right shift		|		Rshift
+left shift		|		Lshift
+right ctrl		|		Rctrl
+left ctrl		|		Lctrl
+right alt		|		Ralt
+left alt		|		Lalt
+right meta		|		Rmeta
+left meta		|		Lmeta
+left super		|		Lsuper
+right super		|		Rsuper
+alt gr			|		altgr
+compose			|		compose
+
+dalsi zvlastni klavesy, nevyskytujici se na kazde klavesnici
+help			|		help
+printscreen		|		printscreen
+sysreq			|		sysreq
+break			|		break
+menu			|		menu
+power			|		power
+euro			|		euro
+undo			|		undo
