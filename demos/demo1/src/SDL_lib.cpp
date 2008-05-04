@@ -133,18 +133,21 @@ SDL_Surface* create_surface(Uint16 w, Uint16 h, SDL_Color color){
 	// vratim
 	return sur;
 }
-void set_transparent(SDL_Surface *sur, SDL_Color color){
+void set_transparent_color(SDL_Surface *sur, SDL_Color color){
 	SDL_SetColorKey(sur, SDL_SRCCOLORKEY,
 		SDL_MapRGB(sur->format, color.r, color.g, color.b));
 }
 // vytvori surface potrebne velikosti a nastavi prusvitnou barvu
-SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h){
+SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h, bool transparent){
 	// transparentni barva
-	SDL_Color trans= Colors::transparent();
+	SDL_Color trans_color= Colors::transparent();
 	// vytvorim surface
-	SDL_Surface *sur=create_surface(w, h, trans);
+	SDL_Surface *sur=create_surface(w, h, trans_color);
 	// nastavim transparentni barvu
-	set_transparent(sur, trans);
+	set_transparent_color(sur, trans_color);
+	//nastavim pruhlednost
+	if(transparent)
+		SDL_SetAlpha(sur, SDL_SRCALPHA | SDL_RLEACCEL, 128);
 	return sur;
 }
 

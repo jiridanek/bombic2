@@ -4,6 +4,8 @@
 <!-- u creature definujeme souradnice a velikost obrazku v pixelech -->
 <!-- po vyhozeni atributu speed, lives, intelligence, flying
 	se jedna o specifikaci bombice (playerN)  -->
+<!-- pokud je specifikovany atribut shadow_src
+	jsou atributy shadow_x a shadow_y povinne vsude, kde jsou volitelne -->
 <creature 	name="jmeno prisery"
 		src="cesta k souboru s obrazky"
 		_shadow_src="cesta k souboru se stiny"

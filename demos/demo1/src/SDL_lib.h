@@ -4,8 +4,8 @@
  * vykresluje jednoduche geometricke utvary, pismo, nacita obrazky...
  */
 
-#ifndef SDL_LIB
-#define SDL_LIB
+#ifndef SDL_LIB_
+#define SDL_LIB_
 
 #include "SDL.h"
 #include "SDL_ttf.h"
@@ -61,8 +61,8 @@ SDL_Surface* get_text(TTF_Font* font, const char* str, SDL_Color color);
 
 // vytvori surface potrebne velikosti a barvy
 SDL_Surface* create_surface(Uint16 w, Uint16 h, SDL_Color color);
-void set_transparent(SDL_Surface *sur, SDL_Color color);
-SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h);
+void set_transparent_color(SDL_Surface *sur, SDL_Color color);
+SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h, bool transparent=false);
 
 // vykresli surface_src do surface_dst
 void draw_surface(int x, int y, SDL_Surface* surface_src, SDL_Surface* surface_dst);
