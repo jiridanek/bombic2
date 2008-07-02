@@ -10,6 +10,8 @@
 	<!-- specifikace obrazku v rohu obrazovky -->
 	<topleft 	x="souradnice obrazku v polickach"
 			y="souradnice"
+			_width="sirska v polickach"
+			_height="vyska v polickach"
 			>
 		<_animation 	rate="pocet obrazku za sekundu"
 				>
@@ -26,7 +28,7 @@
 	</topright>
 	<bottomleft x="sour" y="sour">
 	</bottomleft>
-	<bottomright x="sour" y="sour">
+	<bottomright x="sour" y="sour" _width="sirska v polickach" _height="vyska v polickach">
 	</bottomright>
 	<!-- specifikace okraju -->
 	<top x="sour" y="sour" width="sirska v polickach">
@@ -34,9 +36,11 @@
 	<bottom x="sour" y="sour" width="sirska v polickach"
 			_toplapping="horni presah v polickach,default 0">
 	</bottom>
-	<left x="sour" y="sour" height="vyska v polickach">
+	<left x="sour" y="sour" height="vyska v polickach"
+			_toplapping="horni presah">
 	</left>			
-	<right x="sour" y="sour" height="vyska v polickach">
+	<right x="sour" y="sour" height="vyska v polickach"
+			_toplapping="horni presah">
 	</right>
 	<!-- specifikace pozadi vnitrnich policek -->
 	<clean_bg x="sour" y="sour">
