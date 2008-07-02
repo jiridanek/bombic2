@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<map name="map_forest" height="15" width="15" background="bg_forest">
+<!--
+	<walls 	name="wall_stone">
+		<wall x="souradnice umisteni" y="souradnice umisteni" />
+	</walls>
+-->
+<!--
+	<boxes 	name="box_barrel" count="pocet v celem kole">
+	</boxes>
+-->
+</map>
