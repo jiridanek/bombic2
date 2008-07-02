@@ -12,42 +12,45 @@
 #include <utility>
 
 /************** class Colors ******************/
-Colors::Colors(){
-	// nastavime barvy
-	add(255,255,255); // bila
-	add(255,255,0); // zluta
-	add(255,0,255); // purpurova
-	add(0,255,255); // azurova
-	add(255,0,0); // cervena
-	add(0,255,0); // svetle_zelena
-	add(0,0,255); // modra
-	add(0,0,0); // cerna
-	add(0,128,0); // zelena
-	add(128,0,0); // hneda
-	add(128,128,0); // vyblita
-	add(128,0,128); // fialova
-	add(128,128,128); // seda
-	add(0,0,128); // tmave_modra
-	add(0,128,128); // modro_zelena
-	add(192,192,192); // svetle_seda
-}
 
-SDL_Color Colors::transparent(){
-	SDL_Color trans; trans.r=255; trans.g=0; trans.b=255;
-	return trans;
-}
+// deklarace barev
+SDL_Color Colors::transparent_ = {255,0,255}; // pruhledna
 
-SDL_Color const & Colors::operator[](Colors_Index n) const {
-	// vraci barvu na indexu n nebo barvu POZADI pri chybe
-	if(n<0 || n>palette.size()-1) n=POZADI;
-	return palette[n];
-}
-void Colors::add(int r, int g, int b){
-	// prida pozadovanou barvu do palety
-	SDL_Color color; // pomocna barva
-	color.r=r; color.g=g; color.b=b; // nastavi pozadovanou barvu
-	palette.push_back(color); // prida ji
-}
+SDL_Color Colors::white_ = {255,255,255}; // bila
+SDL_Color Colors::yellow_ = {255,255,0}; // zluta
+SDL_Color Colors::aqua_ = {0,255,255}; // azurova
+SDL_Color Colors::red_ = {255,0,0}; // cervena
+SDL_Color Colors::lime_ = {0,255,0}; // svetle_zelena
+SDL_Color Colors::blue_ = {0,0,255}; // modra
+SDL_Color Colors::black_ = {0,0,0}; // cerna
+SDL_Color Colors::green_ = {0,128,0}; // zelena
+SDL_Color Colors::maroon_ = {128,0,0}; // hneda
+SDL_Color Colors::olive_ = {128,128,0}; // olivova (vyblita)
+SDL_Color Colors::purple_ = {128,0,128}; // fialova
+SDL_Color Colors::gray_ = {128,128,128}; // seda
+SDL_Color Colors::navy_ = {0,0,128}; // tmave_modra
+SDL_Color Colors::teal_ = {0,128,128}; // modro_zelena
+SDL_Color Colors::silver_ = {192,192,192}; // svetle_seda
+
+// deklarace funkci barev
+SDL_Color Colors::transparent(){ return transparent_; }
+
+SDL_Color Colors::white(){ return white_; }
+SDL_Color Colors::yellow(){ return yellow_; }
+SDL_Color Colors::aqua(){ return aqua_; }
+SDL_Color Colors::red(){ return red_; }
+SDL_Color Colors::lime(){ return lime_; }
+SDL_Color Colors::blue(){ return blue_; }
+SDL_Color Colors::black(){ return black_; }
+SDL_Color Colors::green(){ return green_; }
+SDL_Color Colors::maroon(){ return maroon_; }
+SDL_Color Colors::olive(){ return olive_; }
+SDL_Color Colors::purple(){ return purple_; }
+SDL_Color Colors::gray(){ return gray_; }
+SDL_Color Colors::navy(){ return navy_; }
+SDL_Color Colors::teal(){ return teal_; }
+SDL_Color Colors::silver(){ return silver_; }
+
 /******************* END of class Colors ****************/
 
 /******************* class Fonts *********************/
@@ -168,12 +171,10 @@ void draw_center_surface(SDL_Surface* surface_src, SDL_Surface* surface_dst){
 		surface_src, surface_dst);
 }
 
-void clear_surface(int x, int y, SDL_Color color,
-			SDL_Surface* surface_src, SDL_Surface* surface_dst){
-	// vymaze misto v surface_dst na kterem by byl surface_src
-	if(surface_src && surface_dst){
-		SDL_Rect rect={x,y,surface_src->w,surface_src->h};
-		SDL_FillRect(surface_dst, &rect, SDL_MapRGB(surface_dst->format,
+void clear_surface(SDL_Color color, SDL_Surface* surface){
+	// vybarvi surface barvou color
+	if(surface){
+		SDL_FillRect(surface, 0, SDL_MapRGB(surface->format,
 			color.r,color.g,color.b) );
 	}
 }

@@ -14,23 +14,29 @@
 #include <vector>
 #include <string>
 
-enum Colors_Index { // barvy prejaty z http://jakpsatweb.cz/archiv/barvy-zakladni.html
-	BILA, ZLUTA, PURPUROVA, AZUROVA, CERVENA, SVETLE_ZELENA, MODRA, CERNA, ZELENA, HNEDA, VYBLITA, FIALOVA, SEDA, TMAVE_MODRA, MODRO_ZELENA, SVETLE_SEDA, POZADI=CERNA, PRUHLEDNA=PURPUROVA
-};
-
 class Colors {
 	public:
-		// nastavime barvy
-		Colors();
-		// vraci barvu na indexu n nebo barvu POZADI pri chybe
-		SDL_Color const & operator[](Colors_Index n) const;
-		// vraci transparentni barvu
 		static SDL_Color transparent();
+
+		static SDL_Color white();
+		static SDL_Color yellow();
+		static SDL_Color aqua();
+		static SDL_Color red();
+		static SDL_Color lime();
+		static SDL_Color blue();
+		static SDL_Color black();
+		static SDL_Color green();
+		static SDL_Color maroon();
+		static SDL_Color olive();
+		static SDL_Color purple();
+		static SDL_Color gray();
+		static SDL_Color navy();
+		static SDL_Color teal();
+		static SDL_Color silver();
 	private:
-		// prida pozadovanou barvu do palety
-		void add(int r, int g, int b);
-		// hodnoty pouzitych barev
-		std::vector<SDL_Color> palette;
+		static SDL_Color transparent_, white_, yellow_, aqua_,
+				red_, lime_, blue_, black_, green_, maroon_,
+				olive_, purple_, gray_, navy_, teal_, silver_;
 };
 
 class Fonts {
