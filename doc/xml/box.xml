@@ -4,11 +4,11 @@
 
 <box 	name="jmeno bedny"
 	src="cesta k souboru s obrazky"
-	x="souradnice v polickach, na ktere je obrazek"
-	y="souradnice, na ktere je horni roh obrazku"
+	x="souradnice v pixelech, na ktere je obrazek"
+	y="souradnice v pixelech, na ktere je horni roh obrazku"
 	height="vyska v polickach zabirana v mape"
 	width="sirka v polickach zabirana v mape"
-	toplapping="vyska, ktera se nepocita v mape jako zabirana"
+	toplapping="vyska v polickach, ktera se nepocita v mape jako zabirana"
 	_overcrossing="no|yes"
 	>
 
@@ -17,7 +17,7 @@
 		<!-- kazda faze animace ma svuj tag animation_item
 			povinny je alespon jeden, jako prvni obrazek
 			se pouzije x,y z tagu box, potom v poradi jak je uvedeno -->
-		<animation_item 	x="souradnice na ktere je obrazek"
+		<animation_item 	x="souradnice na ktere je obrazek v pixelech"
 					y="souradnice na ktere je obrazek"
 					/>
 	</_animation>

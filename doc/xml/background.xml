@@ -8,8 +8,8 @@
 	<!-- kazda komponenta pozadi muze obsahovat nepovinne tag animation
 			presne tak, jak je to videt u topleft -->
 	<!-- specifikace obrazku v rohu obrazovky -->
-	<topleft 	x="souradnice obrazku v polickach"
-			y="souradnice"
+	<topleft 	x="souradnice obrazku v pixelech"
+			y="souradnice v pixelech"
 			_width="sirska v polickach"
 			_height="vyska v polickach"
 			>
@@ -19,32 +19,34 @@
 				povinny je alespon jeden, jako prvni obrazek
 				se pouzije x,y z nadrazeneho tagu,
 				potom v poradi jak je uvedeno -->
-			<animation_item 	x="souradnice na ktere je obrazek"
-						y="souradnice na ktere je obrazek"
+			<animation_item 	x="souradnice na ktere je obrazek v pixelech"
+						y="souradnice na ktere je obrazek v pixelech"
 						/>
 		</_animation>
 	</topleft>
-	<topright x="sour" y="sour">
+	<topright x="sour v pixelech" y="sour v pixelech" _width="sirska v polickach (default 1)" _height="">
 	</topright>
-	<bottomleft x="sour" y="sour">
+	<bottomleft x="sour" y="sour" _width="sirska" _height="vyska (default 1)"
+			_toplapping="horni presah (default 0)">
 	</bottomleft>
-	<bottomright x="sour" y="sour" _width="sirska v polickach" _height="vyska v polickach">
+	<bottomright x="sour" y="sour" _width="sirska v polickach" _height="vyska v polickach"
+			_toplapping="horni presah">
 	</bottomright>
 	<!-- specifikace okraju -->
-	<top x="sour" y="sour" width="sirska v polickach">
+	<top x="sour v pixelech" y="sour" _width="sirska v polickach" _height="vyska">
 	</top>
-	<bottom x="sour" y="sour" width="sirska v polickach"
+	<bottom x="sour" y="sour" _width="sirska v polickach" _height="vyska"
 			_toplapping="horni presah v polickach,default 0">
 	</bottom>
-	<left x="sour" y="sour" height="vyska v polickach"
+	<left x="sour" y="sour" _height="vyska v polickach" _width="sirska v polickach"
 			_toplapping="horni presah">
 	</left>			
-	<right x="sour" y="sour" height="vyska v polickach"
+	<right x="sour" y="sour" _height="vyska v polickach bez presahu" _width="sirska"
 			_toplapping="horni presah">
 	</right>
 	<!-- specifikace pozadi vnitrnich policek -->
-	<clean_bg x="sour" y="sour">
+	<clean_bg x="sour v pixelech" y="sour">
 	</clean_bg>
-	<burned_bg x="sour" y="sour">
+	<burned_bg x="sour" y="sour v pixelech">
 	</burned_bg>
 </background>

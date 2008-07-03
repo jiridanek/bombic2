@@ -14,10 +14,10 @@
 			_width="sirska,kolik zabere policek"
 			>
 		<!-- pro kazdou jednu zed musi byt jeden tag wall -->
-		<wall 	x="souradnice umisteni"
+		<wall 	x="souradnice umisteni v polickach"
 			y="souradnice umisteni"
 			_name="jmeno"
-			_height="vyska vlozene zdi"
+			_height="vyska vlozene zdi v polickach"
 			_width="sirska"
 			/>
 	</_walls>
@@ -26,24 +26,24 @@
 		jde spise o kosmetickou zalezitost -->
 	<!-- pro kazdy jeden objekt musi byt jeden tag floorobject -->
 	<_floorobject 	name="jmeno objektu"
-			x="souradnice umisteni"
+			x="souradnice umisteni v polickach"
 			y="souradnice umisteni"
-			_height="vyska objektu"
+			_height="vyska objektu v polickach"
 			_width="sirska objektu"
 			/>
 	<!-- pripadna rozsahlejsi (height | width >1)
 		bedna bouchne cela najednou -->
 	<_boxes 	name="jmeno bedny"
 			count="pocet v celem kole"
-			_height="vyska"
+			_height="vyska v polickach"
 			_width="sirska"
 			>
 		<!-- pro kazdou pevne umistenou bednu musi byt jeden tag box
 			ostatni se vygeneruji na nahodne misto -->
-		<_box 	x="souradnice umisteni"
+		<_box 	x="souradnice umisteni v polickach"
 			y="souradnice umisteni"
 			_name="jmeno"
-			_height="vyska"
+			_height="vyska v polickach"
 			_width="sirska"
 			/>
 	</_boxes>
@@ -53,7 +53,7 @@
 			>
 		<!-- pro kazdou pevne umistenou potvoru musi byt jeden tag creature
 			ostatni se vygeneruji na nahodne misto -->
-		<_creature 	x="souradnice umisteni"
+		<_creature 	x="souradnice umisteni v polickach"
 				y="souradnice umisteni"
 				/>
 	</_creatures>

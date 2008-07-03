@@ -5,7 +5,7 @@
 	zkratka se chova jakoby tam nebyl, je to jen kosmeticka uprava -->
 <floorobject 	name="jmeno objektu"
 		src="cesta k souboru s obrazky"
-		x="souradnice v polickach, na ktere je obrazek"
+		x="souradnice v pixelech, na ktere je obrazek"
 		y="souradnice, na ktere je horni roh obrazku"
 		height="vyska v polickach zabirana v mape"
 		width="sirka v polickach zabirana v mape"
@@ -17,7 +17,7 @@
 			povinny je alespon jeden, jako prvni obrazek
 			se pouzije x,y z tagu floorobject,
 			potom v poradi jak je uvedeno -->
-		<animation_item 	x="souradnice na ktere je obrazek"
+		<animation_item 	x="souradnice na ktere je obrazeki pixelech"
 					y="souradnice na ktere je obrazek"
 					/>
 	</_animation>
