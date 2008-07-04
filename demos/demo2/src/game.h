@@ -3,6 +3,8 @@
  * Game.h obsahuje stejnojmennou třídu obstarávající konkrétní hru jako celek
  * a jí podřízené třídy jako například mapObject.
  */
+#ifndef GAME_
+#define GAME_
 
 #include <iostream>
 #include <list>
@@ -10,6 +12,7 @@
 #include <string>
 #include "SDL_lib.h"
 #include "constants.h"
+#include "tixml_helper.h"
 
 /** Obecný objekt hry.
  * Čistě virtuální třída zastřešující veškeré objekty v mapě.
@@ -17,7 +20,8 @@
 class MapObject{
 	public:
 		/// Vykreslení.
-		virtual void draw()=0;
+		virtual void draw(SDL_Surface *)=0;
+		virtual std::string type()=0;
 };
 
 /** Dynamický objekt hry.
@@ -51,11 +55,14 @@ class Game {
 		/// Inicializace hry.
 		Game(Uint8 players_count, const std::string & mapname);
 // 			bool deathmatch=false, bool creatures=true, bool bombsatend=false);
+		/// Uvolnění naalokovaaných surface.
+		~Game();
 		/// Nastavení parametrů hráče.
 		void set_player(Uint8 player_num, Uint8 lives,
 			Uint8 bombs, Uint8 flames, Uint8 boots);
 		/// Spuštění hry.
 		void play();
+		void draw(SDL_Surface *window);
 		/// Info o ukončení hry.
 		bool success() const;
 		/// Info o hráči.
@@ -66,111 +73,17 @@ class Game {
 		std::list<DynamicMO*> dynamicMOs_;
 		/// Seznam statických objektů mapy.
 		std::vector<StaticMO*> staticMOs_;
-		/// Dvourozměrné pole mapy se seznamem objektů na něm položených.
-		std::vector< std::vector< std::list< MapObject* > > > map_array_;
+		/// Dvourozměrné pole mapy, na každém políčku seznam objektů na něm položených.
+		typedef std::vector< std::vector< std::list< MapObject* > > > map_array_t;
+		map_array_t map_array_;
 
+		/// Načtení mapy pro hru.
+		void load_map_(const std::string & mapname);
+		/// Načtení pozadí mapy.
+		void load_background_(const std::string & mapname);
+		/// Načtení podelementu pozadí.
+		SDL_Surface* load_bg_subEl_(TiXmlElement *bg_el, const char* name_subEl,
+				int & toplapping, SDL_Surface* sur_src);
 };
 
-/** Zed.
- * Statický objekt, který neshoří, a nejde přes něj chodit,
- * většinou ani létat.
- * Plamen se o zed zarazí.
- */
-class Wall: public StaticMO{
-	public:
-		/// Vykreslení.
-		void draw();
-};
-
-/** Objekt ležící na zemi.
- * Statický objekt sloužící jako lokální změna pozadí mapy.
- * Nehoří, jde přes něj chodit i létat, letí přes něj plamen.
- */
-class Floorobject: public StaticMO{
-	public:
-		/// Vykreslení.
-		void draw();
-};
-
-/** Pozadí mapy.
- * Statický objekt jako podklad hrací plochy.
- * Lze přes něj chodit, létat, letí přes něj plamen.
- * Po výbuchu bomby může změnit vzhled.
- */
-class Background: public StaticMO{
-	public:
-		/// Vykreslení.
-		void draw();
-};
-
-/** Postava Bombiče.
- * Dynamický objekt, který vytváří bomby,
- * zabíjí, umírá, sbírá bonusy, chodí.
- */
-class Bomber: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
-
-/** Nestvůra.
- * Dynamický objekt, který zabíjí, umírá, chodí nebo létá.
- * Disponuje umělou inteligencí.
- */
-class Creature: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
-
-/** Bedna.
- * Dynamický objekt, vytvořený na začátku hry.
- * Při zasažení plamenem shoří, vytváří bonus,
- * plamen přes něj neletí, nelze přes něj chodit ani létat.
- */
-class Box: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
-
-/** Bomba.
- * Dynamický objekt vytvářený především bombičem.
- * Vytváří plamen, může se hýbat.
- */
-class Bomb: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
-
-/** Plamen bomby.
- * Dynamický objekt vytvářený především bombou.
- * Zabíjí, sbírá (spaluje) bonusy, nehýbe se.
- */
-class Flame: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
-
-/** Bonus.
- * Dynamický objekt. Hoří, nechá se sbírat bombičem.
- */
-class Bonus: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
+#endif

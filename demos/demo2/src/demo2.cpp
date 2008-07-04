@@ -18,7 +18,7 @@ int main(int argc, char ** argv){
 
 	// vytvoreni hlavniho okna
 	SDL_Surface *window, *background, *bgrect;
-	window_init(&window, 640, 480, "Bombic2 - Demo 2");
+	window_init(&window, 800, 600, "Bombic2 - Demo 2");
 
 	// vytvorit obdelnickovane pozadi
 	background = create_surface(640, 480, Colors::navy());
@@ -28,6 +28,7 @@ int main(int argc, char ** argv){
 
 		// vyprazdneni celeho okna
 		draw_surface(0,0, background, window);
+		game.draw(window);
 
 		// obnoveni stavu klavesnice
 		SDL_PumpEvents();// obnoveni stavu klavesnice

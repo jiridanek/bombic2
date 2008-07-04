@@ -58,6 +58,23 @@ class Fonts {
 		fontMap_t fontMap;
 };
 
+class Surface {
+	public:
+		Surface();
+		Surface(SDL_Surface *sur_SDL);
+		Surface(const Surface & sur);
+		~Surface();
+
+		Surface & operator= (const Surface & sur);
+
+		SDL_Surface* GetSurface();
+	private:
+		Uint16 decrement_();
+
+		SDL_Surface* surface_;
+		Uint16* references_;
+};
+
 // Inicializace SDL a TTF, vytvori okno o zadanych rozmerech a zahlavi
 void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *caption);
 

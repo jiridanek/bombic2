@@ -100,7 +100,7 @@ Bombic::Bombic(Uint8 fps_global): fps_global_(fps_global),
 // element subEl je povinny
 // fce precte jeho atributy a pripadne vnorenou animaci a udela cache obrazku
 void Bombic::subElement_(TiXmlElement *Element, directions_t direction){
-	TiXmlElement *subEl= Element->FirstChildElement(direction2str_(direction));
+	TiXmlElement *subEl= Element->FirstChildElement(direction2str_(direction).c_str());
 	if(!subEl)
 		TiXmlError_("chybějící element <"
 				+direction2str_(direction)+" ...>");

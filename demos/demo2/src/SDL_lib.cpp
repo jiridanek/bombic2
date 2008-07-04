@@ -93,6 +93,62 @@ TTF_Font* Fonts::add(unsigned int size){
 
 /******** END of class Fonts ************************/
 
+/******** class Surface *****************************/
+
+
+Surface::Surface() : surface_(0){
+	// Create a new reference
+	references_ = new Uint16(0);
+}
+
+Surface::Surface(SDL_Surface *sur_SDL):
+				surface_(sur_SDL){
+	// Create a new reference
+	references_ = new Uint16(1);
+}
+
+Surface::Surface(const Surface & sur):
+			surface_(sur.surface_), references_(sur.references_){
+	++(*references_);
+}
+
+Surface::~Surface(){
+	decrement_();
+}
+
+Uint16 Surface::decrement_(){
+	// Decrement the reference count
+	// if reference become zero delete the data
+	if( --(*references_) == 0){
+		delete references_;
+		if(surface_){
+			SDL_FreeSurface(surface_);
+			surface_=0;
+		}
+	}
+	return *references_;
+}
+
+Surface & Surface::operator= (const Surface & sur){
+	// Assignment operator
+	if(this != &sur){ // Avoid self assignment
+		decrement_();
+		// Copy the data and reference pointer
+		// and increment the reference count
+
+		surface_ = sur.surface_;
+		references_ = sur.references_;
+		++(*references_);
+	}
+	return *this;
+}
+
+SDL_Surface* Surface::GetSurface(){
+	return surface_;
+}
+
+/******** END of class Surface **********************/
+
 /******** SDL_lib functions **************************/
 
 void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *caption){
@@ -137,6 +193,7 @@ SDL_Surface* create_surface(Uint16 w, Uint16 h, SDL_Color color){
 	return sur;
 }
 void set_transparent_color(SDL_Surface *sur, SDL_Color color){
+	if(!sur) return;
 	SDL_SetColorKey(sur, SDL_SRCCOLORKEY,
 		SDL_MapRGB(sur->format, color.r, color.g, color.b));
 }
@@ -165,10 +222,12 @@ void draw_surface(int x, int y, SDL_Surface* surface_src, SDL_Surface* surface_d
 
 // vykresli src do dst vycentrovane
 void draw_center_surface(SDL_Surface* surface_src, SDL_Surface* surface_dst){
-	draw_surface(
-		(surface_dst->w - surface_src->w)/2,
-		(surface_dst->h - surface_src->h)/2,
-		surface_src, surface_dst);
+	if(surface_src && surface_dst){
+		draw_surface(
+			(surface_dst->w - surface_src->w)/2,
+			(surface_dst->h - surface_src->h)/2,
+			surface_src, surface_dst);
+	}
 }
 
 void clear_surface(SDL_Color color, SDL_Surface* surface){
@@ -181,6 +240,7 @@ void clear_surface(SDL_Color color, SDL_Surface* surface){
 
 void draw_pixel(SDL_Surface* surface, int x, int y, SDL_Color color){
 	// nakresli do `surface` pixel na souradnice [x,y] barvy `color`
+	if(!surface) return;
 
 	if(x>=surface->w || y>=surface->h || x<0 || y<0)
 		return; // Presahuje rozmery surface
