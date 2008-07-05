@@ -21,6 +21,7 @@ class MapObject{
 	public:
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *)=0;
+		/// Typ objektu.
 		virtual std::string type()=0;
 };
 
@@ -80,10 +81,23 @@ class Game {
 		/// Načtení mapy pro hru.
 		void load_map_(const std::string & mapname);
 		/// Načtení pozadí mapy.
-		void load_background_(const std::string & mapname);
-		/// Načtení podelementu pozadí.
-		SDL_Surface* load_bg_subEl_(TiXmlElement *bg_el, const char* name_subEl,
+		void load_background_(const std::string & bgname);
+		/// Načtení zdí mapy.
+		void load_walls_(TiXmlElement *wallsEl);
+		/// Načtení specifických atributů jedné zdi.
+		void load_wall_(TiXmlElement *wallEl, std::string & name,
+				int & height, int & width);
+		/// Načtení specifických atributů jedné zdi včetně x a y.
+		void load_wall_(TiXmlElement *wallEl, std::string & name,
+				int & height, int & width, int & x, int & y);
+
+		/// Načtení surface podelementu.
+		SDL_Surface* load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 				int & toplapping, SDL_Surface* sur_src);
+		/// Vytvoření a vložení zdi do mapy.
+		void insert_wall_(const Surface & sur,
+				Uint16 toplapping, Uint16 x, Uint16 y);
+
 };
 
 #endif

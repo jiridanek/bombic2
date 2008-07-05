@@ -12,12 +12,18 @@
 #include "tinyxml.h"
 // #include "SDL_lib.h"
 
+/// Načte dokument a v něm najde RootElement, variabilně kontroluje atribut name.
+TiXmlElement* TiXmlRootElement(TiXmlDocument & doc,
+		std::string & filename, const std::string& rootEl_name, bool checkAttr_name);
+
+
 /// Vytiskne chybu a ukončí program.
 template<typename T> void TiXmlError(T error){
 	std::cerr << "Chyba v XML souboru: " << error << std::endl;
 	exit(1);
 }
 
+/// Vytiskne chybu se jménem souboru a ukončí program.
 template<typename S, typename T> void TiXmlError(S filename, T error){
 	std::cerr << "Chyba v XML souboru " << filename
 		<< " : " << error << std::endl;

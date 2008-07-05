@@ -7,6 +7,56 @@
 
 using namespace std;
 
+/**
+ * @details Otevře xml dokument, zkontroluje správnost root elementu,
+ * variabilně zkontroluje správnost atributu name proti filename.
+ * Pokud kontrola selže, vyvolá TiXmlError().
+ * Filename obalí cestou a příponou.
+ * @param doc prázdný TiXmlDocument
+ * @param filename jméno souboru pro otevření, zadávejte bez cesty a bez přípony
+ * @param rootEl_name vyžádané jméno root elementu, pokud je prázdné nekontrokluje se
+ * @param checkAttr_name pokud true, provede kontrolu atributu name
+ * @return Vrací root element.
+ * @see TiXmlError()
+ */
+TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
+				const std::string& rootEl_name, bool checkAttr_name){
+	// obalit cestou a priponou
+	string name("xml/"+filename+".xml");
+	// prohodit
+	swap(name, filename);
+
+	if(!doc.LoadFile(filename.c_str()))
+		TiXmlError(filename,"nelze otevřít XML soubor , nebo není syntakticky správný.");
+
+	TiXmlElement *rootEl;
+
+	if(rootEl_name.empty())
+		rootEl = doc.RootElement();
+	else { // kontrola root elementu
+		rootEl= doc.FirstChildElement(rootEl_name.c_str());
+		if(!rootEl)
+			TiXmlError(filename,"root element musí být <"+rootEl_name+" ...>.");
+	}
+	// zkontrolovat atribut name
+	if(!checkAttr_name) return rootEl;
+
+
+	string str;
+
+	switch(QueryStringAttribute(rootEl,"name", &str)){
+		case TIXML_SUCCESS:
+			if(str!=name)
+				TiXmlError(filename,"chybná hodnota atributu name");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+				TiXmlError(filename, "chybějící atribut name");
+			break;
+	}
+	return rootEl;
+}
+
+
 /** @details
  * Vyhledá atribut požadovaného jména,
  * uloží jeho hodnotu typu string.
@@ -15,7 +65,6 @@ using namespace std;
  * @param outValue pointer na string, do kterého se uloží nalezená hodnota
  * @return Vrací TIXML_NO_ATTRIBUTE pokud atribut neexistuje, jinak TIXML_SUCCESS.
  */
-
 int QueryStringAttribute(TiXmlElement *El, const char* name,
 			std::string* outValue){
 
@@ -34,7 +83,6 @@ int QueryStringAttribute(TiXmlElement *El, const char* name,
  * @param attr_map mapa zpracovaných atributů
  * @see loadItem()
  */
-
 void subElement(TiXmlElement *Element, const char* subEl_name, attr_map_t & attr_map){
 	TiXmlElement *subEl= Element->FirstChildElement(subEl_name);
 	if(!subEl)
@@ -88,7 +136,6 @@ void subElement(TiXmlElement *Element, const char* subEl_name, attr_map_t & attr
  * @param El element, jehož atrobuty se mají zpracovat
  * @param attr_map mapa do níž se uloží hodnoty atributů s názvy jako klíči
  */
-
 void parseIntAttributes(TiXmlElement *El, attr_map_t & attr_map){
 	int value;
 	// inicializuje prvnim atributem

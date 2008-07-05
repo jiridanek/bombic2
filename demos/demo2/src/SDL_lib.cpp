@@ -143,8 +143,14 @@ Surface & Surface::operator= (const Surface & sur){
 	return *this;
 }
 
-SDL_Surface* Surface::GetSurface(){
+SDL_Surface* Surface::GetSurface() const {
 	return surface_;
+}
+Uint16 Surface::width() const {
+	return surface_->w;
+}
+Uint16 Surface::height() const {
+	return surface_->h;
 }
 
 /******** END of class Surface **********************/

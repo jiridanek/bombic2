@@ -3,8 +3,6 @@
 			- v realnem xml uz podtrzitka nepsat!!-->
 <bonus 	name="jmeno bonusu"
 	src="cesta k souboru s obrazky"
-	x="souradnice v pixelech, na ktere je obrazek"
-	y="souradnice v pixelech"
 	small_src="cesta k souboru s obrazky malych symbolu zobrazovanych v panelu"
 	small_x="souradnice symbolu zobrazovanych v panelu v pixelech"
 	small_y="souradnice symbolu v pixelech"
@@ -12,15 +10,18 @@
 	small_width="sirska symbolu v pixelech"
 	>
 
-	<_animation 	rate="pocet obrazku za sekundu"
-			>
-		<!-- kazda faze animace ma svuj tag animation_item
-			povinny je alespon jeden, jako prvni obrazek
-			se pouzije x,y z tagu bonus,
-			potom v poradi jak je uvedeno -->
-		<animation_item 	x="souradnice na ktere je obrazek v pixelech"
-					y="souradnice na ktere je obrazek"
-					/>
-	</_animation>
-			
+	<img	x="souradnice v pixelech, na ktere je obrazek"
+			y="souradnice v pixelech" >
+
+		<_animation 	rate="pocet obrazku za sekundu"
+				>
+			<!-- kazda faze animace ma svuj tag animation_item
+				povinny je alespon jeden, jako prvni obrazek
+				se pouzije x,y z tagu bonus,
+				potom v poradi jak je uvedeno -->
+			<animation_item 	x="souradnice na ktere je obrazek v pixelech"
+						y="souradnice na ktere je obrazek"
+						/>
+		</_animation>
+	</img>
 </bonus>

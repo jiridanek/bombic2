@@ -67,7 +67,9 @@ class Surface {
 
 		Surface & operator= (const Surface & sur);
 
-		SDL_Surface* GetSurface();
+		SDL_Surface* GetSurface() const;
+		Uint16 width() const;
+		Uint16 height() const;
 	private:
 		Uint16 decrement_();
 

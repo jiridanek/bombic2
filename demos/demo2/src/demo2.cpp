@@ -43,3 +43,4 @@ int main(int argc, char ** argv){
 	SDL_FreeSurface(background);
 	return 0;
 }
+

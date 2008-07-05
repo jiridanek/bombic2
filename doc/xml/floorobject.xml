@@ -4,22 +4,23 @@
 <!-- objekt na zemi je objekt po kterem se da chodit, neda se spalit
 	zkratka se chova jakoby tam nebyl, je to jen kosmeticka uprava -->
 <floorobject 	name="jmeno objektu"
-		src="cesta k souboru s obrazky"
-		x="souradnice v pixelech, na ktere je obrazek"
-		y="souradnice, na ktere je horni roh obrazku"
-		height="vyska v polickach zabirana v mape"
-		width="sirka v polickach zabirana v mape"
-		>
+		src="cesta k souboru s obrazky" >
 
-	<_animation 	rate="pocet obrazku za sekundu"
-			>
-		<!-- kazda faze animace ma svuj tag animation_item
-			povinny je alespon jeden, jako prvni obrazek
-			se pouzije x,y z tagu floorobject,
-			potom v poradi jak je uvedeno -->
-		<animation_item 	x="souradnice na ktere je obrazeki pixelech"
-					y="souradnice na ktere je obrazek"
-					/>
-	</_animation>
-			
+	<img	x="souradnice v pixelech, na ktere je obrazek"
+			y="souradnice, na ktere je horni roh obrazku"
+			_height="vyska v polickach zabirana v mape"
+			_width="sirka v polickach zabirana v mape" >
+
+		<_animation 	rate="pocet obrazku za sekundu"
+				>
+			<!-- kazda faze animace ma svuj tag animation_item
+				povinny je alespon jeden, jako prvni obrazek
+				se pouzije x,y z tagu floorobject,
+				potom v poradi jak je uvedeno -->
+			<animation_item 	x="souradnice na ktere je obrazeki pixelech"
+						y="souradnice na ktere je obrazek"
+						/>
+		</_animation>
+	</img>
+
 </floorobject>
