@@ -138,6 +138,7 @@ void subElement(TiXmlElement *Element, const char* subEl_name, attr_map_t & attr
  */
 void parseIntAttributes(TiXmlElement *El, attr_map_t & attr_map){
 	int value;
+	string error;
 	// inicializuje prvnim atributem
 	TiXmlAttribute *attr= El->FirstAttribute();
 	// v kazde iteraci prejdeme na dalsi atribut
@@ -169,4 +170,129 @@ bool attrIntValue(const char* attr, int & value, const attr_map_t & attr_map ){
 	if(it==attr_map.end()) return false;
 	value = it->second;
 	return true;
+}
+
+/**
+ * @details
+ * Naplní parametry mimo prvního hodnotami atributů.
+ * Pokud atribut nenajde uloží do parametru -1 (nebo empty string).
+ * Pokud je atribut prázdný nebo špatného typu vyvolá výjimku s chybovou hláškou.
+ * @param El element jehož hodnoty atributů hledáme
+ * @param name hodnota stejnojmenného atributu nebo prázdny string
+ * @param height hodnota stejnojmenného atributu nebo -1
+ * @param width hodnota stejnojmenného atributu nebo -1
+ */
+void attr_NameHeightWidth(TiXmlElement *El, std::string & name,
+			int & height, int & width){
+	if(!El){
+		name.erase();
+		height = width = -1;
+		return;
+	}
+
+	switch(QueryStringAttribute(El,"name", &name)){
+		case TIXML_SUCCESS:
+			if(name.empty())
+				throw string("atribut name nesmí být prázdný.");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+			name.erase();
+			break;
+	}
+
+	switch(El->QueryIntAttribute("height", &height)){
+		case TIXML_SUCCESS:
+			if(height<=0)
+				throw string("atribut height musí být větší než 0.");
+			break;
+		case TIXML_WRONG_TYPE:
+				throw string("atribut height není typu int.");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+			height= -1;
+			break;
+	}
+
+	switch(El->QueryIntAttribute("width", &width)){
+		case TIXML_SUCCESS:
+			if(width<=0)
+				throw string("atribut width musí být větší než 0.");
+			break;
+		case TIXML_WRONG_TYPE:
+				throw string("atribut width není typu int.");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+			width= -1;
+			break;
+	}
+}
+
+/**
+ * @details
+ * Naplní parametry mimo prvního hodnotami adekvátních atributů.
+ * Kontroluje také zda je parametr přítomen.
+ * Pokud atribut chybí nebo je špatného typu, vyvolá výjimku s chybovou hláškou.
+ * @param El element jehož hodnoty atributů hledáme
+ * @param x hodnota atributu x
+ * @param y hodnota atributu y
+ */
+void attr_XY(TiXmlElement *El, int & x, int & y){
+	if(!El){
+		x = y = -1;
+		return;
+	}
+	switch(El->QueryIntAttribute("x", &x)){
+		case TIXML_SUCCESS:
+			if(x<0)
+				throw string("atribut x musí být nezáporný.");
+			break;
+		case TIXML_WRONG_TYPE:
+				throw string("atribut x není typu int.");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+				throw string("atribut x chybí.");
+			break;
+	}
+
+	switch(El->QueryIntAttribute("y", &y)){
+		case TIXML_SUCCESS:
+			if(y<0)
+				throw string("atribut y musí být nezáporný.");
+			break;
+		case TIXML_WRONG_TYPE:
+				throw string("atribut y není typu int.");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+				throw string("atribut y chybí.");
+			break;
+	}
+}
+
+/**
+ * @details
+ * Naplní parametry mimo prvního hodnotami adekvátních atributů.
+ * Pokud atribut nenajde, uloží do parametru -1.
+ * Pokud atribut chybí nebo je špatného typu, vyvolá výjimku s chybovou hláškou.
+ * @param El element jehož hodnoty atributů hledáme
+ * @param count hodnota atributu count
+ */
+void attr_Count(TiXmlElement *El, double & count){
+	if(!El){
+		count = -1;
+		return;
+	}
+	int count_;
+	switch(El->QueryIntAttribute("count", &count_)){
+		case TIXML_SUCCESS:
+			if(count_<1)
+				throw string("atribut count musí být kladný.");
+			break;
+		case TIXML_WRONG_TYPE:
+				throw string("atribut count není typu int.");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+				throw string("atribut count chybí.");
+			break;
+	}
+	count= count_;
 }

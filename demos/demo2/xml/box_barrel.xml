@@ -2,4 +2,5 @@
 
 <box 	name="box_barrel" src="img/mapa0.bmp">
 	<img x="205" y="102" toplapping="1" />
+	<burning x="256" y="152" />
 </box>

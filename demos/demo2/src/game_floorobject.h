@@ -15,20 +15,15 @@
  */
 class Floorobject: public StaticMO{
 	public:
-		/// Vykreslení.
-		void draw();
+		Floorobject(const Surface & sur, Uint16 x, Uint16 y);
+		void draw(SDL_Surface * window);
+		std::string type();
+	private:
+		Surface sur_;
+		Uint16 x_, y_;
 };
 
-/** Pozadí mapy.
- * Statický objekt jako podklad hrací plochy.
- * Lze přes něj chodit, létat, letí přes něj plamen.
- * Po výbuchu bomby může změnit vzhled.
- */
-class Background: public StaticMO{
-	public:
-		/// Vykreslení.
-		void draw();
-};
+/**************************************************/
 
 /** Postava Bombiče.
  * Dynamický objekt, který vytváří bomby,
@@ -47,19 +42,6 @@ class Bomber: public DynamicMO{
  * Disponuje umělou inteligencí.
  */
 class Creature: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
-
-/** Bedna.
- * Dynamický objekt, vytvořený na začátku hry.
- * Při zasažení plamenem shoří, vytváří bonus,
- * plamen přes něj neletí, nelze přes něj chodit ani létat.
- */
-class Box: public DynamicMO{
 	public:
 		/// Pohyb.
 		void move();

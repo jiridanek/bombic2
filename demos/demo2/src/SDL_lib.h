@@ -13,6 +13,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <cstdlib> // For rand()
 
 class Colors {
 	public:
@@ -61,11 +62,12 @@ class Fonts {
 class Surface {
 	public:
 		Surface();
-		Surface(SDL_Surface *sur_SDL);
 		Surface(const Surface & sur);
+		Surface(SDL_Surface *sur_SDL);
 		~Surface();
 
 		Surface & operator= (const Surface & sur);
+		Surface & operator= (SDL_Surface *sur_SDL);
 
 		SDL_Surface* GetSurface() const;
 		Uint16 width() const;
@@ -123,5 +125,8 @@ bool get_event_isquit(SDLKey key= SDLK_LAST);
 // tato fce navic ceka na nejakou udalost
 // vrati take true pokud udalost vyvolala klavesa key
 bool wait_event_isquit(SDLKey key= SDLK_LAST);
+
+// vraci pseudonahodne cislo od nuly do jednicky vcetne
+double SDL_Rand();
 
 #endif

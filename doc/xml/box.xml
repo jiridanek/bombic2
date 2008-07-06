@@ -12,15 +12,31 @@
 			_width="sirka v polickach zabirana v mape"
 			_toplapping="vyska v polickach, ktera se nepocita v mape jako zabirana"	>
 
-		<_animation 	rate="pocet obrazku za sekundu"
-				>
+		<_animation	rate="pocet obrazku za sekundu"
+					>
 			<!-- kazda faze animace ma svuj tag animation_item
-				povinny je alespon jeden, jako prvni obrazek
-				se pouzije x,y z tagu box, potom v poradi jak je uvedeno -->
-			<animation_item 	x="souradnice na ktere je obrazek v pixelech"
-						y="souradnice na ktere je obrazek"
-						/>
+				 povinny je alespon jeden, jako prvni obrazek
+				 se pouzije x,y z tagu box, potom v poradi jak je uvedeno -->
+			<animation_item	x="souradnice na ktere je obrazek v pixelech"
+							y="souradnice na ktere je obrazek"
+							/>
 		</_animation>
 	</img>
+	<!-- horeni bedny, po odehrani animace se bedna ztrati -->
+	<!-- width, height, toplapping musi mit stejne hodnoty jako u img -->
+	<burning	x="souradnice v pixelech, na ktere je obrazek"
+				y="souradnice v pixelech, na ktere je horni roh obrazku"
+
+				>
+		<_animation 	rate="pocet obrazku za sekundu"
+						>
+			<!-- kazda faze animace ma svuj tag animation_item
+				 povinny je alespon jeden, jako prvni obrazek
+				 se pouzije x,y z tagu box, potom v poradi jak je uvedeno -->
+			<animation_item 	x="souradnice na ktere je obrazek v pixelech"
+								y="souradnice na ktere je obrazek"
+								/>
+		</_animation>
+	</burning>
 
 </box>

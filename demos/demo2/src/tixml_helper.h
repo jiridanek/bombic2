@@ -44,4 +44,13 @@ void parseIntAttributes(TiXmlElement *El, attr_map_t & attr_map);
 /// Vyhledá hodnotu atributu.
 bool attrIntValue(const char* attr , int & value, const attr_map_t & attr_map );
 
+
+/// Zpracování specifických atributů.
+void attr_NameHeightWidth(TiXmlElement *El, std::string & name,
+			int & height, int & width);
+/// Zpracování specifických atributů.
+void attr_XY(TiXmlElement *El, int & x, int & y);
+/// Zpracování specifických atributů.
+void attr_Count(TiXmlElement *El, double & count);
+
 #endif

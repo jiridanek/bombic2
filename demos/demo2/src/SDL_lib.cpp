@@ -98,7 +98,7 @@ TTF_Font* Fonts::add(unsigned int size){
 
 Surface::Surface() : surface_(0){
 	// Create a new reference
-	references_ = new Uint16(0);
+	references_ = new Uint16(1);
 }
 
 Surface::Surface(SDL_Surface *sur_SDL):
@@ -139,6 +139,19 @@ Surface & Surface::operator= (const Surface & sur){
 		surface_ = sur.surface_;
 		references_ = sur.references_;
 		++(*references_);
+	}
+	return *this;
+}
+
+Surface & Surface::operator= (SDL_Surface * sur_SDL){
+	// Assignment operator
+	if(this->surface_ != sur_SDL){ // Avoid self assignment
+		decrement_();
+		// Copy the data and reference pointer
+		// and create the reference count
+
+		surface_ = sur_SDL;
+		references_ = new Uint16(1);
 	}
 	return *this;
 }
@@ -386,4 +399,9 @@ bool wait_event_isquit(SDLKey key){
 		return false;
 }
 
+double SDL_Rand(){
+	double random= rand()+1;
+		random= rand()/random;
+	return (random<1) ? random : 1/random;
+}
 /********* END of SDL_lib functions ********************/

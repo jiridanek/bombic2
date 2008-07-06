@@ -70,8 +70,9 @@ class Game {
 		void player(Uint8 player_num, Uint8 & lives,
 			Uint8 & bombs, Uint8 & flames, Uint8 & boots) const;
 	private:
+		typedef std::list<DynamicMO*> dynamicMOs_t;
 		/// Seznam dynamických objektů mapy.
-		std::list<DynamicMO*> dynamicMOs_;
+		dynamicMOs_t dynamicMOs_;
 		/// Seznam statických objektů mapy.
 		std::vector<StaticMO*> staticMOs_;
 		/// Dvourozměrné pole mapy, na každém políčku seznam objektů na něm položených.
@@ -84,18 +85,24 @@ class Game {
 		void load_background_(const std::string & bgname);
 		/// Načtení zdí mapy.
 		void load_walls_(TiXmlElement *wallsEl);
-		/// Načtení specifických atributů jedné zdi.
-		void load_wall_(TiXmlElement *wallEl, std::string & name,
-				int & height, int & width);
-		/// Načtení specifických atributů jedné zdi včetně x a y.
-		void load_wall_(TiXmlElement *wallEl, std::string & name,
-				int & height, int & width, int & x, int & y);
+		/// Načtení objektů na zemi.
+		void load_floorobjects_(TiXmlElement *floorEl);
+		/// Načtení beden mapy.
+		void load_boxes_(TiXmlElement *boxesEl);
 
 		/// Načtení surface podelementu.
 		SDL_Surface* load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 				int & toplapping, SDL_Surface* sur_src);
+		/// Načtení surface souboru v atributu src.
+		SDL_Surface* load_src_surface_(TiXmlElement *El);
+
 		/// Vytvoření a vložení zdi do mapy.
 		void insert_wall_(const Surface & sur,
+				Uint16 toplapping, Uint16 x, Uint16 y);
+		/// Vytvoření a vložení objektu na zemi do mapy.
+		void insert_floorobject_(const Surface & sur, Uint16 x, Uint16 y);
+		/// Vytvoření a vložení bedny do mapy.
+		void insert_box_(const Surface & sur_img, const Surface & sur_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y);
 
 };

@@ -3,9 +3,9 @@ cflags= `sdl-config --cflags ` -g
 
 
 build: demo2.o SDL_lib.o tixml_helper.o game.o \
-	game_background.o game_wall.o
+	game_background.o game_wall.o game_floorobject.o game_box.o
 	g++ -o demo2 demo2.o SDL_lib.o tixml_helper.o game.o \
-		game_background.o game_wall.o ${libs}
+		game_background.o game_wall.o game_floorobject.o game_box.o ${libs}
 
 SDL_lib.o: src/SDL_lib.cpp src/SDL_lib.h
 	g++ -c src/SDL_lib.cpp ${cflags}
@@ -20,8 +20,12 @@ game_background.o: src/game_background.cpp src/game_background.h \
 game_wall.o: src/game_wall.cpp src/game_wall.h \
 	src/game.h src/SDL_lib.h src/constants.h
 	g++ -c src/game_wall.cpp ${cflags}
-
-
+game_floorobject.o: src/game_floorobject.cpp src/game_floorobject.h \
+	src/game.h src/SDL_lib.h src/constants.h
+	g++ -c src/game_floorobject.cpp ${cflags}
+game_box.o: src/game_box.cpp src/game_box.h \
+	src/game.h src/SDL_lib.h src/constants.h
+	g++ -c src/game_box.cpp ${cflags}
 
 demo2.o: src/demo2.cpp src/SDL_lib.h src/game.h 
 	g++ -c src/demo2.cpp ${cflags}

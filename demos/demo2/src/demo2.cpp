@@ -1,6 +1,9 @@
 
 #include <iostream>
 #include <string>
+#include <ctime>    // For time()
+#include <cstdlib>  // For srand() and rand()
+
 using namespace std;
 
 #include "SDL_lib.h"
@@ -8,6 +11,7 @@ using namespace std;
 
 
 int main(int argc, char ** argv){
+	srand(time(0));
 	// konstrukce zarizujici spravny pocet obrazku za sekundu
 	Uint8 fps=64;
 	Uint32 fps_last= SDL_fps(0,fps);

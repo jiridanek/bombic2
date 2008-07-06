@@ -31,10 +31,11 @@
 			_height="vyska objektu v polickach"
 			_width="sirska objektu"
 			/>
-	<!-- pripadna rozsahlejsi (height | width >1)
-		bedna bouchne cela najednou -->
+	<!-- pripadna rozsahlejsi (height | width >1)
+		bedna bouchne cela najednou, pricemz
+		tyto rozsahlejsi bedny nebudou nahodne generovany -->
 	<_boxes 	name="jmeno bedny"
-			count="pocet v celem kole"
+			count="pocet v cele mape"
 			_height="vyska v polickach"
 			_width="sirska"
 			>
@@ -46,10 +47,13 @@
 			_height="vyska v polickach"
 			_width="sirska"
 			/>
+		<!-- oznaceni mista, kde se nesmi nahodne vygenerovat bedna -->
+		<_nobox	x="souradnice zakazaneho mista v polickach"
+				y="souradnice zakazaneho mista v polickach" >
 	</_boxes>
 	<!-- pro kazdy druh(name) prisery jeden tag creatures -->
 	<_creatures 	name="jmeno prisery(druh)"
-			count="pocet v celem kole"
+			count="pocet v cele mape"
 			>
 		<!-- pro kazdou pevne umistenou potvoru musi byt jeden tag creature
 			ostatni se vygeneruji na nahodne misto -->
@@ -62,6 +66,6 @@
 		zde jakekoli bonusy nastavovat -->
 	<!-- pro kazdy druh(name) bonusu jeden tag bonuses -->
 	<_bonuses 	name="jmeno bonusu"
-			count="maximalni pocet v celem kole"
+			count="maximalni pocet v cele mape"
 			/>
 </map>
