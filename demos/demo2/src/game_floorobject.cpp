@@ -12,6 +12,6 @@ void Floorobject::draw(SDL_Surface* window){
 	draw_surface(x_*CELL_SIZE,y_*CELL_SIZE,sur_.GetSurface(),window);
 }
 
-std::string Floorobject::type(){
-	return "floorobject";
+OBJECT_TYPES Floorobject::type(){
+	return FLOOROBJECT;
 }

@@ -3,25 +3,44 @@
 
 	<walls 	name="wall_stone">
 		<wall x="5" y="5" />
-		<wall x="6" y="5" />
 		<wall x="7" y="5" />
-		<wall x="7" y="6" width="3" name="wall_winnersculpture" />
+<!-- 		<wall x="7" y="6" width="3" name="wall_winnersculpture" /> -->
 		<wall x="8" y="7" />
 		<wall x="9" y="5" name="wall_stone" />
 		<wall x="10" y="5" />
 		<wall x="9" y="7" />
-		<wall x="10" y="2" width="3" name="wall_winnersculpture" />
-		<wall x="1" y="10" width="3" name="wall_winnersculpture" />
+<!-- 		<wall x="10" y="2" width="3" name="wall_winnersculpture" /> -->
+<!-- 		<wall x="1" y="10" width="3" name="wall_winnersculpture" /> -->
 	</walls>
-	<floorobject name="floor_deadbody" x="2" y="9" width="2" />
+<!-- 	<floorobject name="floor_deadbody" x="2" y="9" width="2" /> -->
 	<floorobject name="floor_deadbody" x="6" y="4" width="2" />
 
 
-	<boxes 	name="box_barrel" count="50">
+	<boxes 	name="box_barrel" count="20">
 		<nobox x="2" y="2" />
-		<box x="1" y="2" />
+		<box x="10" y="2" />
 		<nobox x="1" y="3" />
 		<nobox x="2" y="3" />
 	</boxes>
+
+	<bonuses name="bonus_flame" count="1" />
+	<bonuses name="bonus_bomb" count="1" />
+	<bonuses name="bonus_illness" count="1" />
+	<bonuses name="bonus_speed" count="1" />
+	<bonuses name="bonus_timer" count="1" />
+	<bonuses name="bonus_megabomb" count="1" />
+	<bonuses name="bonus_live" count="1" />
+	<bonuses name="bonus_shield" count="1" />
+	<bonuses name="bonus_kicker" count="1" />
+	<bonuses name="bonus_othersillness" count="1" />
+	<bonuses name="bonus_slider" count="1" />
+	<bonuses name="bonus_fireman" count="1" />
+
+	<creatures name="creature_rat" count="5">
+		<creature x="2" y="2" />
+	</creatures>
+	<creatures name="creature_ghost" count="5">
+		<creature x="6" y="3" />
+	</creatures>
 
 </map>

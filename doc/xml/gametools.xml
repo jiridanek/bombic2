@@ -57,4 +57,49 @@
 		<player3 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
 		<player4 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
 	</panels>
+	<!-- zmenseniny bonusu zobrazujici se v panelu hry -->
+	<bonuses>
+		<megabomb
+			x="souradnice symbolu zobrazovanych v panelu v pixelech"
+			y="souradnice symbolu v pixelech"
+			height="vyska symbolu v pixelech"
+			width="sirska symbolu v pixelech"
+			/>
+		<shield
+			x="souradnice symbolu zobrazovanych v panelu v pixelech"
+			y="souradnice symbolu v pixelech"
+			height="vyska symbolu v pixelech"
+			width="sirska symbolu v pixelech"
+			/>
+		<illness
+			x="souradnice symbolu zobrazovanych v panelu v pixelech"
+			y="souradnice symbolu v pixelech"
+			height="vyska symbolu v pixelech"
+			width="sirska symbolu v pixelech"
+			/>
+		<timer
+			x="souradnice symbolu zobrazovanych v panelu v pixelech"
+			y="souradnice symbolu v pixelech"
+			height="vyska symbolu v pixelech"
+			width="sirska symbolu v pixelech"
+			/>
+		<slider
+			x="souradnice symbolu zobrazovanych v panelu v pixelech"
+			y="souradnice symbolu v pixelech"
+			height="vyska symbolu v pixelech"
+			width="sirska symbolu v pixelech"
+			/>
+		<kicker
+			x="souradnice symbolu zobrazovanych v panelu v pixelech"
+			y="souradnice symbolu v pixelech"
+			height="vyska symbolu v pixelech"
+			width="sirska symbolu v pixelech"
+			/>
+		<fireman
+			x="souradnice symbolu zobrazovanych v panelu v pixelech"
+			y="souradnice symbolu v pixelech"
+			height="vyska symbolu v pixelech"
+			width="sirska symbolu v pixelech"
+			/>
+	</bonuses>
 </gametools>

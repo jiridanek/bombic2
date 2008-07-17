@@ -46,11 +46,14 @@ bool attrIntValue(const char* attr , int & value, const attr_map_t & attr_map );
 
 
 /// Zpracování specifických atributů.
-void attr_NameHeightWidth(TiXmlElement *El, std::string & name,
-			int & height, int & width);
+void attr_Name(TiXmlElement *El, std::string & name);
+/// Zpracování specifických atributů.
+void attr_HeightWidth(TiXmlElement *El, int & height, int & width);
 /// Zpracování specifických atributů.
 void attr_XY(TiXmlElement *El, int & x, int & y);
 /// Zpracování specifických atributů.
-void attr_Count(TiXmlElement *El, double & count);
+void attr_Count(TiXmlElement *El, int & count);
+/// Zpracování specifických atributů.
+// TODO void attr_Speed..(TiXmlElement *El, int & x, int & y);
 
 #endif

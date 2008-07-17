@@ -21,7 +21,7 @@ class Background: public StaticMO{
 				Uint16 x, Uint16 y);
 		/// Vykreslení.
 		void draw(SDL_Surface * window);
-		std::string type();
+		OBJECT_TYPES type();
 	private:
 		Surface sur_clean_, sur_burned_;
 		Uint16 x_, y_;

@@ -8,7 +8,9 @@
 Box::Box(const Surface & sur_img, const Surface & sur_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y):
 	sur_img_(sur_img), sur_burning_(sur_burning),
-	x_(x), y_(y), toplapping_(toplapping){}
+	x_(x), y_(y), toplapping_(toplapping),
+	height_((sur_img.height()-toplapping)/CELL_SIZE),
+	width_(sur_img.width()/CELL_SIZE){}
 
 void Box::move(){
 }
@@ -18,8 +20,8 @@ void Box::draw(SDL_Surface *window){
 			sur_img_.GetSurface(), window);
 }
 
-std::string Box::type(){
-	return "Box";
+OBJECT_TYPES Box::type(){
+	return BOX;
 }
 
 

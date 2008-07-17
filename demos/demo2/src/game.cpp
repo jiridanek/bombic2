@@ -3,6 +3,7 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <utility>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
 #include "game.h"
@@ -10,11 +11,12 @@
 #include "game_wall.h"
 #include "game_floorobject.h"
 #include "game_box.h"
+#include "game_bonus.h"
+#include "game_creature.h"
 
 using namespace std;
 
 /*************** class Game ******************************/
-/// Inicializace hry.
 Game::Game(Uint8 players_count, const std::string & mapname){
 // 	bool deathmatch, bool creatures, bool bombsatend){
 	load_map_(mapname);
@@ -72,13 +74,16 @@ void Game::load_map_(const std::string & mapname){
 			break;
 	}
 
-	// nacteni zdi
-	load_walls_(map_el->FirstChildElement("walls"));
 	// nacteni objektu na zemi
 	load_floorobjects_(map_el->FirstChildElement("floorobject"));
+	// nacteni zdi
+	load_walls_(map_el->FirstChildElement("walls"));
 	// nacteni boxu
 	load_boxes_(map_el->FirstChildElement("boxes"));
-
+	// nacteni bonusu
+	load_bonuses_(map_el->FirstChildElement("bonuses"));
+	// nacteni priser
+	load_creatures_(map_el->FirstChildElement("creatures"));
 }
 
 void Game::load_background_(const std::string & bgname){
@@ -126,27 +131,27 @@ void Game::load_background_(const std::string & bgname){
 		// strany
 		sur1 = load_subEl_surface_(bg_el, "top", toplapping, sur_src.GetSurface());
 		for(column=0 ; column< map_array_.size() ; ++column){
-			if(map_array_[column][0].back()->type()==string("Background"))
+			if(map_array_[column][0].back()->type()==BACKGROUND)
 				insert_wall_(sur1, 0, column, 0);
 		}
 
 		sur1 = load_subEl_surface_(bg_el, "left", toplapping, sur_src.GetSurface());
 		for(field = 0 ; field<map_array_[0].size() ; ++field){
-			if(map_array_[0][field].back()->type()==string("Background"))
+			if(map_array_[0][field].back()->type()==BACKGROUND)
 				insert_wall_(sur1, toplapping, 0, field);
 		}
 
 		sur1 = load_subEl_surface_(bg_el, "bottom", toplapping, sur_src.GetSurface());
 		field= map_array_[0].size()-(sur1.height()-toplapping)/CELL_SIZE;
 		for(column=0 ; column< map_array_.size() ; ++column){
-			if(map_array_[column][field].back()->type()==string("Background"))
+			if(map_array_[column][field].back()->type()==BACKGROUND)
 				insert_wall_(sur1, toplapping, column, field);
 		}
 
 		sur1 = load_subEl_surface_(bg_el, "right", toplapping, sur_src.GetSurface());
 		column = map_array_.size()-sur1.width()/CELL_SIZE;
 		for(field = 0 ; field<map_array_[column].size() ; ++field){
-			if(map_array_[column][field].back()->type()==string("Background"))
+			if(map_array_[column][field].back()->type()==BACKGROUND)
 				insert_wall_(sur1, toplapping, column, field);
 		}
 
@@ -171,7 +176,8 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 	// TODO overcrossing
 
 	try{
-		attr_NameHeightWidth(wallsEl, name_def, height_def, width_def);
+		attr_Name(wallsEl, name_def);
+		attr_HeightWidth(wallsEl, height_def, width_def);
 	}
 	catch( string s){
 		TiXmlError("v elementu <walls ...>: "+s);
@@ -205,7 +211,8 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 	try{
 		while(wallsEl){
 			try{
-				attr_NameHeightWidth(wallsEl, filename, height, width);
+				attr_Name(wallsEl, filename);
+				attr_HeightWidth(wallsEl, height, width);
 				attr_XY(wallsEl, x, y);
 			}
 			catch( string s){
@@ -242,7 +249,7 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 }
 
 void Game::load_floorobjects_(TiXmlElement *floorEl){
-	string filename, str;
+	string filename;
 	int height, width, x,y,toplapping;
 
 	Surface sur_src, sur;
@@ -252,7 +259,8 @@ void Game::load_floorobjects_(TiXmlElement *floorEl){
 	try{
 		while(floorEl){
 			try{
-				attr_NameHeightWidth(floorEl, filename, height, width);
+				attr_Name(floorEl, filename);
+				attr_HeightWidth(floorEl, height, width);
 				attr_XY(floorEl, x, y);
 			}
 			catch( string s){
@@ -262,7 +270,7 @@ void Game::load_floorobjects_(TiXmlElement *floorEl){
 				TiXmlError("hodnota atributu name u <floorobject ...> chybí.");
 			if(height<1) height=1;
 			if(width<1) width=1;
-			// nacteni nove zdi
+			// nacteni objektu
 			rootEl = TiXmlRootElement(doc, filename, "floorobject", true);
 			sur_src = load_src_surface_(rootEl);
 			sur= load_subEl_surface_(rootEl, "img",
@@ -294,13 +302,14 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 	// nacteni atributu
 	string name_def, filename;
 	Surface sur_src, sur_img_def, sur_burning_def, sur_img, sur_burning;
-	int toplapping_def, height_def, width_def,
+	int toplapping_def, height_def, width_def, count,
 		toplapping, height, width, x, y;
-	double count, count_free;
+
 	// TODO overcrossing
 
 	try{
-		attr_NameHeightWidth(boxesEl, name_def, height_def, width_def);
+		attr_Name(boxesEl, name_def);
+		attr_HeightWidth(boxesEl, height_def, width_def);
 		attr_Count(boxesEl, count);
 	}
 	catch(string s){
@@ -337,7 +346,8 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 	try{
 		while(El){
 			try{
-				attr_NameHeightWidth(El, filename, height, width);
+				attr_Name(El, filename);
+				attr_HeightWidth(El, height, width);
 				attr_XY(El, x, y);
 			}
 			catch(string s){
@@ -396,32 +406,297 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 		TiXmlError("v elementu <nobox ...>: "+s);
 	}
 	// spocitani volnych policek pro nahodne boxy
-	count_free= 0.0;
-	string bg("Background");
+	double count_free= 0.0;
 	for(x=0; x<map_array_.size() ; ++x){
 		for(y=0 ; y<map_array_[x].size() ; ++y){
 			if(noboxes[x][y]) continue;
-			if(map_array_[x][y].back()->type()!=bg) continue;
+			if(map_array_[x][y].back()->type()!=BACKGROUND) continue;
 			++count_free;
 		}
 	}
-	// kdyz mam umistit
-	if(count_free<count) count=count_free;
 
-	// nasledne plati invariant count_free>=count;
 	for(x=0; x<map_array_.size() ; ++x){
 		for(y=0 ; y<map_array_[x].size() ; ++y){
 			if(noboxes[x][y]) continue;
-			if(map_array_[x][y].back()->type()!=bg) continue;
+			if(map_array_[x][y].back()->type()!=BACKGROUND) continue;
 			// jsem na prazdnem policku
-			if(count/count_free > SDL_Rand()){
+			if(count/count_free >= SDL_Rand()){
 				insert_box_(sur_img_def, sur_burning_def, toplapping_def, x, y);
-				--count;
+				if(--count==0) return;
 			}
 			if(--count_free<=0) return;
 		}
 	}
 
+}
+
+void Game::load_bonuses_(TiXmlElement *bonusEl){
+	string filename;
+	int help_var, x,y, count, width, height;
+
+	Surface sur_src, sur;
+	SDL_Rect rect;
+	// dvojice velky obrazek do mapy a maly obrazek do panelu
+	vector< Surface > bonuses;
+	vector< Surface >::iterator it;
+
+	TiXmlDocument doc;
+	TiXmlElement *rootEl;
+	try{
+		while(bonusEl){
+			try{
+				attr_Name(bonusEl, filename);
+				attr_Count(bonusEl, count);
+			}
+			catch( string s){
+				TiXmlError("v elementu <bonus ...>: "+s);
+			}
+			if(filename.empty())
+				TiXmlError("hodnota atributu name u <bonus ...> chybí.");
+			// nacteni bonusu
+			rootEl = TiXmlRootElement(doc, filename, "bonus", true);
+			// obrazek do mapy
+			sur_src = load_src_surface_(rootEl);
+			sur= load_subEl_surface_(rootEl, "img",
+					help_var, sur_src.GetSurface());
+			// do seznamu nezarazenych bonusu pridam bonus count krat
+			while(count--){
+				// TODO ruzne bonusy
+				bonuses.push_back(sur);
+			}
+			bonusEl= bonusEl->NextSiblingElement("bonuses");
+		}
+	}
+	catch(string s){
+		TiXmlError(filename,s);
+	}
+
+	// spocitani policek pro nahodne bonusy
+	double count_free= 0.0;
+
+	for(x=0; x<map_array_.size() ; ++x){
+		for(y=0 ; y<map_array_[x].size() ; ++y){
+			// bonus muzu umistit pouze na policko s bednou
+			if(map_array_[x][y].back()->type()!=BOX) continue;
+			++count_free;
+		}
+	}
+
+	// projdu mapu a rozmistim nahodne bonusy
+	for(x=0; x<map_array_.size() ; ++x){
+		for(y=0 ; y<map_array_[x].size() ; ++y){
+			if(map_array_[x][y].back()->type()!=BOX) continue;
+			// rozmistit ci nikoli
+			count = bonuses.size();
+			if(count==0) return;
+			if(count/count_free >= SDL_Rand()){
+				// nahodny bonus
+				it = bonuses.begin()+ rand() % count;
+				insert_bonus_(*it, x, y);
+				// vyhozeni umisteneho bonusu
+				bonuses.erase(it);
+			}
+			if(--count_free<=0) return;
+		}
+	}
+}
+
+void Game::load_creatures_(TiXmlElement *creaturesEl){
+	string filename;
+	int x,y, count, width, height;
+	attr_map_t attr_map;
+	bool is_shadow;
+	Surface sur_src, sur_src_s, sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
+		sur_down, sur_down_s, sur_burned;
+	SDL_Rect rect;
+	// seznam prazdnych policek
+	vector< pair<Uint16, Uint16> > empty_fields;
+	vector< pair<Uint16, Uint16> >::iterator it;
+	// naplneni seznamu prazdnych policek
+	map_array_t::value_type::value_type::iterator l_it;
+	for(x=0; x<map_array_.size() ; ++x){
+		for(y=0 ; y<map_array_[x].size() ; ++y){
+			if(map_array_[x][y].back()->type()==BOX) continue;
+			if(map_array_[x][y].back()->type()==WALL) continue;
+			if(map_array_[x][y].back()->type()==BONUS) continue;
+
+			empty_fields.push_back(make_pair(x,y));
+		}
+	}
+	// neni kam pridat jakoukoli priseru
+	if(empty_fields.empty()) return;
+
+	TiXmlDocument doc;
+	TiXmlElement *rootEl, *El;
+	try{
+		while(creaturesEl){
+			try{
+				attr_Name(creaturesEl, filename);
+				attr_Count(creaturesEl, count);
+			}
+			catch( string s){
+				TiXmlError("v elementu <creatures ...>: "+s);
+			}
+			if(filename.empty())
+				TiXmlError("hodnota atributu name u <creatures ...> chybí.");
+			// nacteni prisery
+			rootEl = TiXmlRootElement(doc, filename, "creature", true);
+			// zdrojovy obrazek
+			sur_src = load_src_surface_(rootEl);
+			try {
+				sur_src_s = load_src_surface_(rootEl,"shadow_src");
+				is_shadow=true;
+			}
+			catch(string s){
+				if(s.substr(0,7)=="hodnota") throw;
+				is_shadow=false;
+			}
+			// vyska a sirska obrazku
+			attr_HeightWidth(rootEl, height, width);
+			if(height<1) TiXmlError(filename,"atribut height chybí");
+			if(width<1) TiXmlError(filename,"atribut width chybí");
+
+			rect.w = static_cast<Uint16>(width);
+			rect.h = static_cast<Uint16>(height);
+			// left
+			attr_map.clear();
+			subElement(rootEl,"left",attr_map);
+			if(!attrIntValue("x",x,attr_map))
+				TiXmlError(filename,"chybějící atribut x u elementu <left>");
+			else rect.x= static_cast<Sint16>(x);
+			if(!attrIntValue("y",y,attr_map))
+				TiXmlError(filename,"chybějící atribut y u elementu <left>");
+			else	rect.y= static_cast<Sint16>(y);
+			// preneseni obrazku do noveho surface
+			sur_left= create_transparent_surface(width, height, false);
+			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_left.GetSurface(), 0);
+			if(is_shadow){
+				if(!attrIntValue("shadow_x",x,attr_map))
+					TiXmlError(filename,"chybějící atribut shadow_x u elementu <left>");
+				else rect.x= static_cast<Sint16>(x);
+				if(!attrIntValue("shadow_y",y,attr_map))
+					TiXmlError(filename,"chybějící atribut shadow_y u elementu <left>");
+				else	rect.y= static_cast<Sint16>(y);
+				// preneseni obrazku do noveho surface
+				sur_left_s= create_transparent_surface(width, height, true);
+				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_left_s.GetSurface(), 0);
+			}
+			// up
+			attr_map.clear();
+			subElement(rootEl,"up",attr_map);
+			if(!attrIntValue("x",x,attr_map))
+				TiXmlError(filename,"chybějící atribut x u elementu <up>");
+			else rect.x= static_cast<Sint16>(x);
+			if(!attrIntValue("y",y,attr_map))
+				TiXmlError(filename,"chybějící atribut y u elementu <up>");
+			else	rect.y= static_cast<Sint16>(y);
+			// preneseni obrazku do noveho surface
+			sur_up= create_transparent_surface(width, height, false);
+			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_up.GetSurface(), 0);
+			if(is_shadow){
+				if(!attrIntValue("shadow_x",x,attr_map))
+					TiXmlError(filename,"chybějící atribut shadow_x u elementu <up>");
+				else rect.x= static_cast<Sint16>(x);
+				if(!attrIntValue("shadow_y",y,attr_map))
+					TiXmlError(filename,"chybějící atribut shadow_y u elementu <up>");
+				else	rect.y= static_cast<Sint16>(y);
+				// preneseni obrazku do noveho surface
+				sur_up_s= create_transparent_surface(width, height, true);
+				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_up_s.GetSurface(), 0);
+			}
+			// right
+			attr_map.clear();
+			subElement(rootEl,"right",attr_map);
+			if(!attrIntValue("x",x,attr_map))
+				TiXmlError(filename,"chybějící atribut x u elementu <right>");
+			else rect.x= static_cast<Sint16>(x);
+			if(!attrIntValue("y",y,attr_map))
+				TiXmlError(filename,"chybějící atribut y u elementu <right>");
+			else	rect.y= static_cast<Sint16>(y);
+			// preneseni obrazku do noveho surface
+			sur_right= create_transparent_surface(width, height, false);
+			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_right.GetSurface(), 0);
+			if(is_shadow){
+				if(!attrIntValue("shadow_x",x,attr_map))
+					TiXmlError(filename,"chybějící atribut shadow_x u elementu <right>");
+				else rect.x= static_cast<Sint16>(x);
+				if(!attrIntValue("shadow_y",y,attr_map))
+					TiXmlError(filename,"chybějící atribut shadow_y u elementu <right>");
+				else	rect.y= static_cast<Sint16>(y);
+				// preneseni obrazku do noveho surface
+				sur_right_s= create_transparent_surface(width, height, true);
+				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_right_s.GetSurface(), 0);
+			}
+			// down
+			attr_map.clear();
+			subElement(rootEl,"down",attr_map);
+			if(!attrIntValue("x",x,attr_map))
+				TiXmlError(filename,"chybějící atribut x u elementu <down>");
+			else rect.x= static_cast<Sint16>(x);
+			if(!attrIntValue("y",y,attr_map))
+				TiXmlError(filename,"chybějící atribut y u elementu <down>");
+			else	rect.y= static_cast<Sint16>(y);
+			// preneseni obrazku do noveho surface
+			sur_down= create_transparent_surface(width, height, false);
+			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_down.GetSurface(), 0);
+			if(is_shadow){
+				if(!attrIntValue("shadow_x",x,attr_map))
+					TiXmlError(filename,"chybějící atribut shadow_x u elementu <down>");
+				else rect.x= static_cast<Sint16>(x);
+				if(!attrIntValue("shadow_y",y,attr_map))
+					TiXmlError(filename,"chybějící atribut shadow_y u elementu <down>");
+				else	rect.y= static_cast<Sint16>(y);
+				// preneseni obrazku do noveho surface
+				sur_down_s= create_transparent_surface(width, height, true);
+				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_down_s.GetSurface(), 0);
+			}
+			// burned
+			attr_map.clear();
+			subElement(rootEl,"burned",attr_map);
+			if(!attrIntValue("x",x,attr_map))
+				TiXmlError(filename,"chybějící atribut x u elementu <burned>");
+			else rect.x= static_cast<Sint16>(x);
+			if(!attrIntValue("y",y,attr_map))
+				TiXmlError(filename,"chybějící atribut y u elementu <burned>");
+			else	rect.y= static_cast<Sint16>(y);
+			// preneseni obrazku do noveho surface
+			sur_burned= create_transparent_surface(width, height, false);
+			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_burned.GetSurface(), 0);
+
+			// pevne zarazene prisery
+			El = creaturesEl->FirstChildElement("creature");
+			while(El){
+				try {
+					attr_XY(El, x, y);
+				}
+				catch(string s){
+					TiXmlError("v elementu <boxes ...>: "+s);
+				}
+				// TODO predelat az budou fce typu withoutWall() withoutBox()
+				if(x>=map_array_.size() || y>=map_array_[x].size()) continue;
+				if(map_array_[x][y].back()->type()==BOX) continue;
+				if(map_array_[x][y].back()->type()==WALL) continue;
+				insert_creature_(sur_left, sur_left_s,
+					sur_up, sur_up_s, sur_right, sur_right_s,
+					sur_down, sur_down_s, sur_burned, x, y);
+				El= El->NextSiblingElement("creature");
+				--count;
+			}
+
+			// nahodne rozlozeni priser
+			while(count--){
+				// nahodne policko
+				it = empty_fields.begin()+ rand() % empty_fields.size();
+				insert_creature_(sur_left, sur_left_s,
+					sur_up, sur_up_s, sur_right, sur_right_s,
+					sur_down, sur_down_s, sur_burned, it->first, it->second);
+			}
+			creaturesEl= creaturesEl->NextSiblingElement("creatures");
+		}
+	}
+	catch(string s){
+		TiXmlError(filename,s);
+	}
 }
 
 /** @details
@@ -474,28 +749,30 @@ SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 }
 
 /** @details
- * Vytvoří SDL_Surface bmp souboru s cestou definovanou v atributu src.
+ * Vytvoří SDL_Surface bmp souboru s cestou definovanou v atributu attr_name(defaultně src).
  * Vrácené surface má nastavenou průhlednou barvu, nikoli však průhlednost.
  * Při chybě (nenalezení atributu nebo nevytvoření surface)
  * vyvolá výjimku typu string s chybovým hlášením.
- * @param El rodič hledaného podelementu
- * @return Výsledný surface patřící nalezenému podelementu.
+ * @param El element v nemz se hleda atribut src
+ * @param attr_name jmeno atributu, v nemz se ma hledat cesta k surface
+ * defaultně "src"
+ * @return Výsledný surface patřící nalezenému elementu.
  */
-SDL_Surface* Game::load_src_surface_(TiXmlElement *El){
+SDL_Surface* Game::load_src_surface_(TiXmlElement *El, const char* attr_name){
 	string str;
 	SDL_Surface *sur_SDL;
-	switch(QueryStringAttribute(El,"src", &str)){
+	switch(QueryStringAttribute(El,attr_name, &str)){
 		case TIXML_SUCCESS:
 			// zdrojovy  obrazek z disku
 			sur_SDL=SDL_LoadBMP(str.c_str());
 			if(!sur_SDL)
-				throw string("hodnota atributu src není cesta k souboru s BMP.");
+				throw string("hodnota atributu ")+attr_name+" není cesta k souboru s BMP.";
 			// nastavim pruhlednost
 			set_transparent_color(sur_SDL, Colors::transparent());
 			// vytvorim defaultni surface
 			break;
 		case TIXML_NO_ATTRIBUTE:
-			throw string("chybějící atribut src");
+			throw string("chybějící atribut ")+attr_name;
 			break;
 	}
 	return sur_SDL;
@@ -570,6 +847,46 @@ void Game::insert_box_(const Surface & sur_img, const Surface & sur_burning,
 	}
 }
 
+/** @details
+ * Vytvoří bonus na zadaných souřadnicích a vloží ho do mapy.
+ * @param sur_img surface vkládaného bonusu (do mapy)
+ * @param sur_small surface vkládaného bonusu (do panelu)
+ * @param x souřadnice bonusu v mapě
+ * @param y souřadnice bonusu v mapě
+ */
+void Game::insert_bonus_(const Surface & sur, Uint16 x, Uint16 y){
+	// vytvorit a ulozit do seznamu dynamickych objektu
+	dynamicMOs_.push_back(new Bonus(sur, x, y) );
+	// ulozit do mapy na spravne policko
+	if(x>=map_array_.size() || y>=map_array_[0].size())
+		return;
+	map_array_[x][y].push_back(dynamicMOs_.back());
+}
+
+/** @details
+ * Vytvoří bonus na zadaných souřadnicích a vloží ho do mapy.
+ * TODO
+ * @param sur_img surface vkládaného bonusu (do mapy)
+ * @param sur_small surface vkládaného bonusu (do panelu)
+ * @param x souřadnice bonusu v mapě
+ * @param y souřadnice bonusu v mapě
+ */
+void Game::insert_creature_(const Surface & sur_left, const Surface & sur_left_s,
+			const Surface & sur_up, const Surface & sur_up_s,
+			const Surface & sur_right, const Surface & sur_right_s,
+			const Surface & sur_down, const Surface & sur_down_s,
+			const Surface & sur_burned, Uint16 x, Uint16 y){
+
+	// vytvorit a ulozit do seznamu dynamickych objektu
+	dynamicMOs_.push_back(new Creature(sur_left, sur_left_s,
+			sur_up, sur_up_s, sur_right, sur_right_s,
+			sur_down, sur_down_s, sur_burned, x, y) );
+	// ulozit do mapy na spravne policko
+	if(x>=map_array_.size() || y>=map_array_[0].size())
+		return;
+	map_array_[x][y].push_back(dynamicMOs_.back());
+}
+
 Game::~Game(){
 	// zrusit staticke objekty
 	for(int i=0; i< staticMOs_.size() ; ++i){
@@ -584,18 +901,38 @@ Game::~Game(){
 
 void Game::draw(SDL_Surface* window){
 	Uint16 column, field;
-
 	map_array_t::value_type::value_type::iterator it;
+
+	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
+	for(field = 0 ; field<map_array_[0].size() ; ++field){
+		for(column=0 ; column< map_array_.size() ; ++column){
+			// vykreslim pozadi
+			it = map_array_[column][field].begin();
+			(*it)->draw(window);
+			// vykreslim objekt na zemi
+			if(map_array_[column][field].size()>1){
+				++it;
+				if((*it)->type()==FLOOROBJECT)
+					(*it)->draw(window);
+			}
+		}
+	}
+
+	// podruhe projdu mapu a vykreslim ostatni objekty
 	for(field = 0 ; field<map_array_[0].size() ; ++field){
 		for(column=0 ; column< map_array_.size() ; ++column){
 			for(it= map_array_[column][field].begin() ;
 					it!= map_array_[column][field].end() ;
 					++it){
-				(*it)->draw(window);
-
+				switch((*it)->type()){
+					case BACKGROUND: break;
+					case FLOOROBJECT: break;
+					default: (*it)->draw(window);
+				}
 			}
 		}
 	}
+
 }
 
 /// Nastavení parametrů hráče.

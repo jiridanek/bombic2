@@ -18,7 +18,7 @@ class Wall: public StaticMO{
 	public:
 		Wall(const Surface & sur, Uint16 x, Uint16 y);
 		void draw(SDL_Surface * window);
-		std::string type();
+		OBJECT_TYPES type();
 	private:
 		Surface sur_;
 		Uint16 x_, y_;

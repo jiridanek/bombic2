@@ -11,8 +11,9 @@
 
 /** Bedna.
  * Dynamický objekt, vytvořený na začátku hry.
- * Při zasažení plamenem shoří, vytváří bonus,
+ * Při zasažení plamenem shoří,
  * plamen přes něj neletí, nelze přes něj chodit ani létat.
+ * Malá změna, bedna nevytváří bonus.
  */
 class Box: public DynamicMO{
 	public:
@@ -23,10 +24,10 @@ class Box: public DynamicMO{
 		/// Vykreslení.
 		void draw(SDL_Surface *window);
 
-		std::string type();
+		OBJECT_TYPES type();
 	private:
 		Surface sur_img_, sur_burning_;
-		Uint16 x_, y_, toplapping_;
+		Uint16 x_, y_, toplapping_, height_, width_;
 };
 
 #endif

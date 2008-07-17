@@ -14,6 +14,10 @@
 #include "constants.h"
 #include "tixml_helper.h"
 
+
+/// Všechny typy obejktů
+enum OBJECT_TYPES { BACKGROUND, FLOOROBJECT, WALL, BOX, BONUS, CREATURE, PLAYER };
+
 /** Obecný objekt hry.
  * Čistě virtuální třída zastřešující veškeré objekty v mapě.
  */
@@ -22,7 +26,7 @@ class MapObject{
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *)=0;
 		/// Typ objektu.
-		virtual std::string type()=0;
+		virtual OBJECT_TYPES type()=0;
 };
 
 /** Dynamický objekt hry.
@@ -89,12 +93,16 @@ class Game {
 		void load_floorobjects_(TiXmlElement *floorEl);
 		/// Načtení beden mapy.
 		void load_boxes_(TiXmlElement *boxesEl);
+		/// Načtení bonusů.
+		void load_bonuses_(TiXmlElement *bonusEl);
+		/// Načtení příšer.
+		void load_creatures_(TiXmlElement *creaturesEl);
 
 		/// Načtení surface podelementu.
 		SDL_Surface* load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 				int & toplapping, SDL_Surface* sur_src);
 		/// Načtení surface souboru v atributu src.
-		SDL_Surface* load_src_surface_(TiXmlElement *El);
+		SDL_Surface* load_src_surface_(TiXmlElement *El, const char* attr_name="src");
 
 		/// Vytvoření a vložení zdi do mapy.
 		void insert_wall_(const Surface & sur,
@@ -104,7 +112,14 @@ class Game {
 		/// Vytvoření a vložení bedny do mapy.
 		void insert_box_(const Surface & sur_img, const Surface & sur_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y);
-
+		/// Vytvoření a vložení bonusu do mapy.
+		void insert_bonus_(const Surface & sur, Uint16 x, Uint16 y);
+		/// Vytvoření a vložení příšery do mapy.
+		void insert_creature_(const Surface & sur_left, const Surface & sur_left_s,
+			const Surface & sur_up, const Surface & sur_up_s,
+			const Surface & sur_right, const Surface & sur_right_s,
+			const Surface & sur_down, const Surface & sur_down_s,
+			const Surface & sur_burned, Uint16 x, Uint16 y);
 };
 
 #endif

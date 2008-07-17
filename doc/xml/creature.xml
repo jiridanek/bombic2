@@ -43,7 +43,7 @@
 	<down x="sour" y="sour" _shadow_x="sour" _shadow_y="sour">
 	</down>
 	<right x="sour" y="sour" _shadow_x="sour" _shadow_y="sour">
-	</right>			
+	</right>
 	<!-- specifikace umirani -->
 	<burned x="sour" y="sour" _shadow_x="sour" _shadow_y="sour">
 		<_animation     rate="pocet obrazku za sekundu"

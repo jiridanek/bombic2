@@ -12,6 +12,6 @@ void Wall::draw(SDL_Surface* window){
 	draw_surface(x_*CELL_SIZE,y_*CELL_SIZE,sur_.GetSurface(),window);
 }
 
-std::string Wall::type(){
-	return "Wall";
+OBJECT_TYPES Wall::type(){
+	return WALL;
 }

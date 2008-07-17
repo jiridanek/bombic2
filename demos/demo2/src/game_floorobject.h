@@ -17,7 +17,7 @@ class Floorobject: public StaticMO{
 	public:
 		Floorobject(const Surface & sur, Uint16 x, Uint16 y);
 		void draw(SDL_Surface * window);
-		std::string type();
+		OBJECT_TYPES type();
 	private:
 		Surface sur_;
 		Uint16 x_, y_;
@@ -30,18 +30,6 @@ class Floorobject: public StaticMO{
  * zabíjí, umírá, sbírá bonusy, chodí.
  */
 class Bomber: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
-
-/** Nestvůra.
- * Dynamický objekt, který zabíjí, umírá, chodí nebo létá.
- * Disponuje umělou inteligencí.
- */
-class Creature: public DynamicMO{
 	public:
 		/// Pohyb.
 		void move();
@@ -66,17 +54,6 @@ class Bomb: public DynamicMO{
  * Zabíjí, sbírá (spaluje) bonusy, nehýbe se.
  */
 class Flame: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
-
-/** Bonus.
- * Dynamický objekt. Hoří, nechá se sbírat bombičem.
- */
-class Bonus: public DynamicMO{
 	public:
 		/// Pohyb.
 		void move();
