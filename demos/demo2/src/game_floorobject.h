@@ -8,6 +8,7 @@
 #include <iostream>
 #include "SDL_lib.h"
 #include "game.h"
+#include "game_mapobjects.h"
 
 /** Objekt ležící na zemi.
  * Statický objekt sloužící jako lokální změna pozadí mapy.

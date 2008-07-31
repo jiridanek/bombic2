@@ -3,6 +3,7 @@
 #include "SDL_lib.h"
 #include "constants.h"
 #include "game.h"
+#include "game_mapobjects.h"
 #include "game_background.h"
 
 /************* class Background ******************/

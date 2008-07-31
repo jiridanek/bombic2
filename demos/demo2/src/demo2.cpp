@@ -30,6 +30,7 @@ int main(int argc, char ** argv){
 	// iterace dokud neni vyvolano zavreni okna
 	while(!get_event_isquit(SDLK_ESCAPE)) {
 
+		game.play();
 		// vyprazdneni celeho okna
 		draw_surface(0,0, background, window);
 		game.draw(window);

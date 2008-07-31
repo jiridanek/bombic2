@@ -6,7 +6,9 @@
 #include <utility>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
+#include "constants.h"
 #include "game.h"
+#include "game_mapobjects.h"
 #include "game_background.h"
 #include "game_wall.h"
 #include "game_floorobject.h"
@@ -17,6 +19,8 @@
 using namespace std;
 
 /*************** class Game ******************************/
+Game::map_array_t Game::map_array_;
+
 Game::Game(Uint8 players_count, const std::string & mapname){
 // 	bool deathmatch, bool creatures, bool bombsatend){
 	load_map_(mapname);
@@ -56,6 +60,7 @@ void Game::load_map_(const std::string & mapname){
 			break;
 	}
 	// vytvoreni zakladniho rozmeru mapy
+	map_array_.clear();
 	map_array_t::value_type column;
 	map_array_t::value_type::value_type empty_list;
 	column.insert(column.end(), height, empty_list);
@@ -504,6 +509,7 @@ void Game::load_bonuses_(TiXmlElement *bonusEl){
 void Game::load_creatures_(TiXmlElement *creaturesEl){
 	string filename;
 	int x,y, count, width, height;
+	Uint8 speed, lives, intelligence;
 	attr_map_t attr_map;
 	bool is_shadow;
 	Surface sur_src, sur_src_s, sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
@@ -555,9 +561,10 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			attr_HeightWidth(rootEl, height, width);
 			if(height<1) TiXmlError(filename,"atribut height chybí");
 			if(width<1) TiXmlError(filename,"atribut width chybí");
-
 			rect.w = static_cast<Uint16>(width);
 			rect.h = static_cast<Uint16>(height);
+			// rychlost, pocet zivotu a inteligence prisery
+			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
 			// left
 			attr_map.clear();
 			subElement(rootEl,"left",attr_map);
@@ -678,7 +685,8 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 				if(map_array_[x][y].back()->type()==WALL) continue;
 				insert_creature_(sur_left, sur_left_s,
 					sur_up, sur_up_s, sur_right, sur_right_s,
-					sur_down, sur_down_s, sur_burned, x, y);
+					sur_down, sur_down_s, sur_burned, x, y,
+					speed, lives, intelligence);
 				El= El->NextSiblingElement("creature");
 				--count;
 			}
@@ -689,7 +697,8 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 				it = empty_fields.begin()+ rand() % empty_fields.size();
 				insert_creature_(sur_left, sur_left_s,
 					sur_up, sur_up_s, sur_right, sur_right_s,
-					sur_down, sur_down_s, sur_burned, it->first, it->second);
+					sur_down, sur_down_s, sur_burned, it->first, it->second,
+					speed, lives, intelligence);
 			}
 			creaturesEl= creaturesEl->NextSiblingElement("creatures");
 		}
@@ -875,12 +884,14 @@ void Game::insert_creature_(const Surface & sur_left, const Surface & sur_left_s
 			const Surface & sur_up, const Surface & sur_up_s,
 			const Surface & sur_right, const Surface & sur_right_s,
 			const Surface & sur_down, const Surface & sur_down_s,
-			const Surface & sur_burned, Uint16 x, Uint16 y){
+			const Surface & sur_burned, Uint16 x, Uint16 y,
+			Uint8 speed, Uint8 lives, Uint8 ai){
 
 	// vytvorit a ulozit do seznamu dynamickych objektu
 	dynamicMOs_.push_back(new Creature(sur_left, sur_left_s,
 			sur_up, sur_up_s, sur_right, sur_right_s,
-			sur_down, sur_down_s, sur_burned, x, y) );
+			sur_down, sur_down_s, sur_burned, x, y,
+			speed, lives, ai) );
 	// ulozit do mapy na spravne policko
 	if(x>=map_array_.size() || y>=map_array_[0].size())
 		return;
@@ -918,6 +929,7 @@ void Game::draw(SDL_Surface* window){
 		}
 	}
 
+	Uint32 fps_last=0; // TODO debug
 	// podruhe projdu mapu a vykreslim ostatni objekty
 	for(field = 0 ; field<map_array_[0].size() ; ++field){
 		for(column=0 ; column< map_array_.size() ; ++column){
@@ -930,6 +942,12 @@ void Game::draw(SDL_Surface* window){
 					default: (*it)->draw(window);
 				}
 			}
+		// TODO debug
+		// cekani - chceme presny pocet obrazku za sekundu
+// 		fps_last= SDL_fps(fps_last,10);
+		// zobrazeni na obrazovku
+// 		SDL_Flip(window);
+
 		}
 	}
 
@@ -939,9 +957,16 @@ void Game::draw(SDL_Surface* window){
 void Game::set_player(Uint8 player_num, Uint8 lives,
 	Uint8 bombs, Uint8 flames, Uint8 boots){
 }
-/// Spuštění hry.
+
+/** @details
+ * Projde všechny dynamické objekty hry zavola na nich fci move().
+ * @see DynamicMO::move()
+ */
 void Game::play(){
-	std::cout << "Play" << std::endl;
+	dynamicMOs_t::iterator it;
+	for(it= dynamicMOs_.begin() ; it!= dynamicMOs_.end() ; ++it){
+		(*it)->move();
+	}
 }
 /// Info o ukončení hry.
 bool Game::success() const{
@@ -952,12 +977,18 @@ void Game::player(Uint8 player_num, Uint8 & lives,
 	Uint8 & bombs, Uint8 & flames, Uint8 & boots) const{
 }
 
+/**
+ * @param x x-ová souřadnice políčka
+ * @param y y-ová souřadnice políčka
+ * @return Vrací TRUE pokud lze zadané políčko přejít (není na něm zed ani bedna).
+ */
+bool Game::field_canGoOver(Uint16 x, Uint16 y){
+	map_array_t::value_type::value_type::const_iterator it;
+	for(it=map_array_[x][y].begin() ; it!=map_array_[x][y].end() ; ++it){
+		if((*it)->type()==WALL) return false;
+		if((*it)->type()==BOX) return false;
+	}
+	return true;
+}
 
-/*
-/// Seznam dynamických objektů mapy.
-std::list<DynamicMO> dynamicMOs_;
-/// Seznam statických objektů mapy.
-std::vector<StaticMO> staticMOs_;
-/// Dvourozměrné pole mapy se seznamem objektů na něm položených.
-std::vector< std::vector< std::list< MapObject* > > > map_array_;
 /*************** END OF class Game ******************************/

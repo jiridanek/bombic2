@@ -8,6 +8,7 @@
 #include <iostream>
 #include "SDL_lib.h"
 #include "game.h"
+#include "game_mapobjects.h"
 
 /** Zed.
  * Statický objekt, který neshoří, a nejde přes něj chodit,

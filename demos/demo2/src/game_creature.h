@@ -9,6 +9,7 @@
 #include <iostream>
 #include "SDL_lib.h"
 #include "game.h"
+#include "game_mapobjects.h"
 
 
 /** Nestvůra.
@@ -21,7 +22,8 @@ class Creature: public DynamicMO{
 			const Surface & sur_up, const Surface & sur_up_s,
 			const Surface & sur_right, const Surface & sur_right_s,
 			const Surface & sur_down, const Surface & sur_down_s,
-			const Surface & sur_burned, Uint16 x, Uint16 y);
+			const Surface & sur_burned, Uint16 x, Uint16 y,
+			Uint8 speed, Uint8 lives, Uint8 ai);
 		/// Pohyb.
 		void move();
 		/// Vykreslení.
@@ -32,7 +34,11 @@ class Creature: public DynamicMO{
 		Surface sur_left_, sur_left_s_, sur_up_, sur_up_s_,
 			sur_right_, sur_right_s_, sur_down_, sur_down_s_, sur_burned_;
 		/// Souřadnice polohy v pixelech.
-		double x_, y_;
+		Uint16 x_, y_;
+		/// Současné otočení.
+		DIRECTION d_;
+		/// Rychlost, počet životů, inteligence.
+		Uint8 speed_, lives_, ai_;
 };
 
 #endif

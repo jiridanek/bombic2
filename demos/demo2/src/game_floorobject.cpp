@@ -3,6 +3,7 @@
 #include "SDL_lib.h"
 #include "constants.h"
 #include "game.h"
+#include "game_mapobjects.h"
 #include "game_floorobject.h"
 
 Floorobject::Floorobject(const Surface & sur,	Uint16 x, Uint16 y):

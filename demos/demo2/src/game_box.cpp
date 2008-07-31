@@ -3,6 +3,7 @@
 #include "SDL_lib.h"
 #include "constants.h"
 #include "game.h"
+#include "game_mapobjects.h"
 #include "game_box.h"
 
 Box::Box(const Surface & sur_img, const Surface & sur_burning,

@@ -305,3 +305,60 @@ void attr_Count(TiXmlElement *El, int & count){
 			break;
 	}
 }
+
+/**
+ * @details
+ * Naplní parametry mimo prvního hodnotami adekvátních atributů.
+ * Pokud atribut chybí nebo je špatného typu, vyvolá výjimku s chybovou hláškou.
+ * @param El element jehož hodnoty atributů hledáme
+ * @param s hodnota atributu speed
+ * @param l hodnota atributu lives
+ * @param i hodnota atributu intelligence
+ */
+void attr_SpeedLivesIntelligence(TiXmlElement *El,
+			Uint8 & speed, Uint8 & lives, Uint8 & intelligence){
+	if(!El){
+		speed = lives = intelligence = 0;
+		return;
+	}
+	int s, l, i;
+	switch(El->QueryIntAttribute("speed", &s)){
+		case TIXML_SUCCESS:
+			if(s<0)
+				throw string("atribut speed musí být kladný.");
+			break;
+		case TIXML_WRONG_TYPE:
+				throw string("atribut speed není typu double.");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+				throw string("atribut speed chybí.");
+			break;
+	}
+	speed = s;
+	switch(El->QueryIntAttribute("lives", &l)){
+		case TIXML_SUCCESS:
+			if(l<1)
+				throw string("atribut lives musí být kladný.");
+			break;
+		case TIXML_WRONG_TYPE:
+				throw string("atribut lives není typu int.");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+				throw string("atribut lives chybí.");
+			break;
+	}
+	lives = l;
+	switch(El->QueryIntAttribute("intelligence", &i)){
+		case TIXML_SUCCESS:
+			if(i<0)
+				throw string("atribut intelligence musí být nezáporný.");
+			break;
+		case TIXML_WRONG_TYPE:
+				throw string("atribut intelligence není typu int.");
+			break;
+		case TIXML_NO_ATTRIBUTE:
+				throw string("atribut intelligence chybí.");
+			break;
+	}
+	intelligence = i;
+}

@@ -10,7 +10,7 @@
 #include <map>
 
 #include "tinyxml.h"
-// #include "SDL_lib.h"
+#include "SDL_lib.h" // TODO
 
 /// Načte dokument a v něm najde RootElement, variabilně kontroluje atribut name.
 TiXmlElement* TiXmlRootElement(TiXmlDocument & doc,
@@ -54,6 +54,6 @@ void attr_XY(TiXmlElement *El, int & x, int & y);
 /// Zpracování specifických atributů.
 void attr_Count(TiXmlElement *El, int & count);
 /// Zpracování specifických atributů.
-// TODO void attr_Speed..(TiXmlElement *El, int & x, int & y);
+void attr_SpeedLivesIntelligence(TiXmlElement *El, Uint8 & s, Uint8 & l, Uint8 & i);
 
 #endif
