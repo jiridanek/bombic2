@@ -20,14 +20,17 @@ class AI {
 	public:
 		/// Nastaví nové hodnoty souřadnicím.
 		static DIRECTION step(int x, int y, DIRECTION direction, Uint8 speed, Uint8 ai);
+		/// Inteligence ovládaná klávesnicí. TODO
+		static DIRECTION from_keyboard(Uint16 & x, Uint16 & y, Uint8 speed,
+			SDLKey up, SDLKey right, SDLKey down, SDLKey left);
 		/// Umělá inteligence vyspělosti 0.
 		static DIRECTION ai0();
 		/// Umělá inteligence vyspělosti 1.
 		static DIRECTION ai1();
 		/// Pomocná funkce pro ai1, zjištuje, jestli se můžeme posunout daným směrem.
 		static bool ai1_checkfield(Uint8 i);
-		/// Inicializace move_;
-		static void initialize();
+		/// Inicializace proměnných.
+		static void initialize(int x, int y, DIRECTION direction, Uint8 speed);
 		/// Pomocná struktura pro otočení a souřadnice při posunu.
 		typedef struct{ DIRECTION d; Uint16 x, y; } Direction_XY;
 	private:
@@ -35,6 +38,8 @@ class AI {
 		static Uint16 x_, y_;
 		/// Uložení směru a souřadnic pro každé otočení.
 		static std::vector<Direction_XY > move_;
+		/// Stav klávesnice.
+		static Uint8 *keystate_;
 };
 
 #endif

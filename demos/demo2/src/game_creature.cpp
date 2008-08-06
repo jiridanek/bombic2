@@ -18,17 +18,23 @@ Creature::Creature(const Surface & sur_left, const Surface & sur_left_s,
 	sur_right_(sur_right), sur_right_s_(sur_right_s),
 	sur_down_(sur_down), sur_down_s_(sur_down_s),
 	sur_burned_(sur_burned), x_(x*CELL_SIZE+CELL_SIZE/2), y_(y*CELL_SIZE+CELL_SIZE/2),
-	speed_(speed), lives_(lives), ai_(ai){}
+	speed_(speed), lives_(lives), ai_(ai), d_(UP){}
 
 
 void Creature::move(){
 	Uint16 old_x=x_, old_y=y_;
-	switch(AI::step(x_,y_,d_,speed_,ai_)){
-		case UP: d_=UP; y_-=speed_; break;
-		case RIGHT: d_=RIGHT; x_+=speed_; break;
-		case DOWN: d_=DOWN; y_+=speed_; break;
-		case LEFT: d_=LEFT; x_-=speed_; break;
-		// defaultne nedela nic
+	if(ai_<10){
+		switch(AI::step(x_,y_,d_,speed_,ai_)){
+			case UP: d_=UP; y_-=speed_; break;
+			case RIGHT: d_=RIGHT; x_+=speed_; break;
+			case DOWN: d_=DOWN; y_+=speed_; break;
+			case LEFT: d_=LEFT; x_-=speed_; break;
+			// defaultne nedela nic
+		}
+	}
+	else {
+		DIRECTION d=AI::from_keyboard(x_,y_,speed_,SDLK_UP,SDLK_RIGHT,SDLK_DOWN,SDLK_LEFT);
+		if(d!=BURNED) d_=d;
 	}
 	setFieldInMap(old_x/CELL_SIZE, old_y/CELL_SIZE, x_/CELL_SIZE, y_/CELL_SIZE);
 	centerPosition(x_,y_);
