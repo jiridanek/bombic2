@@ -19,11 +19,13 @@
 class AI {
 	public:
 		/// Nastaví nové hodnoty souřadnicím.
-		static DIRECTION step(int x, int y, DIRECTION direction, Uint8 ai);
+		static DIRECTION step(int x, int y, DIRECTION direction, Uint8 speed, Uint8 ai);
 		/// Umělá inteligence vyspělosti 0.
 		static DIRECTION ai0();
 		/// Umělá inteligence vyspělosti 1.
 		static DIRECTION ai1();
+		/// Pomocná funkce pro ai1, zjištuje, jestli se můžeme posunout daným směrem.
+		static bool ai1_checkfield(Uint8 i);
 		/// Inicializace move_;
 		static void initialize();
 		/// Pomocná struktura pro otočení a souřadnice při posunu.

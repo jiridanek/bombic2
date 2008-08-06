@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<map name="map_forest_debug" height="12" width="16" background="bg_forest">
+
+	<walls 	name="wall_winnersculpture" width="3">
+		<wall x="1" y="9" />
+		<wall x="4" y="9" />
+		<wall x="7" y="9" />
+		<wall x="10" y="9" />
+	</walls>
+<!-- 	<floorobject name="floor_deadbody" x="2" y="9" width="2" /> -->
+<!-- 	<floorobject name="floor_deadbody" x="6" y="4" width="2" /> -->
+
+	<boxes 	name="box_barrel" count="20">
+		<nobox x="1" y="10" />
+		<nobox x="2" y="10" />
+		<nobox x="3" y="10" />
+		<nobox x="4" y="10" />
+		<nobox x="5" y="10" />
+		<nobox x="6" y="10" />
+		<nobox x="7" y="10" />
+		<nobox x="8" y="10" />
+		<nobox x="9" y="10" />
+		<nobox x="10" y="10" />
+		<nobox x="11" y="10" />
+		<nobox x="12" y="10" />
+		<nobox x="13" y="10" />
+		<nobox x="14" y="10" />
+
+		<box x="4" y="2" />
+		<box x="4" y="5" />
+	</boxes>
+<!--
+	<bonuses name="bonus_flame" count="1" />
+	<bonuses name="bonus_bomb" count="1" />
+	<bonuses name="bonus_illness" count="1" />
+	<bonuses name="bonus_speed" count="1" />
+	<bonuses name="bonus_timer" count="1" />
+	<bonuses name="bonus_megabomb" count="1" />
+	<bonuses name="bonus_live" count="1" />
+	<bonuses name="bonus_shield" count="1" />
+	<bonuses name="bonus_kicker" count="1" />
+	<bonuses name="bonus_othersillness" count="1" />
+	<bonuses name="bonus_slider" count="1" />
+	<bonuses name="bonus_fireman" count="1" />
+-->
+	<creatures name="creature_rat" count="5">
+		<creature x="2" y="10" />
+	</creatures>
+	<creatures name="creature_ghost" count="5">
+		<creature x="6" y="10" />
+	</creatures>
+
+</map>

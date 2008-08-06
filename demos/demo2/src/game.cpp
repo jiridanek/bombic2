@@ -565,6 +565,13 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			rect.h = static_cast<Uint16>(height);
 			// rychlost, pocet zivotu a inteligence prisery
 			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
+			if(speed>CELL_SIZE/2){
+				cerr << "Maximální povolená rychlost nestvůry je"
+					<< " polovina velikosti políčka, tedy "
+					<< CELL_SIZE/2 << endl;
+				TiXmlError(filename,"atribut speed má příliš velkou hodnotu");
+			}
+
 			// left
 			attr_map.clear();
 			subElement(rootEl,"left",attr_map);
@@ -671,8 +678,8 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_burned.GetSurface(), 0);
 
 			// pevne zarazene prisery
-			El = creaturesEl->FirstChildElement("creature");
-			while(El){
+			for(El = creaturesEl->FirstChildElement("creature");
+					El ; El= El->NextSiblingElement("creature")){
 				try {
 					attr_XY(El, x, y);
 				}
@@ -687,7 +694,6 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 					sur_up, sur_up_s, sur_right, sur_right_s,
 					sur_down, sur_down_s, sur_burned, x, y,
 					speed, lives, intelligence);
-				El= El->NextSiblingElement("creature");
 				--count;
 			}
 

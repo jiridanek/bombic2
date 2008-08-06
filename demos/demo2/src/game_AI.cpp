@@ -13,11 +13,12 @@ Uint16 AI::y_=0;
 std::vector< AI::Direction_XY > AI::move_;
 /** @details
  */
-DIRECTION AI::step(int x, int y, DIRECTION d, Uint8 ai){
+DIRECTION AI::step(int x, int y, DIRECTION d, Uint8 speed, Uint8 ai){
 	initialize();
+	x_=x;
+	y_=y;
+
 	// nynejsi souradnice
-	x_=x/CELL_SIZE;
-	y_=y/CELL_SIZE;
 	// nastavim smery pro otoceni
 	Uint8 i=0;
 	switch(d){
@@ -27,10 +28,10 @@ DIRECTION AI::step(int x, int y, DIRECTION d, Uint8 ai){
 		case RIGHT: i=3; break;
 	}
 	//souradnice pro otoceni a jedno policko vpred
-	move_[  i%4].d=UP;  	move_[i%4].x=x_;	move_[i%4].y=y_-1;
-	move_[++i%4].d=RIGHT;	move_[i%4].x=x_+1;	move_[i%4].y=y_;
-	move_[++i%4].d=DOWN;	move_[i%4].x=x_;	move_[i%4].y=y_+1;
-	move_[++i%4].d=LEFT;	move_[i%4].x=x_-1;	move_[i%4].y=y_;
+	move_[  i%4].d=UP;  	move_[i%4].x=x;      	move_[i%4].y=y-speed;
+	move_[++i%4].d=RIGHT;	move_[i%4].x=x+speed;	move_[i%4].y=y;
+	move_[++i%4].d=DOWN;	move_[i%4].x=x;      	move_[i%4].y=y+speed;
+	move_[++i%4].d=LEFT;	move_[i%4].x=x-speed;	move_[i%4].y=y;
 	// rozhodneme ktera umela inteligence se pouzije
 	switch(ai){
 		case 0: return ai0();
@@ -43,34 +44,68 @@ DIRECTION AI::step(int x, int y, DIRECTION d, Uint8 ai){
 /**
  */
 DIRECTION AI::ai0(){
-	if(Game::field_canGoOver(move_[0].x,move_[0].y))
+	if(ai1_checkfield(0))
 		return move_[0].d;
 	return ai1();
 }
 
+bool AI::ai1_checkfield(Uint8 i){
+	Uint16 x=move_[i].x/CELL_SIZE, y=move_[i].y/CELL_SIZE;
+	if(!Game::field_canGoOver(x,y))
+		return false;
+
+	switch(move_[i].d){
+		case UP: if(!Game::field_canGoOver(x,y-1)
+				&& move_[i].y%CELL_SIZE<CELL_SIZE/2)
+					return false;
+			break;
+		case RIGHT: if(!Game::field_canGoOver(x+1,y)
+				&& move_[i].x%CELL_SIZE>CELL_SIZE/2)
+					return false;
+			break;
+		case DOWN: if(!Game::field_canGoOver(x,y+1)
+				&& move_[i].y%CELL_SIZE>CELL_SIZE/2)
+					return false;
+			break;
+		case LEFT: if(!Game::field_canGoOver(x-1,y)
+				&& move_[i].x%CELL_SIZE<CELL_SIZE/2)
+					return false;
+			break;
+	}
+	return true;
+}
 /**
  */
 DIRECTION AI::ai1(){
+// pravdepodobnost kterym smerem se dat
+#ifndef AI1_straight
+#define AI1_straight 95.0/100
+#define AI1_right 2.0/100
+#define AI1_left 2.0/100
+#endif
 	double random = SDL_Rand();
+
 	// vpred
-	if(random>0.5){
-		if(Game::field_canGoOver(move_[0].x,move_[0].y))
+	if(random<AI1_straight){
+		if(ai1_checkfield(0))
 			return move_[0].d;
-		else random=SDL_Rand()/2;
+		random=SDL_Rand()*(1-AI1_straight);
 	}
+	else random-=AI1_straight;
 	// otoceni doprava
-	if(random>0.3){
-		if(Game::field_canGoOver(move_[1].x,move_[1].y))
+	if(random<AI1_right){
+		if(ai1_checkfield(1))
 			return move_[1].d;
-		else random=SDL_Rand()/3;
+		random=SDL_Rand()*(1-AI1_straight-AI1_right);
 	}
+	else random-=AI1_right;
 	// otoceni doleva
-	if(random>0.1){
-		if(Game::field_canGoOver(move_[3].x,move_[3].y))
+	if(random<AI1_left){
+		if(ai1_checkfield(3))
 			return move_[3].d;
 	}
 	// vzad
-	if(Game::field_canGoOver(move_[2].x,move_[2].y))
+	if(ai1_checkfield(2))
 		return move_[2].d;
 	return BURNED;
 }

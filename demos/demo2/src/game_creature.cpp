@@ -23,7 +23,7 @@ Creature::Creature(const Surface & sur_left, const Surface & sur_left_s,
 
 void Creature::move(){
 	Uint16 old_x=x_, old_y=y_;
-	switch(AI::step(x_,y_,d_,ai_)){
+	switch(AI::step(x_,y_,d_,speed_,ai_)){
 		case UP: d_=UP; y_-=speed_; break;
 		case RIGHT: d_=RIGHT; x_+=speed_; break;
 		case DOWN: d_=DOWN; y_+=speed_; break;

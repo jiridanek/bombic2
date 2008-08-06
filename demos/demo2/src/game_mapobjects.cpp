@@ -30,22 +30,22 @@ void DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y, Uint16 x, Uint16 y){
  */
 void DynamicMO::centerPosition(Uint16 & x, Uint16 & y){
 	// nahore
-	if(y%CELL_SIZE<CELL_SIZE/2){
+	if(y%CELL_SIZE+3<CELL_SIZE/2){
 		if(!Game::field_canGoOver(x/CELL_SIZE,y/CELL_SIZE-1))
 			y+=1;
 	}
 	// dole
-	else if(y%CELL_SIZE>CELL_SIZE/2){
+	else if(y%CELL_SIZE-1>CELL_SIZE/2){
 		if(!Game::field_canGoOver(x/CELL_SIZE,y/CELL_SIZE+1))
 			y-=3;
 	}
 	// vlevo
-	if(x%CELL_SIZE<CELL_SIZE/2){
+	if(x%CELL_SIZE+2<CELL_SIZE/2){
 		if(!Game::field_canGoOver(x/CELL_SIZE-1,y/CELL_SIZE))
 			x+=2;
 	}
 	// vpravo
-	else if(x%CELL_SIZE>CELL_SIZE/2){
+	else if(x%CELL_SIZE-2>CELL_SIZE/2){
 		if(!Game::field_canGoOver(x/CELL_SIZE+1,y/CELL_SIZE))
 			x-=2;
 	}
