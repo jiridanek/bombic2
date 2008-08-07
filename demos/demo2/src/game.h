@@ -3,6 +3,7 @@
  * Game.h obsahuje stejnojmennou třídu obstarávající konkrétní hru jako celek
  * a jí podřízené třídy jako například mapObject.
  */
+
 #ifndef GAME_H
 #define GAME_H
 
