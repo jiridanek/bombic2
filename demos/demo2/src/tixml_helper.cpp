@@ -157,6 +157,15 @@ void parseIntAttributes(TiXmlElement *El, attr_map_t & attr_map){
 	}
 }
 
+
+template <class T>
+bool stringtox(const string &s, T & val)
+{
+	stringstream ss(s);
+	ss >> val;
+	return !ss.fail();
+}
+
 /** @details
  * Najde hodnotu zadaného atributu, kontroluje, byl-li zadán.
  * @param attr název atributu

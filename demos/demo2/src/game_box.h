@@ -28,7 +28,7 @@ class Box: public DynamicMO{
 		OBJECT_TYPES type();
 	private:
 		Surface sur_img_, sur_burning_;
-		Uint16 x_, y_, toplapping_, height_, width_;
+		Uint16 toplapping_, height_, width_;
 };
 
 #endif

@@ -26,7 +26,6 @@ class Bonus: public DynamicMO{
 		OBJECT_TYPES type();
 	private:
 		Surface sur_;
-		Uint16 x_, y_;
 		bool visible_;
 };
 

@@ -9,7 +9,7 @@
 #include <string>
 #include <map>
 
-#include "tinyxml.h"
+#include "tinyxml/tinyxml.h"
 #include "SDL_lib.h" // TODO
 
 /// Načte dokument a v něm najde RootElement, variabilně kontroluje atribut name.

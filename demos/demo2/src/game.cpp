@@ -552,6 +552,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			try {
 				sur_src_s = load_src_surface_(rootEl,"shadow_src");
 				is_shadow=true;
+				//is_shadow = try_load_src_surface(sur_src_s,rootEl,"shadow_src"); 
 			}
 			catch(string s){
 				if(s.substr(0,7)=="hodnota") throw;
@@ -998,3 +999,26 @@ bool Game::field_canGoOver(Uint16 x, Uint16 y){
 }
 
 /*************** END OF class Game ******************************/
+
+/*
+int last_time = SDL_GetTicks();
+int time_to_use = 0;
+while (!end_game())
+{
+	draw_the_world();
+
+	int this_time = SDL_GetTicks();
+	time_to_use += this_time - last_time;
+	last_time = this_time;
+
+	for (; this_time > 4; this_time -= 4)
+	{
+		update_the_world();
+	}	
+}
+
+*/
+
+
+
+

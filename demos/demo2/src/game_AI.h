@@ -16,6 +16,45 @@
  * využívající nějakou inteligenci potřebuje v jednom kroku vědět (podle své inteligence)
  * nové souřadnice. Na ty se zeptá své inteligence.
  */
+/*
+class Crature
+{
+
+	void update()
+	{
+		// ......
+		if (m_AI != NULL) m_AI->update();
+	}
+	void set_AI(AI *ai);
+	
+private:
+	AI *m_AI; // delete in destructor
+};
+
+
+
+class AI 
+{
+	void init(Creature *creature);
+	virtual void update();
+
+private:
+	Crature *m_creature;	
+
+};
+
+
+class AI_housenka : public AI
+{
+	virtual void update();
+};
+
+
+Creature housenka;
+housenka.set_AI(new AI_housenka);
+*/
+
+
 class AI {
 	public:
 		/// Nastaví nové hodnoty souřadnicím.

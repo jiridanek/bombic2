@@ -3,8 +3,8 @@
  * Game.h obsahuje stejnojmennou třídu obstarávající konkrétní hru jako celek
  * a jí podřízené třídy jako například mapObject.
  */
-#ifndef GAME_
-#define GAME_
+#ifndef GAME_H
+#define GAME_H
 
 #include <iostream>
 #include <list>
@@ -23,8 +23,24 @@
  * Podává informace o typu ukončení hry.
  * @see GameIntro, DeathmatchIntro.
  */
+/*
+Game::get_instance()->
+*/
 class Game {
 	public:
+/*
+		static Game *get_instance()
+		{
+			if (m_game == NULL)
+			{
+				m_game = new Game;
+				if (m_game == NULL) exit(10);
+			}
+			return m_game;			
+		}
+
+		static Game *m_game = NULL;
+*/
 		/// Inicializace hry.
 		Game(Uint8 players_count, const std::string & mapname);
 // 			bool deathmatch=false, bool creatures=true, bool bombsatend=false);
@@ -98,5 +114,7 @@ class Game {
 			const Surface & sur_burned, Uint16 x, Uint16 y,
 			Uint8 speed, Uint8 lives, Uint8 ai);
 };
+
+
 
 #endif

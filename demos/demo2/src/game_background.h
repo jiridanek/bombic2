@@ -28,4 +28,5 @@ class Background: public StaticMO{
 		Uint16 x_, y_;
 };
 
+
 #endif

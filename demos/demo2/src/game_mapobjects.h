@@ -32,6 +32,7 @@ class MapObject{
  */
 class DynamicMO: public MapObject{
 	public:
+		DynamicMO(Uint16 x, Uint16 y):x_(x),y_(y) {};
 		/// Pohyb.
 		virtual void move()=0;
 	protected:
@@ -39,6 +40,9 @@ class DynamicMO: public MapObject{
 		void setFieldInMap(Uint16 old_x, Uint16 old_y, Uint16 x, Uint16 y);
 		/// Vycentruje objekt na políčko - je-li třeba.
 		void centerPosition(Uint16 & x, Uint16 & y);
+
+		/// Souřadnice polohy v pixelech.
+		Uint16 x_, y_;
 };
 
 /** Statický objekt hry.

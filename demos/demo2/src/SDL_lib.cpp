@@ -12,7 +12,11 @@
 #include <utility>
 
 /************** class Colors ******************/
-
+/*
+namespace color{
+const SDL_Color transparent = {255,0,255};
+};
+*/
 // deklarace barev
 SDL_Color Colors::transparent_ = {255,0,255}; // pruhledna
 

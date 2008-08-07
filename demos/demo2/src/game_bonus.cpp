@@ -7,7 +7,9 @@
 #include "game_bonus.h"
 
 Bonus::Bonus(const Surface & sur, Uint16 x, Uint16 y):
-	sur_(sur), x_(x), y_(y), visible_(false){}
+	DynamicMO(x,y), sur_(sur), visible_(false)
+{
+}
 
 
 void Bonus::move(){

@@ -14,12 +14,16 @@
 #include <vector>
 #include <string>
 #include <cstdlib> // For rand()
-
+/*
+namespace color{
+extern const SDL_Color transparent;
+};
+*/
 class Colors {
 	public:
 		static SDL_Color transparent();
 
-		static SDL_Color white();
+		static SDL_Color white();//{ return white_; }
 		static SDL_Color yellow();
 		static SDL_Color aqua();
 		static SDL_Color red();

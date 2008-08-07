@@ -15,6 +15,7 @@ void DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y, Uint16 x, Uint16 y){
 	// vyhozeni ze stareho policka
 	Game::map_array_t::value_type::value_type::iterator it;
 	it= Game::map_array_[old_x][old_y].end();
+	// TODO find
 	while(it!= Game::map_array_[old_x][old_y].begin()){
 		--it;
 		if(*it==this){

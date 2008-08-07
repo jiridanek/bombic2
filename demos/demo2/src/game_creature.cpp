@@ -13,12 +13,16 @@ Creature::Creature(const Surface & sur_left, const Surface & sur_left_s,
 			const Surface & sur_down, const Surface & sur_down_s,
 			const Surface & sur_burned, Uint16 x, Uint16 y,
 			Uint8 speed, Uint8 lives, Uint8 ai):
-	sur_left_(sur_left),sur_left_s_(sur_left_s),
+	DynamicMO(x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2),
+        sur_left_(sur_left),sur_left_s_(sur_left_s),
 	sur_up_(sur_up), sur_up_s_(sur_up_s),
 	sur_right_(sur_right), sur_right_s_(sur_right_s),
 	sur_down_(sur_down), sur_down_s_(sur_down_s),
-	sur_burned_(sur_burned), x_(x*CELL_SIZE+CELL_SIZE/2), y_(y*CELL_SIZE+CELL_SIZE/2),
-	speed_(speed), lives_(lives), ai_(ai), d_(UP){}
+	sur_burned_(sur_burned),
+	speed_(speed), lives_(lives), ai_(ai), d_(UP)
+{
+
+}
 
 
 void Creature::move(){

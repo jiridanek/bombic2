@@ -33,8 +33,6 @@ class Creature: public DynamicMO{
 	private:
 		Surface sur_left_, sur_left_s_, sur_up_, sur_up_s_,
 			sur_right_, sur_right_s_, sur_down_, sur_down_s_, sur_burned_;
-		/// Souřadnice polohy v pixelech.
-		Uint16 x_, y_;
 		/// Současné otočení.
 		DIRECTION d_;
 		/// Rychlost, počet životů, inteligence.
