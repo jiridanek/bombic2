@@ -7,7 +7,7 @@
 #include "game_wall.h"
 
 Wall::Wall(const Surface & sur,	Uint16 x, Uint16 y):
-		sur_(sur), x_(x), y_(y){}
+		StaticMO(x, y), sur_(sur) {}
 
 void Wall::draw(SDL_Surface* window){
 	draw_surface(x_*CELL_SIZE,y_*CELL_SIZE,sur_.GetSurface(),window);

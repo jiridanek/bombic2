@@ -3,7 +3,6 @@
 #include <string>
 
 #include "tixml_helper.h"
-// #include "SDL_lib.h"
 
 using namespace std;
 
@@ -157,7 +156,7 @@ void parseIntAttributes(TiXmlElement *El, attr_map_t & attr_map){
 	}
 }
 
-
+/*
 template <class T>
 bool stringtox(const string &s, T & val)
 {
@@ -165,6 +164,7 @@ bool stringtox(const string &s, T & val)
 	ss >> val;
 	return !ss.fail();
 }
+*/
 
 /** @details
  * Najde hodnotu zadaného atributu, kontroluje, byl-li zadán.

@@ -21,15 +21,14 @@ class Floorobject: public StaticMO{
 		OBJECT_TYPES type();
 	private:
 		Surface sur_;
-		Uint16 x_, y_;
 };
 
-/**************************************************/
+/************************************************** /
 
 /** Postava Bombiče.
  * Dynamický objekt, který vytváří bomby,
  * zabíjí, umírá, sbírá bonusy, chodí.
- */
+ * /
 class Bomber: public DynamicMO{
 	public:
 		/// Pohyb.
@@ -41,7 +40,7 @@ class Bomber: public DynamicMO{
 /** Bomba.
  * Dynamický objekt vytvářený především bombičem.
  * Vytváří plamen, může se hýbat.
- */
+ * /
 class Bomb: public DynamicMO{
 	public:
 		/// Pohyb.
@@ -53,7 +52,7 @@ class Bomb: public DynamicMO{
 /** Plamen bomby.
  * Dynamický objekt vytvářený především bombou.
  * Zabíjí, sbírá (spaluje) bonusy, nehýbe se.
- */
+ * /
 class Flame: public DynamicMO{
 	public:
 		/// Pohyb.
@@ -61,5 +60,5 @@ class Flame: public DynamicMO{
 		/// Vykreslení.
 		void draw();
 };
-
+/***********************************************/
 #endif

@@ -25,7 +25,6 @@ class Background: public StaticMO{
 		OBJECT_TYPES type();
 	private:
 		Surface sur_clean_, sur_burned_;
-		Uint16 x_, y_;
 };
 
 

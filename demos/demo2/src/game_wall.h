@@ -22,7 +22,6 @@ class Wall: public StaticMO{
 		OBJECT_TYPES type();
 	private:
 		Surface sur_;
-		Uint16 x_, y_;
 };
 
 #endif

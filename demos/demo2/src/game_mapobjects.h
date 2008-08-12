@@ -20,10 +20,16 @@ enum DIRECTION { UP, RIGHT, DOWN, LEFT, BURNED };
  */
 class MapObject{
 	public:
+		MapObject():x_(0),y_(0) {};
+		/// Nastaví souřadnice objektu.
+		MapObject(Uint16 x, Uint16 y):x_(x),y_(y) {};
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *)=0;
 		/// Typ objektu.
 		virtual OBJECT_TYPES type()=0;
+	protected:
+		/// Souřadnice polohy v pixelech.
+		Uint16 x_, y_;
 };
 
 /** Dynamický objekt hry.
@@ -32,7 +38,8 @@ class MapObject{
  */
 class DynamicMO: public MapObject{
 	public:
-		DynamicMO(Uint16 x, Uint16 y):x_(x),y_(y) {};
+		/// Nastaví souřadnice objektu.
+		DynamicMO(Uint16 x, Uint16 y):MapObject(x, y) {};
 		/// Pohyb.
 		virtual void move()=0;
 	protected:
@@ -40,9 +47,6 @@ class DynamicMO: public MapObject{
 		void setFieldInMap(Uint16 old_x, Uint16 old_y, Uint16 x, Uint16 y);
 		/// Vycentruje objekt na políčko - je-li třeba.
 		void centerPosition(Uint16 & x, Uint16 & y);
-
-		/// Souřadnice polohy v pixelech.
-		Uint16 x_, y_;
 };
 
 /** Statický objekt hry.
@@ -51,6 +55,8 @@ class DynamicMO: public MapObject{
  */
 class StaticMO: public MapObject{
 	public:
+		/// Nastaví souřadnice objektu.
+		StaticMO(Uint16 x, Uint16 y):MapObject(x, y) {};
 };
 
 
