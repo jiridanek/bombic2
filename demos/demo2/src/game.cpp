@@ -38,25 +38,25 @@ void Game::load_map_(const std::string & mapname){
 	switch(map_el->QueryIntAttribute("height", &height)){
 		case TIXML_SUCCESS:
 			if(height<=2)
-				TiXmlError(filename,"atribut height musí být větší než 2.");
+				TiXmlError(filename,"the value of attribute height must be greater than 2.");
 			break;
 		case TIXML_WRONG_TYPE:
-			TiXmlError(filename,"atribut height není typu int.");
+			TiXmlError(filename,"wrong type of attribute height, it must be int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
-			TiXmlError(filename,"chybějící atribut height v <map ...>.");
+			TiXmlError(filename,"missing attribute height in <map ...>.");
 			break;
 	}
 	switch(map_el->QueryIntAttribute("width", &width)){
 		case TIXML_SUCCESS:
 			if(width<=2)
-				TiXmlError(filename,"atribut width musí být větší než 2.");
+				TiXmlError(filename,"the value of attribute width must be greater than 2.");
 			break;
 		case TIXML_WRONG_TYPE:
-			TiXmlError(filename,"atribut width není typu int.");
+			TiXmlError(filename,"wrong type of attribute width, it must be int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
-			TiXmlError(filename,"chybějící atribut width v <map ...>.");
+			TiXmlError(filename,"missing attribute width in <map ...>.");
 			break;
 	}
 	// vytvoreni zakladniho rozmeru mapy
@@ -75,7 +75,7 @@ void Game::load_map_(const std::string & mapname){
 			load_background_(str);
 			break;
 		case TIXML_NO_ATTRIBUTE:
-			TiXmlError(filename,"chybějící atribut background v <map ...>");
+			TiXmlError(filename,"missing attribute background in <map ...>");
 			break;
 	}
 
@@ -185,10 +185,10 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 		attr_HeightWidth(wallsEl, height_def, width_def);
 	}
 	catch( string s){
-		TiXmlError("v elementu <walls ...>: "+s);
+		TiXmlError("in element <walls ...>: "+s);
 	}
 	if(name_def.empty())
-		TiXmlError("atribut name u <walls ...> chybí.");
+		TiXmlError("missing attribute name in <walls ...> .");
 
 	if(height_def<1) height_def=1;
 	if(width_def<1) width_def=1;
@@ -207,10 +207,10 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 
 	// kontrola jestli koresponduji rozmery obrazku
 	if(height_def!=(sur_def.height()-toplapping_def)/CELL_SIZE)
-		TiXmlError(filename,"hodnota atributu height neodpovídá hodnotě v elementu <walls ...>");
+		TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>");
 
 	if(width_def!= sur_def.width()/CELL_SIZE)
-		TiXmlError(filename,"hodnota atributu width neodpovídá hodnotě v elementu <walls ...>");
+		TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>");
 	// vytvoreni zdi
 	wallsEl= wallsEl->FirstChildElement("wall");
 	try{
@@ -221,7 +221,7 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 				attr_XY(wallsEl, x, y);
 			}
 			catch( string s){
-				TiXmlError("v elementu <walls ...>: "+s);
+				TiXmlError("in element <walls ...>: "+s);
 			}
 			if(height<1) height=height_def;
 			if(width<1) width=width_def;
@@ -234,10 +234,10 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 
 				// kontrola jestli koresponduji rozmery obrazku
 				if(height!=(sur.height()-toplapping)/CELL_SIZE)
-					TiXmlError(filename,"hodnota atributu height neodpovídá hodnotě v elementu <walls ...>");
+					TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>");
 
 				if(width!= sur.width()/CELL_SIZE)
-					TiXmlError(filename,"hodnota atributu width neodpovídá hodnotě v elementu <walls ...>");
+					TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>");
 			}
 			else{
 				sur= sur_def;
@@ -269,10 +269,10 @@ void Game::load_floorobjects_(TiXmlElement *floorEl){
 				attr_XY(floorEl, x, y);
 			}
 			catch( string s){
-				TiXmlError("v elementu <floorobject ...>: "+s);
+				TiXmlError("in element <floorobject ...>: "+s);
 			}
 			if(filename.empty())
-				TiXmlError("hodnota atributu name u <floorobject ...> chybí.");
+				TiXmlError("empty attribute name in <floorobject ...>.");
 			if(height<1) height=1;
 			if(width<1) width=1;
 			// nacteni objektu
@@ -283,10 +283,10 @@ void Game::load_floorobjects_(TiXmlElement *floorEl){
 
 			// kontrola jestli koresponduji rozmery obrazku
 			if(height!=sur.height()/CELL_SIZE)
-				TiXmlError(filename,"hodnota atributu height neodpovídá hodnotě v elementu <floorobject ...> v mapě");
+				TiXmlError(filename,"the value of attribute height doesn't correspond with value in <floorobject ...> in map.");
 
 			if(width!= sur.width()/CELL_SIZE)
-				TiXmlError(filename,"hodnota atributu width neodpovídá hodnotě v elementu <floorobject ...> v mapě");
+				TiXmlError(filename,"the value of attribute width doesn't correspond with value in <floorobject ...> in map.");
 
 			insert_floorobject_(sur, x, y);
 			floorEl= floorEl->NextSiblingElement("floorobject");
@@ -318,12 +318,12 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 		attr_Count(boxesEl, count);
 	}
 	catch(string s){
-		TiXmlError("v elementu <boxes ...>: "+s);
+		TiXmlError("in element <boxes ...>: "+s);
 	}
 	if(name_def.empty())
-		TiXmlError("atribut name u <boxes ...> chybí.");
+		TiXmlError("missing attribute name in <boxes ...>.");
 	if(count<1)
-		TiXmlError("atribut count u <boxes ...> chybí.");
+		TiXmlError("missing attribute count in <boxes ...>.");
 	if(height_def<1) height_def=1;
 	if(width_def<1) width_def=1;
 	// nacteni defaultniho boxu
@@ -341,10 +341,10 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 	}
 	// kontrola jestli koresponduji rozmery obrazku
 	if(height_def!=(sur_img_def.height()-toplapping_def)/CELL_SIZE)
-		TiXmlError(filename,"hodnota atributu height neodpovídá hodnotě v elementu <walls ...>");
+		TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>.");
 
 	if(width_def!= sur_img_def.width()/CELL_SIZE)
-		TiXmlError(filename,"hodnota atributu width neodpovídá hodnotě v elementu <walls ...>");
+		TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>.");
 
 	// vytvoreni boxu
 	El= boxesEl->FirstChildElement("box");
@@ -356,7 +356,7 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 				attr_XY(El, x, y);
 			}
 			catch(string s){
-				TiXmlError("v elementu <boxes ...>: "+s);
+				TiXmlError("in element <boxes ...>: "+s);
 			}
 			if(height<1) height=height_def;
 			if(width<1) width=width_def;
@@ -370,10 +370,10 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 						toplapping, sur_src.GetSurface());
 				// kontrola jestli koresponduji rozmery obrazku
 				if(height!=(sur_img.height()-toplapping)/CELL_SIZE)
-					TiXmlError(filename,"hodnota atributu height neodpovídá hodnotě v elementu <boxes ...>");
+					TiXmlError(filename,"the value of attribute height doesn't correspond with value in <boxes ...>.");
 
 				if(width!= sur_img.width()/CELL_SIZE)
-					TiXmlError(filename,"hodnota atributu width neodpovídá hodnotě v elementu <walls ...>");
+					TiXmlError(filename,"the value of attribute width doesn't correspond with value in <boxes ...>.");
 			}
 			else{
 				sur_img= sur_img_def;
@@ -408,7 +408,7 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 		}
 	}
 	catch(string s){
-		TiXmlError("v elementu <nobox ...>: "+s);
+		TiXmlError("in element <nobox ...>: "+s);
 	}
 	// spocitani volnych policek pro nahodne boxy
 	double count_free= 0.0;
@@ -454,10 +454,10 @@ void Game::load_bonuses_(TiXmlElement *bonusEl){
 				attr_Count(bonusEl, count);
 			}
 			catch( string s){
-				TiXmlError("v elementu <bonus ...>: "+s);
+				TiXmlError("in element <bonus ...>: "+s);
 			}
 			if(filename.empty())
-				TiXmlError("hodnota atributu name u <bonus ...> chybí.");
+				TiXmlError("empty attribute name in <bonus ...>.");
 			// nacteni bonusu
 			rootEl = TiXmlRootElement(doc, filename, "bonus", true);
 			// obrazek do mapy
@@ -541,10 +541,10 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 				attr_Count(creaturesEl, count);
 			}
 			catch( string s){
-				TiXmlError("v elementu <creatures ...>: "+s);
+				TiXmlError("in element <creatures ...>: "+s);
 			}
 			if(filename.empty())
-				TiXmlError("hodnota atributu name u <creatures ...> chybí.");
+				TiXmlError("empty attribute name in <creatures ...>.");
 			// nacteni prisery
 			rootEl = TiXmlRootElement(doc, filename, "creature", true);
 			// zdrojovy obrazek
@@ -552,7 +552,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			try {
 				sur_src_s = load_src_surface_(rootEl,"shadow_src");
 				is_shadow=true;
-				//is_shadow = try_load_src_surface(sur_src_s,rootEl,"shadow_src"); 
+				//is_shadow = try_load_src_surface(sur_src_s,rootEl,"shadow_src");
 			}
 			catch(string s){
 				if(s.substr(0,7)=="hodnota") throw;
@@ -560,37 +560,36 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			}
 			// vyska a sirska obrazku
 			attr_HeightWidth(rootEl, height, width);
-			if(height<1) TiXmlError(filename,"atribut height chybí");
-			if(width<1) TiXmlError(filename,"atribut width chybí");
+			if(height<1) TiXmlError(filename,"missing attribute height");
+			if(width<1) TiXmlError(filename,"missing attribute width");
 			rect.w = static_cast<Uint16>(width);
 			rect.h = static_cast<Uint16>(height);
 			// rychlost, pocet zivotu a inteligence prisery
 			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
 			if(speed>CELL_SIZE/2){
-				cerr << "Maximální povolená rychlost nestvůry je"
-					<< " polovina velikosti políčka, tedy "
+				cerr << "Maximal allowed creature's speed is "
 					<< CELL_SIZE/2 << endl;
-				TiXmlError(filename,"atribut speed má příliš velkou hodnotu");
+				TiXmlError(filename,"too high value of speed");
 			}
 
 			// left
 			attr_map.clear();
 			subElement(rootEl,"left",attr_map);
 			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"chybějící atribut x u elementu <left>");
+				TiXmlError(filename,"missing attribute x in <left>");
 			else rect.x= static_cast<Sint16>(x);
 			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"chybějící atribut y u elementu <left>");
+				TiXmlError(filename,"missing attribute y in <left>");
 			else	rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_left= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_left.GetSurface(), 0);
 			if(is_shadow){
 				if(!attrIntValue("shadow_x",x,attr_map))
-					TiXmlError(filename,"chybějící atribut shadow_x u elementu <left>");
+					TiXmlError(filename,"missing attribute shadow_x in <left>");
 				else rect.x= static_cast<Sint16>(x);
 				if(!attrIntValue("shadow_y",y,attr_map))
-					TiXmlError(filename,"chybějící atribut shadow_y u elementu <left>");
+					TiXmlError(filename,"missing attribute shadow_y in <left>");
 				else	rect.y= static_cast<Sint16>(y);
 				// preneseni obrazku do noveho surface
 				sur_left_s= create_transparent_surface(width, height, true);
@@ -600,20 +599,20 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			attr_map.clear();
 			subElement(rootEl,"up",attr_map);
 			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"chybějící atribut x u elementu <up>");
+				TiXmlError(filename,"missing attribute x in <up>");
 			else rect.x= static_cast<Sint16>(x);
 			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"chybějící atribut y u elementu <up>");
+				TiXmlError(filename,"missing attribute y in <up>");
 			else	rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_up= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_up.GetSurface(), 0);
 			if(is_shadow){
 				if(!attrIntValue("shadow_x",x,attr_map))
-					TiXmlError(filename,"chybějící atribut shadow_x u elementu <up>");
+					TiXmlError(filename,"missing attribute shadow_x in <up>");
 				else rect.x= static_cast<Sint16>(x);
 				if(!attrIntValue("shadow_y",y,attr_map))
-					TiXmlError(filename,"chybějící atribut shadow_y u elementu <up>");
+					TiXmlError(filename,"missing attribute shadow_y in <up>");
 				else	rect.y= static_cast<Sint16>(y);
 				// preneseni obrazku do noveho surface
 				sur_up_s= create_transparent_surface(width, height, true);
@@ -623,20 +622,20 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			attr_map.clear();
 			subElement(rootEl,"right",attr_map);
 			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"chybějící atribut x u elementu <right>");
+				TiXmlError(filename,"missing attribute x in <right>");
 			else rect.x= static_cast<Sint16>(x);
 			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"chybějící atribut y u elementu <right>");
+				TiXmlError(filename,"missing attribute y in <right>");
 			else	rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_right= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_right.GetSurface(), 0);
 			if(is_shadow){
 				if(!attrIntValue("shadow_x",x,attr_map))
-					TiXmlError(filename,"chybějící atribut shadow_x u elementu <right>");
+					TiXmlError(filename,"missing attribute shadow_x in <right>");
 				else rect.x= static_cast<Sint16>(x);
 				if(!attrIntValue("shadow_y",y,attr_map))
-					TiXmlError(filename,"chybějící atribut shadow_y u elementu <right>");
+					TiXmlError(filename,"missing attribute shadow_y in <right>");
 				else	rect.y= static_cast<Sint16>(y);
 				// preneseni obrazku do noveho surface
 				sur_right_s= create_transparent_surface(width, height, true);
@@ -646,20 +645,20 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			attr_map.clear();
 			subElement(rootEl,"down",attr_map);
 			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"chybějící atribut x u elementu <down>");
+				TiXmlError(filename,"missing attribute x in <down>");
 			else rect.x= static_cast<Sint16>(x);
 			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"chybějící atribut y u elementu <down>");
+				TiXmlError(filename,"missing attribute y in <down>");
 			else	rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_down= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_down.GetSurface(), 0);
 			if(is_shadow){
 				if(!attrIntValue("shadow_x",x,attr_map))
-					TiXmlError(filename,"chybějící atribut shadow_x u elementu <down>");
+					TiXmlError(filename,"missing attribute shadow_x in <down>");
 				else rect.x= static_cast<Sint16>(x);
 				if(!attrIntValue("shadow_y",y,attr_map))
-					TiXmlError(filename,"chybějící atribut shadow_y u elementu <down>");
+					TiXmlError(filename,"missing attribute shadow_y in <down>");
 				else	rect.y= static_cast<Sint16>(y);
 				// preneseni obrazku do noveho surface
 				sur_down_s= create_transparent_surface(width, height, true);
@@ -669,10 +668,10 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			attr_map.clear();
 			subElement(rootEl,"burned",attr_map);
 			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"chybějící atribut x u elementu <burned>");
+				TiXmlError(filename,"missing attribute x in <burned>");
 			else rect.x= static_cast<Sint16>(x);
 			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"chybějící atribut y u elementu <burned>");
+				TiXmlError(filename,"missing attribute y in <burned>");
 			else	rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_burned= create_transparent_surface(width, height, false);
@@ -685,7 +684,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 					attr_XY(El, x, y);
 				}
 				catch(string s){
-					TiXmlError("v elementu <boxes ...>: "+s);
+					TiXmlError("in element <boxes ...>: "+s);
 				}
 				// TODO predelat az budou fce typu withoutWall() withoutBox()
 				if(x>=map_array_.size() || y>=map_array_[x].size()) continue;
@@ -736,25 +735,25 @@ SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 	int x, y, w, h;
 	subElement(El,name_subEl,attr_map);
 	if(!attrIntValue("x",x,attr_map))
-		throw string("chybějící atribut x");
+		throw string("missing attribute x");
 	else	rect.x= static_cast<Sint16>(x);
 	if(!attrIntValue("y",y,attr_map))
-		throw string("chybějící atribut y");
+		throw string("missing attribute y");
 	else	rect.y= static_cast<Sint16>(y);
 	if(!attrIntValue("width",w,attr_map))
 			rect.w= CELL_SIZE;
 	else if(w<1)
-		throw string("atribut width musí mít kladnou hodnotu");
+		throw string("the value of width must be higher than 0");
 	else	rect.w= CELL_SIZE*static_cast<Uint16>(w);
 	if(!attrIntValue("height",h,attr_map))
 			rect.h= CELL_SIZE;
 	else if(h<1)
-		throw string("atribut height musí mít kladnou hodnotu");
+		throw string("the value of height must be higher than 0");
 	else	rect.h= CELL_SIZE*static_cast<Uint16>(h);
 	if(!attrIntValue("toplapping",toplapping,attr_map))
 		toplapping=0;
 	else if(toplapping<0)
-		throw string("atribut toplapping musí mít nezápornou hodnotu");
+		throw string("the value of toplapping must be higher than 0 or equal");
 	else	rect.h+= CELL_SIZE*toplapping;
 
 	// preneseni obrazku do noveho surface
@@ -782,13 +781,13 @@ SDL_Surface* Game::load_src_surface_(TiXmlElement *El, const char* attr_name){
 			// zdrojovy  obrazek z disku
 			sur_SDL=SDL_LoadBMP(str.c_str());
 			if(!sur_SDL)
-				throw string("hodnota atributu ")+attr_name+" není cesta k souboru s BMP.";
+				throw string("the value of ")+attr_name+" isn't valid path to file with BMP.";
 			// nastavim pruhlednost
 			set_transparent_color(sur_SDL, Colors::transparent());
 			// vytvorim defaultni surface
 			break;
 		case TIXML_NO_ATTRIBUTE:
-			throw string("chybějící atribut ")+attr_name;
+			throw string("missing attribute ")+attr_name;
 			break;
 	}
 	return sur_SDL;
@@ -1014,7 +1013,7 @@ while (!end_game())
 	for (; this_time > 4; this_time -= 4)
 	{
 		update_the_world();
-	}	
+	}
 }
 
 */

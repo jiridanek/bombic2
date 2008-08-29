@@ -37,7 +37,7 @@ class Game {
 				m_game = new Game;
 				if (m_game == NULL) exit(10);
 			}
-			return m_game;			
+			return m_game;
 		}
 
 		static Game *m_game = NULL;

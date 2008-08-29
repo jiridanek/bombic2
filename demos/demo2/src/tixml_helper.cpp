@@ -26,7 +26,7 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
 	swap(name, filename);
 
 	if(!doc.LoadFile(filename.c_str()))
-		TiXmlError(filename,"nelze otevřít XML soubor , nebo není syntakticky správný.");
+		TiXmlError(filename,"can't read XML file or syntactic error occured.");
 
 	TiXmlElement *rootEl;
 
@@ -35,7 +35,7 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
 	else { // kontrola root elementu
 		rootEl= doc.FirstChildElement(rootEl_name.c_str());
 		if(!rootEl)
-			TiXmlError(filename,"root element musí být <"+rootEl_name+" ...>.");
+			TiXmlError(filename,"bad root element, it may be <"+rootEl_name+" ...>.");
 	}
 	// zkontrolovat atribut name
 	if(!checkAttr_name) return rootEl;
@@ -46,10 +46,10 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
 	switch(QueryStringAttribute(rootEl,"name", &str)){
 		case TIXML_SUCCESS:
 			if(str!=name)
-				TiXmlError(filename,"chybná hodnota atributu name");
+				TiXmlError(filename,"bad value of attribute name");
 			break;
 		case TIXML_NO_ATTRIBUTE:
-				TiXmlError(filename, "chybějící atribut name");
+				TiXmlError(filename, "missing attribute name");
 			break;
 	}
 	return rootEl;
@@ -85,7 +85,7 @@ int QueryStringAttribute(TiXmlElement *El, const char* name,
 void subElement(TiXmlElement *Element, const char* subEl_name, attr_map_t & attr_map){
 	TiXmlElement *subEl= Element->FirstChildElement(subEl_name);
 	if(!subEl)
-		throw "chybějící element <"+string(subEl_name)+" ...>";
+		throw "missing element <"+string(subEl_name)+" ...>";
 	// atributy
 	parseIntAttributes(subEl, attr_map);
 /*
@@ -149,8 +149,8 @@ void parseIntAttributes(TiXmlElement *El, attr_map_t & attr_map){
 				attr_map[attr->Name()]=value;
 				break;
 			case TIXML_WRONG_TYPE:
-				throw string("atribut ")+attr->Name()+" v elementu "
-					+El->Value()+" neni typu int";
+				throw string("attribute ")+attr->Name()+" in element "
+					+El->Value()+" must be type of int";
 				break;
 		}
 	}
@@ -198,7 +198,7 @@ void attr_Name(TiXmlElement *El, std::string & name){
 	switch(QueryStringAttribute(El,"name", &name)){
 		case TIXML_SUCCESS:
 			if(name.empty())
-				throw string("atribut name nesmí být prázdný.");
+				throw string("empty value of attribute name.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
 			name.erase();
@@ -224,10 +224,10 @@ void attr_HeightWidth(TiXmlElement *El, int & height, int & width){
 	switch(El->QueryIntAttribute("height", &height)){
 		case TIXML_SUCCESS:
 			if(height<=0)
-				throw string("atribut height musí být větší než 0.");
+				throw string("value of attribute height must be higher than 0.");
 			break;
 		case TIXML_WRONG_TYPE:
-				throw string("atribut height není typu int.");
+				throw string("attribute height must be type of int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
 			height= -1;
@@ -237,10 +237,10 @@ void attr_HeightWidth(TiXmlElement *El, int & height, int & width){
 	switch(El->QueryIntAttribute("width", &width)){
 		case TIXML_SUCCESS:
 			if(width<=0)
-				throw string("atribut width musí být větší než 0.");
+				throw string("value of attribute width must be higher than 0.");
 			break;
 		case TIXML_WRONG_TYPE:
-				throw string("atribut width není typu int.");
+				throw string("attribute width must be type of int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
 			width= -1;
@@ -265,26 +265,26 @@ void attr_XY(TiXmlElement *El, int & x, int & y){
 	switch(El->QueryIntAttribute("x", &x)){
 		case TIXML_SUCCESS:
 			if(x<0)
-				throw string("atribut x musí být nezáporný.");
+				throw string("value of attribute x must be higher than 0 or equals.");
 			break;
 		case TIXML_WRONG_TYPE:
-				throw string("atribut x není typu int.");
+				throw string("attribute x must be type of int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
-				throw string("atribut x chybí.");
+				throw string("missing attribute x.");
 			break;
 	}
 
 	switch(El->QueryIntAttribute("y", &y)){
 		case TIXML_SUCCESS:
 			if(y<0)
-				throw string("atribut y musí být nezáporný.");
+				throw string("value of attribute y must be higher than 0 or equals.");
 			break;
 		case TIXML_WRONG_TYPE:
-				throw string("atribut y není typu int.");
+				throw string("attribute y must be type of int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
-				throw string("atribut y chybí.");
+				throw string("missing attribute y.");
 			break;
 	}
 }
@@ -304,13 +304,13 @@ void attr_Count(TiXmlElement *El, int & count){
 	switch(El->QueryIntAttribute("count", &count)){
 		case TIXML_SUCCESS:
 			if(count<1)
-				throw string("atribut count musí být kladný.");
+				throw string("attribute count must be higher than 0.");
 			break;
 		case TIXML_WRONG_TYPE:
-				throw string("atribut count není typu int.");
+				throw string("attribute count must be type of int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
-				throw string("atribut count chybí.");
+				throw string("missing attribute count.");
 			break;
 	}
 }
@@ -334,39 +334,39 @@ void attr_SpeedLivesIntelligence(TiXmlElement *El,
 	switch(El->QueryIntAttribute("speed", &s)){
 		case TIXML_SUCCESS:
 			if(s<0)
-				throw string("atribut speed musí být kladný.");
+				throw string("attribute speed must be higher than 0.");
 			break;
 		case TIXML_WRONG_TYPE:
-				throw string("atribut speed není typu double.");
+				throw string("attribute speed must be type of int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
-				throw string("atribut speed chybí.");
+				throw string("missing attribute speed.");
 			break;
 	}
 	speed = s;
 	switch(El->QueryIntAttribute("lives", &l)){
 		case TIXML_SUCCESS:
 			if(l<1)
-				throw string("atribut lives musí být kladný.");
+				throw string("attribute lives must be higher than 0.");
 			break;
 		case TIXML_WRONG_TYPE:
-				throw string("atribut lives není typu int.");
+				throw string("attribute lives must be type of int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
-				throw string("atribut lives chybí.");
+				throw string("missing attribute lives.");
 			break;
 	}
 	lives = l;
 	switch(El->QueryIntAttribute("intelligence", &i)){
 		case TIXML_SUCCESS:
 			if(i<0)
-				throw string("atribut intelligence musí být nezáporný.");
+				throw string("attribute intelligence must be higher than 0 or equals.");
 			break;
 		case TIXML_WRONG_TYPE:
-				throw string("atribut intelligence není typu int.");
+				throw string("attribute intelligence must be type of int.");
 			break;
 		case TIXML_NO_ATTRIBUTE:
-				throw string("atribut intelligence chybí.");
+				throw string("missing attribute intelligence.");
 			break;
 	}
 	intelligence = i;
