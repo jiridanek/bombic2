@@ -18,14 +18,14 @@ int main(int argc, char ** argv){
 	// stav klavesnice
 	Uint8 *keystate = SDL_GetKeyState(0);
 
-	Game game(1, "map_forest_debug");
+	Game game(1, "map_forest");
 
 	// vytvoreni hlavniho okna
 	SDL_Surface *window, *background, *bgrect;
 	window_init(&window, 800, 600, "Bombic2 - Demo 2");
 
 	// vytvorit obdelnickovane pozadi
-	background = create_surface(640, 480, Colors::navy());
+	background = create_surface(640, 480, Color::navy);
 
 	// iterace dokud neni vyvolano zavreni okna
 	while(!get_event_isquit(SDLK_ESCAPE)) {

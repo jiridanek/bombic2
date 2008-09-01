@@ -14,34 +14,25 @@
 #include <vector>
 #include <string>
 #include <cstdlib> // For rand()
-/*
-namespace color{
-extern const SDL_Color transparent;
-};
-*/
-class Colors {
-	public:
-		static SDL_Color transparent();
 
-		static SDL_Color white();//{ return white_; }
-		static SDL_Color yellow();
-		static SDL_Color aqua();
-		static SDL_Color red();
-		static SDL_Color lime();
-		static SDL_Color blue();
-		static SDL_Color black();
-		static SDL_Color green();
-		static SDL_Color maroon();
-		static SDL_Color olive();
-		static SDL_Color purple();
-		static SDL_Color gray();
-		static SDL_Color navy();
-		static SDL_Color teal();
-		static SDL_Color silver();
-	private:
-		static SDL_Color transparent_, white_, yellow_, aqua_,
-				red_, lime_, blue_, black_, green_, maroon_,
-				olive_, purple_, gray_, navy_, teal_, silver_;
+namespace Color{
+	extern const SDL_Color transparent;
+
+	extern const SDL_Color white;
+	extern const SDL_Color yellow;
+	extern const SDL_Color aqua;
+	extern const SDL_Color red;
+	extern const SDL_Color lime;
+	extern const SDL_Color blue;
+	extern const SDL_Color black;
+	extern const SDL_Color green;
+	extern const SDL_Color maroon;
+	extern const SDL_Color olive;
+	extern const SDL_Color purple;
+	extern const SDL_Color gray;
+	extern const SDL_Color navy;
+	extern const SDL_Color teal;
+	extern const SDL_Color silver;
 };
 
 class Fonts {

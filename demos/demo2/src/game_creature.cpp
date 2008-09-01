@@ -13,7 +13,7 @@ Creature::Creature(const Surface & sur_left, const Surface & sur_left_s,
 			const Surface & sur_down, const Surface & sur_down_s,
 			const Surface & sur_burned, Uint16 x, Uint16 y,
 			Uint8 speed, Uint8 lives, Uint8 ai):
-	DynamicMO(x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2),
+	DynamicMO(x, y),
         sur_left_(sur_left),sur_left_s_(sur_left_s),
 	sur_up_(sur_up), sur_up_s_(sur_up_s),
 	sur_right_(sur_right), sur_right_s_(sur_right_s),
@@ -60,9 +60,5 @@ void Creature::draw(SDL_Surface *window){
 	if(sur) draw_surface(x, y, sur->GetSurface(), window);
 
 }
-
-// OBJECT_TYPES Creature::type(){
-// 	return CREATURE;
-// }
 
 

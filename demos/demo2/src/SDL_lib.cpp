@@ -11,51 +11,27 @@
 #include <string>
 #include <utility>
 
-/************** class Colors ******************/
-/*
-namespace color{
-const SDL_Color transparent = {255,0,255};
-};
-*/
 // deklarace barev
-SDL_Color Colors::transparent_ = {255,0,255}; // pruhledna
+namespace Color{
+	const SDL_Color transparent = {255,0,255}; // pruhledna
 
-SDL_Color Colors::white_ = {255,255,255}; // bila
-SDL_Color Colors::yellow_ = {255,255,0}; // zluta
-SDL_Color Colors::aqua_ = {0,255,255}; // azurova
-SDL_Color Colors::red_ = {255,0,0}; // cervena
-SDL_Color Colors::lime_ = {0,255,0}; // svetle_zelena
-SDL_Color Colors::blue_ = {0,0,255}; // modra
-SDL_Color Colors::black_ = {0,0,0}; // cerna
-SDL_Color Colors::green_ = {0,128,0}; // zelena
-SDL_Color Colors::maroon_ = {128,0,0}; // hneda
-SDL_Color Colors::olive_ = {128,128,0}; // olivova (vyblita)
-SDL_Color Colors::purple_ = {128,0,128}; // fialova
-SDL_Color Colors::gray_ = {128,128,128}; // seda
-SDL_Color Colors::navy_ = {0,0,128}; // tmave_modra
-SDL_Color Colors::teal_ = {0,128,128}; // modro_zelena
-SDL_Color Colors::silver_ = {192,192,192}; // svetle_seda
+	const SDL_Color white = {255,255,255}; // bila
+	const SDL_Color yellow = {255,255,0}; // zluta
+	const SDL_Color aqua = {0,255,255}; // azurova
+	const SDL_Color red = {255,0,0}; // cervena
+	const SDL_Color lime = {0,255,0}; // svetle_zelena
+	const SDL_Color blue = {0,0,255}; // modra
+	const SDL_Color black = {0,0,0}; // cerna
+	const SDL_Color green = {0,128,0}; // zelena
+	const SDL_Color maroon = {128,0,0}; // hneda
+	const SDL_Color olive = {128,128,0}; // olivova (vyblita)
+	const SDL_Color purple = {128,0,128}; // fialova
+	const SDL_Color gray = {128,128,128}; // seda
+	const SDL_Color navy = {0,0,128}; // tmave_modra
+	const SDL_Color teal = {0,128,128}; // modro_zelena
+	const SDL_Color silver = {192,192,192}; // svetle_seda
+};
 
-// deklarace funkci barev
-SDL_Color Colors::transparent(){ return transparent_; }
-
-SDL_Color Colors::white(){ return white_; }
-SDL_Color Colors::yellow(){ return yellow_; }
-SDL_Color Colors::aqua(){ return aqua_; }
-SDL_Color Colors::red(){ return red_; }
-SDL_Color Colors::lime(){ return lime_; }
-SDL_Color Colors::blue(){ return blue_; }
-SDL_Color Colors::black(){ return black_; }
-SDL_Color Colors::green(){ return green_; }
-SDL_Color Colors::maroon(){ return maroon_; }
-SDL_Color Colors::olive(){ return olive_; }
-SDL_Color Colors::purple(){ return purple_; }
-SDL_Color Colors::gray(){ return gray_; }
-SDL_Color Colors::navy(){ return navy_; }
-SDL_Color Colors::teal(){ return teal_; }
-SDL_Color Colors::silver(){ return silver_; }
-
-/******************* END of class Colors ****************/
 
 /******************* class Fonts *********************/
 
@@ -223,11 +199,11 @@ void set_transparent_color(SDL_Surface *sur, SDL_Color color){
 // vytvori surface potrebne velikosti a nastavi prusvitnou barvu
 SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h, bool transparent){
 	// transparentni barva
-	SDL_Color trans_color= Colors::transparent();
+// 	SDL_Color trans_color= Colors::transparent();
 	// vytvorim surface
-	SDL_Surface *sur=create_surface(w, h, trans_color);
+	SDL_Surface *sur=create_surface(w, h, Color::transparent);
 	// nastavim transparentni barvu
-	set_transparent_color(sur, trans_color);
+	set_transparent_color(sur, Color::transparent);
 	//nastavim pruhlednost
 	if(transparent)
 		SDL_SetAlpha(sur, SDL_SRCALPHA | SDL_RLEACCEL, 128);

@@ -17,12 +17,9 @@ void Box::move(){
 }
 
 void Box::draw(SDL_Surface *window){
-	draw_surface(x_*CELL_SIZE, (y_-toplapping_)*CELL_SIZE,
+	draw_surface(x_, y_- toplapping_*CELL_SIZE,
 			sur_img_.GetSurface(), window);
 }
 
-// OBJECT_TYPES Box::type(){
-// 	return BOX;
-// }
 
 

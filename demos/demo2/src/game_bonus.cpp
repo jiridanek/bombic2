@@ -15,11 +15,7 @@ void Bonus::move(){
 
 void Bonus::draw(SDL_Surface *window){
 	if(!visible_) return;
-	draw_surface(x_*CELL_SIZE, y_*CELL_SIZE, sur_.GetSurface(), window);
+	draw_surface(x_, y_, sur_.GetSurface(), window);
 }
-
-// OBJECT_TYPES Bonus::type(){
-// 	return BONUS;
-// }
 
 

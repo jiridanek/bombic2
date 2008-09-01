@@ -111,7 +111,7 @@ void Game::load_background_(const std::string & bgname){
 		for(column=0 ; column< map_array_.size() ; ++column){
 			for(field = 0 ; field<map_array_[column].size() ; ++field){
 				// vytvorit a ulozit do seznamu statickych objektu
-				staticMOs_.push_back(new Background(sur1,sur2, column, field) );
+				staticMOs_.push_back(new Background(sur1,sur2, column*CELL_SIZE, field*CELL_SIZE) );
 				// ulozit do mapy na spravne policko
 				map_array_[column][field].push_back(staticMOs_.back());
 			}
@@ -783,7 +783,7 @@ SDL_Surface* Game::load_src_surface_(TiXmlElement *El, const char* attr_name){
 			if(!sur_SDL)
 				throw string("the value of ")+attr_name+" isn't valid path to file with BMP.";
 			// nastavim pruhlednost
-			set_transparent_color(sur_SDL, Colors::transparent());
+			set_transparent_color(sur_SDL, Color::transparent);
 			// vytvorim defaultni surface
 			break;
 		case TIXML_NO_ATTRIBUTE:
@@ -805,7 +805,7 @@ SDL_Surface* Game::load_src_surface_(TiXmlElement *El, const char* attr_name){
 void Game::insert_wall_(const Surface & sur,
 				Uint16 toplapping, Uint16 x, Uint16 y){
 	// vytvorit a ulozit do seznamu statickych objektu
-	staticMOs_.push_back(new Wall(sur, x, y-toplapping) );
+	staticMOs_.push_back(new Wall(sur, x*CELL_SIZE, (y-toplapping)*CELL_SIZE) );
 	// ulozit do mapy na spravna policka
 	for(Uint16 column=0; column<sur.width()/CELL_SIZE ; ++column){
 		for(Uint16 field=0 ; field<(sur.height()-toplapping)/CELL_SIZE
@@ -826,7 +826,7 @@ void Game::insert_wall_(const Surface & sur,
  */
 void Game::insert_floorobject_(const Surface & sur, Uint16 x, Uint16 y){
 	// vytvorit a ulozit do seznamu statickych objektu
-	staticMOs_.push_back(new Floorobject(sur, x, y));
+	staticMOs_.push_back(new Floorobject(sur, x*CELL_SIZE, y*CELL_SIZE));
 	// ulozit do mapy na spravna policka
 	for(Uint16 column=0; column<sur.width()/CELL_SIZE ; ++column){
 		for(Uint16 field=0 ; field<sur.height()/CELL_SIZE ; ++field){
@@ -850,7 +850,7 @@ void Game::insert_floorobject_(const Surface & sur, Uint16 x, Uint16 y){
 void Game::insert_box_(const Surface & sur_img, const Surface & sur_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y){
 	// vytvorit a ulozit do seznamu dynamickych objektu
-	dynamicMOs_.push_back(new Box(sur_img, sur_burning, toplapping, x, y) );
+	dynamicMOs_.push_back(new Box(sur_img, sur_burning, toplapping, x*CELL_SIZE, y*CELL_SIZE) );
 	// ulozit do mapy na spravna policka
 	for(Uint16 column=0; column<sur_img.width()/CELL_SIZE ; ++column){
 		for(Uint16 field=0 ; field<(sur_img.height()-toplapping)/CELL_SIZE
@@ -870,7 +870,7 @@ void Game::insert_box_(const Surface & sur_img, const Surface & sur_burning,
  */
 void Game::insert_bonus_(const Surface & sur, Uint16 x, Uint16 y){
 	// vytvorit a ulozit do seznamu dynamickych objektu
-	dynamicMOs_.push_back(new Bonus(sur, x, y) );
+	dynamicMOs_.push_back(new Bonus(sur, x*CELL_SIZE, y*CELL_SIZE) );
 	// ulozit do mapy na spravne policko
 	if(x>=map_array_.size() || y>=map_array_[0].size())
 		return;
@@ -904,7 +904,8 @@ void Game::insert_creature_(const Surface & sur_left, const Surface & sur_left_s
 	// vytvorit a ulozit do seznamu dynamickych objektu
 	dynamicMOs_.push_back(new Creature(sur_left, sur_left_s,
 			sur_up, sur_up_s, sur_right, sur_right_s,
-			sur_down, sur_down_s, sur_burned, x, y,
+			sur_down, sur_down_s, sur_burned,
+			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
 			speed, lives, ai) );
 	// ulozit do mapy na spravne policko
 	if(x>=map_array_.size() || y>=map_array_[0].size())

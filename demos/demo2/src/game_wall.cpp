@@ -20,9 +20,6 @@ Wall::Wall(const Surface & sur,	Uint16 x, Uint16 y):
  * @see draw_surface()
  */
 void Wall::draw(SDL_Surface* window){
-	draw_surface(x_*CELL_SIZE,y_*CELL_SIZE,sur_.GetSurface(),window);
+	draw_surface(x_, y_, sur_.GetSurface(),window);
 }
 
-// OBJECT_TYPES Wall::type(){
-// 	return WALL;
-// }

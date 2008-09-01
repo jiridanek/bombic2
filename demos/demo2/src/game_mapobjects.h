@@ -59,4 +59,21 @@ class StaticMO: public MapObject{
 		StaticMO(Uint16 x, Uint16 y):MapObject(x, y) {};
 };
 
+/** Predikát na zjištění typu objektu mapy.
+ * Inicializace typem objektu nebo objektem,
+ * volání operátoru kulatých závorek jako volání logického predikátu.
+ */
+class isTypeOf {
+	public:
+		/// Inicializuje predikát požadovaným typem.
+		explicit isTypeOf(OBJECT_TYPES type);
+		/// Inicializuje predikát požadovaným typem skrze objekt.
+		explicit isTypeOf(MapObject * object);
+		/// Volání predikátu.
+		bool operator()(MapObject * object);
+	private:
+		/// Uložený typ pro srovnání.
+		OBJECT_TYPES type_;
+};
+
 #endif
