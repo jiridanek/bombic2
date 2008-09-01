@@ -18,7 +18,7 @@ int main(int argc, char ** argv){
 	// stav klavesnice
 	Uint8 *keystate = SDL_GetKeyState(0);
 
-	Game game(1, "map_forest");
+	Game game(1, "map_forest_debug");
 
 	// vytvoreni hlavniho okna
 	SDL_Surface *window, *background, *bgrect;
