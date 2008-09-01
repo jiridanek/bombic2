@@ -2,8 +2,8 @@
  * Herní bonus.
  * Game_bonus.h obsahuje třídu obstarávající bonusy.
  */
-#ifndef GAME_BONUS_
-#define GAME_BONUS_
+#ifndef GAME_BONUS_H
+#define GAME_BONUS_H
 
 #include <iostream>
 #include "SDL_lib.h"
@@ -19,11 +19,11 @@ class Bonus: public DynamicMO{
 	public:
 		Bonus(const Surface & sur, Uint16 x, Uint16 y);
 		/// Pohyb.
-		void move();
+		virtual void move();
 		/// Vykreslení.
-		void draw(SDL_Surface *window);
-
-		OBJECT_TYPES type();
+		virtual void draw(SDL_Surface *window);
+		/// Typ objektu je bonus.
+		virtual OBJECT_TYPES type(){ return BONUS; }
 	private:
 		Surface sur_;
 		bool visible_;

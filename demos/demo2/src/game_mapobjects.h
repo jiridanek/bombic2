@@ -4,8 +4,8 @@
  * Velmi obecně implementuje, rozhraní objektů.
  * MapObject je nejobecnější představa objektu, dále jsou zde třídy DynamicMO a StaticMO.
  */
-#ifndef GAME_MAPOBJECTS_
-#define GAME_MAPOBJECTS_
+#ifndef GAME_MAPOBJECTS_H
+#define GAME_MAPOBJECTS_H
 
 #include <iostream>
 #include "SDL_lib.h"
@@ -58,6 +58,5 @@ class StaticMO: public MapObject{
 		/// Nastaví souřadnice objektu.
 		StaticMO(Uint16 x, Uint16 y):MapObject(x, y) {};
 };
-
 
 #endif

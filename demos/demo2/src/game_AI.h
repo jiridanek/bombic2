@@ -2,8 +2,8 @@
  * Umělá inteligence.
  * Game_AI.h obsahuje třídu obstarávající umělou inteligenci.
  */
-#ifndef GAME_AI_
-#define GAME_AI_
+#ifndef GAME_AI_H
+#define GAME_AI_H
 
 #include <iostream>
 #include <vector>
@@ -26,20 +26,20 @@ class Crature
 		if (m_AI != NULL) m_AI->update();
 	}
 	void set_AI(AI *ai);
-	
+
 private:
 	AI *m_AI; // delete in destructor
 };
 
 
 
-class AI 
+class AI
 {
 	void init(Creature *creature);
 	virtual void update();
 
 private:
-	Crature *m_creature;	
+	Crature *m_creature;
 
 };
 

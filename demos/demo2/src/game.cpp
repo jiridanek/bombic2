@@ -864,8 +864,7 @@ void Game::insert_box_(const Surface & sur_img, const Surface & sur_burning,
 
 /** @details
  * Vytvoří bonus na zadaných souřadnicích a vloží ho do mapy.
- * @param sur_img surface vkládaného bonusu (do mapy)
- * @param sur_small surface vkládaného bonusu (do panelu)
+ * @param sur surface vkládaného bonusu (do mapy)
  * @param x souřadnice bonusu v mapě
  * @param y souřadnice bonusu v mapě
  */
@@ -879,12 +878,21 @@ void Game::insert_bonus_(const Surface & sur, Uint16 x, Uint16 y){
 }
 
 /** @details
- * Vytvoří bonus na zadaných souřadnicích a vloží ho do mapy.
- * TODO
- * @param sur_img surface vkládaného bonusu (do mapy)
- * @param sur_small surface vkládaného bonusu (do panelu)
+ * Vytvoří nestvůru na zadaných souřadnicích a vloží ji do mapy.
+ * @param sur_left surface pro otoceni doleva
+ * @param sur_left_s surface stinu pro otoceni doleva
+ * @param sur_up surface pro otoceni nahoru
+ * @param sur_up_s surface stinu pro otoceni nahoru
+ * @param sur_right surface pro otoceni doprava
+ * @param sur_right_s surface stinu pro otoceni doprava
+ * @param sur_down surface pro otoceni down
+ * @param sur_down_s surface stinu pro otoceni down
+ * @param sur_burned surface pro umirani
  * @param x souřadnice bonusu v mapě
  * @param y souřadnice bonusu v mapě
+ * @param speed rychlost v pixelech za jednu casovou jednotku
+ * @param lives pocet zivotu
+ * @param ai kvalita umele inteligence
  */
 void Game::insert_creature_(const Surface & sur_left, const Surface & sur_left_s,
 			const Surface & sur_up, const Surface & sur_up_s,

@@ -2,8 +2,8 @@
  * Bedna.
  * Game_box.h obsahuje třídu obstarávající bednu.
  */
-#ifndef GAME_BOX_
-#define GAME_BOX_
+#ifndef GAME_BOX_H
+#define GAME_BOX_H
 
 #include <iostream>
 #include "SDL_lib.h"
@@ -21,11 +21,11 @@ class Box: public DynamicMO{
 		Box(const Surface & sur_img, const Surface & sur_burning,
 			Uint16 toplapping, Uint16 x, Uint16 y);
 		/// Pohyb.
-		void move();
+		virtual void move();
 		/// Vykreslení.
-		void draw(SDL_Surface *window);
-
-		OBJECT_TYPES type();
+		virtual void draw(SDL_Surface *window);
+		/// Typ objektu je bedna.
+		virtual OBJECT_TYPES type(){ return BOX; }
 	private:
 		Surface sur_img_, sur_burning_;
 		Uint16 toplapping_, height_, width_;

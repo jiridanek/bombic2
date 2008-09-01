@@ -21,8 +21,8 @@ void Box::draw(SDL_Surface *window){
 			sur_img_.GetSurface(), window);
 }
 
-OBJECT_TYPES Box::type(){
-	return BOX;
-}
+// OBJECT_TYPES Box::type(){
+// 	return BOX;
+// }
 
 

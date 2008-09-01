@@ -61,8 +61,8 @@ void Creature::draw(SDL_Surface *window){
 
 }
 
-OBJECT_TYPES Creature::type(){
-	return CREATURE;
-}
+// OBJECT_TYPES Creature::type(){
+// 	return CREATURE;
+// }
 
 

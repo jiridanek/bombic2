@@ -9,6 +9,7 @@
 
 
 /** @details
+ * TODO
  */
 void DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y, Uint16 x, Uint16 y){
 	if(old_x==x && old_y==y) return;
@@ -28,6 +29,7 @@ void DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y, Uint16 x, Uint16 y){
 }
 
 /** @details
+ * TODO
  */
 void DynamicMO::centerPosition(Uint16 & x, Uint16 & y){
 	// nahore

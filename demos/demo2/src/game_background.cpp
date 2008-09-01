@@ -16,9 +16,9 @@ void Background::draw(SDL_Surface* window){
 	draw_surface(x_*CELL_SIZE,y_*CELL_SIZE,sur_clean_.GetSurface(),window);
 }
 
-OBJECT_TYPES Background::type(){
-	return BACKGROUND;
-}
+// OBJECT_TYPES Background::type(){
+// 	return BACKGROUND;
+// }
 
 /************* END of class Background *************/
 

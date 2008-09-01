@@ -1,10 +1,9 @@
 /** @file game_creature.h
- * TODO
- * Herní Creature.
- * Game_creature.h obsahuje třídu obstarávající Creaturey.
+ * Nestvůra.
+ * Game_creature.h obsahuje třídu obstarávající nestvůry.
  */
-#ifndef GAME_CREATURE_
-#define GAME_CREATURE_
+#ifndef GAME_CREATURE_H
+#define GAME_CREATURE_H
 
 #include <iostream>
 #include "SDL_lib.h"
@@ -16,8 +15,9 @@
  * Dynamický objekt, který zabíjí, umírá, chodí nebo létá.
  * Disponuje umělou inteligencí.
  */
-class Creature: public DynamicMO{
+class Creature: public DynamicMO {
 	public:
+		/// Vytvoří nestvůru.
 		Creature(const Surface & sur_left, const Surface & sur_left_s,
 			const Surface & sur_up, const Surface & sur_up_s,
 			const Surface & sur_right, const Surface & sur_right_s,
@@ -25,12 +25,13 @@ class Creature: public DynamicMO{
 			const Surface & sur_burned, Uint16 x, Uint16 y,
 			Uint8 speed, Uint8 lives, Uint8 ai);
 		/// Pohyb.
-		void move();
+		virtual void move();
 		/// Vykreslení.
-		void draw(SDL_Surface *window);
-
-		OBJECT_TYPES type();
+		virtual void draw(SDL_Surface *window);
+		/// Typ objektu je nestvůra.
+		virtual OBJECT_TYPES type(){ return CREATURE; }
 	private:
+		/// Surface pro různé stavy.
 		Surface sur_left_, sur_left_s_, sur_up_, sur_up_s_,
 			sur_right_, sur_right_s_, sur_down_, sur_down_s_, sur_burned_;
 		/// Současné otočení.

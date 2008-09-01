@@ -2,8 +2,8 @@
  * Zed.
  * Game_wall.h obsahuje třídu obstarávající objekty hry typu zed
  */
-#ifndef GAME_WALL_
-#define GAME_WALL_
+#ifndef GAME_WALL_H
+#define GAME_WALL_H
 
 #include <iostream>
 #include "SDL_lib.h"
@@ -17,10 +17,14 @@
  */
 class Wall: public StaticMO{
 	public:
+		/// Vytvoří zeď.
 		Wall(const Surface & sur, Uint16 x, Uint16 y);
-		void draw(SDL_Surface * window);
-		OBJECT_TYPES type();
+		/// Vykreslí zeď.
+		virtual void draw(SDL_Surface * window);
+		/// Typ objektu je zeď.
+		virtual OBJECT_TYPES type(){ return WALL; }
 	private:
+		/// Surface zdi.
 		Surface sur_;
 };
 

@@ -2,8 +2,8 @@
  * Objekt na zemi.
  * Game_floorobject.h obsahuje třídu obstarávající objekty na zemi.
  */
-#ifndef GAME_FLOOROBJECT_
-#define GAME_FLOOROBJECT_
+#ifndef GAME_FLOOROBJECT_H
+#define GAME_FLOOROBJECT_H
 
 #include <iostream>
 #include "SDL_lib.h"
@@ -17,8 +17,9 @@
 class Floorobject: public StaticMO{
 	public:
 		Floorobject(const Surface & sur, Uint16 x, Uint16 y);
-		void draw(SDL_Surface * window);
-		OBJECT_TYPES type();
+		virtual void draw(SDL_Surface * window);
+		/// Typ objekt na zemi.
+		virtual OBJECT_TYPES type(){ return FLOOROBJECT; }
 	private:
 		Surface sur_;
 };

@@ -2,8 +2,8 @@
  * Pozadí mapy.
  * Game_background.h obsahuje třídu obstarávající pozadí mapy.
  */
-#ifndef GAME_BACKGROUND_
-#define GAME_BACKGROUND_
+#ifndef GAME_BACKGROUND_H
+#define GAME_BACKGROUND_H
 
 #include <iostream>
 #include "SDL_lib.h"
@@ -21,8 +21,9 @@ class Background: public StaticMO{
 		Background(const Surface & sur_clean,const Surface & sur_burned,
 				Uint16 x, Uint16 y);
 		/// Vykreslení.
-		void draw(SDL_Surface * window);
-		OBJECT_TYPES type();
+		virtual void draw(SDL_Surface * window);
+		/// Typ objektu je pozadí.
+		virtual OBJECT_TYPES type(){ return BACKGROUND; }
 	private:
 		Surface sur_clean_, sur_burned_;
 };
