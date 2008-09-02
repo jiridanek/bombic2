@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <map>
 
 #include "tinyxml.h"
@@ -30,12 +31,21 @@ template<typename S, typename T> void TiXmlError(S filename, T error){
 	exit(1);
 }
 
+/// Načte ze stringu hodnotu zadané proměnné.
+template<typename T> bool string2x(const std::string & s, T & val){
+	std::stringstream ss(s);
+	ss >> val;
+	return !ss.fail();
+}
+
 /// Mapa číselných atributů indexovaná jménem atrobutu.
 typedef std::map< std::string, int> attr_map_t;
 
 /// Zjištění hodnoty atributu typu string.
 int QueryStringAttribute(TiXmlElement *El, const char* name,
 			std::string* outValue);
+/// Načtení hodnoty atributu.
+bool readAttr(TiXmlElement *El, const char* name, std::string & outValue);
 
 /// Zpracování subelementu.
 void subElement(TiXmlElement *Element, const char* name, attr_map_t & attr_map);

@@ -8,6 +8,16 @@
 #include "game_mapobjects.h"
 
 
+bool isUnder(const MapObject * a, const MapObject * b){
+	return a->getZ() < b->getZ();
+}
+
+Uint16 StaticMO::getZ() const {
+	return 0;
+}
+Uint16 DynamicMO::getZ() const {
+	return y_;
+}
 
 /** @details
  * TODO

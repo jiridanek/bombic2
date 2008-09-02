@@ -75,6 +75,24 @@ int QueryStringAttribute(TiXmlElement *El, const char* name,
 }
 
 /** @details
+ * Vyhledá atribut požadovaného jména,
+ * uloží jeho hodnotu typu string.
+ * @param El element, v němž se hledá atribut
+ * @param name jméno hledaného atributu
+ * @param outValue pointer na string, do kterého se uloží nalezená hodnota
+ * @return Vrací false pokud element nebo jeho atribut atribut neexistuje, jinak true.
+ */
+bool readAttr(TiXmlElement *El, const char* name,
+			std::string & outValue){
+	if(!El) return false;
+	const char* pStr;
+	pStr=El->Attribute(name);
+	if(!pStr) return false;
+	outValue= pStr;
+	return true;
+}
+
+/** @details
  * Najde požadovaný vnořený element a zpracuje jeho argumenty.
  * Při chybě vyvolá výjimku typu string s popisem chyby.
  * @param Element , v němž hledáme vnořený element
@@ -156,16 +174,6 @@ void parseIntAttributes(TiXmlElement *El, attr_map_t & attr_map){
 	}
 }
 
-/*
-template <class T>
-bool stringtox(const string &s, T & val)
-{
-	stringstream ss(s);
-	ss >> val;
-	return !ss.fail();
-}
-*/
-
 /** @details
  * Najde hodnotu zadaného atributu, kontroluje, byl-li zadán.
  * @param attr název atributu
@@ -190,20 +198,13 @@ bool attrIntValue(const char* attr, int & value, const attr_map_t & attr_map ){
  * @param name hodnota stejnojmenného atributu nebo prázdny string
  */
 void attr_Name(TiXmlElement *El, std::string & name){
-	if(!El){
+	if(!El || !readAttr(El,"name", name) ){
 		name.erase();
 		return;
 	}
 
-	switch(QueryStringAttribute(El,"name", &name)){
-		case TIXML_SUCCESS:
-			if(name.empty())
-				throw string("empty value of attribute name.");
-			break;
-		case TIXML_NO_ATTRIBUTE:
-			name.erase();
-			break;
-	}
+	if(name.empty())
+		throw string("empty value of attribute name.");
 }
 
 /**
@@ -216,36 +217,27 @@ void attr_Name(TiXmlElement *El, std::string & name){
  * @param width hodnota stejnojmenného atributu nebo -1
  */
 void attr_HeightWidth(TiXmlElement *El, int & height, int & width){
-	if(!El){
-		height = width = -1;
-		return;
-	}
-
-	switch(El->QueryIntAttribute("height", &height)){
-		case TIXML_SUCCESS:
+	string s_height, s_width;
+	if(readAttr(El,"height", s_height)){
+		if(string2x(s_height, height)){
 			if(height<=0)
 				throw string("value of attribute height must be higher than 0.");
-			break;
-		case TIXML_WRONG_TYPE:
-				throw string("attribute height must be type of int.");
-			break;
-		case TIXML_NO_ATTRIBUTE:
-			height= -1;
-			break;
-	}
+		}
+		else	throw string("attribute height must be type of int.");
 
-	switch(El->QueryIntAttribute("width", &width)){
-		case TIXML_SUCCESS:
+	}
+	else	height= -1;
+
+	if(readAttr(El,"width", s_width)){
+		if(string2x(s_width, width)){
 			if(width<=0)
 				throw string("value of attribute width must be higher than 0.");
-			break;
-		case TIXML_WRONG_TYPE:
-				throw string("attribute width must be type of int.");
-			break;
-		case TIXML_NO_ATTRIBUTE:
-			width= -1;
-			break;
+		}
+		else	throw string("attribute width must be type of int.");
+
+
 	}
+	else	width= -1;
 }
 
 /**
@@ -262,31 +254,24 @@ void attr_XY(TiXmlElement *El, int & x, int & y){
 		x = y = -1;
 		return;
 	}
-	switch(El->QueryIntAttribute("x", &x)){
-		case TIXML_SUCCESS:
+	string s_x, s_y;
+	if(readAttr(El,"x", s_x)){
+		if(string2x(s_x, x)){
 			if(x<0)
 				throw string("value of attribute x must be higher than 0 or equals.");
-			break;
-		case TIXML_WRONG_TYPE:
-				throw string("attribute x must be type of int.");
-			break;
-		case TIXML_NO_ATTRIBUTE:
-				throw string("missing attribute x.");
-			break;
+		}
+		else	throw string("attribute x must be type of int.");
 	}
+	else	throw string("missing attribute x.");
 
-	switch(El->QueryIntAttribute("y", &y)){
-		case TIXML_SUCCESS:
+	if(readAttr(El,"y", s_y)){
+		if(string2x(s_y, y)){
 			if(y<0)
 				throw string("value of attribute y must be higher than 0 or equals.");
-			break;
-		case TIXML_WRONG_TYPE:
-				throw string("attribute y must be type of int.");
-			break;
-		case TIXML_NO_ATTRIBUTE:
-				throw string("missing attribute y.");
-			break;
+		}
+		else	throw string("attribute y must be type of int.");
 	}
+	else	throw string("missing attribute y.");
 }
 
 /**
@@ -301,18 +286,15 @@ void attr_Count(TiXmlElement *El, int & count){
 		count = -1;
 		return;
 	}
-	switch(El->QueryIntAttribute("count", &count)){
-		case TIXML_SUCCESS:
+	string s_count;
+	if(readAttr(El,"count", s_count)){
+		if(string2x(s_count, count)){
 			if(count<1)
 				throw string("attribute count must be higher than 0.");
-			break;
-		case TIXML_WRONG_TYPE:
-				throw string("attribute count must be type of int.");
-			break;
-		case TIXML_NO_ATTRIBUTE:
-				throw string("missing attribute count.");
-			break;
+		}
+		else	throw string("attribute count must be type of int.");
 	}
+	else	throw string("missing attribute count.");
 }
 
 /**
@@ -320,9 +302,9 @@ void attr_Count(TiXmlElement *El, int & count){
  * Naplní parametry mimo prvního hodnotami adekvátních atributů.
  * Pokud atribut chybí nebo je špatného typu, vyvolá výjimku s chybovou hláškou.
  * @param El element jehož hodnoty atributů hledáme
- * @param s hodnota atributu speed
- * @param l hodnota atributu lives
- * @param i hodnota atributu intelligence
+ * @param speed hodnota atributu speed
+ * @param lives hodnota atributu lives
+ * @param intelligence hodnota atributu intelligence
  */
 void attr_SpeedLivesIntelligence(TiXmlElement *El,
 			Uint8 & speed, Uint8 & lives, Uint8 & intelligence){
@@ -330,44 +312,28 @@ void attr_SpeedLivesIntelligence(TiXmlElement *El,
 		speed = lives = intelligence = 0;
 		return;
 	}
-	int s, l, i;
-	switch(El->QueryIntAttribute("speed", &s)){
-		case TIXML_SUCCESS:
-			if(s<0)
+	string s_speed, s_lives, s_intelligence;
+	if(readAttr(El,"speed", s_speed)){
+		if(string2x(s_speed, speed)){
+			if(speed==0)
 				throw string("attribute speed must be higher than 0.");
-			break;
-		case TIXML_WRONG_TYPE:
-				throw string("attribute speed must be type of int.");
-			break;
-		case TIXML_NO_ATTRIBUTE:
-				throw string("missing attribute speed.");
-			break;
+		}
+		else	throw string("attribute speed must be type of unsigned int.");
 	}
-	speed = s;
-	switch(El->QueryIntAttribute("lives", &l)){
-		case TIXML_SUCCESS:
-			if(l<1)
+	else	throw string("missing attribute speed.");
+
+	if(readAttr(El,"lives", s_lives)){
+		if(string2x(s_lives, lives)){
+			if(lives==0)
 				throw string("attribute lives must be higher than 0.");
-			break;
-		case TIXML_WRONG_TYPE:
-				throw string("attribute lives must be type of int.");
-			break;
-		case TIXML_NO_ATTRIBUTE:
-				throw string("missing attribute lives.");
-			break;
+		}
+		else	throw string("attribute lives must be type of unsigned int.");
 	}
-	lives = l;
-	switch(El->QueryIntAttribute("intelligence", &i)){
-		case TIXML_SUCCESS:
-			if(i<0)
-				throw string("attribute intelligence must be higher than 0 or equals.");
-			break;
-		case TIXML_WRONG_TYPE:
-				throw string("attribute intelligence must be type of int.");
-			break;
-		case TIXML_NO_ATTRIBUTE:
-				throw string("missing attribute intelligence.");
-			break;
+	else	throw string("missing attribute lives.");
+
+	if(readAttr(El,"intelligence", s_intelligence)){
+		if(!string2x(s_intelligence, intelligence))
+			throw string("attribute intelligence must be type of unsigned int.");
 	}
-	intelligence = i;
+	else	throw string("missing attribute intelligence.");
 }

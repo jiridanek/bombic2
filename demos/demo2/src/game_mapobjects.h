@@ -23,6 +23,8 @@ class MapObject{
 		MapObject():x_(0),y_(0) {};
 		/// Nastaví souřadnice objektu.
 		MapObject(Uint16 x, Uint16 y):x_(x),y_(y) {};
+		/// z-ová souřadnice.
+		virtual Uint16 getZ() const =0;
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *)=0;
 		/// Typ objektu.
@@ -32,6 +34,9 @@ class MapObject{
 		Uint16 x_, y_;
 };
 
+/// Porovnání obejktů mapy podle souřadnice z.
+bool isUnder(const MapObject * a, const MapObject * b);
+
 /** Dynamický objekt hry.
  * Objekt v mapě, který během hry vzniká, zaniká
  * nebo se v mapě pohybuje. Má také možnost animace.
@@ -40,6 +45,8 @@ class DynamicMO: public MapObject{
 	public:
 		/// Nastaví souřadnice objektu.
 		DynamicMO(Uint16 x, Uint16 y):MapObject(x, y) {};
+		/// z-ová souřadnice.
+		virtual Uint16 getZ() const;
 		/// Pohyb.
 		virtual void move()=0;
 	protected:
@@ -57,6 +64,8 @@ class StaticMO: public MapObject{
 	public:
 		/// Nastaví souřadnice objektu.
 		StaticMO(Uint16 x, Uint16 y):MapObject(x, y) {};
+		/// z-ová souřadnice.
+		virtual Uint16 getZ() const;
 };
 
 /** Predikát na zjištění typu objektu mapy.

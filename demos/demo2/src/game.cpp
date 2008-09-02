@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <algorithm>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
 #include "constants.h"
@@ -520,8 +521,8 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 	vector< pair<Uint16, Uint16> >::iterator it;
 	// naplneni seznamu prazdnych policek
 	map_array_t::value_type::value_type::iterator l_it;
-	for(x=0; x<map_array_.size() ; ++x){
-		for(y=0 ; y<map_array_[x].size() ; ++y){
+	for(x=0; x<static_cast<int>(map_array_.size()) ; ++x){
+		for(y=0 ; y<static_cast<int>(map_array_[x].size()) ; ++y){
 			if(map_array_[x][y].back()->type()==BOX) continue;
 			if(map_array_[x][y].back()->type()==WALL) continue;
 			if(map_array_[x][y].back()->type()==BONUS) continue;
@@ -566,7 +567,9 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			rect.h = static_cast<Uint16>(height);
 			// rychlost, pocet zivotu a inteligence prisery
 			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
-			if(speed>CELL_SIZE/2){
+// 			if(speed>CELL_SIZE/2){ TODO
+			if(static_cast<int>(speed)==static_cast<int>(51)){
+				cout << speed << endl;
 				cerr << "Maximal allowed creature's speed is "
 					<< CELL_SIZE/2 << endl;
 				TiXmlError(filename,"too high value of speed");
@@ -927,24 +930,32 @@ Game::~Game(){
 
 void Game::draw(SDL_Surface* window){
 	Uint16 column, field;
-	map_array_t::value_type::value_type::iterator it;
-
+	map_array_t::value_type::value_type::iterator it, end_it;
+	isTypeOf isFloorobject(FLOOROBJECT);
+	Uint32 fps_last=0; // TODO debug
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
+	// objekty na policku seradim
 	for(field = 0 ; field<map_array_[0].size() ; ++field){
 		for(column=0 ; column< map_array_.size() ; ++column){
 			// vykreslim pozadi
 			it = map_array_[column][field].begin();
+			end_it = map_array_[column][field].end();
+			// TODO debug
+			if((*it)->type()!=BACKGROUND)
+				cout << "Game::draw() : na prvnim miste neni pozadi" << endl;
 			(*it)->draw(window);
 			// vykreslim objekt na zemi
-			if(map_array_[column][field].size()>1){
-				++it;
-				if((*it)->type()==FLOOROBJECT)
-					(*it)->draw(window);
+			while( (it=find_if(++it, end_it, isFloorobject)) !=end_it){
+				(*it)->draw(window);
+// TODO debug
+// fps_last= SDL_fps(fps_last,10);
+// zobrazeni na obrazovku
+// SDL_Flip(window);
+			map_array_[column][field].sort(isUnder);
 			}
 		}
 	}
 
-	Uint32 fps_last=0; // TODO debug
 	// podruhe projdu mapu a vykreslim ostatni objekty
 	for(field = 0 ; field<map_array_[0].size() ; ++field){
 		for(column=0 ; column< map_array_.size() ; ++column){
@@ -957,11 +968,11 @@ void Game::draw(SDL_Surface* window){
 					default: (*it)->draw(window);
 				}
 			}
-		// TODO debug
-		// cekani - chceme presny pocet obrazku za sekundu
-// 		fps_last= SDL_fps(fps_last,10);
-		// zobrazeni na obrazovku
-// 		SDL_Flip(window);
+// TODO debug
+// cekani - chceme presny pocet obrazku za sekundu
+// fps_last= SDL_fps(fps_last,10);
+// zobrazeni na obrazovku
+// SDL_Flip(window);
 
 		}
 	}
