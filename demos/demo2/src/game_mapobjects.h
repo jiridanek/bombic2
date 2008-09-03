@@ -29,8 +29,6 @@ class MapObject{
 		virtual void draw(SDL_Surface *)=0;
 		/// Typ objektu.
 		virtual OBJECT_TYPES type()=0;
-		/// Destructor
-// 		virtual ~MapObject()=0;
 	protected:
 		/// Souřadnice polohy v pixelech.
 		Uint16 x_, y_;
@@ -51,8 +49,6 @@ class DynamicMO: public MapObject{
 		virtual Uint16 getZ() const;
 		/// Pohyb.
 		virtual void move()=0;
-		/// Destructor
-// 		virtual ~DynamicMO()=0;
 	protected:
 		/// Nastavení správného políčka v mapě.
 		void setFieldInMap(Uint16 old_x, Uint16 old_y, Uint16 x, Uint16 y);
@@ -70,8 +66,6 @@ class StaticMO: public MapObject{
 		StaticMO(Uint16 x, Uint16 y):MapObject(x, y) {};
 		/// z-ová souřadnice.
 		virtual Uint16 getZ() const;
-		/// Destructor
-// 		virtual ~StaticMO()=0;
 };
 
 /** Predikát na zjištění typu objektu mapy.

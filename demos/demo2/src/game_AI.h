@@ -58,18 +58,18 @@ housenka.set_AI(new AI_housenka);
 class AI {
 	public:
 		/// Nastaví nové hodnoty souřadnicím.
-		static DIRECTION step(int x, int y, DIRECTION direction, Uint8 speed, Uint8 ai);
+		static DIRECTION step(int x, int y, DIRECTION direction, Uint16 speed, Uint16 ai);
 		/// Inteligence ovládaná klávesnicí. TODO
-		static DIRECTION from_keyboard(Uint16 & x, Uint16 & y, Uint8 speed,
+		static DIRECTION from_keyboard(Uint16 & x, Uint16 & y, Uint16 speed,
 			SDLKey up, SDLKey right, SDLKey down, SDLKey left);
 		/// Umělá inteligence vyspělosti 0.
 		static DIRECTION ai0();
 		/// Umělá inteligence vyspělosti 1.
 		static DIRECTION ai1();
 		/// Pomocná funkce pro ai1, zjištuje, jestli se můžeme posunout daným směrem.
-		static bool ai1_checkfield(Uint8 i);
+		static bool ai1_checkfield(Uint16 i);
 		/// Inicializace proměnných.
-		static void initialize(int x, int y, DIRECTION direction, Uint8 speed);
+		static void initialize(int x, int y, DIRECTION direction, Uint16 speed);
 		/// Pomocná struktura pro otočení a souřadnice při posunu.
 		typedef struct{ DIRECTION d; Uint16 x, y; } Direction_XY;
 	private:

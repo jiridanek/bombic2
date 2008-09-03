@@ -2,6 +2,7 @@
 #include <iostream>
 #include "SDL_lib.h"
 #include "constants.h"
+#include "c++_helper.h"
 #include "game.h"
 #include "game_mapobjects.h"
 #include "game_creature.h"
@@ -12,7 +13,7 @@ Creature::Creature(const Surface & sur_left, const Surface & sur_left_s,
 			const Surface & sur_right, const Surface & sur_right_s,
 			const Surface & sur_down, const Surface & sur_down_s,
 			const Surface & sur_burned, Uint16 x, Uint16 y,
-			Uint8 speed, Uint8 lives, Uint8 ai):
+			Uint16 speed, Uint16 lives, Uint16 ai):
 	DynamicMO(x, y),
         sur_left_(sur_left),sur_left_s_(sur_left_s),
 	sur_up_(sur_up), sur_up_s_(sur_up_s),
@@ -44,21 +45,30 @@ void Creature::move(){
 	centerPosition(x_,y_);
 }
 
+extern Fonts g_font;
+
 void Creature::draw(SDL_Surface *window){
-	int x=x_-sur_left_.width()/2;
+	int x=x_-sur_left_.width()+CELL_SIZE/2;
 	int y=y_-sur_left_.height()+CELL_SIZE/2;
 
-	Surface *sur=0, *sur_s=0;
+	Surface sur=0, sur_s=0;
 	switch(d_){
-		case UP: sur=&sur_up_; sur_s=&sur_up_s_; break;
-		case RIGHT: sur=&sur_right_; sur_s=&sur_right_s_; break;
-		case DOWN: sur=&sur_down_; sur_s=&sur_down_s_; break;
-		case LEFT: sur=&sur_left_; sur_s=&sur_left_s_; break;
-		case BURNED: sur=&sur_burned_; break;
+		case UP: sur=sur_up_; sur_s=sur_up_s_; break;
+		case RIGHT: sur=sur_right_; sur_s=sur_right_s_; break;
+		case DOWN: sur=sur_down_; sur_s=sur_down_s_; break;
+		case LEFT: sur=sur_left_; sur_s=sur_left_s_; break;
+		case BURNED: sur=sur_burned_; break;
 	}
-	if(sur_s && sur) draw_surface(x, y, sur_s->GetSurface(), window);
-	if(sur) draw_surface(x, y, sur->GetSurface(), window);
-
+	if(sur_s.GetSurface())
+		draw_surface(x, y, sur_s.GetSurface(), window);
+	draw_surface(x, y, sur.GetSurface(), window);
+	// TODO debug
+	draw_pixel(window, x_, y_, Color::red);
+	sur = get_text(g_font[10],
+		("["+x2string(x_/CELL_SIZE)+","+x2string(y_/CELL_SIZE)+","+x2string(this->getZ())+"]").c_str(),
+		Color::yellow);
+	draw_surface(x-CELL_SIZE, y, sur.GetSurface(), window);
+	//*/
 }
 
 

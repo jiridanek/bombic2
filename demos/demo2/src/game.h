@@ -43,13 +43,13 @@ class Game {
 		static Game *m_game = NULL;
 */
 		/// Inicializace hry.
-		Game(Uint8 players_count, const std::string & mapname);
+		Game(Uint16 players_count, const std::string & mapname);
 // 			bool deathmatch=false, bool creatures=true, bool bombsatend=false);
 		/// Uvolnění naalokovaaných surface.
 		~Game();
 		/// Nastavení parametrů hráče.
-		void set_player(Uint8 player_num, Uint8 lives,
-			Uint8 bombs, Uint8 flames, Uint8 boots);
+		void set_player(Uint16 player_num, Uint16 lives,
+			Uint16 bombs, Uint16 flames, Uint16 boots);
 		/// TODO Spuštění hry. (zatim jeden tah)
 		void play();
 		/// Vykreslení scény.
@@ -57,8 +57,8 @@ class Game {
 		/// Info o ukončení hry.
 		bool success() const;
 		/// Info o hráči.
-		void player(Uint8 player_num, Uint8 & lives,
-			Uint8 & bombs, Uint8 & flames, Uint8 & boots) const;
+		void player(Uint16 player_num, Uint16 & lives,
+			Uint16 & bombs, Uint16 & flames, Uint16 & boots) const;
 		/// Políčko lze přejít.
 		static bool field_canGoOver(Uint16, Uint16);
 		/// Políčko lze přeletet.
@@ -113,7 +113,7 @@ class Game {
 			const Surface & sur_right, const Surface & sur_right_s,
 			const Surface & sur_down, const Surface & sur_down_s,
 			const Surface & sur_burned, Uint16 x, Uint16 y,
-			Uint8 speed, Uint8 lives, Uint8 ai);
+			Uint16 speed, Uint16 lives, Uint16 ai);
 };
 
 

@@ -307,7 +307,7 @@ void attr_Count(TiXmlElement *El, int & count){
  * @param intelligence hodnota atributu intelligence
  */
 void attr_SpeedLivesIntelligence(TiXmlElement *El,
-			Uint8 & speed, Uint8 & lives, Uint8 & intelligence){
+			Uint16 & speed, Uint16 & lives, Uint16 & intelligence){
 	if(!El){
 		speed = lives = intelligence = 0;
 		return;

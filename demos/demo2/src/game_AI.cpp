@@ -15,7 +15,7 @@ Uint8 *AI::keystate_ = SDL_GetKeyState(0);
 std::vector< AI::Direction_XY > AI::move_;
 /** @details
  */
-DIRECTION AI::step(int x, int y, DIRECTION d, Uint8 speed, Uint8 ai){
+DIRECTION AI::step(int x, int y, DIRECTION d, Uint16 speed, Uint16 ai){
 	initialize(x, y, d, speed);
 	// rozhodneme ktera umela inteligence se pouzije
 	switch(ai){
@@ -34,7 +34,7 @@ DIRECTION AI::ai0(){
 	return ai1();
 }
 
-bool AI::ai1_checkfield(Uint8 i){
+bool AI::ai1_checkfield(Uint16 i){
 	Uint16 x=move_[i].x/CELL_SIZE, y=move_[i].y/CELL_SIZE;
 	if(!Game::field_canGoOver(x,y))
 		return false;
@@ -96,10 +96,8 @@ DIRECTION AI::ai1(){
 	return BURNED;
 }
 
-DIRECTION AI::from_keyboard(Uint16 & x, Uint16 & y, Uint8 speed,
+DIRECTION AI::from_keyboard(Uint16 & x, Uint16 & y, Uint16 speed,
 			SDLKey up, SDLKey right, SDLKey down, SDLKey left){
-	// obnoveni stavu klavesnice
-	SDL_PumpEvents();
 	// inicializace jako bych byl otoceny nahoru
 	initialize(x, y, UP, speed);
 
@@ -134,7 +132,7 @@ DIRECTION AI::from_keyboard(Uint16 & x, Uint16 & y, Uint8 speed,
 
 /**
  */
-void AI::initialize(int x, int y, DIRECTION direction, Uint8 speed){
+void AI::initialize(int x, int y, DIRECTION direction, Uint16 speed){
 	// prvni inicializace
 	if(move_.size()<4) {
 		Direction_XY dirxy;
@@ -150,7 +148,7 @@ void AI::initialize(int x, int y, DIRECTION direction, Uint8 speed){
 
 	// nynejsi souradnice
 	// nastavim smery pro otoceni
-	Uint8 i=0;
+	Uint16 i=0;
 	switch(direction){
 		case UP: i=0; break;
 		case LEFT: i=1; break;

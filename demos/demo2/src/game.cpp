@@ -22,7 +22,7 @@ using namespace std;
 /*************** class Game ******************************/
 Game::map_array_t Game::map_array_;
 
-Game::Game(Uint8 players_count, const std::string & mapname){
+Game::Game(Uint16 players_count, const std::string & mapname){
 // 	bool deathmatch, bool creatures, bool bombsatend){
 	load_map_(mapname);
 }
@@ -112,6 +112,7 @@ void Game::load_background_(const std::string & bgname){
 		for(column=0 ; column< map_array_.size() ; ++column){
 			for(field = 0 ; field<map_array_[column].size() ; ++field){
 				// vytvorit a ulozit do seznamu statickych objektu
+				// TODO debug
 				staticMOs_.push_back(new Background(sur1,sur2, column*CELL_SIZE, field*CELL_SIZE) );
 				// ulozit do mapy na spravne policko
 				map_array_[column][field].push_back(staticMOs_.back());
@@ -511,7 +512,7 @@ void Game::load_bonuses_(TiXmlElement *bonusEl){
 void Game::load_creatures_(TiXmlElement *creaturesEl){
 	string filename;
 	int x,y, count, width, height;
-	Uint8 speed, lives, intelligence;
+	Uint16 speed, lives, intelligence;
 	attr_map_t attr_map;
 	bool is_shadow;
 	Surface sur_src, sur_src_s, sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
@@ -903,7 +904,7 @@ void Game::insert_creature_(const Surface & sur_left, const Surface & sur_left_s
 			const Surface & sur_right, const Surface & sur_right_s,
 			const Surface & sur_down, const Surface & sur_down_s,
 			const Surface & sur_burned, Uint16 x, Uint16 y,
-			Uint8 speed, Uint8 lives, Uint8 ai){
+			Uint16 speed, Uint16 lives, Uint16 ai){
 
 	// vytvorit a ulozit do seznamu dynamickych objektu
 	dynamicMOs_.push_back(new Creature(sur_left, sur_left_s,
@@ -933,7 +934,9 @@ void Game::draw(SDL_Surface* window){
 	Uint16 column, field;
 	map_array_t::value_type::value_type::iterator it, end_it;
 	isTypeOf isFloorobject(FLOOROBJECT);
-// 	Uint32 fps_last=0; // TODO debug
+// TODO debug
+Uint32 fps_last=0;
+Uint8 *keystate = SDL_GetKeyState(0);
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
 	for(field = 0 ; field<map_array_[0].size() ; ++field){
@@ -948,12 +951,8 @@ void Game::draw(SDL_Surface* window){
 			// vykreslim objekt na zemi
 			while( (it=find_if(++it, end_it, isFloorobject)) !=end_it){
 				(*it)->draw(window);
-// TODO debug
-// fps_last= SDL_fps(fps_last,10);
-// zobrazeni na obrazovku
-// SDL_Flip(window);
-			map_array_[column][field].sort(isUnder);
 			}
+			map_array_[column][field].sort(isUnder);
 		}
 	}
 
@@ -968,21 +967,21 @@ void Game::draw(SDL_Surface* window){
 					case FLOOROBJECT: break;
 					default: (*it)->draw(window);
 				}
-			}
 // TODO debug
-// cekani - chceme presny pocet obrazku za sekundu
-// fps_last= SDL_fps(fps_last,10);
-// zobrazeni na obrazovku
-// SDL_Flip(window);
-
+SDL_PumpEvents();
+if(keystate[SDLK_m]){
+	fps_last= SDL_fps(fps_last,10);
+	SDL_Flip(window);
+}
+			}
 		}
 	}
 
 }
 
 /// Nastavení parametrů hráče.
-void Game::set_player(Uint8 player_num, Uint8 lives,
-	Uint8 bombs, Uint8 flames, Uint8 boots){
+void Game::set_player(Uint16 player_num, Uint16 lives,
+	Uint16 bombs, Uint16 flames, Uint16 boots){
 }
 
 /** @details
@@ -1000,8 +999,8 @@ bool Game::success() const{
 	return true;
 }
 /// Info o hráči.
-void Game::player(Uint8 player_num, Uint8 & lives,
-	Uint8 & bombs, Uint8 & flames, Uint8 & boots) const{
+void Game::player(Uint16 player_num, Uint16 & lives,
+	Uint16 & bombs, Uint16 & flames, Uint16 & boots) const{
 }
 
 /**

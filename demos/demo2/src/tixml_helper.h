@@ -2,8 +2,8 @@
  * Soubor obsahující pomocné třídy a funkce ke knihovně tinyXML.
  */
 
-#ifndef TIXML_HELPER_
-#define TIXML_HELPER_
+#ifndef TIXML_HELPER_H
+#define TIXML_HELPER_H
 
 #include <iostream>
 #include <string>
@@ -11,6 +11,7 @@
 #include <map>
 
 #include "tinyxml.h"
+#include "c++_helper.h"
 #include "SDL_lib.h" // TODO
 
 /// Načte dokument a v něm najde RootElement, variabilně kontroluje atribut name.
@@ -29,13 +30,6 @@ template<typename S, typename T> void TiXmlError(S filename, T error){
 	std::cerr << "Error in XML file " << filename
 		<< " occured: " << error << std::endl;
 	exit(1);
-}
-
-/// Načte ze stringu hodnotu zadané proměnné.
-template<typename T> bool string2x(const std::string & s, T & val){
-	std::stringstream ss(s);
-	ss >> val;
-	return !ss.fail();
 }
 
 /// Mapa číselných atributů indexovaná jménem atrobutu.
@@ -64,6 +58,6 @@ void attr_XY(TiXmlElement *El, int & x, int & y);
 /// Zpracování specifických atributů.
 void attr_Count(TiXmlElement *El, int & count);
 /// Zpracování specifických atributů.
-void attr_SpeedLivesIntelligence(TiXmlElement *El, Uint8 & s, Uint8 & l, Uint8 & i);
+void attr_SpeedLivesIntelligence(TiXmlElement *El, Uint16 & s, Uint16 & l, Uint16 & i);
 
 #endif

@@ -14,7 +14,7 @@
 	<left x="52" y="1" toplapping="1" />
 	<right x="256" y="1" toplapping="1" />
 	<!-- specifikace pozadi vnitrnich policek -->
-<!-- 	<clean_bg x="0" y="50" /> -->
-	<clean_bg x="1" y="51" />
+	<clean_bg x="0" y="50" />
+<!-- 	<clean_bg x="1" y="51" /> -->
 	<burned_bg x="460" y="152" />
 </background>

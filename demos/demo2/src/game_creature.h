@@ -23,7 +23,7 @@ class Creature: public DynamicMO {
 			const Surface & sur_right, const Surface & sur_right_s,
 			const Surface & sur_down, const Surface & sur_down_s,
 			const Surface & sur_burned, Uint16 x, Uint16 y,
-			Uint8 speed, Uint8 lives, Uint8 ai);
+			Uint16 speed, Uint16 lives, Uint16 ai);
 		/// Pohyb.
 		virtual void move();
 		/// Vykreslení.
@@ -39,7 +39,7 @@ class Creature: public DynamicMO {
 		/// Současné otočení.
 		DIRECTION d_;
 		/// Rychlost, počet životů, inteligence.
-		Uint8 speed_, lives_, ai_;
+		Uint16 speed_, lives_, ai_;
 };
 
 #endif
