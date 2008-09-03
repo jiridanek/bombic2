@@ -19,7 +19,7 @@ Creature::Creature(const Surface & sur_left, const Surface & sur_left_s,
 	sur_right_(sur_right), sur_right_s_(sur_right_s),
 	sur_down_(sur_down), sur_down_s_(sur_down_s),
 	sur_burned_(sur_burned),
-	speed_(speed), lives_(lives), ai_(ai), d_(UP)
+	d_(UP), speed_(speed), lives_(lives), ai_(ai)
 {
 
 }
@@ -33,7 +33,7 @@ void Creature::move(){
 			case RIGHT: d_=RIGHT; x_+=speed_; break;
 			case DOWN: d_=DOWN; y_+=speed_; break;
 			case LEFT: d_=LEFT; x_-=speed_; break;
-			// defaultne nedela nic
+			default: break;
 		}
 	}
 	else {

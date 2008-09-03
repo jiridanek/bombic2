@@ -20,13 +20,15 @@ class Floorobject: public StaticMO{
 		virtual void draw(SDL_Surface * window);
 		/// Typ objekt na zemi.
 		virtual OBJECT_TYPES type(){ return FLOOROBJECT; }
+		/// Destructor
+		virtual ~Floorobject() {};
 	private:
 		Surface sur_;
 };
 
 /************************************************** /
 
-/** Postava Bombiče.
+/ ** Postava Bombiče.
  * Dynamický objekt, který vytváří bomby,
  * zabíjí, umírá, sbírá bonusy, chodí.
  * /
@@ -38,7 +40,7 @@ class Bomber: public DynamicMO{
 		void draw();
 };
 
-/** Bomba.
+/ ** Bomba.
  * Dynamický objekt vytvářený především bombičem.
  * Vytváří plamen, může se hýbat.
  * /
@@ -50,7 +52,7 @@ class Bomb: public DynamicMO{
 		void draw();
 };
 
-/** Plamen bomby.
+/ ** Plamen bomby.
  * Dynamický objekt vytvářený především bombou.
  * Zabíjí, sbírá (spaluje) bonusy, nehýbe se.
  * /
@@ -61,5 +63,5 @@ class Flame: public DynamicMO{
 		/// Vykreslení.
 		void draw();
 };
-/***********************************************/
+/ ***********************************************/
 #endif

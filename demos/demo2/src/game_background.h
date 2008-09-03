@@ -24,6 +24,8 @@ class Background: public StaticMO{
 		virtual void draw(SDL_Surface * window);
 		/// Typ objektu je pozadí.
 		virtual OBJECT_TYPES type(){ return BACKGROUND; }
+		/// Destructor
+		virtual ~Background() {};
 	private:
 		Surface sur_clean_, sur_burned_;
 };

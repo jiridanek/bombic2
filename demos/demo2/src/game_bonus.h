@@ -24,6 +24,8 @@ class Bonus: public DynamicMO{
 		virtual void draw(SDL_Surface *window);
 		/// Typ objektu je bonus.
 		virtual OBJECT_TYPES type(){ return BONUS; }
+		/// Destructor
+		virtual ~Bonus() {};
 	private:
 		Surface sur_;
 		bool visible_;

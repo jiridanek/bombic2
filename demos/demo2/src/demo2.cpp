@@ -16,12 +16,12 @@ int main(int argc, char ** argv){
 	Uint8 fps=64;
 	Uint32 fps_last= SDL_fps(0,fps);
 	// stav klavesnice
-	Uint8 *keystate = SDL_GetKeyState(0);
+// 	Uint8 *keystate = SDL_GetKeyState(0);
 
 	Game game(1, "map_forest_debug");
 
 	// vytvoreni hlavniho okna
-	SDL_Surface *window, *background, *bgrect;
+	SDL_Surface *window, *background;
 	window_init(&window, 800, 600, "Bombic2 - Demo 2");
 
 	// vytvorit obdelnickovane pozadi

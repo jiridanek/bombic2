@@ -102,7 +102,7 @@ void Game::load_background_(const std::string & bgname){
 	// atributy vnorenych elementu
 	int toplapping;
 	Surface sur_src, sur1, sur2;
-	Uint16 column, field, width, height;
+	Uint16 column, field;
 	try{
 		// nacteni zdrojoveho obrazku
 		sur_src = load_src_surface_(bg_el);
@@ -403,7 +403,8 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 		while(El){
 			attr_XY(El, x, y);
 			// vlozeni do mapy zakazanych policek
-			if(x<noboxes.size() && y<noboxes[0].size())
+			if(x<static_cast<Sint16>(noboxes.size())
+			&& y<static_cast<Sint16>(noboxes[0].size()))
 				noboxes[x][y]=true;
 			El= El->NextSiblingElement("nobox");
 		}
@@ -413,16 +414,16 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 	}
 	// spocitani volnych policek pro nahodne boxy
 	double count_free= 0.0;
-	for(x=0; x<map_array_.size() ; ++x){
-		for(y=0 ; y<map_array_[x].size() ; ++y){
+	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
+		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
 			if(noboxes[x][y]) continue;
 			if(map_array_[x][y].back()->type()!=BACKGROUND) continue;
 			++count_free;
 		}
 	}
 
-	for(x=0; x<map_array_.size() ; ++x){
-		for(y=0 ; y<map_array_[x].size() ; ++y){
+	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
+		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
 			if(noboxes[x][y]) continue;
 			if(map_array_[x][y].back()->type()!=BACKGROUND) continue;
 			// jsem na prazdnem policku
@@ -438,10 +439,10 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 
 void Game::load_bonuses_(TiXmlElement *bonusEl){
 	string filename;
-	int help_var, x,y, count, width, height;
+	int help_var, x,y, count;//, width, height;
 
 	Surface sur_src, sur;
-	SDL_Rect rect;
+// 	SDL_Rect rect;
 	// dvojice velky obrazek do mapy a maly obrazek do panelu
 	vector< Surface > bonuses;
 	vector< Surface >::iterator it;
@@ -480,8 +481,8 @@ void Game::load_bonuses_(TiXmlElement *bonusEl){
 	// spocitani policek pro nahodne bonusy
 	double count_free= 0.0;
 
-	for(x=0; x<map_array_.size() ; ++x){
-		for(y=0 ; y<map_array_[x].size() ; ++y){
+	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
+		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
 			// bonus muzu umistit pouze na policko s bednou
 			if(map_array_[x][y].back()->type()!=BOX) continue;
 			++count_free;
@@ -489,8 +490,8 @@ void Game::load_bonuses_(TiXmlElement *bonusEl){
 	}
 
 	// projdu mapu a rozmistim nahodne bonusy
-	for(x=0; x<map_array_.size() ; ++x){
-		for(y=0 ; y<map_array_[x].size() ; ++y){
+	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
+		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
 			if(map_array_[x][y].back()->type()!=BOX) continue;
 			// rozmistit ci nikoli
 			count = bonuses.size();
@@ -690,7 +691,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 					TiXmlError("in element <boxes ...>: "+s);
 				}
 				// TODO predelat az budou fce typu withoutWall() withoutBox()
-				if(x>=map_array_.size() || y>=map_array_[x].size()) continue;
+				if(x>=static_cast<Sint16>(map_array_.size()) || y>=static_cast<Sint16>(map_array_[x].size()) ) continue;
 				if(map_array_[x][y].back()->type()==BOX) continue;
 				if(map_array_[x][y].back()->type()==WALL) continue;
 				insert_creature_(sur_left, sur_left_s,
@@ -918,7 +919,7 @@ void Game::insert_creature_(const Surface & sur_left, const Surface & sur_left_s
 
 Game::~Game(){
 	// zrusit staticke objekty
-	for(int i=0; i< staticMOs_.size() ; ++i){
+	for(Uint16 i=0; i< staticMOs_.size() ; ++i){
 		delete (staticMOs_[i]);
 	}
 	// zrusit dynamicke objekty
@@ -932,7 +933,7 @@ void Game::draw(SDL_Surface* window){
 	Uint16 column, field;
 	map_array_t::value_type::value_type::iterator it, end_it;
 	isTypeOf isFloorobject(FLOOROBJECT);
-	Uint32 fps_last=0; // TODO debug
+// 	Uint32 fps_last=0; // TODO debug
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
 	for(field = 0 ; field<map_array_[0].size() ; ++field){

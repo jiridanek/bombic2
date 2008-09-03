@@ -30,6 +30,8 @@ class Creature: public DynamicMO {
 		virtual void draw(SDL_Surface *window);
 		/// Typ objektu je nestvůra.
 		virtual OBJECT_TYPES type(){ return CREATURE; }
+		/// Destructor
+		virtual ~Creature() {};
 	private:
 		/// Surface pro různé stavy.
 		Surface sur_left_, sur_left_s_, sur_up_, sur_up_s_,

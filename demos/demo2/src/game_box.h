@@ -26,6 +26,8 @@ class Box: public DynamicMO{
 		virtual void draw(SDL_Surface *window);
 		/// Typ objektu je bedna.
 		virtual OBJECT_TYPES type(){ return BOX; }
+		/// Destructor
+		virtual ~Box() {};
 	private:
 		Surface sur_img_, sur_burning_;
 		Uint16 toplapping_, height_, width_;

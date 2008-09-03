@@ -56,6 +56,7 @@ bool AI::ai1_checkfield(Uint8 i){
 				&& move_[i].x%CELL_SIZE<CELL_SIZE/2)
 					return false;
 			break;
+		default: break;
 	}
 	return true;
 }
@@ -155,6 +156,7 @@ void AI::initialize(int x, int y, DIRECTION direction, Uint8 speed){
 		case LEFT: i=1; break;
 		case DOWN: i=2; break;
 		case RIGHT: i=3; break;
+		default: break;
 	}
 	//souradnice pro otoceni a jedno policko vpred
 	move_[  i%4].d=UP;  	move_[i%4].x=x;      	move_[i%4].y=y-speed;

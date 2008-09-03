@@ -23,6 +23,8 @@ class Wall: public StaticMO{
 		virtual void draw(SDL_Surface * window);
 		/// Typ objektu je zeď.
 		virtual OBJECT_TYPES type(){ return WALL; }
+		/// Destructor
+		virtual ~Wall() {};
 	private:
 		/// Surface zdi.
 		Surface sur_;
