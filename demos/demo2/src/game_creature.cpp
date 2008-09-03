@@ -2,7 +2,7 @@
 #include <iostream>
 #include "SDL_lib.h"
 #include "constants.h"
-#include "c++_helper.h"
+#include "stl_helper.h"
 #include "game.h"
 #include "game_mapobjects.h"
 #include "game_creature.h"

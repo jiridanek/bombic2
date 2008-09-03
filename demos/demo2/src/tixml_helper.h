@@ -11,7 +11,7 @@
 #include <map>
 
 #include "tinyxml.h"
-#include "c++_helper.h"
+#include "stl_helper.h"
 #include "SDL_lib.h" // TODO
 
 /// Načte dokument a v něm najde RootElement, variabilně kontroluje atribut name.

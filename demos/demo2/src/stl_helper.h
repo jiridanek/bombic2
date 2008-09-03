@@ -1,9 +1,9 @@
-/** @file c++_helper.h
+/** @file stl_helper.h
  * Soubor obsahující pomocné třídy a funkce na obecné úrovni.
  */
 
-#ifndef CPP_HELPER_H
-#define CPP_HELPER_H
+#ifndef STL_HELPER_H
+#define STL_HELPER_H
 
 #include <iostream>
 #include <string>
