@@ -69,16 +69,11 @@ void Game::load_map_(const std::string & mapname){
 
 	// nacteni pozadi
 	string str;
-
-	switch(QueryStringAttribute(map_el,"background", &str)){
-		case TIXML_SUCCESS:
-			// nacteni pozadi mapy
-			load_background_(str);
-			break;
-		case TIXML_NO_ATTRIBUTE:
-			TiXmlError(filename,"missing attribute background in <map ...>");
-			break;
-	}
+	if(!readStringAttr(map_el, "background", str))
+		TiXmlError(filename, "missing attribute background in <map ...>");
+	else
+		// nacteni pozadi mapy
+		load_background_(str);
 
 	// nacteni objektu na zemi
 	load_floorobjects_(map_el->FirstChildElement("floorobject"));
@@ -440,10 +435,9 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 
 void Game::load_bonuses_(TiXmlElement *bonusEl){
 	string filename;
-	int help_var, x,y, count;//, width, height;
+	int help_var, x,y, count;
 
 	Surface sur_src, sur;
-// 	SDL_Rect rect;
 	// dvojice velky obrazek do mapy a maly obrazek do panelu
 	vector< Surface > bonuses;
 	vector< Surface >::iterator it;
@@ -513,7 +507,6 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 	string filename;
 	int x,y, count, width, height;
 	Uint16 speed, lives, intelligence;
-	attr_map_t attr_map;
 	bool is_shadow;
 	Surface sur_src, sur_src_s, sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
 		sur_down, sur_down_s, sur_burned;
@@ -569,115 +562,81 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			rect.h = static_cast<Uint16>(height);
 			// rychlost, pocet zivotu a inteligence prisery
 			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
-// 			if(speed>CELL_SIZE/2){ TODO
-			if(static_cast<int>(speed)==static_cast<int>(51)){
-				cout << speed << endl;
+			if(speed>CELL_SIZE/2){
 				cerr << "Maximal allowed creature's speed is "
 					<< CELL_SIZE/2 << endl;
 				TiXmlError(filename,"too high value of speed");
 			}
 
 			// left
-			attr_map.clear();
-			subElement(rootEl,"left",attr_map);
-			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"missing attribute x in <left>");
-			else rect.x= static_cast<Sint16>(x);
-			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"missing attribute y in <left>");
-			else	rect.y= static_cast<Sint16>(y);
+			El = subElement(rootEl,"left");
+			attr_XY(El, x, y);
+			rect.x= static_cast<Sint16>(x);
+			rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_left= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_left.GetSurface(), 0);
 			if(is_shadow){
-				if(!attrIntValue("shadow_x",x,attr_map))
-					TiXmlError(filename,"missing attribute shadow_x in <left>");
-				else rect.x= static_cast<Sint16>(x);
-				if(!attrIntValue("shadow_y",y,attr_map))
-					TiXmlError(filename,"missing attribute shadow_y in <left>");
-				else	rect.y= static_cast<Sint16>(y);
+				attr_ShadowXY(El, x, y);
+				rect.x= static_cast<Sint16>(x);
+				rect.y= static_cast<Sint16>(y);
 				// preneseni obrazku do noveho surface
 				sur_left_s= create_transparent_surface(width, height, true);
 				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_left_s.GetSurface(), 0);
 			}
 			// up
-			attr_map.clear();
-			subElement(rootEl,"up",attr_map);
-			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"missing attribute x in <up>");
-			else rect.x= static_cast<Sint16>(x);
-			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"missing attribute y in <up>");
-			else	rect.y= static_cast<Sint16>(y);
+			El = subElement(rootEl,"up");
+			attr_XY(El, x, y);
+			rect.x= static_cast<Sint16>(x);
+			rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_up= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_up.GetSurface(), 0);
 			if(is_shadow){
-				if(!attrIntValue("shadow_x",x,attr_map))
-					TiXmlError(filename,"missing attribute shadow_x in <up>");
-				else rect.x= static_cast<Sint16>(x);
-				if(!attrIntValue("shadow_y",y,attr_map))
-					TiXmlError(filename,"missing attribute shadow_y in <up>");
-				else	rect.y= static_cast<Sint16>(y);
+				attr_ShadowXY(El, x, y);
+				rect.x= static_cast<Sint16>(x);
+				rect.y= static_cast<Sint16>(y);
 				// preneseni obrazku do noveho surface
 				sur_up_s= create_transparent_surface(width, height, true);
 				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_up_s.GetSurface(), 0);
 			}
 			// right
-			attr_map.clear();
-			subElement(rootEl,"right",attr_map);
-			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"missing attribute x in <right>");
-			else rect.x= static_cast<Sint16>(x);
-			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"missing attribute y in <right>");
-			else	rect.y= static_cast<Sint16>(y);
+			El = subElement(rootEl,"right");
+			attr_XY(El, x, y);
+			rect.x= static_cast<Sint16>(x);
+			rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_right= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_right.GetSurface(), 0);
 			if(is_shadow){
-				if(!attrIntValue("shadow_x",x,attr_map))
-					TiXmlError(filename,"missing attribute shadow_x in <right>");
-				else rect.x= static_cast<Sint16>(x);
-				if(!attrIntValue("shadow_y",y,attr_map))
-					TiXmlError(filename,"missing attribute shadow_y in <right>");
-				else	rect.y= static_cast<Sint16>(y);
+				attr_ShadowXY(El, x, y);
+				rect.x= static_cast<Sint16>(x);
+				rect.y= static_cast<Sint16>(y);
 				// preneseni obrazku do noveho surface
 				sur_right_s= create_transparent_surface(width, height, true);
 				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_right_s.GetSurface(), 0);
 			}
 			// down
-			attr_map.clear();
-			subElement(rootEl,"down",attr_map);
-			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"missing attribute x in <down>");
-			else rect.x= static_cast<Sint16>(x);
-			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"missing attribute y in <down>");
-			else	rect.y= static_cast<Sint16>(y);
+			El = subElement(rootEl,"down");
+			attr_XY(El, x, y);
+			rect.x= static_cast<Sint16>(x);
+			rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_down= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_down.GetSurface(), 0);
 			if(is_shadow){
-				if(!attrIntValue("shadow_x",x,attr_map))
-					TiXmlError(filename,"missing attribute shadow_x in <down>");
-				else rect.x= static_cast<Sint16>(x);
-				if(!attrIntValue("shadow_y",y,attr_map))
-					TiXmlError(filename,"missing attribute shadow_y in <down>");
-				else	rect.y= static_cast<Sint16>(y);
+				attr_ShadowXY(El, x, y);
+				rect.x= static_cast<Sint16>(x);
+				rect.y= static_cast<Sint16>(y);
 				// preneseni obrazku do noveho surface
 				sur_down_s= create_transparent_surface(width, height, true);
 				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_down_s.GetSurface(), 0);
 			}
 			// burned
-			attr_map.clear();
-			subElement(rootEl,"burned",attr_map);
-			if(!attrIntValue("x",x,attr_map))
-				TiXmlError(filename,"missing attribute x in <burned>");
-			else rect.x= static_cast<Sint16>(x);
-			if(!attrIntValue("y",y,attr_map))
-				TiXmlError(filename,"missing attribute y in <burned>");
-			else	rect.y= static_cast<Sint16>(y);
+			El = subElement(rootEl,"burned");
+			attr_XY(El, x, y);
+			rect.x= static_cast<Sint16>(x);
+			rect.y= static_cast<Sint16>(y);
 			// preneseni obrazku do noveho surface
 			sur_burned= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_burned.GetSurface(), 0);
@@ -689,7 +648,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 					attr_XY(El, x, y);
 				}
 				catch(string s){
-					TiXmlError("in element <boxes ...>: "+s);
+					TiXmlError("in element <creature ...>: "+s);
 				}
 				// TODO predelat az budou fce typu withoutWall() withoutBox()
 				if(x>=static_cast<Sint16>(map_array_.size()) || y>=static_cast<Sint16>(map_array_[x].size()) ) continue;
@@ -730,32 +689,29 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
  * @param toplapping reference na int, do které se přiřadí nalezená (nebo defaultní) hodnota
  * @param sur_src zdrojový surface, ze kterého se vyjme výsledný surface
  * @return Výsledný surface patřící nalezenému podelementu.
- * @see subElement(), attrIntValue()
+ * @see subElement(), readAttr()
  */
 SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 				int & toplapping, SDL_Surface* sur_src){
-	attr_map_t attr_map;
 	SDL_Rect rect;
 	SDL_Surface* sur_dst;
 	int x, y, w, h;
-	subElement(El,name_subEl,attr_map);
-	if(!attrIntValue("x",x,attr_map))
-		throw string("missing attribute x");
-	else	rect.x= static_cast<Sint16>(x);
-	if(!attrIntValue("y",y,attr_map))
-		throw string("missing attribute y");
-	else	rect.y= static_cast<Sint16>(y);
-	if(!attrIntValue("width",w,attr_map))
+	El = subElement(El,name_subEl);
+	readAttr(El, "x", x);
+	rect.x= static_cast<Sint16>(x);
+	readAttr(El, "y", y);
+	rect.y= static_cast<Sint16>(y);
+	if(!readAttr(El, "width", w, false))
 			rect.w= CELL_SIZE;
 	else if(w<1)
 		throw string("the value of width must be higher than 0");
 	else	rect.w= CELL_SIZE*static_cast<Uint16>(w);
-	if(!attrIntValue("height",h,attr_map))
+	if(!readAttr(El, "height", h, false))
 			rect.h= CELL_SIZE;
 	else if(h<1)
 		throw string("the value of height must be higher than 0");
 	else	rect.h= CELL_SIZE*static_cast<Uint16>(h);
-	if(!attrIntValue("toplapping",toplapping,attr_map))
+	if(!readAttr(El, "toplapping", toplapping, false))
 		toplapping=0;
 	else if(toplapping<0)
 		throw string("the value of toplapping must be higher than 0 or equal");
@@ -781,20 +737,13 @@ SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 SDL_Surface* Game::load_src_surface_(TiXmlElement *El, const char* attr_name){
 	string str;
 	SDL_Surface *sur_SDL;
-	switch(QueryStringAttribute(El,attr_name, &str)){
-		case TIXML_SUCCESS:
-			// zdrojovy  obrazek z disku
-			sur_SDL=SDL_LoadBMP(str.c_str());
-			if(!sur_SDL)
-				throw string("the value of ")+attr_name+" isn't valid path to file with BMP.";
-			// nastavim pruhlednost
-			set_transparent_color(sur_SDL, Color::transparent);
-			// vytvorim defaultni surface
-			break;
-		case TIXML_NO_ATTRIBUTE:
-			throw string("missing attribute ")+attr_name;
-			break;
-	}
+
+	readAttr(El, attr_name, str);
+	sur_SDL=SDL_LoadBMP(str.c_str());
+	if(!sur_SDL)
+		throw string("the value of ")+attr_name+" isn't valid path to file with BMP.";
+	// nastavim pruhlednost
+	set_transparent_color(sur_SDL, Color::transparent);
 	return sur_SDL;
 }
 

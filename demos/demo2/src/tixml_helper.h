@@ -32,22 +32,40 @@ template<typename S, typename T> void TiXmlError(S filename, T error){
 	exit(1);
 }
 
-/// Mapa číselných atributů indexovaná jménem atrobutu.
-typedef std::map< std::string, int> attr_map_t;
+/// Načtení hodnoty atributu do stringu.
+bool readStringAttr(TiXmlElement *El, const char* name, std::string & outValue);
 
-/// Zjištění hodnoty atributu typu string.
-int QueryStringAttribute(TiXmlElement *El, const char* name,
-			std::string* outValue);
-/// Načtení hodnoty atributu.
-bool readAttr(TiXmlElement *El, const char* name, std::string & outValue);
+/** Načtení hodnoty atributu do proměnné.
+ * Uloží do proměnné hodnotu zadaného atributu,
+ * pokud atribut nebo element neexistuje a parametr force není nastaven na false,
+ * vyvolá výjimku string s chybovým hlášením,
+ * pokud nelze hodnota atributu přetypovat vyvolá se vždy výjimka typu string.
+ * @param El element, jehož atribut hledáme
+ * @param name jméno atributu, jehož hodnotu chceme získat
+ * @param outValue šablonovaná proměnná, do které se uloží hodnota nalezeného atributu
+ * @param force nepovinný parametr, pokud je
+ * @return Vrací TRUE při úspěchu, jinak false.
+ */
+template<typename T>
+		bool readAttr(TiXmlElement *El, const char* name,
+				T & outValue, bool force=true){
+	std::string strValue;
+	if(readStringAttr(El,name, strValue)){
+		if(!string2x(strValue, outValue))
+			throw std::string("wrong type of attribute ")+name+
+					" in element <"+El->Value()+">.";
+		return true;
+	}
+	else if(force)
+			throw std::string("missing attribute ")+name+
+					" in element <"+El->Value()+">.";
+	else return false;
+}
 
-/// Zpracování subelementu.
-void subElement(TiXmlElement *Element, const char* name, attr_map_t & attr_map);
-/// Zpracování atributů typu int.
-void parseIntAttributes(TiXmlElement *El, attr_map_t & attr_map);
-/// Vyhledá hodnotu atributu.
-bool attrIntValue(const char* attr , int & value, const attr_map_t & attr_map );
 
+
+/// Nalezení subelementu.
+TiXmlElement* subElement(TiXmlElement *Element, const char* name);
 
 /// Zpracování specifických atributů.
 void attr_Name(TiXmlElement *El, std::string & name);
@@ -55,6 +73,8 @@ void attr_Name(TiXmlElement *El, std::string & name);
 void attr_HeightWidth(TiXmlElement *El, int & height, int & width);
 /// Zpracování specifických atributů.
 void attr_XY(TiXmlElement *El, int & x, int & y);
+/// Zpracování specifických atributů.
+void attr_ShadowXY(TiXmlElement *El, int & x, int & y);
 /// Zpracování specifických atributů.
 void attr_Count(TiXmlElement *El, int & count);
 /// Zpracování specifických atributů.
