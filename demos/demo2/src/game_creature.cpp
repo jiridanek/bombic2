@@ -62,7 +62,7 @@ void Creature::draw(SDL_Surface *window){
 	if(sur_s.GetSurface())
 		draw_surface(x, y, sur_s.GetSurface(), window);
 	draw_surface(x, y, sur.GetSurface(), window);
-	// TODO debug
+	/*/ TODO debug
 	draw_pixel(window, x_, y_, Color::red);
 	sur = get_text(g_font[10],
 		("["+x2string(x_/CELL_SIZE)+","+x2string(y_/CELL_SIZE)+","+x2string(this->getZ())+"]").c_str(),

@@ -12,7 +12,6 @@ using namespace std;
 Fonts g_font("fonts/verdana.ttf");
 
 int main(int argc, char ** argv){
-
 	srand(time(0));
 	// konstrukce zarizujici spravny pocet obrazku za sekundu
 	Uint8 fps=64;
@@ -20,20 +19,21 @@ int main(int argc, char ** argv){
 	// stav klavesnice
 	Uint8 *keystate = SDL_GetKeyState(0);
 
-	Game game(1, "map_forest_debug");
-
 	// vytvoreni hlavniho okna
-	SDL_Surface *window, *background, *pause;
-	window_init(&window, 800, 600, "Bombic2 - Demo 2");
+	SDL_Surface *window=0, *background=0, *pause=0;
 
-	// vytvorit pozadi
-	background = create_surface(640, 480, Color::navy);
-	// text napisu
-	pause = get_text(g_font[15], "PAUSE", Color::white);
-
-	// iterace dokud neni vyvolano zavreni okna
 	int return_val=0;
 	try {
+		window_init(&window, 800, 600, "Bombic2 - Demo 2");
+
+		// vytvorit pozadi
+		background = create_surface(640, 480, Color::navy);
+		// text napisu
+		pause = get_text(g_font[15], "PAUSE", Color::white);
+
+		Game game(1, "map_forest_debug");
+
+		// iterace dokud neni vyvolano zavreni okna
 		while(!get_event_isquit(SDLK_ESCAPE)) {
 			// obnoveni stavu klavesnice
 			SDL_PumpEvents();// obnoveni stavu klavesnice
@@ -59,9 +59,9 @@ int main(int argc, char ** argv){
 	catch(int val){
 		return_val = val;
 	}
-	SDL_FreeSurface(window);
-	SDL_FreeSurface(background);
-	SDL_FreeSurface(pause);
+	if(window) SDL_FreeSurface(window);
+	if(background) SDL_FreeSurface(background);
+	if(pause) SDL_FreeSurface(pause);
 	return return_val;
 }
 
