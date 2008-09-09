@@ -12,6 +12,7 @@ using namespace std;
 Fonts g_font("fonts/verdana.ttf");
 
 int main(int argc, char ** argv){
+
 	srand(time(0));
 	// konstrukce zarizujici spravny pocet obrazku za sekundu
 	Uint8 fps=64;
@@ -31,31 +32,36 @@ int main(int argc, char ** argv){
 	pause = get_text(g_font[15], "PAUSE", Color::white);
 
 	// iterace dokud neni vyvolano zavreni okna
-	while(!get_event_isquit(SDLK_ESCAPE)) {
-		// obnoveni stavu klavesnice
-		SDL_PumpEvents();// obnoveni stavu klavesnice
-		// pauza
-		if(keystate[SDLK_SPACE]){
-			draw_surface(window->h/2, window->w/2, pause, window);
+	int return_val=0;
+	try {
+		while(!get_event_isquit(SDLK_ESCAPE)) {
+			// obnoveni stavu klavesnice
+			SDL_PumpEvents();// obnoveni stavu klavesnice
+			// pauza
+			if(keystate[SDLK_SPACE]){
+				draw_surface(window->h/2, window->w/2, pause, window);
+				SDL_Flip(window);
+				while(!wait_event_isquit(SDLK_SPACE)) ;
+				SDL_Delay(500);
+			}
+
+			game.play();
+			// vyprazdneni celeho okna
+			draw_surface(0,0, background, window);
+			game.draw(window);
+
+			// cekani - chceme presny pocet obrazku za sekundu
+			fps_last= SDL_fps(fps_last,fps);
+			// zobrazeni na obrazovku
 			SDL_Flip(window);
-			while(!wait_event_isquit(SDLK_SPACE)) ;
-			SDL_Delay(500);
 		}
-
-		game.play();
-		// vyprazdneni celeho okna
-		draw_surface(0,0, background, window);
-		game.draw(window);
-
-		// cekani - chceme presny pocet obrazku za sekundu
-		fps_last= SDL_fps(fps_last,fps);
-		// zobrazeni na obrazovku
-		SDL_Flip(window);
 	}
-
+	catch(int val){
+		return_val = val;
+	}
 	SDL_FreeSurface(window);
 	SDL_FreeSurface(background);
 	SDL_FreeSurface(pause);
-	return 0;
+	return return_val;
 }
 
