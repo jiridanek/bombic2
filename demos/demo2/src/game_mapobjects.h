@@ -10,8 +10,13 @@
 #include <iostream>
 #include "SDL_lib.h"
 
-/// Všechny typy obejktů
+/** Všechny typy obejktů.
+ * @see MapObject::type() and derived
+ * @see isTypeOf::clear()
+ */
 enum OBJECT_TYPES { BACKGROUND, FLOOROBJECT, WALL, BOX, BONUS, CREATURE, PLAYER };
+#define OBJECT_TYPES_COUNT 7
+
 /// Čtyři směry + hoření
 enum DIRECTION { UP, RIGHT, DOWN, LEFT, BURNED };
 
@@ -74,15 +79,19 @@ class StaticMO: public MapObject{
  */
 class isTypeOf {
 	public:
+		/// Bez požadovaného typu.
+		isTypeOf();
 		/// Inicializuje predikát požadovaným typem.
 		explicit isTypeOf(OBJECT_TYPES type);
-		/// Inicializuje predikát požadovaným typem skrze objekt.
-		explicit isTypeOf(MapObject * object);
+		/// Přidání typu.
+		void addType(OBJECT_TYPES type);
+		/// Vyprázdnění typů.
+		void clear();
 		/// Volání predikátu.
 		bool operator()(MapObject * object);
 	private:
-		/// Uložený typ pro srovnání.
-		OBJECT_TYPES type_;
+		/// Uložené typy pro srovnání.
+		std::vector<bool> types_;
 };
 
 #endif

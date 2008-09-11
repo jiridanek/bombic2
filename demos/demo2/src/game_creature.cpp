@@ -15,34 +15,24 @@ Creature::Creature(const Surface & sur_left, const Surface & sur_left_s,
 			const Surface & sur_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives, Uint16 ai):
 	DynamicMO(x, y),
-        sur_left_(sur_left),sur_left_s_(sur_left_s),
+	sur_left_(sur_left),sur_left_s_(sur_left_s),
 	sur_up_(sur_up), sur_up_s_(sur_up_s),
 	sur_right_(sur_right), sur_right_s_(sur_right_s),
 	sur_down_(sur_down), sur_down_s_(sur_down_s),
-	sur_burned_(sur_burned),
-	d_(UP), speed_(speed), lives_(lives), ai_(ai)
-{
+	sur_burned_(sur_burned), d_(static_cast<DIRECTION>(rand()%4)),
+	speed_(speed), lives_(lives), ai_(AI::new_ai(this, ai)) {}
 
+Creature::~Creature(){
+	if(ai_)
+		delete ai_;
 }
-
 
 void Creature::move(){
 	Uint16 old_x=x_, old_y=y_;
-	if(ai_<10){
-		switch(AI::step(x_,y_,d_,speed_,ai_)){
-			case UP: d_=UP; y_-=speed_; break;
-			case RIGHT: d_=RIGHT; x_+=speed_; break;
-			case DOWN: d_=DOWN; y_+=speed_; break;
-			case LEFT: d_=LEFT; x_-=speed_; break;
-			default: break;
-		}
-	}
-	else {
-		DIRECTION d=AI::from_keyboard(x_,y_,speed_,SDLK_UP,SDLK_RIGHT,SDLK_DOWN,SDLK_LEFT);
-		if(d!=BURNED) d_=d;
-	}
-	setFieldInMap(old_x/CELL_SIZE, old_y/CELL_SIZE, x_/CELL_SIZE, y_/CELL_SIZE);
+	if(ai_) ai_->move();
+
 	centerPosition(x_,y_);
+	setFieldInMap(old_x/CELL_SIZE, old_y/CELL_SIZE, x_/CELL_SIZE, y_/CELL_SIZE);
 }
 
 extern Fonts g_font;
@@ -70,5 +60,3 @@ void Creature::draw(SDL_Surface *window){
 	draw_surface(x-CELL_SIZE, y, sur.GetSurface(), window);
 	//*/
 }
-
-

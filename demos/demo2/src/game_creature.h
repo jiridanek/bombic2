@@ -10,12 +10,15 @@
 #include "game.h"
 #include "game_mapobjects.h"
 
+class AI; // forward declaration
+
 
 /** Nestvůra.
  * Dynamický objekt, který zabíjí, umírá, chodí nebo létá.
  * Disponuje umělou inteligencí.
  */
 class Creature: public DynamicMO {
+	friend class AI;
 	public:
 		/// Vytvoří nestvůru.
 		Creature(const Surface & sur_left, const Surface & sur_left_s,
@@ -31,7 +34,7 @@ class Creature: public DynamicMO {
 		/// Typ objektu je nestvůra.
 		virtual OBJECT_TYPES type(){ return CREATURE; }
 		/// Destructor
-		virtual ~Creature() {};
+		virtual ~Creature();
 	private:
 		/// Surface pro různé stavy.
 		Surface sur_left_, sur_left_s_, sur_up_, sur_up_s_,
@@ -39,7 +42,8 @@ class Creature: public DynamicMO {
 		/// Současné otočení.
 		DIRECTION d_;
 		/// Rychlost, počet životů, inteligence.
-		Uint16 speed_, lives_, ai_;
+		Uint16 speed_, lives_;
+		AI* ai_;
 };
 
 #endif

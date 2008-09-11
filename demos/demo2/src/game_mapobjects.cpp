@@ -8,6 +8,7 @@
 #include "game_mapobjects.h"
 
 
+/**************** getZ **************************/
 bool isUnder(const MapObject * a, const MapObject * b){
 	return a->getZ() < b->getZ();
 }
@@ -18,6 +19,7 @@ Uint16 StaticMO::getZ() const {
 Uint16 DynamicMO::getZ() const {
 	return y_;
 }
+/********************** DynamicMO ****************/
 
 /** @details
  * TODO
@@ -60,13 +62,24 @@ void DynamicMO::centerPosition(Uint16 & x, Uint16 & y){
 	}
 }
 
+/**************** isTypeOf *************************/
 
-isTypeOf::isTypeOf(OBJECT_TYPES type):
-	type_(type) {}
+isTypeOf::isTypeOf(){
+	clear();
+}
+isTypeOf::isTypeOf(OBJECT_TYPES type){
+	clear();
+	addType(type);
+}
 
-isTypeOf::isTypeOf(MapObject * object):
-	type_(object->type()) {}
+void isTypeOf::addType(OBJECT_TYPES type){
+	types_[type]=true;
+}
+void isTypeOf::clear(){
+	types_.clear();
+	types_.insert(types_.end(), OBJECT_TYPES_COUNT, false);
+}
 
 bool isTypeOf::operator()(MapObject * object){
-	return object->type()==type_;
+	return types_[object->type()];
 }

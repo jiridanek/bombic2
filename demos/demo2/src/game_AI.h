@@ -1,6 +1,6 @@
 /** @file game_AI.h
  * Umělá inteligence.
- * Game_AI.h obsahuje třídu obstarávající umělou inteligenci.
+ * Game_AI.h obsahuje třídy obstarávající umělou inteligenci.
  */
 #ifndef GAME_AI_H
 #define GAME_AI_H
@@ -10,6 +10,7 @@
 #include "SDL_lib.h"
 #include "game.h"
 #include "game_mapobjects.h"
+#include "game_creature.h"
 
 /** Umělá inteligence.
  * Třída je postavena na tom, že objekt stojící na nějakém políčku v nějaké mapě
@@ -57,28 +58,51 @@ housenka.set_AI(new AI_housenka);
 
 class AI {
 	public:
-		/// Nastaví nové hodnoty souřadnicím.
-		static DIRECTION step(int x, int y, DIRECTION direction, Uint16 speed, Uint16 ai);
-		/// Inteligence ovládaná klávesnicí. TODO
-		static DIRECTION from_keyboard(Uint16 & x, Uint16 & y, Uint16 speed,
-			SDLKey up, SDLKey right, SDLKey down, SDLKey left);
-		/// Umělá inteligence vyspělosti 0.
-		static DIRECTION ai0();
-		/// Umělá inteligence vyspělosti 1.
-		static DIRECTION ai1();
-		/// Pomocná funkce pro ai1, zjištuje, jestli se můžeme posunout daným směrem.
-		static bool ai1_checkfield(Uint16 i);
-		/// Inicializace proměnných.
-		static void initialize(int x, int y, DIRECTION direction, Uint16 speed);
+		/// Vytvoří umělou inteligenci.
+		static AI* new_ai(Creature *creature, Uint16 intelligence);
+		/// Uloží rodičovskou nestvůru.
+		AI(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move()=0;
 		/// Pomocná struktura pro otočení a souřadnice při posunu.
-		typedef struct{ DIRECTION d; Uint16 x, y; } Direction_XY;
+		typedef struct{ DIRECTION d; Uint16 x, y; } position_t;
+		/// Destruktor.
+		virtual ~AI() {};
+	protected:
+		/// Nestvůra, které inteligence patří.
+		Creature *creature_;
+		/// Seznam pozic pro každý krok.
+		std::vector<position_t > positions_;
+		/// Uloží cílové pozice pro každé otočení.
+		void updatePositions();
+		/// Nastaví nestvůře novou pozici.
+		void setPosition(const position_t & position);
+};
+
+class AI_0 : public AI {
+	public:
+		/// Zavolá konstruktor AI
+		AI_0(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Destruktor.
+		virtual ~AI_0() {};
 	private:
-		/// Souřadnice v políčkách mapy.
-		static Uint16 x_, y_;
-		/// Uložení směru a souřadnic pro každé otočení.
-		static std::vector<Direction_XY > move_;
-		/// Stav klávesnice.
-		static Uint8 *keystate_;
+		/// Zjistí, zda je možné vstoupit na políčko.
+		bool checkfield_(const position_t & position);
+};
+
+class AI_1 : public AI {
+	public:
+		/// Zavolá konstruktor AI
+		AI_1(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Destruktor.
+		virtual ~AI_1() {};
+	private:
+		/// Zjistí, zda je možné vstoupit na políčko.
+		bool checkfield_(const position_t & position);
 };
 
 #endif
