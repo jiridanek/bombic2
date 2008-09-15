@@ -14,7 +14,7 @@ Fonts g_font("fonts/verdana.ttf");
 int main(int argc, char ** argv){
 	srand(time(0));
 	// konstrukce zarizujici spravny pocet obrazku za sekundu
-	Uint8 fps=64;
+	Uint8 fps=8;
 	Uint32 fps_last= SDL_fps(0,fps);
 	// stav klavesnice
 	Uint8 *keystate = SDL_GetKeyState(0);

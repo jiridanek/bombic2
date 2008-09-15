@@ -19,6 +19,7 @@ class AI; // forward declaration
  */
 class Creature: public DynamicMO {
 	friend class AI;
+	friend class AI_fromKeyboard;
 	public:
 		/// Vytvoří nestvůru.
 		Creature(const Surface & sur_left, const Surface & sur_left_s,

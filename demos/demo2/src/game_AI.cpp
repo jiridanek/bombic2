@@ -17,7 +17,7 @@
  */
 AI* AI::new_ai(Creature * creature, Uint16 intelligence){
 	switch(intelligence){
-		case 0: return new AI_0(creature);
+		case 0: return new AI_fromKeyboard(creature);
 		case 1: return new AI_1(creature);
 		default: return 0;
 	}
@@ -78,12 +78,148 @@ void AI::updatePositions(){
 
 /** @details
  * Nastaví nestvůře souřadnice a otočení.
+ * Stará se také o centrování na políčku.
  * @param position nová pozice
  */
-void AI::setPosition(const position_t & position){
+void AI::setPosition(position_t & position){
+	// prvne vycentrovat
+	switch(position.d){
+		case UP:
+			if(position.y%CELL_SIZE+1<CELL_SIZE/2){
+				// vlevo
+				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE-1,position.y/CELL_SIZE-1)){
+						centerCoordinate(position.x, +1);
+						centerCoordinate(position.y, +1);
+					}
+				// vpravo
+				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE+1,position.y/CELL_SIZE-1)){
+						centerCoordinate(position.x, -1);
+						centerCoordinate(position.y, +1);
+					}
+			} else {
+				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE-1,position.y/CELL_SIZE)){
+						centerCoordinate(position.x, +1);
+// 						centerCoordinate(position.y, +1);
+					}
+				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE+1,position.y/CELL_SIZE)){
+						centerCoordinate(position.x, -1);
+// 						centerCoordinate(position.y, +1);
+					}
+			} break;
+		case RIGHT:
+			if(position.x%CELL_SIZE-1>CELL_SIZE/2){
+				// nahore
+				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE+1,position.y/CELL_SIZE-1)){
+						centerCoordinate(position.x, -1);
+						centerCoordinate(position.y, +1);
+					}
+				// dole
+				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE+1,position.y/CELL_SIZE+1)){
+						centerCoordinate(position.x, -1);
+						centerCoordinate(position.y, -1);
+					}
+			} else {
+				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE,position.y/CELL_SIZE-1)){
+// 						centerCoordinate(position.x, -1);
+						centerCoordinate(position.y, +1);
+					}
+				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE,position.y/CELL_SIZE+1)){
+// 						centerCoordinate(position.x, -1);
+						centerCoordinate(position.y, -1);
+					}
+
+			} break;
+		case DOWN:
+			if(position.y%CELL_SIZE-1>CELL_SIZE/2){
+				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE-1,position.y/CELL_SIZE+1)){
+						centerCoordinate(position.x, +1);
+						centerCoordinate(position.y, -1);
+					}
+				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE+1,position.y/CELL_SIZE+1)){
+						centerCoordinate(position.x, -1);
+						centerCoordinate(position.y, -1);
+					}
+			} else {
+				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE-1,position.y/CELL_SIZE)){
+						centerCoordinate(position.x, +1);
+// 						centerCoordinate(position.y, -1);
+					}
+				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE+1,position.y/CELL_SIZE)){
+						centerCoordinate(position.x, -1);
+// 						centerCoordinate(position.y, -1);
+					}
+			} break;
+		case LEFT:
+			if(position.x%CELL_SIZE+1<CELL_SIZE/2){
+				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE-1,position.y/CELL_SIZE-1)){
+						centerCoordinate(position.x, +1);
+						centerCoordinate(position.y, +1);
+					}
+				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE-1,position.y/CELL_SIZE+1)){
+						centerCoordinate(position.x, +1);
+						centerCoordinate(position.y, -1);
+					}
+			}else {
+				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE,position.y/CELL_SIZE-1)){
+// 						centerCoordinate(position.x, +1);
+						centerCoordinate(position.y, +1);
+					}
+				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
+					if(!Game::field_canGoOver(
+					position.x/CELL_SIZE,position.y/CELL_SIZE+1)){
+// 						centerCoordinate(position.x, +1);
+						centerCoordinate(position.y, -1);
+					}
+			} break;
+		default: break;
+	}
+	// nastavit pozici prisery
 	creature_->x_=position.x;
 	creature_->y_=position.y;
 	creature_->d_=position.d;
+}
+
+/** @details
+ * Podle zadaného znaménka přidá k souřadnici nebo ubere od souřadnice
+ * polovinu rychlosti nestvůry. Maximálně však do poloviny políčka.
+ * @param coordinate centrovaná souřadnice
+ * @param sign +1 nebo -1, přidá nebo ubere
+ */
+void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign){
+	Uint8 diff_center = sign*(CELL_SIZE/2-coordinate%CELL_SIZE);
+	Uint8 diff_speed = (creature_->speed_)/2;
+	coordinate = coordinate + sign*(
+		diff_center<diff_speed ? diff_center : diff_speed );
 }
 
 /************************ AI_0 **************************/
@@ -202,36 +338,67 @@ bool AI_1::checkfield_(const position_t & position){
 	return true;
 }
 
-/*
-DIRECTION AI::from_keyboard(Uint16 & x, Uint16 & y, Uint16 speed,
-			SDLKey up, SDLKey right, SDLKey down, SDLKey left){
-	// inicializace jako bych byl otoceny nahoru
-	initialize(x, y, UP, speed);
+
+/************************ AI_fromKeybord **************************/
+
+AI_fromKeyboard::AI_fromKeyboard(Creature *creature): AI(creature) {
+	 keystate_= SDL_GetKeyState(0);
+}
+
+void AI_fromKeyboard::move() {
+	SDLKey up=SDLK_UP, right=SDLK_RIGHT, down=SDLK_DOWN, left=SDLK_LEFT;
+	// update pozic pro pohyb jako bych byl otoceny nahoru
+	DIRECTION cur_d = creature_->d_;
+	creature_->d_ = UP;
+	updatePositions();
+	// souradnice v polickach
+	Uint16 x,y;
 
 	if(keystate_[up]){
-		if(ai1_checkfield_(0)){
-			y = positions_[0].y;
+		creature_->d_ = UP;
+		x=positions_[1].x/CELL_SIZE; y=positions_[1].y/CELL_SIZE;
+		if(Game::field_canGoOver(x, y)){
+			if(!Game::field_canGoOver(x, y-1)
+			&& positions_[1].y%CELL_SIZE<CELL_SIZE/2){
+				positions_[1].y =y*CELL_SIZE+CELL_SIZE/2;
+			}
+			if(positions_[1].y<positions_[0].y)
+				setPosition(positions_[1]);
 		}
-		return positions_[0].d;
 	}
-	if(keystate_[right]){
-		if(ai1_checkfield_(1)){
-			x = positions_[1].x;
+	else if(keystate_[right]){
+		creature_->d_ = RIGHT;
+		x=positions_[2].x/CELL_SIZE; y=positions_[2].y/CELL_SIZE;
+		if(Game::field_canGoOver(x, y)){
+			if(!Game::field_canGoOver(x+1, y)
+			&& positions_[2].x%CELL_SIZE>CELL_SIZE/2)
+				positions_[2].x =x*CELL_SIZE+CELL_SIZE/2;
+			if(positions_[2].x>positions_[0].x)
+				setPosition(positions_[2]);
 		}
-		return positions_[1].d;
 	}
-	if(keystate_[down]){
-		if(ai1_checkfield_(2)){
-			y = positions_[2].y;
+	else if(keystate_[down]){
+		creature_->d_ = DOWN;
+		x=positions_[3].x/CELL_SIZE; y=positions_[3].y/CELL_SIZE;
+		if(Game::field_canGoOver(x, y)){
+			if(!Game::field_canGoOver(x, y+1)
+			&& positions_[3].y%CELL_SIZE>CELL_SIZE/2)
+				positions_[3].y =y*CELL_SIZE+CELL_SIZE/2;
+			if(positions_[3].y>positions_[0].y)
+				setPosition(positions_[3]);
 		}
-		return positions_[2].d;
 	}
-	if(keystate_[left]){
-		if(ai1_checkfield_(3)){
-			x = positions_[3].x;
+	else if(keystate_[left]){
+		creature_->d_ = LEFT;
+		x=positions_[4].x/CELL_SIZE; y=positions_[4].y/CELL_SIZE;
+		if(Game::field_canGoOver(x, y)){
+			if(!Game::field_canGoOver(x-1, y)
+			&& positions_[4].x%CELL_SIZE<CELL_SIZE/2)
+				positions_[4].x =x*CELL_SIZE+CELL_SIZE/2;
+			if(positions_[4].x<positions_[0].x)
+				setPosition(positions_[4]);
 		}
-		return positions_[3].d;
 	}
-	// zadna zmacknuta klavesa
-	return BURNED;
-}*/
+	else creature_->d_ = cur_d;
+
+}

@@ -31,8 +31,7 @@ void Creature::move(){
 	Uint16 old_x=x_, old_y=y_;
 	if(ai_) ai_->move();
 
-	centerPosition(x_,y_);
-	setFieldInMap(old_x/CELL_SIZE, old_y/CELL_SIZE, x_/CELL_SIZE, y_/CELL_SIZE);
+	setFieldInMap(old_x, old_y);
 }
 
 extern Fonts g_font;

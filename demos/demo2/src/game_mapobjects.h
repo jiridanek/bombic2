@@ -56,9 +56,7 @@ class DynamicMO: public MapObject{
 		virtual void move()=0;
 	protected:
 		/// Nastavení správného políčka v mapě.
-		void setFieldInMap(Uint16 old_x, Uint16 old_y, Uint16 x, Uint16 y);
-		/// Vycentruje objekt na políčko - je-li třeba.
-		void centerPosition(Uint16 & x, Uint16 & y);
+		void setFieldInMap(Uint16 old_x, Uint16 old_y);
 };
 
 /** Statický objekt hry.

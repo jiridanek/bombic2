@@ -22,14 +22,14 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc,
 /// Vytiskne chybu a ukončí program.
 template<typename T> void TiXmlError(T error){
 	std::cerr << "Error in XML occured: " << error << std::endl;
-	exit(1);
+	throw 1;
 }
 
 /// Vytiskne chybu se jménem souboru a ukončí program.
 template<typename S, typename T> void TiXmlError(S filename, T error){
 	std::cerr << "Error in XML file " << filename
 		<< " occured: " << error << std::endl;
-	exit(1);
+	throw 1;
 }
 
 /// Načtení hodnoty atributu do stringu.

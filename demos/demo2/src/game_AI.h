@@ -76,7 +76,9 @@ class AI {
 		/// Uloží cílové pozice pro každé otočení.
 		void updatePositions();
 		/// Nastaví nestvůře novou pozici.
-		void setPosition(const position_t & position);
+		void setPosition(position_t & position);
+		/// Partikulárně centruje souřadnici dostředu políčka.
+		void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign);
 };
 
 class AI_0 : public AI {
@@ -104,5 +106,18 @@ class AI_1 : public AI {
 		/// Zjistí, zda je možné vstoupit na políčko.
 		bool checkfield_(const position_t & position);
 };
+
+class AI_fromKeyboard : public AI {
+	public:
+		/// Zavolá konstruktor AI
+		AI_fromKeyboard(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Destruktor.
+		virtual ~AI_fromKeyboard() {};
+	private:
+		Uint8 *keystate_;
+};
+
 
 #endif
