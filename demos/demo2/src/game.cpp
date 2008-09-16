@@ -132,28 +132,29 @@ void Game::load_background_(const std::string & bgname){
 
 		// strany
 		sur1 = load_subEl_surface_(bg_el, "top", toplapping, sur_src.GetSurface());
+		isTypeOf isBG(BACKGROUND);
 		for(column=0 ; column< map_array_.size() ; ++column){
-			if(map_array_[column][0].back()->type()==BACKGROUND)
+			if(isBG(map_array_[column][0].back()))
 				insert_wall_(sur1, 0, column, 0);
 		}
 
 		sur1 = load_subEl_surface_(bg_el, "left", toplapping, sur_src.GetSurface());
 		for(field = 0 ; field<map_array_[0].size() ; ++field){
-			if(map_array_[0][field].back()->type()==BACKGROUND)
+			if(isBG(map_array_[0][field].back()))
 				insert_wall_(sur1, toplapping, 0, field);
 		}
 
 		sur1 = load_subEl_surface_(bg_el, "bottom", toplapping, sur_src.GetSurface());
 		field= map_array_[0].size()-(sur1.height()-toplapping)/CELL_SIZE;
 		for(column=0 ; column< map_array_.size() ; ++column){
-			if(map_array_[column][field].back()->type()==BACKGROUND)
+			if(isBG(map_array_[column][field].back()))
 				insert_wall_(sur1, toplapping, column, field);
 		}
 
 		sur1 = load_subEl_surface_(bg_el, "right", toplapping, sur_src.GetSurface());
 		column = map_array_.size()-sur1.width()/CELL_SIZE;
 		for(field = 0 ; field<map_array_[column].size() ; ++field){
-			if(map_array_[column][field].back()->type()==BACKGROUND)
+			if(isBG(map_array_[column][field].back()))
 				insert_wall_(sur1, toplapping, column, field);
 		}
 
@@ -409,11 +410,12 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 		TiXmlError("in element <nobox ...>: "+s);
 	}
 	// spocitani volnych policek pro nahodne boxy
+	isTypeOf isBG(BACKGROUND);
 	double count_free= 0.0;
 	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
 		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
 			if(noboxes[x][y]) continue;
-			if(map_array_[x][y].back()->type()!=BACKGROUND) continue;
+			if(!isBG(map_array_[x][y].back())) continue;
 			++count_free;
 		}
 	}
@@ -421,7 +423,7 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
 		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
 			if(noboxes[x][y]) continue;
-			if(map_array_[x][y].back()->type()!=BACKGROUND) continue;
+			if(!isBG(map_array_[x][y].back())) continue;
 			// jsem na prazdnem policku
 			if(count/count_free >= SDL_Rand()){
 				insert_box_(sur_img_def, sur_burning_def, toplapping_def, x, y);
@@ -475,19 +477,19 @@ void Game::load_bonuses_(TiXmlElement *bonusEl){
 
 	// spocitani policek pro nahodne bonusy
 	double count_free= 0.0;
-
+	isTypeOf isBox(BOX);
 	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
 		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
 			// bonus muzu umistit pouze na policko s bednou
-			if(map_array_[x][y].back()->type()!=BOX) continue;
-			++count_free;
+			if(isBox(map_array_[x][y].back()))
+				++count_free;
 		}
 	}
 
 	// projdu mapu a rozmistim nahodne bonusy
 	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
 		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
-			if(map_array_[x][y].back()->type()!=BOX) continue;
+			if(!isBox(map_array_[x][y].back())) continue;
 			// rozmistit ci nikoli
 			count = bonuses.size();
 			if(count==0) return;
@@ -516,13 +518,11 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 	vector< pair<Uint16, Uint16> >::iterator it;
 	// naplneni seznamu prazdnych policek
 	map_array_t::value_type::value_type::iterator l_it;
+	isTypeOf isBadType(BOX); isBadType.addType(WALL).addType(BONUS);
 	for(x=0; x<static_cast<int>(map_array_.size()) ; ++x){
 		for(y=0 ; y<static_cast<int>(map_array_[x].size()) ; ++y){
-			if(map_array_[x][y].back()->type()==BOX) continue;
-			if(map_array_[x][y].back()->type()==WALL) continue;
-			if(map_array_[x][y].back()->type()==BONUS) continue;
-
-			empty_fields.push_back(make_pair(x,y));
+			if(!isBadType(map_array_[x][y].back()))
+				empty_fields.push_back(make_pair(x,y));
 		}
 	}
 	// neni kam pridat jakoukoli priseru
@@ -650,10 +650,10 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 				catch(string s){
 					TiXmlError("in element <creature ...>: "+s);
 				}
-				// TODO predelat az budou fce typu withoutWall() withoutBox()
-				if(x>=static_cast<Sint16>(map_array_.size()) || y>=static_cast<Sint16>(map_array_[x].size()) ) continue;
-				if(map_array_[x][y].back()->type()==BOX) continue;
-				if(map_array_[x][y].back()->type()==WALL) continue;
+				if(x>=static_cast<Sint16>(map_array_.size())
+				|| y>=static_cast<Sint16>(map_array_[x].size()) ) continue;
+				if(isBadType(map_array_[x][y].back())) continue;
+
 				insert_creature_(sur_left, sur_left_s,
 					sur_up, sur_up_s, sur_right, sur_right_s,
 					sur_down, sur_down_s, sur_burned, x, y,
@@ -882,24 +882,21 @@ Game::~Game(){
 void Game::draw(SDL_Surface* window){
 	Uint16 column, field;
 	map_array_t::value_type::value_type::iterator it, end_it;
-	isTypeOf isFloorobject(FLOOROBJECT);
+	isTypeOf isBgType;
 // TODO debug
 Uint32 fps_last=0;
 Uint8 *keystate = SDL_GetKeyState(0);
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
+	isBgType.addType(BACKGROUND).addType(FLOOROBJECT);
 	for(field = 0 ; field<map_array_[0].size() ; ++field){
 		for(column=0 ; column< map_array_.size() ; ++column){
-			// vykreslim pozadi
 			it = map_array_[column][field].begin();
 			end_it = map_array_[column][field].end();
-			// TODO debug
-			if((*it)->type()!=BACKGROUND)
-				cout << "Game::draw() : na prvnim miste neni pozadi" << endl;
-			(*it)->draw(window);
-			// vykreslim objekt na zemi
-			while( (it=find_if(++it, end_it, isFloorobject)) !=end_it){
+			// vykreslim pozadi a objekt na zemi
+			while( (it=find_if(it, end_it, isBgType)) !=end_it){
 				(*it)->draw(window);
+				++it;
 			}
 			map_array_[column][field].sort(isUnder);
 		}
@@ -911,11 +908,8 @@ Uint8 *keystate = SDL_GetKeyState(0);
 			for(it= map_array_[column][field].begin() ;
 					it!= map_array_[column][field].end() ;
 					++it){
-				switch((*it)->type()){
-					case BACKGROUND: break;
-					case FLOOROBJECT: break;
-					default: (*it)->draw(window);
-				}
+				if(!isBgType(*it))
+					(*it)->draw(window);
 // TODO debug
 SDL_PumpEvents();
 if(keystate[SDLK_m]){
@@ -925,7 +919,6 @@ if(keystate[SDLK_m]){
 			}
 		}
 	}
-
 }
 
 /// Nastavení parametrů hráče.
@@ -958,35 +951,14 @@ void Game::player(Uint16 player_num, Uint16 & lives,
  * @return Vrací TRUE pokud lze zadané políčko přejít (není na něm zed ani bedna).
  */
 bool Game::field_canGoOver(Uint16 x, Uint16 y){
-	map_array_t::value_type::value_type::const_iterator it;
-	for(it=map_array_[x][y].begin() ; it!=map_array_[x][y].end() ; ++it){
-		if((*it)->type()==WALL) return false;
-		if((*it)->type()==BOX) return false;
-	}
-	return true;
+	map_array_t::value_type::value_type::const_iterator begin, end;
+	isTypeOf isBlockedObject; isBlockedObject.addType(WALL).addType(BOX);
+
+	begin = map_array_[x][y].begin();
+	end = map_array_[x][y].end();
+
+	return find_if(begin, end, isBlockedObject)==end;
 }
 
 /*************** END OF class Game ******************************/
-
-/*
-int last_time = SDL_GetTicks();
-int time_to_use = 0;
-while (!end_game())
-{
-	draw_the_world();
-
-	int this_time = SDL_GetTicks();
-	time_to_use += this_time - last_time;
-	last_time = this_time;
-
-	for (; this_time > 4; this_time -= 4)
-	{
-		update_the_world();
-	}
-}
-
-*/
-
-
-
 

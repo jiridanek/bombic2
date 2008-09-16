@@ -82,7 +82,7 @@ class isTypeOf {
 		/// Inicializuje predikát požadovaným typem.
 		explicit isTypeOf(OBJECT_TYPES type);
 		/// Přidání typu.
-		void addType(OBJECT_TYPES type);
+		isTypeOf & addType(OBJECT_TYPES type);
 		/// Vyprázdnění typů.
 		void clear();
 		/// Volání predikátu.

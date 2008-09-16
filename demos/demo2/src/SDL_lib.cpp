@@ -159,7 +159,7 @@ void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *capti
 	atexit(SDL_Quit);
 
 	// Vytvori okno s definovanymi vlastnostmi
-	*pWindow = SDL_SetVideoMode(win_w, win_h, 0, SDL_HWSURFACE);
+	*pWindow = SDL_SetVideoMode(win_w, win_h, 0, SDL_HWSURFACE | SDL_DOUBLEBUF);
 	if(*pWindow == NULL){
 		std::cerr << "Unable to set video: " << SDL_GetError() << std::endl;
 		exit(1);

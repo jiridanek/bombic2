@@ -48,9 +48,11 @@ isTypeOf::isTypeOf(OBJECT_TYPES type){
 	addType(type);
 }
 
-void isTypeOf::addType(OBJECT_TYPES type){
+isTypeOf & isTypeOf::addType(OBJECT_TYPES type){
 	types_[type]=true;
+	return *this;
 }
+
 void isTypeOf::clear(){
 	types_.clear();
 	types_.insert(types_.end(), OBJECT_TYPES_COUNT, false);
