@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <map name="map_forest_debug" height="12" width="16" background="bg_forest">
 
+	<players x="1" y="2">
+		<player1 x="1" y="2" />
+		<player2 x="14" y="10" />
+		<player3 x="14" y="2" />
+		<player4 x="1" y="10" />
+	</players>
+
 	<walls 	name="wall_winnersculpture" width="3">
 		<wall x="1" y="9" />
 		<wall x="4" y="9" />
@@ -44,11 +51,10 @@
 	<bonuses name="bonus_slider" count="1" />
 	<bonuses name="bonus_fireman" count="1" />
 -->
-	<creatures name="creature_rat" count="1">
+	<creatures name="creature_rat" count="10">
 		<creature x="2" y="10" />
 	</creatures>
 	<creatures name="creature_ghost" count="5">
 		<creature x="6" y="10" />
 	</creatures>
-
 </map>

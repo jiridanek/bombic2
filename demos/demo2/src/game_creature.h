@@ -36,7 +36,7 @@ class Creature: public DynamicMO {
 		virtual OBJECT_TYPES type(){ return CREATURE; }
 		/// Destructor
 		virtual ~Creature();
-	private:
+	protected:
 		/// Surface pro různé stavy.
 		Surface sur_left_, sur_left_s_, sur_up_, sur_up_s_,
 			sur_right_, sur_right_s_, sur_down_, sur_down_s_, sur_burned_;

@@ -28,18 +28,6 @@ class Floorobject: public StaticMO{
 
 /************************************************** /
 
-/ ** Postava Bombiče.
- * Dynamický objekt, který vytváří bomby,
- * zabíjí, umírá, sbírá bonusy, chodí.
- * /
-class Bomber: public DynamicMO{
-	public:
-		/// Pohyb.
-		void move();
-		/// Vykreslení.
-		void draw();
-};
-
 / ** Bomba.
  * Dynamický objekt vytvářený především bombičem.
  * Vytváří plamen, může se hýbat.

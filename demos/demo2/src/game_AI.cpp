@@ -17,7 +17,7 @@
  */
 AI* AI::new_ai(Creature * creature, Uint16 intelligence){
 	switch(intelligence){
-		case 0: return new AI_fromKeyboard(creature);
+		case 0: return new AI_0(creature);
 		case 1: return new AI_1(creature);
 		default: return 0;
 	}
@@ -217,7 +217,7 @@ void AI::setPosition(position_t & position){
  */
 void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign){
 	Uint8 diff_center = sign*(CELL_SIZE/2-coordinate%CELL_SIZE);
-	Uint8 diff_speed = (creature_->speed_)/2;
+	Uint8 diff_speed = (creature_->speed_+1)/2;
 	coordinate = coordinate + sign*(
 		diff_center<diff_speed ? diff_center : diff_speed );
 }

@@ -77,9 +77,11 @@ class Game {
 		std::vector<StaticMO*> staticMOs_;
 
 		/// Načtení mapy pro hru.
-		void load_map_(const std::string & mapname);
+		void load_map_(Uint16 players_count, const std::string & mapname);
 		/// Načtení pozadí mapy.
 		void load_background_(const std::string & bgname);
+		/// Načtení hráčů.
+		void load_players_(TiXmlElement *playersEl, Uint16 count);
 		/// Načtení zdí mapy.
 		void load_walls_(TiXmlElement *wallsEl);
 		/// Načtení objektů na zemi.
@@ -94,8 +96,9 @@ class Game {
 		/// Načtení surface podelementu.
 		SDL_Surface* load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 				int & toplapping, SDL_Surface* sur_src);
-		/// Načtení surface souboru v atributu src.
-		SDL_Surface* load_src_surface_(TiXmlElement *El, const char* attr_name="src");
+		/// Načtení surface souboru.
+		SDL_Surface* load_src_surface_(TiXmlElement *El,
+				const char* attr_name="src", bool force=true);
 
 		/// Vytvoření a vložení zdi do mapy.
 		void insert_wall_(const Surface & sur,
@@ -114,6 +117,13 @@ class Game {
 			const Surface & sur_down, const Surface & sur_down_s,
 			const Surface & sur_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives, Uint16 ai);
+		/// Vytvoření a vložení hráče do mapy.
+		void insert_player_(const Surface & sur_left, const Surface & sur_left_s,
+			const Surface & sur_up, const Surface & sur_up_s,
+			const Surface & sur_right, const Surface & sur_right_s,
+			const Surface & sur_down, const Surface & sur_down_s,
+			const Surface & sur_burned, Uint16 x, Uint16 y,
+			Uint16 speed, Uint16 lives);
 };
 
 

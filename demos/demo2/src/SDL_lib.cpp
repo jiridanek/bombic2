@@ -135,7 +135,7 @@ Surface & Surface::operator= (SDL_Surface * sur_SDL){
 	}
 	return *this;
 }
-
+// TODO zmenit na getSurface()
 SDL_Surface* Surface::GetSurface() const {
 	return surface_;
 }
