@@ -54,7 +54,7 @@ int main(int argc, char ** argv){
 			this_time = SDL_GetTicks();
 			time_to_use += this_time - last_time;
 // 			cout << time_to_use << endl;
-			for(; time_to_use > 50; time_to_use -= 50){
+			for(; time_to_use > 10; time_to_use -= 10){
 				game.play();
 			}
 			last_time = this_time;

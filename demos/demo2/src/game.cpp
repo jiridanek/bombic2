@@ -213,7 +213,7 @@ void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 			if(speed>CELL_SIZE/2){
 				cerr << "Maximal allowed creature's speed is "
 					<< CELL_SIZE/2 << endl;
-				TiXmlError(filename,"too high value of speed");
+// 				TiXmlError(filename,"too high value of speed");
 			}
 
 			// left

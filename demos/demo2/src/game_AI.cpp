@@ -61,18 +61,22 @@ void AI::updatePositions(){
 	//souradnice pro otoceni a jedno policko vpred
 	positions_[i].d=UP;
 	positions_[i].x=creature_->x_;
-	positions_[i].y=creature_->y_ - creature_->speed_;
+	positions_[i].y=creature_->y_ - creature_->speed_diff_;
+// 	positions_[i].y=creature_->y_ - 1;
 	i=i%4+1;
 	positions_[i].d=RIGHT;
-	positions_[i].x=creature_->x_ + creature_->speed_;
+	positions_[i].x=creature_->x_ + creature_->speed_diff_;
+// 	positions_[i].x=creature_->x_ + 1;
 	positions_[i].y=creature_->y_;
 	i=i%4+1;
 	positions_[i].d=DOWN;
 	positions_[i].x=creature_->x_;
-	positions_[i].y=creature_->y_ + creature_->speed_;
+	positions_[i].y=creature_->y_ + creature_->speed_diff_;
+// 	positions_[i].y=creature_->y_ + 1;
 	i=i%4+1;
 	positions_[i].d=LEFT;
-	positions_[i].x=creature_->x_ - creature_->speed_;
+	positions_[i].x=creature_->x_ - creature_->speed_diff_;
+// 	positions_[i].x=creature_->x_ - 1;
 	positions_[i].y=creature_->y_;
 }
 
@@ -217,7 +221,7 @@ void AI::setPosition(position_t & position){
  */
 void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign){
 	Uint8 diff_center = sign*(CELL_SIZE/2-coordinate%CELL_SIZE);
-	Uint8 diff_speed = (creature_->speed_+1)/2;
+	Uint8 diff_speed = (creature_->speed_diff_+1)/2;
 	coordinate = coordinate + sign*(
 		diff_center<diff_speed ? diff_center : diff_speed );
 }
@@ -287,7 +291,7 @@ AI_1::AI_1(Creature *creature): AI(creature) {}
 void AI_1::move() {
 	updatePositions();
 	// vpred
-	if(rand()%100<=95 && checkfield_(positions_[1])){
+	if(rand()%100<=97 && checkfield_(positions_[1])){
 		setPosition(positions_[1]);
 		return;
 	}
@@ -353,6 +357,27 @@ void AI_fromKeyboard::move() {
 	updatePositions();
 	// souradnice v polickach
 	Uint16 x,y;
+
+	if(keystate_[SDLK_x]){
+		creature_->speed_rate_++;
+		SDL_Delay(500);
+		SDL_PumpEvents();
+	}
+	if(keystate_[SDLK_y]){
+		creature_->speed_rate_--;
+		SDL_Delay(500);
+		SDL_PumpEvents();
+	}
+	if(keystate_[SDLK_d]){
+		creature_->speed_diff_++;
+		SDL_Delay(500);
+		SDL_PumpEvents();
+	}
+	if(keystate_[SDLK_s]){
+		creature_->speed_diff_--;
+		SDL_Delay(500);
+		SDL_PumpEvents();
+	}
 
 	if(keystate_[up]){
 		creature_->d_ = UP;

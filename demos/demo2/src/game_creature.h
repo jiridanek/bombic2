@@ -42,9 +42,12 @@ class Creature: public DynamicMO {
 			sur_right_, sur_right_s_, sur_down_, sur_down_s_, sur_burned_;
 		/// Současné otočení.
 		DIRECTION d_;
-		/// Rychlost, počet životů, inteligence.
-		Uint16 speed_, lives_;
+		/// Rychlost, počet životů.
+		Uint16 speed_diff_, speed_rate_, lives_;
+		/// Umělá inteligence.
 		AI* ai_;
+		/// Počítadlo přístupů.
+		Uint32 access_counter_;
 };
 
 #endif

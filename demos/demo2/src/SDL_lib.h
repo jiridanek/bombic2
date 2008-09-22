@@ -74,6 +74,13 @@ class Surface {
 		Uint16* references_;
 };
 
+class Animation {
+	public:
+
+	private:
+		std::vector<Surface> items_;
+};
+
 // Inicializace SDL a TTF, vytvori okno o zadanych rozmerech a zahlavi
 void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *caption);
 

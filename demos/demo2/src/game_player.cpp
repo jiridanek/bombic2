@@ -31,9 +31,13 @@ Player::~Player(){
 }
 
 void Player::move(){
-	Uint16 old_x=x_, old_y=y_;
-	if(ai_) ai_->move();
+	Uint16 accessed = ++access_counter_%speed_rate_;
+	if(accessed!=0 && accessed!=speed_rate_/2){
+		Uint16 old_x=x_, old_y=y_;
+		if(ai_) ai_->move();
+		setFieldInMap(old_x, old_y);
+	}
+	// update animation
 
-	setFieldInMap(old_x, old_y);
 }
 
