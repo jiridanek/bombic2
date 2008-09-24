@@ -18,7 +18,7 @@
 class Wall: public StaticMO{
 	public:
 		/// Vytvoří zeď.
-		Wall(const Surface & sur, Uint16 x, Uint16 y);
+		Wall(const Animation & anim, Uint16 x, Uint16 y);
 		/// Vykreslí zeď.
 		virtual void draw(SDL_Surface * window);
 		/// Typ objektu je zeď.
@@ -26,8 +26,8 @@ class Wall: public StaticMO{
 		/// Destructor
 		virtual ~Wall() {};
 	private:
-		/// Surface zdi.
-		Surface sur_;
+		/// Animace zdi.
+		Animation anim_;
 };
 
 #endif

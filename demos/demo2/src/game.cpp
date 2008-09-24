@@ -23,6 +23,7 @@ using namespace std;
 
 /*************** class Game ******************************/
 Game::map_array_t Game::map_array_;
+Game::dynamicMOs_t Game::dynamicMOs_;
 
 Game::Game(Uint16 players_count, const std::string & mapname){
 // 	bool deathmatch, bool creatures, bool bombsatend){
@@ -100,67 +101,70 @@ void Game::load_background_(const std::string & bgname){
 	bg_el = TiXmlRootElement(doc, filename, "background", true);
 
 	// atributy vnorenych elementu
-	int toplapping;
-	Surface sur_src, sur1, sur2;
-	Uint16 column, field;
+	Surface sur_src;
+	Animation anim, anim_burned;
+	Uint16 column, field, toplapping;
 	try{
 		// nacteni zdrojoveho obrazku
 		sur_src = load_src_surface_(bg_el);
 		// pozadi
-		sur1 = load_subEl_surface_(bg_el, "clean_bg", toplapping, sur_src.GetSurface());
-		sur2 = load_subEl_surface_(bg_el, "burned_bg", toplapping, sur_src.GetSurface());
+		load_subEl_animation_(bg_el, "clean_bg", anim, sur_src);
+		load_subEl_animation_(bg_el, "burned_bg", anim_burned, sur_src);
 		for(column=0 ; column< map_array_.size() ; ++column){
 			for(field = 0 ; field<map_array_[column].size() ; ++field){
 				// vytvorit a ulozit do seznamu statickych objektu
-				// TODO debug
-				staticMOs_.push_back(new Background(sur1,sur2, column*CELL_SIZE, field*CELL_SIZE) );
+				staticMOs_.push_back(
+					new Background(anim, anim_burned, column*CELL_SIZE, field*CELL_SIZE) );
 				// ulozit do mapy na spravne policko
 				map_array_[column][field].push_back(staticMOs_.back());
 			}
 		}
 		// rohy
-		sur1 = load_subEl_surface_(bg_el, "topleft", toplapping, sur_src.GetSurface());
-		insert_wall_(sur1, 0, 0, 0);
+		load_subEl_animation_(bg_el, "topleft", anim, sur_src);
+		insert_wall_(anim, 0, 0, 0);
 
-		sur1 = load_subEl_surface_(bg_el, "topright", toplapping, sur_src.GetSurface());
-		insert_wall_(sur1, 0,
-				map_array_.size()-sur1.width()/CELL_SIZE, 0);
+		load_subEl_animation_(bg_el, "topright", anim, sur_src);
+		insert_wall_(anim, 0,
+				map_array_.size()-anim.width()/CELL_SIZE, 0);
 
-		sur1 = load_subEl_surface_(bg_el, "bottomleft", toplapping, sur_src.GetSurface());
-		insert_wall_(sur1, toplapping, 0,
-				map_array_[0].size()-(sur1.height()-toplapping)/CELL_SIZE);
+		toplapping =
+		load_subEl_animation_(bg_el, "bottomleft", anim, sur_src);
+		insert_wall_(anim, toplapping, 0,
+				map_array_[0].size()-(anim.height()-toplapping)/CELL_SIZE);
 
-		sur1 = load_subEl_surface_(bg_el, "bottomright", toplapping, sur_src.GetSurface());
-		insert_wall_(sur1, toplapping,
-				map_array_.size()-sur1.width()/CELL_SIZE,
-				map_array_[0].size()-(sur1.height()-toplapping)/CELL_SIZE);
+		toplapping =
+		load_subEl_animation_(bg_el, "bottomright", anim, sur_src);
+		insert_wall_(anim, toplapping,
+				map_array_.size()-anim.width()/CELL_SIZE,
+				map_array_[0].size()-(anim.height()-toplapping)/CELL_SIZE);
 
 		// strany
-		sur1 = load_subEl_surface_(bg_el, "top", toplapping, sur_src.GetSurface());
+		load_subEl_animation_(bg_el, "top", anim, sur_src);
 		isTypeOf isBG(BACKGROUND);
 		for(column=0 ; column< map_array_.size() ; ++column){
 			if(isBG(map_array_[column][0].back()))
-				insert_wall_(sur1, 0, column, 0);
+				insert_wall_(anim, 0, column, 0);
 		}
 
-		sur1 = load_subEl_surface_(bg_el, "left", toplapping, sur_src.GetSurface());
+		toplapping =
+		load_subEl_animation_(bg_el, "left", anim, sur_src);
 		for(field = 0 ; field<map_array_[0].size() ; ++field){
 			if(isBG(map_array_[0][field].back()))
-				insert_wall_(sur1, toplapping, 0, field);
+				insert_wall_(anim, toplapping, 0, field);
 		}
 
-		sur1 = load_subEl_surface_(bg_el, "bottom", toplapping, sur_src.GetSurface());
-		field= map_array_[0].size()-(sur1.height()-toplapping)/CELL_SIZE;
+		toplapping = load_subEl_animation_(bg_el, "bottom", anim, sur_src);
+		field= map_array_[0].size()-(anim.height()-toplapping)/CELL_SIZE;
 		for(column=0 ; column< map_array_.size() ; ++column){
 			if(isBG(map_array_[column][field].back()))
-				insert_wall_(sur1, toplapping, column, field);
+				insert_wall_(anim, toplapping, column, field);
 		}
 
-		sur1 = load_subEl_surface_(bg_el, "right", toplapping, sur_src.GetSurface());
-		column = map_array_.size()-sur1.width()/CELL_SIZE;
+		toplapping = load_subEl_animation_(bg_el, "right", anim, sur_src);
+		column = map_array_.size()-anim.width()/CELL_SIZE;
 		for(field = 0 ; field<map_array_[column].size() ; ++field){
 			if(isBG(map_array_[column][field].back()))
-				insert_wall_(sur1, toplapping, column, field);
+				insert_wall_(anim, toplapping, column, field);
 		}
 
 	}
@@ -171,12 +175,14 @@ void Game::load_background_(const std::string & bgname){
 
 void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 	string filename;
-	int column, field, x,y, width, height;
+	int column, field, width, height;
+// 	int x,y;
 	Uint16 speed, lives, intelligence;
-	bool is_shadow;
-	Surface sur_src, sur_src_s, sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
-		sur_down, sur_down_s, sur_burned;
-	SDL_Rect rect;
+// 	bool is_shadow;
+	Surface sur_src, sur_src_s;
+//	Surface sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
+// 		sur_down, sur_down_s, sur_burned;
+// 	SDL_Rect rect;
 
 	isTypeOf isWall(WALL);
 
@@ -191,7 +197,7 @@ void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 		TiXmlError("in element <players ...>: "+s);
 	}
 	TiXmlDocument doc;
-	TiXmlElement *rootEl, *El;
+	TiXmlElement *rootEl;//, *El;
 	try{
 		for( ; count>0 ; --count ){
 			filename = "player"+x2string(count);
@@ -200,24 +206,38 @@ void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 			// zdrojovy obrazek
 			sur_src = load_src_surface_(rootEl);
 			sur_src_s = load_src_surface_(rootEl, "shadow_src", false);
-			is_shadow = sur_src_s.GetSurface()!=0;
+// 			is_shadow = sur_src_s.GetSurface()!=0;
 
 			// vyska a sirska obrazku
 			attr_HeightWidth(rootEl, height, width);
 			if(height<1) TiXmlError(filename,"missing attribute height");
 			if(width<1) TiXmlError(filename,"missing attribute width");
-			rect.w = static_cast<Uint16>(width);
-			rect.h = static_cast<Uint16>(height);
+// 			rect.w = static_cast<Uint16>(width);
+// 			rect.h = static_cast<Uint16>(height);
 			// rychlost, pocet zivotu a inteligence prisery
 			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
 			if(speed>CELL_SIZE/2){
 				cerr << "Maximal allowed creature's speed is "
 					<< CELL_SIZE/2 << endl;
-// 				TiXmlError(filename,"too high value of speed");
+				TiXmlError(filename,"too high value of speed");
 			}
 
+
+			Animation anim_up(subElement(rootEl,"up"),
+						width, height, sur_src, sur_src_s),
+					anim_right(subElement(rootEl,"right"),
+						width, height, sur_src, sur_src_s),
+					anim_down(subElement(rootEl,"down"),
+						width, height, sur_src, sur_src_s),
+					anim_left(subElement(rootEl,"left"),
+						width, height, sur_src, sur_src_s),
+					anim_burned(subElement(rootEl,"burned"),
+						width, height, sur_src);
+			insert_player_(anim_up, anim_right, anim_down, anim_left,
+				anim_burned, column, field, speed, lives);
+
+/*
 			// left
-			El = subElement(rootEl,"left");
 			attr_XY(El, x, y);
 			rect.x= static_cast<Sint16>(x);
 			rect.y= static_cast<Sint16>(y);
@@ -293,6 +313,7 @@ void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 				sur_up, sur_up_s, sur_right, sur_right_s,
 				sur_down, sur_down_s, sur_burned, column, field,
 				speed, lives);
+*/
 		}
 	}
 	catch(string s){
@@ -309,7 +330,8 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 
 	// nacteni atributu
 	string name_def, filename, str;
-	Surface sur_src, sur_def, sur;
+	Surface sur_src;
+	Animation anim_def, anim;
 	int toplapping_def, height_def, width_def,
 		toplapping, height, width, x, y;
 	// TODO overcrossing
@@ -332,18 +354,18 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 	rootEl = TiXmlRootElement(doc, filename, "wall", true);
 	try{
 		sur_src = load_src_surface_(rootEl);
-		sur_def= load_subEl_surface_(rootEl, "img",
-				toplapping_def, sur_src.GetSurface());
+		toplapping_def = load_subEl_animation_(rootEl, "img",
+				anim_def, sur_src);
 	}
 	catch(string s){
 		TiXmlError(filename,s);
 	}
 
 	// kontrola jestli koresponduji rozmery obrazku
-	if(height_def!=(sur_def.height()-toplapping_def)/CELL_SIZE)
+	if(height_def!=(anim_def.height()-toplapping_def)/CELL_SIZE)
 		TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>");
 
-	if(width_def!= sur_def.width()/CELL_SIZE)
+	if(width_def!= anim_def.width()/CELL_SIZE)
 		TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>");
 	// vytvoreni zdi
 	wallsEl= wallsEl->FirstChildElement("wall");
@@ -363,21 +385,21 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 			if(!filename.empty() && filename!=name_def){
 				rootEl = TiXmlRootElement(doc, filename, "wall", true);
 				sur_src = load_src_surface_(rootEl);
-				sur= load_subEl_surface_(rootEl, "img",
-						toplapping, sur_src.GetSurface());
+				toplapping= load_subEl_animation_(rootEl, "img",
+						anim, sur_src);
 
 				// kontrola jestli koresponduji rozmery obrazku
-				if(height!=(sur.height()-toplapping)/CELL_SIZE)
+				if(height!=(anim.height()-toplapping)/CELL_SIZE)
 					TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>");
 
-				if(width!= sur.width()/CELL_SIZE)
+				if(width!= anim.width()/CELL_SIZE)
 					TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>");
+				insert_wall_(anim, toplapping, x, y);
 			}
 			else{
-				sur= sur_def;
-				toplapping= toplapping_def;
+				insert_wall_(anim_def, toplapping_def, x, y);
 			}
-			insert_wall_(sur, toplapping, x, y);
+
 			wallsEl= wallsEl->NextSiblingElement("wall");
 		}
 	}
@@ -440,7 +462,8 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 
 	// nacteni atributu
 	string name_def, filename;
-	Surface sur_src, sur_img_def, sur_burning_def, sur_img, sur_burning;
+	Surface sur_src;
+	Animation anim_def, anim_burning_def, anim, anim_burning;
 	int toplapping_def, height_def, width_def, count,
 		toplapping, height, width, x, y;
 
@@ -465,19 +488,19 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 	rootEl = TiXmlRootElement(doc, filename, "box", true);
 	try{
 		sur_src = load_src_surface_(rootEl);
-		sur_burning_def= load_subEl_surface_(rootEl, "burning",
-				toplapping_def, sur_src.GetSurface());
-		sur_img_def= load_subEl_surface_(rootEl, "img",
-				toplapping_def, sur_src.GetSurface());
+
+		toplapping_def=
+		load_subEl_animation_(rootEl, "img", anim_def, sur_src);
+		load_subEl_animation_(rootEl, "burning", anim_burning_def, sur_src);
 	}
 	catch(string s){
 		TiXmlError(filename,s);
 	}
 	// kontrola jestli koresponduji rozmery obrazku
-	if(height_def!=(sur_img_def.height()-toplapping_def)/CELL_SIZE)
+	if(height_def!=(anim_def.height()-toplapping_def)/CELL_SIZE)
 		TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>.");
 
-	if(width_def!= sur_img_def.width()/CELL_SIZE)
+	if(width_def!= anim_def.width()/CELL_SIZE)
 		TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>.");
 
 	// vytvoreni boxu
@@ -573,12 +596,13 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 
 void Game::load_bonuses_(TiXmlElement *bonusEl){
 	string filename;
-	int help_var, x,y, count;
+	int x,y, count;
 
-	Surface sur_src, sur;
+	Surface sur_src;
+	Animation anim;
 	// dvojice velky obrazek do mapy a maly obrazek do panelu
-	vector< Surface > bonuses;
-	vector< Surface >::iterator it;
+	vector< Animation > bonuses;
+	vector< Animation >::iterator it;
 
 	TiXmlDocument doc;
 	TiXmlElement *rootEl;
@@ -597,12 +621,11 @@ void Game::load_bonuses_(TiXmlElement *bonusEl){
 			rootEl = TiXmlRootElement(doc, filename, "bonus", true);
 			// obrazek do mapy
 			sur_src = load_src_surface_(rootEl);
-			sur= load_subEl_surface_(rootEl, "img",
-					help_var, sur_src.GetSurface());
+			load_subEl_animation_(rootEl, "img", anim, sur_src);
 			// do seznamu nezarazenych bonusu pridam bonus count krat
 			while(count--){
 				// TODO ruzne bonusy
-				bonuses.push_back(sur);
+				bonuses.push_back(anim);
 			}
 			bonusEl= bonusEl->NextSiblingElement("bonuses");
 		}
@@ -645,15 +668,15 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 	string filename;
 	int x,y, count, width, height;
 	Uint16 speed, lives, intelligence;
-	bool is_shadow;
-	Surface sur_src, sur_src_s, sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
-		sur_down, sur_down_s, sur_burned;
-	SDL_Rect rect;
+// 	bool is_shadow;
+	Surface sur_src, sur_src_s;
+// 	, sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
+// 		sur_down, sur_down_s, sur_burned;
+// 	SDL_Rect rect;
 	// seznam prazdnych policek
 	vector< pair<Uint16, Uint16> > empty_fields;
 	vector< pair<Uint16, Uint16> >::iterator it;
 	// naplneni seznamu prazdnych policek
-// 	map_array_t::value_type::value_type::iterator l_it;
 	isTypeOf isBadType(BOX); isBadType.addType(WALL).addType(BONUS);
 	for(x=0; x<static_cast<int>(map_array_.size()) ; ++x){
 		for(y=0 ; y<static_cast<int>(map_array_[x].size()) ; ++y){
@@ -682,14 +705,14 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			// zdrojovy obrazek
 			sur_src = load_src_surface_(rootEl);
 			sur_src_s = load_src_surface_(rootEl, "shadow_src", false);
-			is_shadow = sur_src_s.GetSurface()!=0;
+// 			is_shadow = sur_src_s.GetSurface()!=0;
 
 			// vyska a sirska obrazku
 			attr_HeightWidth(rootEl, height, width);
 			if(height<1) TiXmlError(filename,"missing attribute height");
 			if(width<1) TiXmlError(filename,"missing attribute width");
-			rect.w = static_cast<Uint16>(width);
-			rect.h = static_cast<Uint16>(height);
+// 			rect.w = static_cast<Uint16>(width);
+// 			rect.h = static_cast<Uint16>(height);
 			// rychlost, pocet zivotu a inteligence prisery
 			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
 			if(speed>CELL_SIZE/2){
@@ -698,6 +721,18 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 				TiXmlError(filename,"too high value of speed");
 			}
 
+			Animation anim_up(subElement(rootEl,"up"),
+						width, height, sur_src, sur_src_s),
+					anim_right(subElement(rootEl,"right"),
+						width, height, sur_src, sur_src_s),
+					anim_down(subElement(rootEl,"down"),
+						width, height, sur_src, sur_src_s),
+					anim_left(subElement(rootEl,"left"),
+						width, height, sur_src, sur_src_s),
+					anim_burned(subElement(rootEl,"burned"),
+						width, height, sur_src);
+
+/*
 			// left
 			El = subElement(rootEl,"left");
 			attr_XY(El, x, y);
@@ -770,7 +805,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			// preneseni obrazku do noveho surface
 			sur_burned= create_transparent_surface(width, height, false);
 			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_burned.GetSurface(), 0);
-
+*/
 			// pevne zarazene prisery
 			for(El = creaturesEl->FirstChildElement("creature");
 					El ; El= El->NextSiblingElement("creature")){
@@ -783,11 +818,12 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 				if(x>=static_cast<Sint16>(map_array_.size())
 				|| y>=static_cast<Sint16>(map_array_[x].size()) ) continue;
 				if(isBadType(map_array_[x][y].back())) continue;
-
-				insert_creature_(sur_left, sur_left_s,
-					sur_up, sur_up_s, sur_right, sur_right_s,
-					sur_down, sur_down_s, sur_burned, x, y,
-					speed, lives, intelligence);
+				insert_creature_(anim_up, anim_right, anim_down, anim_left,
+					anim_burned, x, y, speed, lives, intelligence);
+// 				insert_creature_(sur_left, sur_left_s,
+// 					sur_up, sur_up_s, sur_right, sur_right_s,
+// 					sur_down, sur_down_s, sur_burned, x, y,
+// 					speed, lives, intelligence);
 				--count;
 			}
 
@@ -795,10 +831,13 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			while(count--){
 				// nahodne policko
 				it = empty_fields.begin()+ rand() % empty_fields.size();
-				insert_creature_(sur_left, sur_left_s,
-					sur_up, sur_up_s, sur_right, sur_right_s,
-					sur_down, sur_down_s, sur_burned, it->first, it->second,
+				insert_creature_(anim_up, anim_right, anim_down,
+					anim_left, anim_burned, it->first, it->second,
 					speed, lives, intelligence);
+// 				insert_creature_(sur_left, sur_left_s,
+// 					sur_up, sur_up_s, sur_right, sur_right_s,
+// 					sur_down, sur_down_s, sur_burned, it->first, it->second,
+// 					speed, lives, intelligence);
 			}
 			creaturesEl= creaturesEl->NextSiblingElement("creatures");
 		}
@@ -855,6 +894,50 @@ SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 }
 
 /** @details
+ * Vytvoří Animation objektu popsaného podelementem se zadaným jménem.
+ * Vrácené surface má nastavenou průhlednou barvu, nikoli však průhlednost.
+ * Zjistí také jaké měl podelement nastavené toplapping (výška nevyužitá v mapě).
+ * @throw string Při chybě (nenalezení podelementu nebo některého povinného atributu)
+ * vyvolá výjimku s chybovým hlášením.
+ * @param El rodič hledaného podelementu
+ * @param name_subEl název hledaného podelementu
+ * @param sur_src zdrojový surface
+ * @param anim_dst
+ * @return Vrací toplapping - hodnotu atributu nebo nulu pokud nebyl nalezen.
+ * @see subElement(), readAttr()
+ */
+Uint16 Game::load_subEl_animation_( TiXmlElement *El, const char* name_subEl,
+			Animation & anim_dst, const Surface & sur_src){
+// 	SDL_Rect rect;
+// 	SDL_Surface* sur_dst;
+// 	int x, y;
+	Uint16 w, h, toplapping;
+	El = subElement(El,name_subEl);
+// 	readAttr(El, "x", x);
+// 	rect.x= static_cast<Sint16>(x);
+// 	readAttr(El, "y", y);
+// 	rect.y= static_cast<Sint16>(y);
+	if(!readAttr(El, "width", w, false))
+			w= CELL_SIZE;
+	else if(w<1)
+		throw string("the value of width must be higher than 0");
+	else	w*= CELL_SIZE;
+	if(!readAttr(El, "height", h, false))
+			h= CELL_SIZE;
+	else if(h<1)
+		throw string("the value of height must be higher than 0");
+	else	h*= CELL_SIZE;
+	if(!readAttr(El, "toplapping", toplapping, false))
+		toplapping=0;
+	else	h+= CELL_SIZE*toplapping;
+
+	Animation anim_new(El, w, h, sur_src);
+	anim_dst = anim_new;
+
+	return toplapping;
+}
+
+/** @details
  * Vytvoří SDL_Surface bmp souboru s cestou definovanou v atributu attr_name(defaultně src).
  * Vrácené surface má nastavenou průhlednou barvu, nikoli však průhlednost.
  * Při chybě (nenalezení atributu nebo nevytvoření surface)
@@ -887,19 +970,19 @@ SDL_Surface* Game::load_src_surface_(TiXmlElement *El,
 /** @details
  * Vytvoří zed na zadaných souřadnicích a vloží ji do mapy.
  * Zed vkládá do mapy na všechna políčka, které zabírá.
- * @param sur surface vkládané zdi
+ * @param anim animace vkládané zdi
  * @param toplapping počet políček odshora obrázku,
  * které nezabírají místo v mapě
  * @param x souřadnice levého rohu zdi v mapě
  * @param y souřadnice horního rohu zdi v mapě
  */
-void Game::insert_wall_(const Surface & sur,
+void Game::insert_wall_(const Animation & anim,
 				Uint16 toplapping, Uint16 x, Uint16 y){
 	// vytvorit a ulozit do seznamu statickych objektu
-	staticMOs_.push_back(new Wall(sur, x*CELL_SIZE, (y-toplapping)*CELL_SIZE) );
+	staticMOs_.push_back(new Wall(anim, x*CELL_SIZE, (y-toplapping)*CELL_SIZE) );
 	// ulozit do mapy na spravna policka
-	for(Uint16 column=0; column<sur.width()/CELL_SIZE ; ++column){
-		for(Uint16 field=0 ; field<(sur.height()-toplapping)/CELL_SIZE
+	for(Uint16 column=0; column<anim.width()/CELL_SIZE ; ++column){
+		for(Uint16 field=0 ; field<(anim.height()-toplapping)/CELL_SIZE
 							; ++field){
 			if(x+column>=map_array_.size() || y+field>=map_array_[0].size())
 				continue;
@@ -959,9 +1042,9 @@ void Game::insert_box_(const Surface & sur_img, const Surface & sur_burning,
  * @param x souřadnice bonusu v mapě
  * @param y souřadnice bonusu v mapě
  */
-void Game::insert_bonus_(const Surface & sur, Uint16 x, Uint16 y){
+void Game::insert_bonus_(const Animation & anim, Uint16 x, Uint16 y){
 	// vytvorit a ulozit do seznamu dynamickych objektu
-	dynamicMOs_.push_back(new Bonus(sur, x*CELL_SIZE, y*CELL_SIZE) );
+	dynamicMOs_.push_back(new Bonus(anim, x*CELL_SIZE, y*CELL_SIZE) );
 	// ulozit do mapy na spravne policko
 	if(x>=map_array_.size() || y>=map_array_[0].size())
 		return;
@@ -985,17 +1068,13 @@ void Game::insert_bonus_(const Surface & sur, Uint16 x, Uint16 y){
  * @param lives pocet zivotu
  * @param ai kvalita umele inteligence
  */
-void Game::insert_creature_(const Surface & sur_left, const Surface & sur_left_s,
-			const Surface & sur_up, const Surface & sur_up_s,
-			const Surface & sur_right, const Surface & sur_right_s,
-			const Surface & sur_down, const Surface & sur_down_s,
-			const Surface & sur_burned, Uint16 x, Uint16 y,
+void Game::insert_creature_(const Animation & anim_up, const Animation & anim_right,
+			const Animation & anim_down, const Animation & anim_left,
+			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives, Uint16 ai){
 
 	// vytvorit a ulozit do seznamu dynamickych objektu
-	dynamicMOs_.push_back(new Creature(sur_left, sur_left_s,
-			sur_up, sur_up_s, sur_right, sur_right_s,
-			sur_down, sur_down_s, sur_burned,
+	dynamicMOs_.push_back(new Creature(anim_up, anim_right, anim_down, anim_left, anim_burned,
 			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
 			speed, lives, ai) );
 	// ulozit do mapy na spravne policko
@@ -1020,17 +1099,21 @@ void Game::insert_creature_(const Surface & sur_left, const Surface & sur_left_s
  * @param speed rychlost v pixelech za jednu casovou jednotku
  * @param lives pocet zivotu
  */
+/*
 void Game::insert_player_(const Surface & sur_left, const Surface & sur_left_s,
 			const Surface & sur_up, const Surface & sur_up_s,
 			const Surface & sur_right, const Surface & sur_right_s,
 			const Surface & sur_down, const Surface & sur_down_s,
 			const Surface & sur_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives){
-
+*/
+void Game::insert_player_(const Animation & anim_up, const Animation & anim_right,
+			const Animation & anim_down, const Animation & anim_left,
+			const Animation & anim_burned, Uint16 x, Uint16 y,
+			Uint16 speed, Uint16 lives){
 	// vytvorit a ulozit do seznamu dynamickych objektu
-	dynamicMOs_.push_back(new Player(sur_left, sur_left_s,
-			sur_up, sur_up_s, sur_right, sur_right_s,
-			sur_down, sur_down_s, sur_burned,
+	dynamicMOs_.push_back(new Player(
+			anim_up, anim_right, anim_down, anim_left, anim_burned,
 			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
 			speed, lives) );
 	// ulozit do mapy na spravne policko
@@ -1130,6 +1213,36 @@ bool Game::field_canGoOver(Uint16 x, Uint16 y){
 	end = map_array_[x][y].end();
 
 	return find_if(begin, end, isBlockedObject)==end;
+}
+
+/**
+ * @param x x-ová souřadnice políčka
+ * @param y y-ová souřadnice políčka
+ * @return Vrací TRUE pokud je na zadaném políčku příšera.
+ */
+bool Game::field_withCreature(Uint16 x, Uint16 y){
+	map_array_t::value_type::value_type::const_iterator begin, end;
+	isTypeOf isCreature(CREATURE);
+
+	begin = map_array_[x][y].begin();
+	end = map_array_[x][y].end();
+
+	return find_if(begin, end, isCreature)!=end;
+}
+
+
+void Game::remove_object(DynamicMO * obj){
+	Uint16 x, y;
+	// vyhodim obj z mapy
+	for(x = 0 ; x<map_array_.size() ; ++x){
+		for(y=0 ; y<map_array_[x].size() ; ++y){
+			map_array_[x][y].remove(obj);
+		}
+	}
+	// vyhodim obj ze seznamu dynamickych objektu
+	dynamicMOs_.remove(obj);
+	// zahodim obj
+	delete obj;
 }
 
 /*************** END OF class Game ******************************/

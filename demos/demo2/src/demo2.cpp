@@ -6,6 +6,7 @@
 
 using namespace std;
 
+#include "constants.h"
 #include "SDL_lib.h"
 #include "game.h"
 
@@ -54,7 +55,7 @@ int main(int argc, char ** argv){
 			this_time = SDL_GetTicks();
 			time_to_use += this_time - last_time;
 // 			cout << time_to_use << endl;
-			for(; time_to_use > 10; time_to_use -= 10){
+			for(; time_to_use > MOVE_PERIOD; time_to_use -= MOVE_PERIOD){
 				game.play();
 			}
 			last_time = this_time;

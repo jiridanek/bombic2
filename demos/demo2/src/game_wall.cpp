@@ -6,20 +6,20 @@
 #include "game_mapobjects.h"
 #include "game_wall.h"
 
-/* * @details
- * @param sur Surface zdi.
+/** @details
+ * @param anim Animace zdi.
  * @param x souřadnice v pixelech
  * @param y souřadnice v pixelech
  * @see StaticMO::StaticMO()
  */
-Wall::Wall(const Surface & sur,	Uint16 x, Uint16 y):
-		StaticMO(x, y), sur_(sur) {}
+Wall::Wall(const Animation & anim,	Uint16 x, Uint16 y):
+		StaticMO(x, y), anim_(anim) {}
 
-/* * @details
+/** @details
  * @param window Surface, do kterého chceme zeď vykreslit.
  * @see draw_surface()
  */
 void Wall::draw(SDL_Surface* window){
-	draw_surface(x_, y_, sur_.GetSurface(),window);
+	anim_.draw(window, x_, y_);
 }
 

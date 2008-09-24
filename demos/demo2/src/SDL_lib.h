@@ -74,11 +74,54 @@ class Surface {
 		Uint16* references_;
 };
 
+// forward
+class TiXmlElement;
+
+/**
+ * Animace jednoho jevu, jako posloupnost obrázků.
+ * Inicializace XML elementem a zdrojovým surface,
+ * nebo čistým okopírováním jiné animace.
+ * Interface obsahuje ještě metodu na resetování stavu animace
+ * update stavu animace a vykreslení aktuálního obrázku do okna.
+ * @throw string Při chybě v načítání xml vypouští výjimky s chybovým hlášením.
+ * @see Surface
+ */
 class Animation {
 	public:
+		/// Bez inicializace.
+		Animation();
+		/// Inicializace z XML a zdrojového surface.
+		Animation(TiXmlElement* el, Uint16 width, Uint16 height,
+			const Surface & sur_src, const Surface & sur_shadow_src=0);
+		/// Okopírování animace.
+		Animation(const Animation & anim);
+		Animation & operator=(const Animation & anim);
 
+		/// Nastavení výchozího obrázku jako aktuální.
+		void reset();
+		/// Update stavu animace (typicky nastavení dalšího framu)
+		bool update();
+		/// Vykreslení aktuálního framu.
+		void draw(SDL_Surface* window, Uint16 x, Uint16 y) const;
+		/// Výška anymace.
+		Uint16 height() const;
+		/// Šířka anymace.
+		Uint16 width() const;
 	private:
-		std::vector<Surface> items_;
+		/// Uloží konkrétní surface zadané v elementu.
+		void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
+				const Surface & sur_src, const Surface & sur_shadow_src);
+
+		typedef std::vector<Surface> frames_t;
+		/// Seznam framů a jejich stínů.
+		frames_t frames_, shadow_frames_;
+		/// Index dalšího framu.
+		frames_t::size_type next_frame_;
+		/// Vykreslovat stíny.
+		bool draw_shadow_;
+		/// Délka zobrazení jednoho framu.
+		Uint16 frame_period_, last_access_;
+
 };
 
 // Inicializace SDL a TTF, vytvori okno o zadanych rozmerech a zahlavi

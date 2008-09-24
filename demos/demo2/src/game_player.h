@@ -21,11 +21,9 @@ class Player: public Creature {
 	friend class AI_fromKeyboard;
 	public:
 		/// Vytvoří bombiče.
-		Player(const Surface & sur_left, const Surface & sur_left_s,
-			const Surface & sur_up, const Surface & sur_up_s,
-			const Surface & sur_right, const Surface & sur_right_s,
-			const Surface & sur_down, const Surface & sur_down_s,
-			const Surface & sur_burned, Uint16 x, Uint16 y,
+		Player(const Animation & anim_up, const Animation & anim_right,
+			const Animation & anim_down, const Animation & anim_left,
+			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives);
 		/// Pohyb.
 		virtual void move();

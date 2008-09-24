@@ -8,15 +8,15 @@
 
 /************* class Background ******************/
 
-Background::Background(const Surface & sur_clean,
-		const Surface & sur_burned,	Uint16 x, Uint16 y):
+Background::Background(const Animation & anim_clean,
+		const Animation & anim_burned,	Uint16 x, Uint16 y):
 			StaticMO(x, y),
-			sur_clean_(sur_clean), sur_burned_(sur_burned) {}
+			anim_clean_(anim_clean), anim_burned_(anim_burned) {}
 
+// TODO update
 void Background::draw(SDL_Surface* window){
-	draw_surface(x_, y_, sur_clean_.GetSurface(), window);
+	anim_clean_.draw(window, x_, y_);
 }
-
 
 /************* END of class Background *************/
 

@@ -22,11 +22,9 @@ class Creature: public DynamicMO {
 	friend class AI_fromKeyboard;
 	public:
 		/// Vytvoří nestvůru.
-		Creature(const Surface & sur_left, const Surface & sur_left_s,
-			const Surface & sur_up, const Surface & sur_up_s,
-			const Surface & sur_right, const Surface & sur_right_s,
-			const Surface & sur_down, const Surface & sur_down_s,
-			const Surface & sur_burned, Uint16 x, Uint16 y,
+		Creature(const Animation & anim_up, const Animation & anim_right,
+			const Animation & anim_down, const Animation & anim_left,
+			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives, Uint16 ai);
 		/// Pohyb.
 		virtual void move();
@@ -37,17 +35,22 @@ class Creature: public DynamicMO {
 		/// Destructor
 		virtual ~Creature();
 	protected:
+		/// Animace pro daný směr.
+		Animation & anim_(DIRECTION d_);
+		/// Přejde na další fázi umírání.
+		void die();
 		/// Surface pro různé stavy.
-		Surface sur_left_, sur_left_s_, sur_up_, sur_up_s_,
-			sur_right_, sur_right_s_, sur_down_, sur_down_s_, sur_burned_;
+		Animation anim_up_, anim_right_, anim_down_, anim_left_, anim_burned_;
 		/// Současné otočení.
 		DIRECTION d_;
-		/// Rychlost, počet životů.
-		Uint16 speed_diff_, speed_rate_, lives_;
 		/// Umělá inteligence.
 		AI* ai_;
+		/// Hýbal se.
+		bool moved_;
 		/// Počítadlo přístupů.
 		Uint32 access_counter_;
+		/// Počet životů, rychlost.
+		Uint16 lives_, speed_diff_, speed_rate_;
 };
 
 #endif

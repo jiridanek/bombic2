@@ -10,6 +10,8 @@
 #include <map>
 #include <string>
 #include <utility>
+#include "constants.h"
+#include "tixml_helper.h"
 
 // deklarace barev
 namespace Color{
@@ -140,13 +142,130 @@ SDL_Surface* Surface::GetSurface() const {
 	return surface_;
 }
 Uint16 Surface::width() const {
-	return surface_->w;
+	return !surface_ ? 0 : surface_->w;
 }
 Uint16 Surface::height() const {
-	return surface_->h;
+	return !surface_ ? 0 : surface_->h;
 }
 
 /******** END of class Surface **********************/
+
+/*************** class Animation *********************/
+
+Animation::Animation(): next_frame_(0), draw_shadow_(0),
+			frame_period_(1000), last_access_(0) {
+	frames_.push_back(Surface());
+}
+
+/**
+ *
+ */
+Animation::Animation(TiXmlElement* el, Uint16 width, Uint16 height,
+			const Surface & sur_src, const Surface & sur_shadow_src):
+			next_frame_(0), draw_shadow_(sur_shadow_src.GetSurface()!=0),
+			frame_period_(1000), last_access_(0) {
+	if(!el) throw std::string("missing element");
+	// atributy
+	loadItem_(el, width, height, sur_src, sur_shadow_src);
+
+	// animace
+	el= el->FirstChildElement("animation");
+	if(!el) return; // nemame animaci
+
+	// ulozit rate
+	Uint16 frame_rate;
+	readAttr(el, "rate", frame_rate);
+	if(frame_rate==0)
+		throw std::string("attribute rate must be higher than 0");
+	frame_period_ /= frame_rate;
+
+	// vsechny slozky animace
+	el= el->FirstChildElement("animation_item");
+	if(!el)
+		throw std::string("missing element <animation_item>");
+	while(el){
+		loadItem_(el, width, height, sur_src, sur_shadow_src);
+		el= el->NextSiblingElement("animation_item");
+	}
+}
+
+/// Okopírování animace.
+Animation::Animation(const Animation & anim):
+	frames_(anim.frames_), shadow_frames_(anim.shadow_frames_),
+	next_frame_(0), draw_shadow_(anim.draw_shadow_),
+	frame_period_(anim.frame_period_), last_access_(0) {}
+
+Animation & Animation::operator=(const Animation & anim){
+	if(&anim!=this){
+		frames_ = anim.frames_; shadow_frames_ = anim.shadow_frames_;
+		next_frame_ = 0; draw_shadow_ = anim.draw_shadow_;
+		frame_period_ = anim.frame_period_; last_access_ = 0;
+	}
+	return *this;
+}
+
+void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
+			const Surface & sur_src, const Surface & sur_shadow_src){
+
+	// atributy pro surface
+	Uint16 x, y;
+	readAttr(el, "x", x);
+	readAttr(el, "y", y);
+
+	// vytvorit surface
+	Surface sur= create_transparent_surface(width, height, false);
+	SDL_Rect rect={x,y,width,height};
+	SDL_BlitSurface(sur_src.GetSurface(), &rect, sur.GetSurface(), 0);
+	frames_.push_back(sur);
+
+	if(!draw_shadow_) return;
+
+	// atributy pro shadow
+	readAttr(el, "shadow_x", x);
+	readAttr(el, "shadow_y", y);
+
+	// vytvorit surface
+	sur= create_transparent_surface(width, height, true);
+	rect.x=x; rect.y=y;
+	SDL_BlitSurface(sur_shadow_src.GetSurface(), &rect, sur.GetSurface(), 0);
+	shadow_frames_.push_back(sur);
+}
+
+/// Nastavení výchozího obrázku jako aktuální.
+void Animation::reset(){
+	next_frame_=0;
+}
+/// Update stavu animace (typicky nastavení dalšího framu)
+bool Animation::update(){
+	bool at_end = false;
+	for(last_access_+=MOVE_PERIOD;
+		last_access_>=frame_period_; last_access_-=frame_period_){
+		++next_frame_;
+		if(next_frame_>=frames_.size()){
+			next_frame_%= frames_.size();
+			at_end=true;
+		}
+	}
+	return at_end;
+}
+/// Vykreslení aktuálního framu.
+void Animation::draw(SDL_Surface* window, Uint16 x, Uint16 y) const {
+	if(draw_shadow_){
+		draw_surface(x, y, shadow_frames_[next_frame_].GetSurface(), window);
+	}
+	draw_surface(x, y, frames_[next_frame_].GetSurface(), window);
+}
+
+Uint16 Animation::height() const {
+	return frames_[0].height();
+}
+
+Uint16 Animation::width() const {
+	return frames_[0].width();
+}
+
+/******** END of class Animation *********************/
+
 
 /******** SDL_lib functions **************************/
 

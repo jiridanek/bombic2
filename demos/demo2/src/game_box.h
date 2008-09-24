@@ -18,7 +18,7 @@
  */
 class Box: public DynamicMO{
 	public:
-		Box(const Surface & sur_img, const Surface & sur_burning,
+		Box(const Animation & anim, const Animation & anim_burning,
 			Uint16 toplapping, Uint16 x, Uint16 y);
 		/// Pohyb.
 		virtual void move();
@@ -29,7 +29,7 @@ class Box: public DynamicMO{
 		/// Destructor
 		virtual ~Box() {};
 	private:
-		Surface sur_img_, sur_burning_;
+		Animation anim_, anim_burning_;
 		Uint16 toplapping_, height_, width_;
 };
 

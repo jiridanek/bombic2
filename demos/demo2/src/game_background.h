@@ -18,7 +18,7 @@
 class Background: public StaticMO{
 	public:
 		/// Vytvoří pozadí jednoho políčka.
-		Background(const Surface & sur_clean,const Surface & sur_burned,
+		Background(const Animation & anim_clean,const Animation & anim_burned,
 				Uint16 x, Uint16 y);
 		/// Vykreslení.
 		virtual void draw(SDL_Surface * window);
@@ -27,7 +27,7 @@ class Background: public StaticMO{
 		/// Destructor
 		virtual ~Background() {};
 	private:
-		Surface sur_clean_, sur_burned_;
+		Animation anim_clean_, anim_burned_;
 };
 
 

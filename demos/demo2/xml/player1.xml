@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <creature name="player1" src="img/player_1.bmp" shadow_src="img/player_s.bmp"
-		height="70"	width="50" speed="5" lives="1" intelligence="0">
+		height="70"	width="50" speed="10" lives="1" intelligence="0">
 	<!-- specifikace smeru -->
 	<up x="1" y="143" shadow_x="1" shadow_y="143" >
-		<animation rate="16" >
+		<animation rate="10" >
 			<animation_item x="52" y="143" shadow_x="52" shadow_y="143" />
 			<animation_item x="103" y="143" shadow_x="103" shadow_y="143" />
 			<animation_item x="154" y="143" shadow_x="154" shadow_y="143" />

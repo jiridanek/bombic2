@@ -6,16 +6,18 @@
 #include "game_mapobjects.h"
 #include "game_bonus.h"
 
-Bonus::Bonus(const Surface & sur, Uint16 x, Uint16 y):
-	DynamicMO(x,y), sur_(sur), visible_(false) {}
+Bonus::Bonus(const Animation & anim, Uint16 x, Uint16 y):
+	DynamicMO(x,y), anim_(anim), visible_(false) {}
 
 
 void Bonus::move(){
+	if(!visible_) return;
+	anim_.update();
 }
 
 void Bonus::draw(SDL_Surface *window){
 	if(!visible_) return;
-	draw_surface(x_, y_, sur_.GetSurface(), window);
+	anim_.draw(window, x_, y_);
 }
 
 

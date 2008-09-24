@@ -60,19 +60,23 @@ class Game {
 		void player(Uint16 player_num, Uint16 & lives,
 			Uint16 & bombs, Uint16 & flames, Uint16 & boots) const;
 		/// Políčko lze přejít.
-		static bool field_canGoOver(Uint16, Uint16);
+		static bool field_canGoOver(Uint16 x, Uint16 y);
 		/// Políčko lze přeletet.
-// 		static bool field_canFlyOver(Uint16, Uint16);
+// 		static bool field_canFlyOver(Uint16 x, Uint16 y);
+		/// Na políčku je příšera.
+		static bool field_withCreature(Uint16 x, Uint16 y);
 
+		static void remove_object(DynamicMO * obj);
 		/// Dvourozměrné pole mapy, na každém políčku seznam objektů na něm položených.
 		typedef std::vector< std::vector< std::list< MapObject* > > > map_array_t;
 		/// Dvourozměrné pole mapy, na každém políčku seznam objektů na něm položených.
 		static map_array_t map_array_;
 
-	private:
 		typedef std::list<DynamicMO*> dynamicMOs_t;
 		/// Seznam dynamických objektů mapy.
-		dynamicMOs_t dynamicMOs_;
+		static dynamicMOs_t dynamicMOs_;
+
+	private:
 		/// Seznam statických objektů mapy.
 		std::vector<StaticMO*> staticMOs_;
 
@@ -96,12 +100,15 @@ class Game {
 		/// Načtení surface podelementu.
 		SDL_Surface* load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 				int & toplapping, SDL_Surface* sur_src);
+		/// Načtení animace podelementu.
+		Uint16 load_subEl_animation_(TiXmlElement *El, const char* name_subEl,
+				Animation & anim, const Surface & sur_src);
 		/// Načtení surface souboru.
 		SDL_Surface* load_src_surface_(TiXmlElement *El,
 				const char* attr_name="src", bool force=true);
 
 		/// Vytvoření a vložení zdi do mapy.
-		void insert_wall_(const Surface & sur,
+		void insert_wall_(const Animation & anim,
 				Uint16 toplapping, Uint16 x, Uint16 y);
 		/// Vytvoření a vložení objektu na zemi do mapy.
 		void insert_floorobject_(const Surface & sur, Uint16 x, Uint16 y);
@@ -109,20 +116,16 @@ class Game {
 		void insert_box_(const Surface & sur_img, const Surface & sur_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y);
 		/// Vytvoření a vložení bonusu do mapy.
-		void insert_bonus_(const Surface & sur, Uint16 x, Uint16 y);
+		void insert_bonus_(const Animation & anim, Uint16 x, Uint16 y);
 		/// Vytvoření a vložení příšery do mapy.
-		void insert_creature_(const Surface & sur_left, const Surface & sur_left_s,
-			const Surface & sur_up, const Surface & sur_up_s,
-			const Surface & sur_right, const Surface & sur_right_s,
-			const Surface & sur_down, const Surface & sur_down_s,
-			const Surface & sur_burned, Uint16 x, Uint16 y,
+		void insert_creature_(const Animation & anim_up, const Animation & anim_right,
+			const Animation & anim_down, const Animation & anim_left,
+			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives, Uint16 ai);
 		/// Vytvoření a vložení hráče do mapy.
-		void insert_player_(const Surface & sur_left, const Surface & sur_left_s,
-			const Surface & sur_up, const Surface & sur_up_s,
-			const Surface & sur_right, const Surface & sur_right_s,
-			const Surface & sur_down, const Surface & sur_down_s,
-			const Surface & sur_burned, Uint16 x, Uint16 y,
+		void insert_player_(const Animation & anim_up, const Animation & anim_right,
+			const Animation & anim_down, const Animation & anim_left,
+			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives);
 };
 

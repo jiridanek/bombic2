@@ -17,7 +17,7 @@
  */
 class Bonus: public DynamicMO{
 	public:
-		Bonus(const Surface & sur, Uint16 x, Uint16 y);
+		Bonus(const Animation & anim, Uint16 x, Uint16 y);
 		/// Pohyb.
 		virtual void move();
 		/// Vykreslení.
@@ -27,7 +27,7 @@ class Bonus: public DynamicMO{
 		/// Destructor
 		virtual ~Bonus() {};
 	private:
-		Surface sur_;
+		Animation anim_;
 		bool visible_;
 };
 
