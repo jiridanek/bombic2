@@ -111,9 +111,9 @@ class Game {
 		void insert_wall_(const Animation & anim,
 				Uint16 toplapping, Uint16 x, Uint16 y);
 		/// Vytvoření a vložení objektu na zemi do mapy.
-		void insert_floorobject_(const Surface & sur, Uint16 x, Uint16 y);
+		void insert_floorobject_(const Animation & anim, Uint16 x, Uint16 y);
 		/// Vytvoření a vložení bedny do mapy.
-		void insert_box_(const Surface & sur_img, const Surface & sur_burning,
+		void insert_box_(const Animation & anim, const Animation & sur_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y);
 		/// Vytvoření a vložení bonusu do mapy.
 		void insert_bonus_(const Animation & anim, Uint16 x, Uint16 y);

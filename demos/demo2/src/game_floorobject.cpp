@@ -6,10 +6,10 @@
 #include "game_mapobjects.h"
 #include "game_floorobject.h"
 
-Floorobject::Floorobject(const Surface & sur,	Uint16 x, Uint16 y):
-	StaticMO(x, y), sur_(sur) {}
+Floorobject::Floorobject(const Animation & anim, Uint16 x, Uint16 y):
+	StaticMO(x, y), anim_(anim) {}
 
 void Floorobject::draw(SDL_Surface* window){
-	draw_surface(x_, y_, sur_.GetSurface(),window);
+	anim_.draw(window, x_, y_);
 }
 

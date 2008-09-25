@@ -411,9 +411,10 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 
 void Game::load_floorobjects_(TiXmlElement *floorEl){
 	string filename;
-	int height, width, x,y,toplapping;
+	int height, width, x,y;
 
-	Surface sur_src, sur;
+	Surface sur_src;
+	Animation anim;
 
 	TiXmlDocument doc;
 	TiXmlElement *rootEl;
@@ -434,17 +435,17 @@ void Game::load_floorobjects_(TiXmlElement *floorEl){
 			// nacteni objektu
 			rootEl = TiXmlRootElement(doc, filename, "floorobject", true);
 			sur_src = load_src_surface_(rootEl);
-			sur= load_subEl_surface_(rootEl, "img",
-					toplapping, sur_src.GetSurface());
+			load_subEl_animation_(rootEl, "img",
+					anim, sur_src);
 
 			// kontrola jestli koresponduji rozmery obrazku
-			if(height!=sur.height()/CELL_SIZE)
+			if(height!=anim.height()/CELL_SIZE)
 				TiXmlError(filename,"the value of attribute height doesn't correspond with value in <floorobject ...> in map.");
 
-			if(width!= sur.width()/CELL_SIZE)
+			if(width!= anim.width()/CELL_SIZE)
 				TiXmlError(filename,"the value of attribute width doesn't correspond with value in <floorobject ...> in map.");
 
-			insert_floorobject_(sur, x, y);
+			insert_floorobject_(anim, x, y);
 			floorEl= floorEl->NextSiblingElement("floorobject");
 		}
 	}
@@ -503,7 +504,7 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 	if(width_def!= anim_def.width()/CELL_SIZE)
 		TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>.");
 
-	// vytvoreni boxu
+	// vytvoreni pevnych boxu
 	El= boxesEl->FirstChildElement("box");
 	try{
 		while(El){
@@ -521,24 +522,24 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 			if(!filename.empty() && filename!=name_def){
 				rootEl = TiXmlRootElement(doc, filename, "box", true);
 				sur_src = load_src_surface_(rootEl);
-				sur_burning= load_subEl_surface_(rootEl, "burning",
-						toplapping, sur_src.GetSurface());
-				sur_img= load_subEl_surface_(rootEl, "img",
-						toplapping, sur_src.GetSurface());
+
+				toplapping =
+				load_subEl_animation_(rootEl, "img", anim_def, sur_src);
+				load_subEl_animation_(rootEl, "burning", anim_burning_def, sur_src);
+
 				// kontrola jestli koresponduji rozmery obrazku
-				if(height!=(sur_img.height()-toplapping)/CELL_SIZE)
+				if(height!=(anim.height()-toplapping)/CELL_SIZE)
 					TiXmlError(filename,"the value of attribute height doesn't correspond with value in <boxes ...>.");
 
-				if(width!= sur_img.width()/CELL_SIZE)
+				if(width!= anim.width()/CELL_SIZE)
 					TiXmlError(filename,"the value of attribute width doesn't correspond with value in <boxes ...>.");
+				// vlozeni do mapy
+				insert_box_(anim, anim_burning, toplapping, x, y);
 			}
 			else{
-				sur_img= sur_img_def;
-				sur_burning= sur_burning_def;;
-				toplapping= toplapping_def;
+				// vlozeni do mapy
+				insert_box_(anim_def, anim_burning_def, toplapping_def, x, y);
 			}
-			// vlozeni do mapy
-			insert_box_(sur_img, sur_burning, toplapping, x, y);
 			--count;
 			El= El->NextSiblingElement("box");
 		}
@@ -551,6 +552,7 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 	// vytvoreni mapy policek zakazanych pro umisteni nahodne bedny
 	vector< vector< bool> > noboxes;
 	vector< bool> column_noboxes;
+	// inicializace podle velikosti mapy (na false)
 	column_noboxes.insert(column_noboxes.end(), map_array_[0].size(), false);
 	noboxes.insert(noboxes.end(), map_array_.size(), column_noboxes);
 
@@ -579,19 +581,18 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 		}
 	}
 
-	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
-		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
+	for(x=0; x<static_cast<int>(map_array_.size()) ; ++x){
+		for(y=0 ; y<static_cast<int>(map_array_[x].size()) ; ++y){
 			if(noboxes[x][y]) continue;
 			if(!isBG(map_array_[x][y].back())) continue;
 			// jsem na prazdnem policku
 			if(count/count_free >= SDL_Rand()){
-				insert_box_(sur_img_def, sur_burning_def, toplapping_def, x, y);
+				insert_box_(anim_def, anim_burning_def, toplapping_def, x, y);
 				if(--count==0) return;
 			}
 			if(--count_free<=0) return;
 		}
 	}
-
 }
 
 void Game::load_bonuses_(TiXmlElement *bonusEl){
@@ -860,6 +861,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
  * @return Výsledný surface patřící nalezenému podelementu.
  * @see subElement(), readAttr()
  */
+ /*
 SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 				int & toplapping, SDL_Surface* sur_src){
 	SDL_Rect rect;
@@ -891,7 +893,7 @@ SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 	SDL_BlitSurface(sur_src, &rect, sur_dst, 0);
 
 	return sur_dst;
-}
+}*/
 
 /** @details
  * Vytvoří Animation objektu popsaného podelementem se zadaným jménem.
@@ -908,15 +910,9 @@ SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
  */
 Uint16 Game::load_subEl_animation_( TiXmlElement *El, const char* name_subEl,
 			Animation & anim_dst, const Surface & sur_src){
-// 	SDL_Rect rect;
-// 	SDL_Surface* sur_dst;
-// 	int x, y;
+
 	Uint16 w, h, toplapping;
 	El = subElement(El,name_subEl);
-// 	readAttr(El, "x", x);
-// 	rect.x= static_cast<Sint16>(x);
-// 	readAttr(El, "y", y);
-// 	rect.y= static_cast<Sint16>(y);
 	if(!readAttr(El, "width", w, false))
 			w= CELL_SIZE;
 	else if(w<1)
@@ -998,12 +994,12 @@ void Game::insert_wall_(const Animation & anim,
  * @param x souřadnice levého rohu objektu v mapě
  * @param y souřadnice horního rohu objektu v mapě
  */
-void Game::insert_floorobject_(const Surface & sur, Uint16 x, Uint16 y){
+void Game::insert_floorobject_(const Animation & anim, Uint16 x, Uint16 y){
 	// vytvorit a ulozit do seznamu statickych objektu
-	staticMOs_.push_back(new Floorobject(sur, x*CELL_SIZE, y*CELL_SIZE));
+	staticMOs_.push_back(new Floorobject(anim, x*CELL_SIZE, y*CELL_SIZE));
 	// ulozit do mapy na spravna policka
-	for(Uint16 column=0; column<sur.width()/CELL_SIZE ; ++column){
-		for(Uint16 field=0 ; field<sur.height()/CELL_SIZE ; ++field){
+	for(Uint16 column=0; column<anim.width()/CELL_SIZE ; ++column){
+		for(Uint16 field=0 ; field<anim.height()/CELL_SIZE ; ++field){
 			if(x+column>=map_array_.size() || y+field>=map_array_[0].size())
 				continue;
 			map_array_[x+column][y+field].push_back(staticMOs_.back());
@@ -1021,13 +1017,13 @@ void Game::insert_floorobject_(const Surface & sur, Uint16 x, Uint16 y){
  * @param x souřadnice levého rohu bedny v mapě
  * @param y souřadnice horního rohu bedny v mapě
  */
-void Game::insert_box_(const Surface & sur_img, const Surface & sur_burning,
+void Game::insert_box_(const Animation & anim, const Animation & anim_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y){
 	// vytvorit a ulozit do seznamu dynamickych objektu
-	dynamicMOs_.push_back(new Box(sur_img, sur_burning, toplapping, x*CELL_SIZE, y*CELL_SIZE) );
+	dynamicMOs_.push_back(new Box(anim, anim_burning, toplapping, x*CELL_SIZE, y*CELL_SIZE) );
 	// ulozit do mapy na spravna policka
-	for(Uint16 column=0; column<sur_img.width()/CELL_SIZE ; ++column){
-		for(Uint16 field=0 ; field<(sur_img.height()-toplapping)/CELL_SIZE
+	for(Uint16 column=0; column<anim.width()/CELL_SIZE ; ++column){
+		for(Uint16 field=0 ; field<(anim.height()-toplapping)/CELL_SIZE
 							; ++field){
 			if(x+column>=map_array_.size() || y+field>=map_array_[0].size())
 				continue;

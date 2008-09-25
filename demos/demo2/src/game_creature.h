@@ -39,7 +39,7 @@ class Creature: public DynamicMO {
 		Animation & anim_(DIRECTION d_);
 		/// Přejde na další fázi umírání.
 		void die();
-		/// Surface pro různé stavy.
+		/// Animace pro různé stavy.
 		Animation anim_up_, anim_right_, anim_down_, anim_left_, anim_burned_;
 		/// Současné otočení.
 		DIRECTION d_;

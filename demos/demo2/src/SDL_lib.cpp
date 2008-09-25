@@ -161,16 +161,25 @@ Animation::Animation(): next_frame_(0), draw_shadow_(0),
  *
  */
 Animation::Animation(TiXmlElement* el, Uint16 width, Uint16 height,
-			const Surface & sur_src, const Surface & sur_shadow_src):
-			next_frame_(0), draw_shadow_(sur_shadow_src.GetSurface()!=0),
-			frame_period_(1000), last_access_(0) {
+			const Surface & sur_src, const Surface & sur_shadow_src) {
+	initialize(el, width, height, sur_src, sur_shadow_src);
+}
+
+const Animation & Animation::initialize(TiXmlElement* el,
+			Uint16 width, Uint16 height,
+			const Surface & sur_src, const Surface & sur_shadow_src){
+	// nastaveni defaultnich hodnot
+	frames_.clear(); shadow_frames_.clear();
+	frame_period_ = 1000; next_frame_ = last_access_ = 0;
+	draw_shadow_ = sur_shadow_src.GetSurface()!=0;
+
 	if(!el) throw std::string("missing element");
 	// atributy
 	loadItem_(el, width, height, sur_src, sur_shadow_src);
 
 	// animace
 	el= el->FirstChildElement("animation");
-	if(!el) return; // nemame animaci
+	if(!el) return *this; // nemame animaci
 
 	// ulozit rate
 	Uint16 frame_rate;
@@ -187,6 +196,7 @@ Animation::Animation(TiXmlElement* el, Uint16 width, Uint16 height,
 		loadItem_(el, width, height, sur_src, sur_shadow_src);
 		el= el->NextSiblingElement("animation_item");
 	}
+	return *this;
 }
 
 /// Okopírování animace.
@@ -195,7 +205,7 @@ Animation::Animation(const Animation & anim):
 	next_frame_(0), draw_shadow_(anim.draw_shadow_),
 	frame_period_(anim.frame_period_), last_access_(0) {}
 
-Animation & Animation::operator=(const Animation & anim){
+const Animation & Animation::operator=(const Animation & anim){
 	if(&anim!=this){
 		frames_ = anim.frames_; shadow_frames_ = anim.shadow_frames_;
 		next_frame_ = 0; draw_shadow_ = anim.draw_shadow_;

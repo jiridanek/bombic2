@@ -81,7 +81,7 @@ class TiXmlElement;
  * Animace jednoho jevu, jako posloupnost obrázků.
  * Inicializace XML elementem a zdrojovým surface,
  * nebo čistým okopírováním jiné animace.
- * Interface obsahuje ještě metodu na resetování stavu animace
+ * Interface obsahuje ještě metodu na resetování stavu animace,
  * update stavu animace a vykreslení aktuálního obrázku do okna.
  * @throw string Při chybě v načítání xml vypouští výjimky s chybovým hlášením.
  * @see Surface
@@ -93,19 +93,24 @@ class Animation {
 		/// Inicializace z XML a zdrojového surface.
 		Animation(TiXmlElement* el, Uint16 width, Uint16 height,
 			const Surface & sur_src, const Surface & sur_shadow_src=0);
+		/// Inicializace z XML a zdrojového surface.
+		const Animation & Animation::initialize(TiXmlElement* el,
+					Uint16 width, Uint16 height,
+					const Surface & sur_src, const Surface & sur_shadow_src);
 		/// Okopírování animace.
 		Animation(const Animation & anim);
-		Animation & operator=(const Animation & anim);
+		/// Okopírování animace.
+		const Animation & operator=(const Animation & anim);
 
-		/// Nastavení výchozího obrázku jako aktuální.
+		/// Nastavení prvního obrázku jako aktuální.
 		void reset();
 		/// Update stavu animace (typicky nastavení dalšího framu)
 		bool update();
 		/// Vykreslení aktuálního framu.
 		void draw(SDL_Surface* window, Uint16 x, Uint16 y) const;
-		/// Výška anymace.
+		/// Výška animace.
 		Uint16 height() const;
-		/// Šířka anymace.
+		/// Šířka animace.
 		Uint16 width() const;
 	private:
 		/// Uloží konkrétní surface zadané v elementu.
