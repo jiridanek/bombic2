@@ -1,6 +1,6 @@
 /** @file game_wall.h
- * Zed.
- * Game_wall.h obsahuje třídu obstarávající objekty hry typu zed
+ * Zeď.
+ * Game_wall.h obsahuje třídu obstarávající objekty hry typu zeď.
  */
 #ifndef GAME_WALL_H
 #define GAME_WALL_H
@@ -10,10 +10,10 @@
 #include "game.h"
 #include "game_mapobjects.h"
 
-/** Zed.
+/** Zeď.
  * Statický objekt, který neshoří, a nejde přes něj chodit,
  * většinou ani létat.
- * Plamen se o zed zarazí.
+ * Plamen se o zeď zarazí.
  */
 class Wall: public StaticMO{
 	public:

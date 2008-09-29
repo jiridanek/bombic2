@@ -18,9 +18,10 @@
  */
 class Box: public DynamicMO{
 	public:
+		/// Vytvoří bednu.
 		Box(const Animation & anim, const Animation & anim_burning,
 			Uint16 toplapping, Uint16 x, Uint16 y);
-		/// Pohyb.
+		/// Zjištění, zda nemá shořet.
 		virtual void move();
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *window);
@@ -29,8 +30,12 @@ class Box: public DynamicMO{
 		/// Destructor
 		virtual ~Box() {};
 	private:
+		/// Animace, animace hoření.
 		Animation anim_, anim_burning_;
-		Uint16 toplapping_, height_, width_;
+
+		Uint16 toplapping_, ///< Horní přesah.
+			height_, ///< Výška v políčkách.
+			width_; ///< Šířka v políčkách.
 };
 
 #endif

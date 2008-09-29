@@ -18,14 +18,23 @@
 TiXmlElement* TiXmlRootElement(TiXmlDocument & doc,
 		std::string & filename, const std::string& rootEl_name, bool checkAttr_name);
 
-
-/// Vytiskne chybu a ukončí program.
+/** Vytiskne chybu a ukončí program.
+ * @details Na standardní chybový výstup vytiskne chybové hlášení.
+ * @param error Chybová hláška, pro zadaný typ musí být definovaný operator<<
+ * @throw int Hodnota pro skončení programu.
+ */
 template<typename T> void TiXmlError(T error){
 	std::cerr << "Error in XML occured: " << error << std::endl;
 	throw 1;
 }
 
-/// Vytiskne chybu se jménem souboru a ukončí program.
+/** Vytiskne chybu se jménem souboru a ukončí program.
+ * @details Na standardní chybový výstup vytiskne zadané jméno souboru
+ * a chybové hlášení.
+ * @param filename Soubor, ve kterém nastala chyba. Pro zadaný typ musí existovat operator<<
+ * @param error Chybová hláška, pro zadaný typ musí být definovaný operator<<
+ * @throw int Hodnota pro skončení programu.
+ */
 template<typename S, typename T> void TiXmlError(S filename, T error){
 	std::cerr << "Error in XML file " << filename
 		<< " occured: " << error << std::endl;
@@ -45,6 +54,7 @@ bool readStringAttr(TiXmlElement *El, const char* name, std::string & outValue);
  * @param outValue šablonovaná proměnná, do které se uloží hodnota nalezeného atributu
  * @param force nepovinný parametr, pokud je
  * @return Vrací TRUE při úspěchu, jinak false.
+ * @throw string Vypustí výjimku, když je atribut špatného typu nebo neexistuje a je povinný.
  */
 template<typename T>
 		bool readAttr(TiXmlElement *El, const char* name,

@@ -13,9 +13,10 @@
 #include "game_creature.h"
 
 /** Umělá inteligence.
- * Třída je postavena na tom, že objekt stojící na nějakém políčku v nějaké mapě
- * využívající nějakou inteligenci potřebuje v jednom kroku vědět (podle své inteligence)
- * nové souřadnice. Na ty se zeptá své inteligence.
+ * AI je abstraktní třída, která implementuje vlastnosti a metody
+ * společné pro většinu úrovní umělých inteligencí.
+ * systém úrovní umělých inteligencí není úplně plochý,
+ * každá úroveň implementuje stěžejní funkce pro rozhodnutí tahu trochu jinak.
  */
 class AI {
 	public:
@@ -42,6 +43,11 @@ class AI {
 		void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign);
 };
 
+/** Umělá inteligence nulté úrovně.
+ * AI_0 je naprosto tupá úroveň.
+ * Jde pořád rovně, když narazí, náhodně se rozhodne kudy dál.
+ * Vůbec neřeší blížící se výbuch nebo dostižení hráče.
+ */
 class AI_0 : public AI {
 	public:
 		/// Zavolá konstruktor AI
@@ -55,6 +61,10 @@ class AI_0 : public AI {
 		bool checkfield_(const position_t & position);
 };
 
+/** Umělá inteligence první úrovně.
+ * AI_1 je velice tupá úroveň, sice nepředvídatelně mění směr,
+ * nicméně vůbec neřeší blížící se výbuch nebo cílené dostižení hráče.
+ */
 class AI_1 : public AI {
 	public:
 		/// Zavolá konstruktor AI
@@ -68,6 +78,11 @@ class AI_1 : public AI {
 		bool checkfield_(const position_t & position);
 };
 
+/** NEumělá inteligence.
+ * AI_fromKeayboard je inteligence, která je řízena vstupem z klávesnice.
+ * Pokud se nic neděje, nestvůrou (hráčem) nehýbá.
+ * Řeší, aby uživatel svou interakcí chodil pouze tudy, kudy může.
+ */
 class AI_fromKeyboard : public AI {
 	public:
 		/// Zavolá konstruktor AI
@@ -77,6 +92,7 @@ class AI_fromKeyboard : public AI {
 		/// Destruktor.
 		virtual ~AI_fromKeyboard() {};
 	private:
+		/// Stav klávesnice.
 		Uint8 *keystate_;
 };
 

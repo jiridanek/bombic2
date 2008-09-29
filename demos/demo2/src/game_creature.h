@@ -39,8 +39,12 @@ class Creature: public DynamicMO {
 		Animation & anim_(DIRECTION d_);
 		/// Přejde na další fázi umírání.
 		void die();
-		/// Animace pro různé stavy.
-		Animation anim_up_, anim_right_, anim_down_, anim_left_, anim_burned_;
+
+		Animation anim_up_, ///< Animace pro pohyb vzhůru.
+			anim_right_, ///< Animace pro pohyb vpravo.
+			anim_down_, ///< Animace pro pohyb dolů.
+			anim_left_, ///< Animace pro pohyb vlevo.
+			anim_burned_; ///< Animace pro umírání.
 		/// Současné otočení.
 		DIRECTION d_;
 		/// Umělá inteligence.
@@ -49,8 +53,10 @@ class Creature: public DynamicMO {
 		bool moved_;
 		/// Počítadlo přístupů.
 		Uint32 access_counter_;
-		/// Počet životů, rychlost.
-		Uint16 lives_, speed_diff_, speed_rate_;
+		/// Počet životů.
+		Uint16 lives_,
+			speed_diff_, ///< Velikost parciálního pohybu.
+			speed_rate_; ///< Míra parciálního pohybu.
 };
 
 #endif

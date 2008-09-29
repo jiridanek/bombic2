@@ -14,7 +14,7 @@ using namespace std;
  * @param doc prázdný TiXmlDocument
  * @param filename jméno souboru pro otevření, zadávejte bez cesty a bez přípony
  * @param rootEl_name vyžádané jméno root elementu, pokud je prázdné nekontrokluje se
- * @param checkAttr_name pokud true, provede kontrolu atributu name
+ * @param checkAttr_name pokud true, provede kontrolu atributu name root elementu
  * @return Vrací root element.
  * @see TiXmlError()
  */
@@ -70,9 +70,8 @@ bool readStringAttr(TiXmlElement *El, const char* name,
 /** @details
  * Najde požadovaný vnořený element.
  * Při chybě vyvolá výjimku typu string s popisem chyby.
- * @param Element , v němž hledáme vnořený element
+ * @param Element v němž hledáme vnořený element
  * @param subEl_name název hledaného elementu
- * @param attr_map mapa zpracovaných atributů
  * @return Vrací subelement.
  */
 TiXmlElement* subElement(TiXmlElement *Element, const char* subEl_name){
@@ -86,9 +85,9 @@ TiXmlElement* subElement(TiXmlElement *Element, const char* subEl_name){
  * @details
  * Naplní parametry mimo prvního hodnotami atributů.
  * Pokud atribut nenajde uloží do parametru empty string.
- * Pokud je atribut prázdný vyvolá výjimku s chybovou hláškou.
  * @param El element jehož hodnoty atributů hledáme
- * @param name hodnota stejnojmenného atributu nebo prázdny string
+ * @param name hodnota stejnojmenného atributu nebo prázdný string, nepovinný
+ * @throw string chybové hlášení, pokud je atribut prázdný
  */
 void attr_Name(TiXmlElement *El, std::string & name){
 	if(!El || !readStringAttr(El,"name", name) ){
@@ -102,11 +101,11 @@ void attr_Name(TiXmlElement *El, std::string & name){
 /**
  * @details
  * Naplní parametry mimo prvního hodnotami atributů.
- * Pokud atribut nenajde uloží do parametru -1.
- * Pokud je atribut prázdný nebo špatného typu vyvolá výjimku s chybovou hláškou.
+ * Pokud nějaký atribut nenajde uloží do parametru -1.
  * @param El element jehož hodnoty atributů hledáme
- * @param height hodnota stejnojmenného atributu nebo -1
- * @param width hodnota stejnojmenného atributu nebo -1
+ * @param height hodnota stejnojmenného atributu nebo -1, nepovinný
+ * @param width hodnota stejnojmenného atributu nebo -1, nepovinný
+ * @throw string chybové hlášení, pokud je atribut špatného typu nebo nulový
  */
 void attr_HeightWidth(TiXmlElement *El, int & height, int & width){
 	if(!readAttr(El, "height", height, false))
@@ -124,10 +123,10 @@ void attr_HeightWidth(TiXmlElement *El, int & height, int & width){
  * @details
  * Naplní parametry mimo prvního hodnotami adekvátních atributů.
  * Kontroluje také zda je parametr přítomen.
- * Pokud atribut chybí nebo je špatného typu, vyvolá výjimku s chybovou hláškou.
  * @param El element jehož hodnoty atributů hledáme
- * @param x hodnota atributu x
- * @param y hodnota atributu y
+ * @param x hodnota atributu x, povinný
+ * @param y hodnota atributu y, povinný
+ * @throw string chybové hlášení, pokud je atribut špatného typu nebo chybí
  */
 void attr_XY(TiXmlElement *El, int & x, int & y){
 	if(!El){
@@ -146,32 +145,9 @@ void attr_XY(TiXmlElement *El, int & x, int & y){
 /**
  * @details
  * Naplní parametry mimo prvního hodnotami adekvátních atributů.
- * Kontroluje také zda je parametr přítomen.
- * Pokud atribut chybí nebo je špatného typu, vyvolá výjimku s chybovou hláškou.
  * @param El element jehož hodnoty atributů hledáme
- * @param x hodnota atributu x
- * @param y hodnota atributu y
- */
-void attr_ShadowXY(TiXmlElement *El, int & x, int & y){
-	if(!El){
-		x = y = -1;
-		return;
-	}
-
-	readAttr(El,"shadow_x", x);
-	if(x<0)
-		throw string("value of attribute shadow_x must be higher than 0 or equals.");
-	readAttr(El,"shadow_y", y);
-	if(y<0)
-		throw string("value of attribute shadow_y must be higher than 0 or equals.");
-}
-
-/**
- * @details
- * Naplní parametry mimo prvního hodnotami adekvátních atributů.
- * Pokud atribut chybí nebo je špatného typu, vyvolá výjimku s chybovou hláškou.
- * @param El element jehož hodnoty atributů hledáme
- * @param count hodnota atributu count
+ * @param count hodnota atributu count, povinný
+ * @throw string chybová hláška, pokud atribut chybí nebo je špatného typu
  */
 void attr_Count(TiXmlElement *El, int & count){
 	if(!El){
@@ -186,11 +162,11 @@ void attr_Count(TiXmlElement *El, int & count){
 /**
  * @details
  * Naplní parametry mimo prvního hodnotami adekvátních atributů.
- * Pokud atribut chybí nebo je špatného typu, vyvolá výjimku s chybovou hláškou.
  * @param El element jehož hodnoty atributů hledáme
- * @param speed hodnota atributu speed
- * @param lives hodnota atributu lives
- * @param intelligence hodnota atributu intelligence
+ * @param speed hodnota atributu speed, povinný
+ * @param lives hodnota atributu lives, povinný
+ * @param intelligence hodnota atributu intelligence, povinný
+ * @throw string chybová hláška, pokud atribut chybí nebo je špatného typu
  */
 void attr_SpeedLivesIntelligence(TiXmlElement *El,
 			Uint16 & speed, Uint16 & lives, Uint16 & intelligence){

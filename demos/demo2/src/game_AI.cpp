@@ -254,6 +254,7 @@ void AI_0::move() {
 
 /** @details
  * Zjistí podle zadané pozice jestli může na políčko vstoupit.
+ * Řeší při tom pouze zda se smí na políčko vstoupit (neřeší plameny atd.).
  * @param position zjištovaná pozice nestvůry
  * @return True pokud můžeme na políčko zadané pozice vstoupit, jinak false.
  */
@@ -312,6 +313,7 @@ void AI_1::move() {
 
 /** @details
  * Zjistí podle zadané pozice jestli může na políčko vstoupit.
+ * Řeší při tom pouze zda se smí na políčko vstoupit (neřeší plameny atd.).
  * @param position zjištovaná pozice nestvůry
  * @return True pokud můžeme na políčko zadané pozice vstoupit, jinak false.
  */
@@ -349,6 +351,7 @@ AI_fromKeyboard::AI_fromKeyboard(Creature *creature): AI(creature) {
 	 keystate_= SDL_GetKeyState(0);
 }
 
+// TODO klávesy
 void AI_fromKeyboard::move() {
 	SDLKey up=SDLK_UP, right=SDLK_RIGHT, down=SDLK_DOWN, left=SDLK_LEFT;
 	// update pozic pro pohyb jako bych byl otoceny nahoru
@@ -357,27 +360,6 @@ void AI_fromKeyboard::move() {
 	updatePositions();
 	// souradnice v polickach
 	Uint16 x,y;
-
-	if(keystate_[SDLK_x]){
-		creature_->speed_rate_++;
-		SDL_Delay(500);
-		SDL_PumpEvents();
-	}
-	if(keystate_[SDLK_y]){
-		creature_->speed_rate_--;
-		SDL_Delay(500);
-		SDL_PumpEvents();
-	}
-	if(keystate_[SDLK_d]){
-		creature_->speed_diff_++;
-		SDL_Delay(500);
-		SDL_PumpEvents();
-	}
-	if(keystate_[SDLK_s]){
-		creature_->speed_diff_--;
-		SDL_Delay(500);
-		SDL_PumpEvents();
-	}
 
 	if(keystate_[up]){
 		creature_->d_ = UP;

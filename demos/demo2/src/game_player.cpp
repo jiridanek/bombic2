@@ -8,6 +8,10 @@
 #include "game_player.h"
 #include "game_AI.h"
 
+
+/**
+ * @see Creature::Creature()
+ */
 Player::Player(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
@@ -27,6 +31,10 @@ Player::~Player(){
 		delete ai_;
 }
 
+/** @details
+ * Navíc hlídá, zda ho nesezrala nestvůra.
+ * @see Creature::move()
+ */
 void Player::move(){
 	Creature::move();
 	if(Game::field_withCreature(x_/CELL_SIZE, y_/CELL_SIZE))

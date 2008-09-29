@@ -16,13 +16,16 @@
  */
 class Floorobject: public StaticMO{
 	public:
+		/// Vytvoří objekt.
 		Floorobject(const Animation & anim, Uint16 x, Uint16 y);
+		/// Vykreslí objekt.
 		virtual void draw(SDL_Surface * window);
 		/// Typ objekt na zemi.
 		virtual OBJECT_TYPES type(){ return FLOOROBJECT; }
 		/// Destructor
 		virtual ~Floorobject() {};
 	private:
+		/// Animace objektu.
 		Animation anim_;
 };
 

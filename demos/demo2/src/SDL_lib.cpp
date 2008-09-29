@@ -37,11 +37,17 @@ namespace Color{
 
 /******************* class Fonts *********************/
 
-// pouze nastavi jmeno souboru s fontem
+/**
+ * @param filename název souboru s fontem
+ */
 Fonts::Fonts(char* filename): fontFile(filename), fontMap() {
 }
 
-TTF_Font* Fonts::operator[](unsigned int size){
+/**
+ * @param size požadovaná velikost písma
+ * @return pointer na vytvořený font
+ */
+TTF_Font* Fonts::operator[](Uint16 size){
 	// vratim font velikosti size
 	// pokud ho nenajdu tak ho vytvorim
 	fontMap_t::const_iterator it;
@@ -60,7 +66,11 @@ Fonts::~Fonts(){
 	}
 }
 
-TTF_Font* Fonts::add(unsigned int size){
+/**
+ * @param size velikost fontu pro vytvoření
+ * @return pointer na vytvořený font
+ */
+TTF_Font* Fonts::add(Uint16 size){
 	// prida velikost pisma pokud jeste neni vytvorena
 	// prvne ji vytvorim
 	TTF_Font* font = TTF_OpenFont(fontFile.c_str(), size);
@@ -83,12 +93,18 @@ Surface::Surface() : surface_(0){
 	references_ = new Uint16(1);
 }
 
+/**
+ * @param sur_SDL SDL_Surface, ze kterého chceme vytvořit nový Surface.
+ */
 Surface::Surface(SDL_Surface *sur_SDL):
 				surface_(sur_SDL){
 	// Create a new reference
 	references_ = new Uint16(1);
 }
 
+/**
+ * @param sur Surface, který chceme klonovat.
+ */
 Surface::Surface(const Surface & sur):
 			surface_(sur.surface_), references_(sur.references_){
 	++(*references_);
@@ -98,6 +114,12 @@ Surface::~Surface(){
 	decrement_();
 }
 
+/** @details
+ * Snížit počet referencí, pokud dosáhnou na nulu,
+ * dealokovat vnitřní SDL_Surface
+ * @return nový počet referencí
+ * @see SDL_FreeSurface
+ */
 Uint16 Surface::decrement_(){
 	// Decrement the reference count
 	// if reference become zero delete the data
@@ -111,6 +133,10 @@ Uint16 Surface::decrement_(){
 	return *references_;
 }
 
+/**
+ * @param sur Surface, který chceme klonovat
+ * @return vytvořený Surface
+ */
 Surface & Surface::operator= (const Surface & sur){
 	// Assignment operator
 	if(this != &sur){ // Avoid self assignment
@@ -125,6 +151,10 @@ Surface & Surface::operator= (const Surface & sur){
 	return *this;
 }
 
+/**
+ * @param sur_SDL SDL_Surface, ze kterého chceme vytvořit nový Surface.
+ * @return vytvořený Surface
+ */
 Surface & Surface::operator= (SDL_Surface * sur_SDL){
 	// Assignment operator
 	if(this->surface_ != sur_SDL){ // Avoid self assignment
@@ -158,13 +188,26 @@ Animation::Animation(): next_frame_(0), draw_shadow_(0),
 }
 
 /**
- *
+ * @see Animation::initialize(), Animation::loadItem_()
  */
 Animation::Animation(TiXmlElement* el, Uint16 width, Uint16 height,
 			const Surface & sur_src, const Surface & sur_shadow_src) {
 	initialize(el, width, height, sur_src, sur_shadow_src);
 }
 
+/** @details
+ * Nastavuje inicializační hodnoty, parsuje XML element a
+ * vytváří z něj animaci.
+ * @param el XML element obsahující definici animace.
+ * Minimálně musí obsahovat atributy x,y.
+ * Typicky obsahuje podelement animation(rate="") s podelementy animation_item(x,y)
+ * @param width šířka každého framu animace
+ * @param height výška každého framu animace
+ * @param sur_src zdrojový obrázek, ze kterého se vyřeže animace
+ * @param sur_shadow_src zdrojový obrýzek, ze kterého se vyřežou stíny,
+ * defaultně bez stínů.
+ * @see Animation::loadItem_()
+ */
 const Animation & Animation::initialize(TiXmlElement* el,
 			Uint16 width, Uint16 height,
 			const Surface & sur_src, const Surface & sur_shadow_src){
@@ -199,7 +242,6 @@ const Animation & Animation::initialize(TiXmlElement* el,
 	return *this;
 }
 
-/// Okopírování animace.
 Animation::Animation(const Animation & anim):
 	frames_(anim.frames_), shadow_frames_(anim.shadow_frames_),
 	next_frame_(0), draw_shadow_(anim.draw_shadow_),
@@ -214,6 +256,16 @@ const Animation & Animation::operator=(const Animation & anim){
 	return *this;
 }
 
+/** @details
+ * Parsuje XML element a vytváří z něj konkrétní jeden frame.
+ * @param el XML element <animation_item x,y,(shadow_x, shadow_y)>
+ * obsahující definici jednoho framu.
+ * @param width šířka framu animace
+ * @param height výška framu animace
+ * @param sur_src zdrojový obrázek, ze kterého se vyřízne frame
+ * @param sur_shadow_src zdrojový obrýzek, ze kterého se vyřízne stín.
+ * @see readAttr()
+ */
 void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
 			const Surface & sur_src, const Surface & sur_shadow_src){
 
@@ -241,11 +293,14 @@ void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
 	shadow_frames_.push_back(sur);
 }
 
-/// Nastavení výchozího obrázku jako aktuální.
 void Animation::reset(){
 	next_frame_=0;
 }
-/// Update stavu animace (typicky nastavení dalšího framu)
+
+/** @details
+ * Zaručí správnou rychlost animace.
+ * @return TRUE, pokud se vracíme na začátek animace, jinak FALSE.
+ */
 bool Animation::update(){
 	bool at_end = false;
 	for(last_access_+=MOVE_PERIOD;
@@ -258,7 +313,12 @@ bool Animation::update(){
 	}
 	return at_end;
 }
-/// Vykreslení aktuálního framu.
+
+/**
+ * @param window surface okna pro vykreslení
+ * @param x cílová souřadnice pro vykreslení
+ * @param y cílová souřadnice pro vykreslení
+ */
 void Animation::draw(SDL_Surface* window, Uint16 x, Uint16 y) const {
 	if(draw_shadow_){
 		draw_surface(x, y, shadow_frames_[next_frame_].GetSurface(), window);
@@ -279,6 +339,17 @@ Uint16 Animation::width() const {
 
 /******** SDL_lib functions **************************/
 
+/** @details
+ * Inicializuje SDL, nastavuje video mode a velikost okna,
+ * inicializuje TTF. Při úspěchu nastavuje zrušení SDL a TTF při ukončení programu.
+ * Při neúspěchu vypisuje chybovou hlášku a ukončí program.
+ * @see SDL_Init(), SDL_Quit(), TTF_Init(), TTF_Quit()
+ * @see exit, atexit
+ * @param pWindow pointer na pointer na SDL_Surface okna
+ * @param win_w šířka okna
+ * @param win_h výška okna
+ * @param caption titulek okna
+ */
 void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *caption){
 	// Inicializace SDL
 	if(SDL_Init(SDL_INIT_VIDEO) == -1){
@@ -304,11 +375,23 @@ void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *capti
 	SDL_WM_SetCaption(caption, 0);
 }
 
+/**
+ * @param font pointer na písmo, kterým se má psát
+ * @param str text, který se má vypsat
+ * @param color barva textu
+ * @return Vrací vytvořené SDL_Surface s textem.
+ * @see TTF_RenderUTF8_Blended()
+ */
 SDL_Surface* get_text(TTF_Font* font, const char* str, SDL_Color color){
         return TTF_RenderUTF8_Blended(font, str, color);
 }
 
-// vytvori surface potrebne velikosti a barvy
+/**
+ * @param w šířka surface
+ * @param h výška surface
+ * @param color barva pro vyplnění
+ * @return Vrací vytvořené SDL_Surface.
+ */
 SDL_Surface* create_surface(Uint16 w, Uint16 h, SDL_Color color){
 	SDL_Surface* sur;
 	// vytvorim surface
@@ -320,15 +403,24 @@ SDL_Surface* create_surface(Uint16 w, Uint16 h, SDL_Color color){
 	// vratim
 	return sur;
 }
+/**
+ * @param sur surface, kteremu chceme nastavit průhlednou barvu
+ * @param color průhledná barva
+ * @see SDL_SetColorKey()
+ */
 void set_transparent_color(SDL_Surface *sur, SDL_Color color){
 	if(!sur) return;
 	SDL_SetColorKey(sur, SDL_SRCCOLORKEY,
 		SDL_MapRGB(sur->format, color.r, color.g, color.b));
 }
-// vytvori surface potrebne velikosti a nastavi prusvitnou barvu
+
+/**
+ * @param w šířka surface
+ * @param h výška surface
+ * @param transparent pokud TRUE, bude nastavena poloprůhlednost surface
+ * @return Vrací vytvořené SDL_Surface.
+ */
 SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h, bool transparent){
-	// transparentni barva
-// 	SDL_Color trans_color= Colors::transparent();
 	// vytvorim surface
 	SDL_Surface *sur=create_surface(w, h, Color::transparent);
 	// nastavim transparentni barvu
@@ -340,6 +432,12 @@ SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h, bool transparent){
 }
 
 
+/**
+ * @param x souřadnice pro vykreslení
+ * @param y souřadnice pro vykreslení
+ * @param surface_src zdroj
+ * @param surface_dst cíl
+ */
 void draw_surface(int x, int y, SDL_Surface* surface_src, SDL_Surface* surface_dst){
 	// vykresli surface_src do surface_dst
 	if(surface_src && surface_dst){
@@ -348,7 +446,10 @@ void draw_surface(int x, int y, SDL_Surface* surface_src, SDL_Surface* surface_d
 	}
 }
 
-// vykresli src do dst vycentrovane
+/**
+ * @param surface_src zdroj
+ * @param surface_dst cíl
+ */
 void draw_center_surface(SDL_Surface* surface_src, SDL_Surface* surface_dst){
 	if(surface_src && surface_dst){
 		draw_surface(
@@ -358,6 +459,10 @@ void draw_center_surface(SDL_Surface* surface_src, SDL_Surface* surface_dst){
 	}
 }
 
+/**
+ * @param color barva vyplnění
+ * @param surface cíl
+ */
 void clear_surface(SDL_Color color, SDL_Surface* surface){
 	// vybarvi surface barvou color
 	if(surface){
@@ -366,6 +471,12 @@ void clear_surface(SDL_Color color, SDL_Surface* surface){
 	}
 }
 
+/**
+ * @param surface cíl
+ * @param x souřadnice vykreslovaného pixelu
+ * @param y souřadnice
+ * @param color barva pixelu
+ */
 void draw_pixel(SDL_Surface* surface, int x, int y, SDL_Color color){
 	// nakresli do `surface` pixel na souradnice [x,y] barvy `color`
 	if(!surface) return;
@@ -407,6 +518,14 @@ void draw_pixel(SDL_Surface* surface, int x, int y, SDL_Color color){
 	}
 }
 
+/**
+ * @param surface cíl
+ * @param x1 počáteční souřadnice úsečky
+ * @param y1 počáteční souřadnice
+ * @param x2 koncové souřadnice úsečky
+ * @param y2 koncové souřadnice úsečky
+ * @param color barva úsečky
+ */
 void draw_line(SDL_Surface* surface, int x1, int y1, int x2, int y2, SDL_Color color){
 	// pres parametrickou rovnici usecky
 	// kazdy bod Z usecky AB se spocita
@@ -423,21 +542,31 @@ void draw_line(SDL_Surface* surface, int x1, int y1, int x2, int y2, SDL_Color c
 	} else	draw_pixel(surface, x1, y1 ,color);
 }
 
+/** @details
+ * Počká od času last tak dlouho abych vykresloval
+ * fps obrázků za sekundu
+ * vráti aktualní čas ukončení teto fce
+ * poznamka: muze špatně fungovat pokud aplikace běží
+ * déle než ~49.7 dní kvůli přetečení Uint32
+ * @param last čas posedního volání této fce
+ * @param fps počet framu za sekundu kterých chceme docílit
+ * @return Vrací aktuální čas použitelný pro další volání.
+ */
 Uint32 SDL_fps(Uint32 last, Uint32 fps){
-	// pocka od casu last tak dlouho abych vykresloval
-	// fps obrazku za sekundu
-	// vrati aktualni cas ukonceni teto fce
-	// poznamka: muze spatne fungovat pokud aplikace bezi
-	// dele nez ~49.7 dni kvuli preteceni Uint32
 	Uint32 time_elipse= (fps==0) ? 2000 : 1000/fps;
 	Uint32 from_last= SDL_GetTicks()-last;
 	if(time_elipse>from_last) SDL_Delay(time_elipse-from_last);
-// 	else std::cout << time_elipse << "," << from_last << std::endl;
+
 	return SDL_GetTicks();
 }
 
 /**************** funkce obstaravajici udalosti *********************/
 
+/**
+ * @return Pokud zjistí událost stisku klávesy (keydown),
+ * nebo žádost o ukončení (quit), vrací hodnotu stisknuté klávesy,
+ * respektive SDL_LAST. Pokud není žádná událost ve frontě, vrací SDL_FIRST.
+ */
 SDLKey get_event(){
 	SDL_Event event;
 
@@ -461,6 +590,12 @@ SDLKey get_event(){
 	return SDLK_FIRST;
 }
 
+
+/**
+ * @param key klávesa pro ukončení programu
+ * @return TRUE, pokud byla nalezena žádost o ukončení,
+ * nebo stisknuta zadaná klávesa, jinak FALSE.
+ */
 bool get_event_isquit(SDLKey key){
 	SDLKey eventkey;
 	while(true){
@@ -472,8 +607,11 @@ bool get_event_isquit(SDLKey key){
 	}
 }
 
-// ceka na udalost a vraci stisknutou klavesu
-// nebo SDLK_LAST pri pozadavk na ukonceni
+/** @details
+ * Čeká, dokud nebude stisknuta klávesa (keydown),
+ * nebo zjistí žádost o ukončení (quit).
+ * @return Vrací stisknutou klávesu nebo SDL_LAST při pokusu o ukončení.
+ */
 SDLKey wait_event(){
 	SDL_Event event;
 
@@ -497,8 +635,13 @@ SDLKey wait_event(){
 	return SDLK_LAST;
 }
 
-// vycka na udalost a vraci true pokud to bylo ukonceni
-// nebo zmacknuta klavesa key, jinak false
+/**
+ * Čeká, dokud nebude stisknuta klávesa (keydown),
+ * nebo zjistí žádost o ukončení (quit).
+ * @param key klávesa pro ukončení programu
+ * @return TRUE, pokud byla nalezena žádost o ukončení,
+ * nebo stisknuta zadaná klávesa, jinak FALSE.
+ */
 bool wait_event_isquit(SDLKey key){
 	SDLKey eventkey;
 	eventkey=wait_event();
@@ -508,9 +651,12 @@ bool wait_event_isquit(SDLKey key){
 		return false;
 }
 
+/**
+ * @return (double) náhodné číslo z intervalu [0,1]
+ */
 double SDL_Rand(){
 	double random= rand()+1;
 		random= rand()/random;
-	return (random<1) ? random : 1/random;
+	return (random<=1) ? random : 1/random;
 }
 /********* END of SDL_lib functions ********************/

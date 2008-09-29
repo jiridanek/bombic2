@@ -27,7 +27,10 @@ class Background: public StaticMO{
 		/// Destructor
 		virtual ~Background() {};
 	private:
-		Animation anim_clean_, anim_burned_;
+		/// Animace před výbuchem.
+		Animation anim_clean_,
+		/// Animace po výbuchu.
+			anim_burned_;
 };
 
 

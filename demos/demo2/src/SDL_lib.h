@@ -1,7 +1,7 @@
-/*
+/** @file SDL_lib.h
  * SDL_lib
- * je nadstavba nad knihovnou SDL, SDL_image, SDL_gfx, SDL_ttf
- * vykresluje jednoduche geometricke utvary, pismo, nacita obrazky...
+ * je nadstavba nad knihovnou SDL, SDL_image, SDL_ttf
+ * vykresluje jednoduché geometrické útvary, písmo, načítá obrázky, animace...
  */
 
 #ifndef SDL_LIB_
@@ -15,6 +15,7 @@
 #include <string>
 #include <cstdlib> // For rand()
 
+/// Konstantní pojmenované barvy.
 namespace Color{
 	extern const SDL_Color transparent;
 
@@ -35,37 +36,56 @@ namespace Color{
 	extern const SDL_Color silver;
 };
 
+/** Písmo.
+ * Jedna instance třídy Fonts obstarává jeden druh písma
+ * ve všech jeho velikostech. Dynamicky různé velikosti tvoří podle toho
+ * jak je o ně žádán. Před prvním voláním operatoru[]
+ * musí být SDL fonty inicializovány pomocí TTF_Init().
+ * @see window_init(), TTF_Init()
+ */
 class Fonts {
 	public:
-		// pouze nastavi jmeno souboru s fontem
+		/// Pouze nastaví jméno souboru s fontem.
 		Fonts(char* filename);
-		// vratim font velikosti size
-		TTF_Font* operator[](unsigned int size);
-		// zrusim vsechny vytvorene velikosti fontu
+		/// Konkrétní velikost fontu.
+		TTF_Font* operator[](Uint16 size);
+		/// Zrušení všech vytvořených velikostí fontu
 		~Fonts();
 	private:
-		// prida velikost pisma pokud jeste neni vytvorena
-		TTF_Font* add(unsigned int size);
-		// nazev souboru s fontem
+		/// Přidání velikosti písma, pokud ješte není vytvořena.
+		TTF_Font* add(Uint16 size);
+		/// Název souboru s fontem.
 		std::string fontFile;
-		// typ mapy, uklada se dvojice <size,vytvoreny font>
-		typedef std::map<unsigned int, TTF_Font* > fontMap_t;
-		// vsechny vytvorene velikosti fontu
+		/// Typ mapování, ukládá se dvojice <size,vytvořený font>.
+		typedef std::map<Uint16, TTF_Font* > fontMap_t;
+		/// Všechny vytvořené velikosti fontu.
 		fontMap_t fontMap;
 };
 
+/** Počítání referencí pro SDL_Surface.
+ * Datový typ Surface obaluje strukturu SDL_Surface, poskytuje
+ * bohatý interface pro kopírování, inicializaci a přetypování z SDL_Surface.
+ * @see SDL_Surface
+ */
 class Surface {
 	public:
+		/// Bez inicializace.
 		Surface();
+  		/// Inicializace zkopírováním.
 		Surface(const Surface & sur);
+		/// Inicializace přímo pomocí SDL_Surface, přetypování.
 		Surface(SDL_Surface *sur_SDL);
+		/// Zrušení konkrétní instance.
 		~Surface();
-
+		/// Přiřazení zkopírováním.
 		Surface & operator= (const Surface & sur);
+		/// Přiřazení přímo SDL_Surface.
 		Surface & operator= (SDL_Surface *sur_SDL);
-
+		/// SDL_Surface konkrétní instance.
 		SDL_Surface* GetSurface() const;
+		/// Šířka surface.
 		Uint16 width() const;
+		/// Výška surface.
 		Uint16 height() const;
 	private:
 		Uint16 decrement_();
@@ -96,7 +116,7 @@ class Animation {
 		/// Inicializace z XML a zdrojového surface.
 		const Animation & Animation::initialize(TiXmlElement* el,
 					Uint16 width, Uint16 height,
-					const Surface & sur_src, const Surface & sur_shadow_src);
+					const Surface & sur_src, const Surface & sur_shadow_src=0);
 		/// Okopírování animace.
 		Animation(const Animation & anim);
 		/// Okopírování animace.
@@ -125,58 +145,55 @@ class Animation {
 		/// Vykreslovat stíny.
 		bool draw_shadow_;
 		/// Délka zobrazení jednoho framu.
-		Uint16 frame_period_, last_access_;
+		Uint16 frame_period_,
+		/// Timestamp posledního přístupu.
+			last_access_;
 
 };
 
-// Inicializace SDL a TTF, vytvori okno o zadanych rozmerech a zahlavi
+/// Inicializace SDL a TTF, vytvoří okno o zadaných rozměrech a záhlaví.
 void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *caption);
 
-
-// surface s textem str v barve color a fontem font
+/// Vytvoření surface s textem.
 SDL_Surface* get_text(TTF_Font* font, const char* str, SDL_Color color);
 
-// vytvori surface potrebne velikosti a barvy
+/// Vytvoření surface.
 SDL_Surface* create_surface(Uint16 w, Uint16 h, SDL_Color color);
+/// Nastavení průhledné barvy pro surface.
 void set_transparent_color(SDL_Surface *sur, SDL_Color color);
+/// Vytvoření surface s průhlednou barvou (volitelně celé poloprůhledně).
 SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h, bool transparent=false);
 
-// vykresli surface_src do surface_dst
+/// Vykreslení surface_src do surface_dst.
 void draw_surface(int x, int y, SDL_Surface* surface_src, SDL_Surface* surface_dst);
 
-// vykresli src do dst vycentrovane
+/// Vykreslení surface_src do surface_dst vycentrovaně.
 void draw_center_surface(SDL_Surface* surface_src, SDL_Surface* surface_dst);
 
-// vymaze misto v surface_dst na kterem by byl surface_src
+/// Vybarvení místa v surface_dst, na kterém by byl surface_src.
 void clear_surface(int x, int y, SDL_Color color,
 			SDL_Surface* surface_src, SDL_Surface* surface_dst);
 
-// nakresli do `surface` pixel na souradnice [x,y] barvy `color`
+/// Nakreslení pixelu do surface.
 void draw_pixel(SDL_Surface* surface, int x, int y, SDL_Color color);
 
-// pres parametrickou rovnici usecky
+/// Nakreslení úsečky.
 void draw_line(SDL_Surface* surface, int x1, int y1, int x2, int y2, SDL_Color color);
 
-// pocka od last tak dlouho abych vykresloval fps obrazku za sekundu
-// vrati aktualni cas ukonceni teto fce
-// pro fps==0 bude vykreslovat obrazek jednou za dve sekundy
+/// Frames per second zdrží program, aby nevykresloval zbytečně často.
 Uint32 SDL_fps(Uint32 last, Uint32 fps);
 
-// vraci hodnotu zmacknute klavesy
-// nebo SDLK_FIRST pokud nebyla klavesa zmacknuta
-// nebo SDLK_LAST pri zadosti o ukonceni
+/// Hodnota zmáčknuté klávesy, nebo SDL_FIRST (pokud není žádná ve frontě).
 SDLKey get_event();
-// ceka na udalost
+/// Hodnota zmáčknuté klávesy, čeká se, až bude nějaká ve frontě.
 SDLKey wait_event();
 
-// vrati true kdyz byla zadost o ukonceni, jinak false
-// vrati take true pokud udalost vyvolala klavesa key
+/// Kontrola žádosti o ukončení.
 bool get_event_isquit(SDLKey key= SDLK_LAST);
-// tato fce navic ceka na nejakou udalost
-// vrati take true pokud udalost vyvolala klavesa key
+/// Kontrola žádosti o ukončení, čeká se na nějakou událost.
 bool wait_event_isquit(SDLKey key= SDLK_LAST);
 
-// vraci pseudonahodne cislo od nuly do jednicky vcetne
+/// Pseudonáhodné číslo v intervalu [0,1].
 double SDL_Rand();
 
 #endif

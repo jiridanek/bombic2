@@ -65,7 +65,7 @@ class Game {
 // 		static bool field_canFlyOver(Uint16 x, Uint16 y);
 		/// Na políčku je příšera.
 		static bool field_withCreature(Uint16 x, Uint16 y);
-
+		/// Vyhození objektu z mapy.
 		static void remove_object(DynamicMO * obj);
 		/// Dvourozměrné pole mapy, na každém políčku seznam objektů na něm položených.
 		typedef std::vector< std::vector< std::list< MapObject* > > > map_array_t;

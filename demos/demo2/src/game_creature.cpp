@@ -8,6 +8,18 @@
 #include "game_creature.h"
 #include "game_AI.h"
 
+/**
+ * @param anim_up animace pro směr vzhůru
+ * @param anim_right animace pro směr vpravo
+ * @param anim_down animace pro směr dolů
+ * @param anim_left animace pro směr vlevo
+ * @param anim_burned animace pro umírání
+ * @param x souřadnice středu v pixelech
+ * @param y souřadnice středu
+ * @param speed rychlost
+ * @param lives počet životů
+ * @param ai úroveň umělé inteligence
+ */
 Creature::Creature(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
@@ -20,11 +32,18 @@ Creature::Creature(const Animation & anim_up, const Animation & anim_right,
 	// pro zjednoduseni zachazeni s rychlosti
 	speed_diff_((speed-1)/7+1), speed_rate_((speed-1)%7+2+speed_diff_) {}
 
+/** @details
+ * Destruuje umělou inteligenci.
+ */
 Creature::~Creature(){
 	if(ai_)
 		delete ai_;
 }
 
+/** @details
+ * Pomocí umělé inteligence hýbne s nestvůrou,
+ * posune frame animace.
+ */
 void Creature::move(){
 	// mrtvoly se nehybou
 	if(d_==BURNED){
@@ -55,6 +74,10 @@ void Creature::move(){
 		anim_(d_).reset();
 }
 
+/** @details
+ * Posune frame umírací animace,
+ * když animace doběhne, vyhodí objekt z mapy.
+ */
 void Creature::die(){
 	if(anim_burned_.update())
 		Game::remove_object(this);
@@ -62,6 +85,9 @@ void Creature::die(){
 
 extern Fonts g_font;
 
+/**
+ * @param window surface okna pro vykreslení
+ */
 void Creature::draw(SDL_Surface *window){
 	int x=x_-anim_up_.width()+CELL_SIZE/2;
 	int y=y_-anim_up_.height()+CELL_SIZE/2;
@@ -78,6 +104,10 @@ void Creature::draw(SDL_Surface *window){
 	//*/
 }
 
+/**
+ * @param d směr, pro který chceme animaci
+ * @return Vrací referenci na animaci zadaného směru pohybu.
+ */
 Animation & Creature::anim_(DIRECTION d) {
 	switch(d){
 		case UP: return anim_up_;

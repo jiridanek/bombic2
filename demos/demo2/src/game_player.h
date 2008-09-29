@@ -32,9 +32,12 @@ class Player: public Creature {
 		/// Destructor
 		virtual ~Player();
 	private:
-		/// Klávesy.
-		SDLKey key_up_, key_right_, key_down_, key_left_,
-			key_plant_, key_timer_;
+		SDLKey key_up_, ///< Klávesa nahoru.
+		 key_right_, ///< Klávesa vpravo.
+		 key_down_, ///< Klávesa dolů.
+		 key_left_, ///< Klávesa vlevo.
+		 key_plant_, ///< Klávesa pokládání bomby.
+		 key_timer_; ///< Klávesa odpalování (pokud má časovač).
 };
 
 #endif

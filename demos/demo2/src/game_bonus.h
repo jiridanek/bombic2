@@ -17,8 +17,9 @@
  */
 class Bonus: public DynamicMO{
 	public:
+		/// Vytvoří bonus.
 		Bonus(const Animation & anim, Uint16 x, Uint16 y);
-		/// Pohyb.
+		/// Obnova stavu.
 		virtual void move();
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *window);
@@ -27,7 +28,9 @@ class Bonus: public DynamicMO{
 		/// Destructor
 		virtual ~Bonus() {};
 	private:
+		/// Animace.
 		Animation anim_;
+		/// Je-li vidět.
 		bool visible_;
 };
 

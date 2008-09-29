@@ -36,10 +36,12 @@ class MapObject{
 		virtual OBJECT_TYPES type()=0;
 	protected:
 		/// Souřadnice polohy v pixelech.
-		Uint16 x_, y_;
+		Uint16 x_,
+		/// Souřadnice polohy v pixelech.
+			y_;
 };
 
-/// Porovnání obejktů mapy podle souřadnice z.
+/// Porovnání obejktů mapy podle souřadnice z (výšky pro vykreslení).
 bool isUnder(const MapObject * a, const MapObject * b);
 
 /** Dynamický objekt hry.
@@ -72,7 +74,7 @@ class StaticMO: public MapObject{
 };
 
 /** Predikát na zjištění typu objektu mapy.
- * Inicializace typem objektu nebo objektem,
+ * Inicializace typem objektu,
  * volání operátoru kulatých závorek jako volání logického predikátu.
  */
 class isTypeOf {

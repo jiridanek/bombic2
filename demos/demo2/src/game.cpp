@@ -25,11 +25,19 @@ using namespace std;
 Game::map_array_t Game::map_array_;
 Game::dynamicMOs_t Game::dynamicMOs_;
 
+/**
+ * @param players_count počet hráčů
+ * @param mapname název mapy
+ */
 Game::Game(Uint16 players_count, const std::string & mapname){
 // 	bool deathmatch, bool creatures, bool bombsatend){
 	load_map_(players_count, mapname);
 }
 
+/**
+ * @param players_count počet hráčů
+ * @param mapname název mapy
+ */
 void Game::load_map_(Uint16 players_count, const std::string & mapname){
 	// nacteni hodnot z xml
 	TiXmlDocument doc;
@@ -93,6 +101,9 @@ void Game::load_map_(Uint16 players_count, const std::string & mapname){
 	load_creatures_(map_el->FirstChildElement("creatures"));
 }
 
+/**
+ * @param bgname název pozadí mapy
+ */
 void Game::load_background_(const std::string & bgname){
 	// nacteni hodnot z xml
 	TiXmlDocument doc;
@@ -173,16 +184,15 @@ void Game::load_background_(const std::string & bgname){
 	}
 }
 
+/**
+ * @param playersEl element v XML souboru specifikující výchozí pozici hráče
+ * @param count počet hráčů
+ */
 void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 	string filename;
 	int column, field, width, height;
-// 	int x,y;
 	Uint16 speed, lives, intelligence;
-// 	bool is_shadow;
 	Surface sur_src, sur_src_s;
-//	Surface sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
-// 		sur_down, sur_down_s, sur_burned;
-// 	SDL_Rect rect;
 
 	isTypeOf isWall(WALL);
 
@@ -197,7 +207,7 @@ void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 		TiXmlError("in element <players ...>: "+s);
 	}
 	TiXmlDocument doc;
-	TiXmlElement *rootEl;//, *El;
+	TiXmlElement *rootEl;
 	try{
 		for( ; count>0 ; --count ){
 			filename = "player"+x2string(count);
@@ -206,14 +216,11 @@ void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 			// zdrojovy obrazek
 			sur_src = load_src_surface_(rootEl);
 			sur_src_s = load_src_surface_(rootEl, "shadow_src", false);
-// 			is_shadow = sur_src_s.GetSurface()!=0;
 
 			// vyska a sirska obrazku
 			attr_HeightWidth(rootEl, height, width);
 			if(height<1) TiXmlError(filename,"missing attribute height");
 			if(width<1) TiXmlError(filename,"missing attribute width");
-// 			rect.w = static_cast<Uint16>(width);
-// 			rect.h = static_cast<Uint16>(height);
 			// rychlost, pocet zivotu a inteligence prisery
 			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
 			if(speed>CELL_SIZE/2){
@@ -236,84 +243,6 @@ void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 			insert_player_(anim_up, anim_right, anim_down, anim_left,
 				anim_burned, column, field, speed, lives);
 
-/*
-			// left
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_left= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_left.GetSurface(), 0);
-			if(is_shadow){
-				attr_ShadowXY(El, x, y);
-				rect.x= static_cast<Sint16>(x);
-				rect.y= static_cast<Sint16>(y);
-				// preneseni obrazku do noveho surface
-				sur_left_s= create_transparent_surface(width, height, true);
-				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_left_s.GetSurface(), 0);
-			}
-			// up
-			El = subElement(rootEl,"up");
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_up= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_up.GetSurface(), 0);
-			if(is_shadow){
-				attr_ShadowXY(El, x, y);
-				rect.x= static_cast<Sint16>(x);
-				rect.y= static_cast<Sint16>(y);
-				// preneseni obrazku do noveho surface
-				sur_up_s= create_transparent_surface(width, height, true);
-				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_up_s.GetSurface(), 0);
-			}
-			// right
-			El = subElement(rootEl,"right");
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_right= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_right.GetSurface(), 0);
-			if(is_shadow){
-				attr_ShadowXY(El, x, y);
-				rect.x= static_cast<Sint16>(x);
-				rect.y= static_cast<Sint16>(y);
-				// preneseni obrazku do noveho surface
-				sur_right_s= create_transparent_surface(width, height, true);
-				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_right_s.GetSurface(), 0);
-			}
-			// down
-			El = subElement(rootEl,"down");
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_down= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_down.GetSurface(), 0);
-			if(is_shadow){
-				attr_ShadowXY(El, x, y);
-				rect.x= static_cast<Sint16>(x);
-				rect.y= static_cast<Sint16>(y);
-				// preneseni obrazku do noveho surface
-				sur_down_s= create_transparent_surface(width, height, true);
-				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_down_s.GetSurface(), 0);
-			}
-			// burned
-			El = subElement(rootEl,"burned");
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_burned= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_burned.GetSurface(), 0);
-
-			insert_player_(sur_left, sur_left_s,
-				sur_up, sur_up_s, sur_right, sur_right_s,
-				sur_down, sur_down_s, sur_burned, column, field,
-				speed, lives);
-*/
 		}
 	}
 	catch(string s){
@@ -321,6 +250,9 @@ void Game::load_players_(TiXmlElement *playersEl, Uint16 count){
 	}
 }
 
+/**
+ * @param wallsEl element v XML souboru specifikující zdi mapy
+ */
 void Game::load_walls_(TiXmlElement *wallsEl){
 	// nenalezen nepovinny tag walls
 	if(!wallsEl) return;
@@ -409,6 +341,9 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 
 }
 
+/**
+ * @param floorEl element v XML souboru specifikující objekt na zemi
+ */
 void Game::load_floorobjects_(TiXmlElement *floorEl){
 	string filename;
 	int height, width, x,y;
@@ -454,6 +389,9 @@ void Game::load_floorobjects_(TiXmlElement *floorEl){
 	}
 }
 
+/**
+ * @param boxesEl element v XML souboru specifikující bedny v mapě
+ */
 void Game::load_boxes_(TiXmlElement *boxesEl){
 	// nenalezen nepovinny tag boxes
 	if(!boxesEl) return;
@@ -595,6 +533,9 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 	}
 }
 
+/**
+ * @param bonusEl element v XML souboru specifikující bonus
+ */
 void Game::load_bonuses_(TiXmlElement *bonusEl){
 	string filename;
 	int x,y, count;
@@ -665,15 +606,14 @@ void Game::load_bonuses_(TiXmlElement *bonusEl){
 	}
 }
 
+/**
+ * @param creaturesEl element v XML souboru specifikující nestvůry
+ */
 void Game::load_creatures_(TiXmlElement *creaturesEl){
 	string filename;
 	int x,y, count, width, height;
 	Uint16 speed, lives, intelligence;
-// 	bool is_shadow;
 	Surface sur_src, sur_src_s;
-// 	, sur_left, sur_left_s, sur_up, sur_up_s, sur_right, sur_right_s,
-// 		sur_down, sur_down_s, sur_burned;
-// 	SDL_Rect rect;
 	// seznam prazdnych policek
 	vector< pair<Uint16, Uint16> > empty_fields;
 	vector< pair<Uint16, Uint16> >::iterator it;
@@ -706,14 +646,11 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 			// zdrojovy obrazek
 			sur_src = load_src_surface_(rootEl);
 			sur_src_s = load_src_surface_(rootEl, "shadow_src", false);
-// 			is_shadow = sur_src_s.GetSurface()!=0;
 
 			// vyska a sirska obrazku
 			attr_HeightWidth(rootEl, height, width);
 			if(height<1) TiXmlError(filename,"missing attribute height");
 			if(width<1) TiXmlError(filename,"missing attribute width");
-// 			rect.w = static_cast<Uint16>(width);
-// 			rect.h = static_cast<Uint16>(height);
 			// rychlost, pocet zivotu a inteligence prisery
 			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
 			if(speed>CELL_SIZE/2){
@@ -733,80 +670,6 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 					anim_burned(subElement(rootEl,"burned"),
 						width, height, sur_src);
 
-/*
-			// left
-			El = subElement(rootEl,"left");
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_left= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_left.GetSurface(), 0);
-			if(is_shadow){
-				attr_ShadowXY(El, x, y);
-				rect.x= static_cast<Sint16>(x);
-				rect.y= static_cast<Sint16>(y);
-				// preneseni obrazku do noveho surface
-				sur_left_s= create_transparent_surface(width, height, true);
-				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_left_s.GetSurface(), 0);
-			}
-			// up
-			El = subElement(rootEl,"up");
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_up= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_up.GetSurface(), 0);
-			if(is_shadow){
-				attr_ShadowXY(El, x, y);
-				rect.x= static_cast<Sint16>(x);
-				rect.y= static_cast<Sint16>(y);
-				// preneseni obrazku do noveho surface
-				sur_up_s= create_transparent_surface(width, height, true);
-				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_up_s.GetSurface(), 0);
-			}
-			// right
-			El = subElement(rootEl,"right");
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_right= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_right.GetSurface(), 0);
-			if(is_shadow){
-				attr_ShadowXY(El, x, y);
-				rect.x= static_cast<Sint16>(x);
-				rect.y= static_cast<Sint16>(y);
-				// preneseni obrazku do noveho surface
-				sur_right_s= create_transparent_surface(width, height, true);
-				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_right_s.GetSurface(), 0);
-			}
-			// down
-			El = subElement(rootEl,"down");
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_down= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_down.GetSurface(), 0);
-			if(is_shadow){
-				attr_ShadowXY(El, x, y);
-				rect.x= static_cast<Sint16>(x);
-				rect.y= static_cast<Sint16>(y);
-				// preneseni obrazku do noveho surface
-				sur_down_s= create_transparent_surface(width, height, true);
-				SDL_BlitSurface(sur_src_s.GetSurface(), &rect, sur_down_s.GetSurface(), 0);
-			}
-			// burned
-			El = subElement(rootEl,"burned");
-			attr_XY(El, x, y);
-			rect.x= static_cast<Sint16>(x);
-			rect.y= static_cast<Sint16>(y);
-			// preneseni obrazku do noveho surface
-			sur_burned= create_transparent_surface(width, height, false);
-			SDL_BlitSurface(sur_src.GetSurface(), &rect, sur_burned.GetSurface(), 0);
-*/
 			// pevne zarazene prisery
 			for(El = creaturesEl->FirstChildElement("creature");
 					El ; El= El->NextSiblingElement("creature")){
@@ -821,10 +684,6 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 				if(isBadType(map_array_[x][y].back())) continue;
 				insert_creature_(anim_up, anim_right, anim_down, anim_left,
 					anim_burned, x, y, speed, lives, intelligence);
-// 				insert_creature_(sur_left, sur_left_s,
-// 					sur_up, sur_up_s, sur_right, sur_right_s,
-// 					sur_down, sur_down_s, sur_burned, x, y,
-// 					speed, lives, intelligence);
 				--count;
 			}
 
@@ -835,10 +694,6 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 				insert_creature_(anim_up, anim_right, anim_down,
 					anim_left, anim_burned, it->first, it->second,
 					speed, lives, intelligence);
-// 				insert_creature_(sur_left, sur_left_s,
-// 					sur_up, sur_up_s, sur_right, sur_right_s,
-// 					sur_down, sur_down_s, sur_burned, it->first, it->second,
-// 					speed, lives, intelligence);
 			}
 			creaturesEl= creaturesEl->NextSiblingElement("creatures");
 		}
@@ -848,7 +703,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
 	}
 }
 
-/** @details
+/* * @details
  * Vytvoří SDL_Surface objektu popsaného podelementem se zadaným jménem.
  * Vrácené surface má nastavenou průhlednou barvu, nikoli však průhlednost.
  * Zjistí také jaké měl podelement nastavené toplapping (výška nevyužitá v mapě).
@@ -860,7 +715,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
  * @param sur_src zdrojový surface, ze kterého se vyjme výsledný surface
  * @return Výsledný surface patřící nalezenému podelementu.
  * @see subElement(), readAttr()
- */
+ * /
  /*
 SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 				int & toplapping, SDL_Surface* sur_src){
@@ -990,7 +845,7 @@ void Game::insert_wall_(const Animation & anim,
 /** @details
  * Vytvoří objekt na zemi na zadaných souřadnicích a vloží ho do mapy.
  * Objekt vkládá do mapy na všechna políčka, které zabírá.
- * @param sur surface vkládaného objektu
+ * @param anim animace vkládaného objektu
  * @param x souřadnice levého rohu objektu v mapě
  * @param y souřadnice horního rohu objektu v mapě
  */
@@ -1010,8 +865,8 @@ void Game::insert_floorobject_(const Animation & anim, Uint16 x, Uint16 y){
 /** @details
  * Vytvoří bednu na zadaných souřadnicích a vloží ji do mapy.
  * Bednu vkládá do mapy na všechna políčka, která zabírá.
- * @param sur_img surface vkládané bedny
- * @param sur_burning surface hořící vkládané bedny
+ * @param anim animace vkládané bedny
+ * @param anim_burning animace hořící bedny
  * @param toplapping počet políček odshora obrázku,
  * které nezabírají místo v mapě
  * @param x souřadnice levého rohu bedny v mapě
@@ -1034,7 +889,7 @@ void Game::insert_box_(const Animation & anim, const Animation & anim_burning,
 
 /** @details
  * Vytvoří bonus na zadaných souřadnicích a vloží ho do mapy.
- * @param sur surface vkládaného bonusu (do mapy)
+ * @param anim animace vkládaného bonusu (do mapy)
  * @param x souřadnice bonusu v mapě
  * @param y souřadnice bonusu v mapě
  */
@@ -1049,20 +904,16 @@ void Game::insert_bonus_(const Animation & anim, Uint16 x, Uint16 y){
 
 /** @details
  * Vytvoří nestvůru na zadaných souřadnicích a vloží ji do mapy.
- * @param sur_left surface pro otoceni doleva
- * @param sur_left_s surface stinu pro otoceni doleva
- * @param sur_up surface pro otoceni nahoru
- * @param sur_up_s surface stinu pro otoceni nahoru
- * @param sur_right surface pro otoceni doprava
- * @param sur_right_s surface stinu pro otoceni doprava
- * @param sur_down surface pro otoceni down
- * @param sur_down_s surface stinu pro otoceni down
- * @param sur_burned surface pro umirani
+ * @param anim_left animace pro otočení doleva
+ * @param anim_up animace pro otočení nahoru
+ * @param anim_right animace pro otočení doprava
+ * @param anim_down animace pro otočení dolů
+ * @param anim_burned animace pro umírání
  * @param x souřadnice bonusu v mapě
  * @param y souřadnice bonusu v mapě
- * @param speed rychlost v pixelech za jednu casovou jednotku
- * @param lives pocet zivotu
- * @param ai kvalita umele inteligence
+ * @param speed rychlost v pixelech za jednu časovou jednotku
+ * @param lives počet životů
+ * @param ai kvalita umělé inteligence
  */
 void Game::insert_creature_(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
@@ -1081,28 +932,16 @@ void Game::insert_creature_(const Animation & anim_up, const Animation & anim_ri
 
 /** @details
  * Vytvoří hráče na zadaných souřadnicích a vloží jej do mapy.
- * @param sur_left surface pro otoceni doleva
- * @param sur_left_s surface stinu pro otoceni doleva
- * @param sur_up surface pro otoceni nahoru
- * @param sur_up_s surface stinu pro otoceni nahoru
- * @param sur_right surface pro otoceni doprava
- * @param sur_right_s surface stinu pro otoceni doprava
- * @param sur_down surface pro otoceni down
- * @param sur_down_s surface stinu pro otoceni down
- * @param sur_burned surface pro umirani
+ * @param anim_left animace pro otočení doleva
+ * @param anim_up animace pro otočení nahoru
+ * @param anim_right animace pro otočení doprava
+ * @param anim_down animace pro otočení dolů
+ * @param anim_burned animace pro umírání
  * @param x souřadnice bonusu v mapě
  * @param y souřadnice bonusu v mapě
- * @param speed rychlost v pixelech za jednu casovou jednotku
- * @param lives pocet zivotu
+ * @param speed rychlost v pixelech za jednu časovou jednotku
+ * @param lives počet životů
  */
-/*
-void Game::insert_player_(const Surface & sur_left, const Surface & sur_left_s,
-			const Surface & sur_up, const Surface & sur_up_s,
-			const Surface & sur_right, const Surface & sur_right_s,
-			const Surface & sur_down, const Surface & sur_down_s,
-			const Surface & sur_burned, Uint16 x, Uint16 y,
-			Uint16 speed, Uint16 lives){
-*/
 void Game::insert_player_(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
@@ -1118,6 +957,10 @@ void Game::insert_player_(const Animation & anim_up, const Animation & anim_righ
 	map_array_[x][y].push_back(dynamicMOs_.back());
 }
 
+/** @details
+ * Zruší nejdříve všechny statické,
+ * následně všechny dynamické objekty v mapě.
+ */
 Game::~Game(){
 	// zrusit staticke objekty
 	for(Uint16 i=0; i< staticMOs_.size() ; ++i){
@@ -1130,13 +973,15 @@ Game::~Game(){
 	}
 }
 
+/** @details
+ * Vykreslí nejdříve objekty pozadí (background, floorobject)
+ * následně ostatní.
+ * @param window surface okna pro vykreslení
+ */
 void Game::draw(SDL_Surface* window){
 	Uint16 column, field;
 	map_array_t::value_type::value_type::iterator it, end_it;
 	isTypeOf isBgType;
-// TODO debug
-Uint32 fps_last=0;
-Uint8 *keystate = SDL_GetKeyState(0);
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
 	isBgType.addType(BACKGROUND).addType(FLOOROBJECT);
@@ -1161,24 +1006,24 @@ Uint8 *keystate = SDL_GetKeyState(0);
 					++it){
 				if(!isBgType(*it))
 					(*it)->draw(window);
-// TODO debug
-SDL_PumpEvents();
-if(keystate[SDLK_m]){
-	fps_last= SDL_fps(fps_last,10);
-	SDL_Flip(window);
-}
 			}
 		}
 	}
 }
 
-/// Nastavení parametrů hráče.
+/**
+ * @param player_num číslo (pořadí) hráče
+ * @param lives počet životů
+ * @param bombs počet bomb, jimiž disponuje
+ * @param flames velikost plamene
+ * @param boots počet botiček
+ */
 void Game::set_player(Uint16 player_num, Uint16 lives,
 	Uint16 bombs, Uint16 flames, Uint16 boots){
 }
 
 /** @details
- * Projde všechny dynamické objekty hry zavola na nich fci move().
+ * Projde všechny dynamické objekty hry a zavolá na nich fci move().
  * @see DynamicMO::move()
  */
 void Game::play(){
@@ -1226,7 +1071,11 @@ bool Game::field_withCreature(Uint16 x, Uint16 y){
 	return find_if(begin, end, isCreature)!=end;
 }
 
-
+/** @details
+ * Specifikovaný objekt vyhodí ze seznamu dynamických objektů,
+ * z mapy a následně jej dealokuje!
+ * @param obj dynamický objekt, který chceme vyhodit
+ */
 void Game::remove_object(DynamicMO * obj){
 	Uint16 x, y;
 	// vyhodim obj z mapy

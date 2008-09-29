@@ -17,7 +17,6 @@ Wall::Wall(const Animation & anim,	Uint16 x, Uint16 y):
 
 /** @details
  * @param window Surface, do kterého chceme zeď vykreslit.
- * @see draw_surface()
  */
 void Wall::draw(SDL_Surface* window){
 	anim_.draw(window, x_, y_);
