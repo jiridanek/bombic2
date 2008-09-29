@@ -715,7 +715,7 @@ void Game::load_creatures_(TiXmlElement *creaturesEl){
  * @param sur_src zdrojový surface, ze kterého se vyjme výsledný surface
  * @return Výsledný surface patřící nalezenému podelementu.
  * @see subElement(), readAttr()
- * /
+ */
  /*
 SDL_Surface* Game::load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
 				int & toplapping, SDL_Surface* sur_src){
