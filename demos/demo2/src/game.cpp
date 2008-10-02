@@ -141,13 +141,13 @@ void Game::load_background_(const std::string & bgname){
 		toplapping =
 		load_subEl_animation_(bg_el, "bottomleft", anim, sur_src);
 		insert_wall_(anim, toplapping, 0,
-				map_array_[0].size()-(anim.height()-toplapping)/CELL_SIZE);
+				map_array_[0].size()-anim.height()/CELL_SIZE+toplapping);
 
 		toplapping =
 		load_subEl_animation_(bg_el, "bottomright", anim, sur_src);
 		insert_wall_(anim, toplapping,
 				map_array_.size()-anim.width()/CELL_SIZE,
-				map_array_[0].size()-(anim.height()-toplapping)/CELL_SIZE);
+				map_array_[0].size()-anim.height()/CELL_SIZE+toplapping);
 
 		// strany
 		load_subEl_animation_(bg_el, "top", anim, sur_src);
@@ -165,7 +165,7 @@ void Game::load_background_(const std::string & bgname){
 		}
 
 		toplapping = load_subEl_animation_(bg_el, "bottom", anim, sur_src);
-		field= map_array_[0].size()-(anim.height()-toplapping)/CELL_SIZE;
+		field= map_array_[0].size()-anim.height()/CELL_SIZE+toplapping;
 		for(column=0 ; column< map_array_.size() ; ++column){
 			if(isBG(map_array_[column][field].back()))
 				insert_wall_(anim, toplapping, column, field);
@@ -294,7 +294,7 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 	}
 
 	// kontrola jestli koresponduji rozmery obrazku
-	if(height_def!=(anim_def.height()-toplapping_def)/CELL_SIZE)
+	if(height_def!=anim_def.height()/CELL_SIZE-toplapping_def)
 		TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>");
 
 	if(width_def!= anim_def.width()/CELL_SIZE)
@@ -321,7 +321,7 @@ void Game::load_walls_(TiXmlElement *wallsEl){
 						anim, sur_src);
 
 				// kontrola jestli koresponduji rozmery obrazku
-				if(height!=(anim.height()-toplapping)/CELL_SIZE)
+				if(height!=anim.height()/CELL_SIZE-toplapping)
 					TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>");
 
 				if(width!= anim.width()/CELL_SIZE)
@@ -436,7 +436,7 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 		TiXmlError(filename,s);
 	}
 	// kontrola jestli koresponduji rozmery obrazku
-	if(height_def!=(anim_def.height()-toplapping_def)/CELL_SIZE)
+	if(height_def!=anim_def.height()/CELL_SIZE-toplapping_def)
 		TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>.");
 
 	if(width_def!= anim_def.width()/CELL_SIZE)
@@ -466,7 +466,7 @@ void Game::load_boxes_(TiXmlElement *boxesEl){
 				load_subEl_animation_(rootEl, "burning", anim_burning_def, sur_src);
 
 				// kontrola jestli koresponduji rozmery obrazku
-				if(height!=(anim.height()-toplapping)/CELL_SIZE)
+				if(height!=anim.height()/CELL_SIZE-toplapping)
 					TiXmlError(filename,"the value of attribute height doesn't correspond with value in <boxes ...>.");
 
 				if(width!= anim.width()/CELL_SIZE)
@@ -833,7 +833,7 @@ void Game::insert_wall_(const Animation & anim,
 	staticMOs_.push_back(new Wall(anim, x*CELL_SIZE, (y-toplapping)*CELL_SIZE) );
 	// ulozit do mapy na spravna policka
 	for(Uint16 column=0; column<anim.width()/CELL_SIZE ; ++column){
-		for(Uint16 field=0 ; field<(anim.height()-toplapping)/CELL_SIZE
+		for(Uint16 field=0 ; field<anim.height()/CELL_SIZE-toplapping
 							; ++field){
 			if(x+column>=map_array_.size() || y+field>=map_array_[0].size())
 				continue;
@@ -878,7 +878,7 @@ void Game::insert_box_(const Animation & anim, const Animation & anim_burning,
 	dynamicMOs_.push_back(new Box(anim, anim_burning, toplapping, x*CELL_SIZE, y*CELL_SIZE) );
 	// ulozit do mapy na spravna policka
 	for(Uint16 column=0; column<anim.width()/CELL_SIZE ; ++column){
-		for(Uint16 field=0 ; field<(anim.height()-toplapping)/CELL_SIZE
+		for(Uint16 field=0 ; field<anim.height()/CELL_SIZE-toplapping
 							; ++field){
 			if(x+column>=map_array_.size() || y+field>=map_array_[0].size())
 				continue;
