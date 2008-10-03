@@ -86,7 +86,7 @@ class isTypeOf {
 		/// Přidání typu.
 		isTypeOf & addType(OBJECT_TYPES type);
 		/// Vyprázdnění typů.
-		isTypeOf & clear();
+		void clear();
 		/// Volání predikátu.
 		bool operator()(MapObject * object);
 	private:

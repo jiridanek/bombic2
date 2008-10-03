@@ -1,0 +1,94 @@
+/** @file game.h
+ * Samotná hra.
+ * Game.h obsahuje stejnojmennou třídu obstarávající konkrétní hru jako celek
+ * a jí podřízené třídy jako například mapObject.
+ */
+
+#ifndef GAME_H
+#define GAME_H
+
+#include <iostream>
+#include <list>
+#include <vector>
+#include <string>
+#include "SDL_lib.h"
+#include "game_base.h"
+#include "game_mapobjects.h"
+#include "tixml_helper.h"
+
+/** Konkrétní hra.
+ * Instance třídy Game obstarává jednu konkrétní hru.
+ * Může to být deathmatch nebo běžný level.
+ * Game může vytvořit pouze jedinou instanci, která je typicky držena
+ * z GameIntro nebo DeathmatchIntro. Implementuje nástroje,
+ * kterými tuto skutečnost hlídá a poskytuje svůj pointer globálně,
+ * prostřednictvím fce Game::get_instance().
+ * Ve svých strukturách uchovává statické i dynamické objekty hry.
+ * Stará se o hru samotnou, její spuštění, správné časování a ukončení.
+ * Podává informace o typu ukončení hry.
+ * @see GameIntro, DeathmatchIntro, GameBase.
+ */
+class Game {
+	public:
+		/// Získat pointer na jedinou instanci třídy.
+		static Game* get_instance();
+
+		/// Inicializace hry.
+		Game(const GameBase & base);
+		/// Uvolnění naalokovaaných objektů.
+		~Game();
+		/// TODO Spuštění hry. (zatim jeden tah)
+		void play();
+		/// Vykreslení scény.
+		void draw(SDL_Surface *window);
+		/// Info o ukončení hry.
+		bool success() const;
+		/// Info o hráči.
+		void player(Uint16 player_num, Uint16 & lives,
+			Uint16 & bombs, Uint16 & flames, Uint16 & boots) const;
+		/// Políčko lze přejít.
+		bool field_canGoOver(Uint16 x, Uint16 y);
+		/// Políčko lze přeletet.
+// 		bool field_canFlyOver(Uint16 x, Uint16 y);
+		/// Na políčku je příšera.
+		bool field_withCreature(Uint16 x, Uint16 y);
+		/// Vyhození objektu z mapy.
+		void remove_object(DynamicMO * obj);
+
+		/// Typ dvourozměrného pole mapy, na každém políčku seznam objektů s rozměry.
+		typedef std::vector< std::vector< std::list< MapObject* > > > map_array_t;
+		/// Typ seznamu dynamickych objektu.
+		typedef std::list< DynamicMO* > dynamicMOs_t;
+		/// Typ seznamu statickych objektu.
+		typedef std::vector< StaticMO* > staticMOs_t;
+
+	private:
+		/// Pointer na jedinou instanci třídy.
+		static Game* myself_ptr_;
+		/// Seznam statických objektů mapy.
+		staticMOs_t staticMOs_;
+		/// Seznam dynamických objektů mapy.
+		dynamicMOs_t dynamicMOs_;
+		/// Dvourozměrné pole mapy, na každém políčku seznam objektů na něm položených.
+		map_array_t map_array_;
+
+		/// Zkopírování pevně umístěných objektů.
+		void load_placed_MOs_(const GameBase::base_array_t & base_array);
+		/// Vygenerování neumístěných objektů.
+		void load_generated_MOs_(const GameBase::generatedMOs_t & generatedMOs);
+		/// Vygenerování beden.
+		void generate_boxes_(GameBase::generatedMOs_t::iteretor begin,
+				GameBase::generatedMOs_t::iterator end);
+		/// Vygenerování bonusů.
+		void generate_bonuses_(GameBase::generatedMOs_t::iterator begin,
+			GameBase::generatedMOs_t::iterator end);
+		/// Vygenerování příšer.
+		void generate_creatures_(GameBase::generatedMOs_t::iterator begin,
+			GameBase::generatedMOs_t::iterator end);
+
+		/// Vytvoření a vložení objektu do mapy.
+		void insert_MO_(const MapObject* mapObject, Uint16 width, Uint16 height,
+				Uint16 toplapping, Uint16 column, Uint16 field);
+};
+
+#endif

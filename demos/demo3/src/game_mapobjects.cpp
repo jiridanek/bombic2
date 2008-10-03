@@ -71,12 +71,11 @@ isTypeOf & isTypeOf::addType(OBJECT_TYPES type){
 	return *this;
 }
 
-isTypeOf & isTypeOf::clear(){
+void isTypeOf::clear(){
 	types_.clear();
 	types_.insert(types_.end(), OBJECT_TYPES_COUNT, false);
-	return *this;
 }
 
 bool isTypeOf::operator()(MapObject * object){
-	return object && types_[object->type()];
+	return types_[object->type()];
 }

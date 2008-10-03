@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<bonus name="bonus_timer" src="img/bonuses.bmp">
+	<img x="205" y="1" />
+</bonus>
