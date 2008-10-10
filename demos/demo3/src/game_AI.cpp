@@ -15,12 +15,25 @@
  * @return Pointer na vytvořenou umělou inteligenci,
  *	nebo nula pokud výše umělé inteligence neexistuje.
  */
-AI* AI::new_ai(Creature * creature, Uint16 intelligence){
+AI* AI::new_ai(Creature * creature, Sint16 intelligence){
 	switch(intelligence){
-		case 0: return new AI_0(creature);
-		case 1: return new AI_1(creature);
+		case -1: return new AI_fromKeyboard(creature);
+		case  0: return new AI_0(creature);
+		case  1: return new AI_1(creature);
 		default: return 0;
 	}
+}
+
+/** @details TODO
+ * Statická fce, pouze rozhodne, která třída AI se použije.
+ * @param creature rodičovská nestvůra
+ * @param intelligence výše umělé inteligence
+ * @return Pointer na vytvořenou umělou inteligenci,
+ *	nebo nula pokud výše umělé inteligence neexistuje.
+ */
+AI* AI::new_ai(Creature * creature, const AI * ai){
+	if(!ai) return 0;
+	return new_ai(creature, ai->type());
 }
 
 /** @details
@@ -92,27 +105,27 @@ void AI::setPosition(position_t & position){
 			if(position.y%CELL_SIZE+1<CELL_SIZE/2){
 				// vlevo
 				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE-1)){
 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, +1);
 					}
 				// vpravo
 				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE-1)){
 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, +1);
 					}
 			} else {
 				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE)){
 						centerCoordinate(position.x, +1);
 // 						centerCoordinate(position.y, +1);
 					}
 				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE)){
 						centerCoordinate(position.x, -1);
 // 						centerCoordinate(position.y, +1);
@@ -122,27 +135,27 @@ void AI::setPosition(position_t & position){
 			if(position.x%CELL_SIZE-1>CELL_SIZE/2){
 				// nahore
 				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE-1)){
 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, +1);
 					}
 				// dole
 				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE+1)){
 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, -1);
 					}
 			} else {
 				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE,position.y/CELL_SIZE-1)){
 // 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, +1);
 					}
 				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE,position.y/CELL_SIZE+1)){
 // 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, -1);
@@ -152,26 +165,26 @@ void AI::setPosition(position_t & position){
 		case DOWN:
 			if(position.y%CELL_SIZE-1>CELL_SIZE/2){
 				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE+1)){
 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, -1);
 					}
 				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE+1)){
 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, -1);
 					}
 			} else {
 				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE)){
 						centerCoordinate(position.x, +1);
 // 						centerCoordinate(position.y, -1);
 					}
 				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE)){
 						centerCoordinate(position.x, -1);
 // 						centerCoordinate(position.y, -1);
@@ -180,26 +193,26 @@ void AI::setPosition(position_t & position){
 		case LEFT:
 			if(position.x%CELL_SIZE+1<CELL_SIZE/2){
 				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE-1)){
 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, +1);
 					}
 				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE+1)){
 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, -1);
 					}
 			}else {
 				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE,position.y/CELL_SIZE-1)){
 // 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, +1);
 					}
 				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!Game::field_canGoOver(
+					if(!Game::get_instance()->field_canGoOver(
 					position.x/CELL_SIZE,position.y/CELL_SIZE+1)){
 // 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, -1);
@@ -260,23 +273,23 @@ void AI_0::move() {
  */
 bool AI_0::checkfield_(const position_t & position){
 	Uint16 x=position.x/CELL_SIZE, y=position.y/CELL_SIZE;
-	if(!Game::field_canGoOver(x,y))
+	if(!Game::get_instance()->field_canGoOver(x,y))
 		return false;
 
 	switch(position.d){
-		case UP: if(!Game::field_canGoOver(x,y-1)
+		case UP: if(!Game::get_instance()->field_canGoOver(x,y-1)
 				&& position.y%CELL_SIZE<CELL_SIZE/2)
 					return false;
 			break;
-		case RIGHT: if(!Game::field_canGoOver(x+1,y)
+		case RIGHT: if(!Game::get_instance()->field_canGoOver(x+1,y)
 				&& position.x%CELL_SIZE>CELL_SIZE/2)
 					return false;
 			break;
-		case DOWN: if(!Game::field_canGoOver(x,y+1)
+		case DOWN: if(!Game::get_instance()->field_canGoOver(x,y+1)
 				&& position.y%CELL_SIZE>CELL_SIZE/2)
 					return false;
 			break;
-		case LEFT: if(!Game::field_canGoOver(x-1,y)
+		case LEFT: if(!Game::get_instance()->field_canGoOver(x-1,y)
 				&& position.x%CELL_SIZE<CELL_SIZE/2)
 					return false;
 			break;
@@ -319,23 +332,23 @@ void AI_1::move() {
  */
 bool AI_1::checkfield_(const position_t & position){
 	Uint16 x=position.x/CELL_SIZE, y=position.y/CELL_SIZE;
-	if(!Game::field_canGoOver(x,y))
+	if(!Game::get_instance()->field_canGoOver(x,y))
 		return false;
 
 	switch(position.d){
-		case UP: if(!Game::field_canGoOver(x,y-1)
+		case UP: if(!Game::get_instance()->field_canGoOver(x,y-1)
 				&& position.y%CELL_SIZE<CELL_SIZE/2)
 					return false;
 			break;
-		case RIGHT: if(!Game::field_canGoOver(x+1,y)
+		case RIGHT: if(!Game::get_instance()->field_canGoOver(x+1,y)
 				&& position.x%CELL_SIZE>CELL_SIZE/2)
 					return false;
 			break;
-		case DOWN: if(!Game::field_canGoOver(x,y+1)
+		case DOWN: if(!Game::get_instance()->field_canGoOver(x,y+1)
 				&& position.y%CELL_SIZE>CELL_SIZE/2)
 					return false;
 			break;
-		case LEFT: if(!Game::field_canGoOver(x-1,y)
+		case LEFT: if(!Game::get_instance()->field_canGoOver(x-1,y)
 				&& position.x%CELL_SIZE<CELL_SIZE/2)
 					return false;
 			break;
@@ -364,8 +377,8 @@ void AI_fromKeyboard::move() {
 	if(keystate_[up]){
 		creature_->d_ = UP;
 		x=positions_[1].x/CELL_SIZE; y=positions_[1].y/CELL_SIZE;
-		if(Game::field_canGoOver(x, y)){
-			if(!Game::field_canGoOver(x, y-1)
+		if(Game::get_instance()->field_canGoOver(x, y)){
+			if(!Game::get_instance()->field_canGoOver(x, y-1)
 			&& positions_[1].y%CELL_SIZE<CELL_SIZE/2){
 				positions_[1].y =y*CELL_SIZE+CELL_SIZE/2;
 			}
@@ -376,8 +389,8 @@ void AI_fromKeyboard::move() {
 	else if(keystate_[right]){
 		creature_->d_ = RIGHT;
 		x=positions_[2].x/CELL_SIZE; y=positions_[2].y/CELL_SIZE;
-		if(Game::field_canGoOver(x, y)){
-			if(!Game::field_canGoOver(x+1, y)
+		if(Game::get_instance()->field_canGoOver(x, y)){
+			if(!Game::get_instance()->field_canGoOver(x+1, y)
 			&& positions_[2].x%CELL_SIZE>CELL_SIZE/2)
 				positions_[2].x =x*CELL_SIZE+CELL_SIZE/2;
 			if(positions_[2].x>positions_[0].x)
@@ -387,8 +400,8 @@ void AI_fromKeyboard::move() {
 	else if(keystate_[down]){
 		creature_->d_ = DOWN;
 		x=positions_[3].x/CELL_SIZE; y=positions_[3].y/CELL_SIZE;
-		if(Game::field_canGoOver(x, y)){
-			if(!Game::field_canGoOver(x, y+1)
+		if(Game::get_instance()->field_canGoOver(x, y)){
+			if(!Game::get_instance()->field_canGoOver(x, y+1)
 			&& positions_[3].y%CELL_SIZE>CELL_SIZE/2)
 				positions_[3].y =y*CELL_SIZE+CELL_SIZE/2;
 			if(positions_[3].y>positions_[0].y)
@@ -398,8 +411,8 @@ void AI_fromKeyboard::move() {
 	else if(keystate_[left]){
 		creature_->d_ = LEFT;
 		x=positions_[4].x/CELL_SIZE; y=positions_[4].y/CELL_SIZE;
-		if(Game::field_canGoOver(x, y)){
-			if(!Game::field_canGoOver(x-1, y)
+		if(Game::get_instance()->field_canGoOver(x, y)){
+			if(!Game::get_instance()->field_canGoOver(x-1, y)
 			&& positions_[4].x%CELL_SIZE<CELL_SIZE/2)
 				positions_[4].x =x*CELL_SIZE+CELL_SIZE/2;
 			if(positions_[4].x<positions_[0].x)

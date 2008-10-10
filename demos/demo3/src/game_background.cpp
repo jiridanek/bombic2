@@ -19,6 +19,10 @@ Background::Background(const Animation & anim_clean,
 			StaticMO(x, y),
 			anim_clean_(anim_clean), anim_burned_(anim_burned) {}
 
+Background::Background(const Background & background, Uint16 x, Uint16 y):
+			StaticMO(x, y), anim_clean_(background.anim_clean_),
+			anim_burned_(background.anim_burned_) {}
+
 // TODO update
 /**
  * @param window surface okna pro vykreslení

@@ -14,6 +14,8 @@
 Floorobject::Floorobject(const Animation & anim, Uint16 x, Uint16 y):
 	StaticMO(x, y), anim_(anim) {}
 
+Floorobject::Floorobject(const Floorobject & floorobject, Uint16 x, Uint16 y):
+	StaticMO(x, y), anim_(floorobject.anim_) {}
 
 /**
  * @param window surface okna pro vykreslení

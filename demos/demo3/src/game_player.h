@@ -25,10 +25,13 @@ class Player: public Creature {
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives);
+		/// Okopíruje hráče.
+		Player(const Player & player, Uint16 x, Uint16 y);
+
 		/// Pohyb.
 		virtual void move();
 		/// Typ objektu je bombic.
-		virtual OBJECT_TYPES type(){ return PLAYER; }
+		virtual OBJECT_TYPES type() const { return PLAYER; }
 		/// Destructor
 		virtual ~Player();
 	private:

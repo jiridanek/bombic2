@@ -12,9 +12,11 @@
  * @param x souřadnice levého rohu v pixelech
  * @param y souřadnice horního rohu v pixelech
  */
-
 Bonus::Bonus(const Animation & anim, Uint16 x, Uint16 y):
 	DynamicMO(x,y), anim_(anim), visible_(false) {}
+
+Bonus::Bonus(const Bonus & bonus, Uint16 x, Uint16 y):
+	DynamicMO(x,y), anim_(bonus.anim_), visible_(false) {}
 
 /** @details
  * Posune frame animace.

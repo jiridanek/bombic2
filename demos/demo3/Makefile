@@ -1,6 +1,6 @@
 
 LIBS=`sdl-config --libs` -lSDL_ttf -ltinyxml -g 
-CFLAGS= `sdl-config --cflags ` -g -Wall 
+CFLAGS= `sdl-config --cflags ` -g #-Wall 
 CC= g++
 
 TARGET        = demo2

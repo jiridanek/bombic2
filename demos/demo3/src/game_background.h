@@ -20,10 +20,12 @@ class Background: public StaticMO{
 		/// Vytvoří pozadí jednoho políčka.
 		Background(const Animation & anim_clean,const Animation & anim_burned,
 				Uint16 x, Uint16 y);
+		/// Okopíruje pozadí jednoho políčka.
+		Background(const Background & background, Uint16 x, Uint16 y);
 		/// Vykreslení.
 		virtual void draw(SDL_Surface * window);
 		/// Typ objektu je pozadí.
-		virtual OBJECT_TYPES type(){ return BACKGROUND; }
+		virtual OBJECT_TYPES type() const { return BACKGROUND; }
 		/// Destructor
 		virtual ~Background() {};
 	private:

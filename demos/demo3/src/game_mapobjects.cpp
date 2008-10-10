@@ -46,14 +46,8 @@ void DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y){
 	Uint16 x=x_/CELL_SIZE, y=y_/CELL_SIZE;
 	old_x/=CELL_SIZE; old_y/=CELL_SIZE;
 	if(old_x==x && old_y==y) return;
-	// vyhozeni ze stareho policka
-	Game::map_array_t::value_type::value_type::iterator it;
-	it= find(Game::map_array_[old_x][old_y].begin(),
-			Game::map_array_[old_x][old_y].end(), this );
-	if(it!=Game::map_array_[old_x][old_y].end())
-		Game::map_array_[old_x][old_y].erase(it);
-	// vlozeni na nove policko
-	Game::map_array_[x][y].push_back(this);
+	// zmena policka
+	Game::get_instance()->change_position(old_x, old_y, x, y, this);
 }
 
 /**************** isTypeOf *************************/
@@ -71,7 +65,7 @@ isTypeOf & isTypeOf::addType(OBJECT_TYPES type){
 	return *this;
 }
 
-void isTypeOf::clear(){
+isTypeOf & isTypeOf::clear(){
 	types_.clear();
 	types_.insert(types_.end(), OBJECT_TYPES_COUNT, false);
 }

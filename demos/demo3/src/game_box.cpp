@@ -20,6 +20,11 @@ Box::Box(const Animation & anim, const Animation & anim_burning,
 	height_((anim.height()-toplapping)/CELL_SIZE),
 	width_(anim.width()/CELL_SIZE){}
 
+Box::Box(const Box & box, Uint16 x, Uint16 y):
+	DynamicMO(x,y), anim_(box.anim_), anim_burning_(box.anim_burning_),
+	toplapping_(box.toplapping_),
+	height_(box.height_), width_(box.width_){}
+
 /** @details
  * Posune frame animace
  */

@@ -23,7 +23,7 @@
 Creature::Creature(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
-			Uint16 speed, Uint16 lives, Uint16 ai):
+			Uint16 speed, Uint16 lives, Sint16 ai):
 	DynamicMO(x, y),
 	anim_up_(anim_up), anim_right_(anim_right), anim_down_(anim_down),
 	anim_left_(anim_left), anim_burned_(anim_burned),
@@ -31,6 +31,16 @@ Creature::Creature(const Animation & anim_up, const Animation & anim_right,
 	moved_(false), access_counter_(0), lives_(lives),
 	// pro zjednoduseni zachazeni s rychlosti
 	speed_diff_((speed-1)/7+1), speed_rate_((speed-1)%7+2+speed_diff_) {}
+
+// TODO
+Creature::Creature(const Creature & creature, Uint16 x, Uint16 y):
+	DynamicMO(x, y),
+	anim_up_(creature.anim_up_), anim_right_(creature.anim_right_),
+	anim_down_(creature.anim_down_), anim_left_(creature.anim_left_),
+	anim_burned_(creature.anim_burned_), d_(creature.d_), ai_(AI::new_ai(this, creature.ai_)),
+	moved_(false), access_counter_(0), lives_(creature.lives_),
+	// pro zjednoduseni zachazeni s rychlosti
+	speed_diff_(creature.speed_diff_), speed_rate_(creature.speed_rate_) {}
 
 /** @details
  * Destruuje umělou inteligenci.
@@ -80,7 +90,7 @@ void Creature::move(){
  */
 void Creature::die(){
 	if(anim_burned_.update())
-		Game::remove_object(this);
+		Game::get_instance()->remove_object(this);
 }
 
 extern Fonts g_font;

@@ -3,8 +3,8 @@
  * Game_base.h obsahuje třídy připravující hru a zejména mapu hry z xml souborů.
  * Postup vytvoření hry je takový, že se jednou naloadují struktury z xml souborů,
  * pevně umístěné objekty se umístí do mapy, náhodně umísťované objekty se připraví mimo.
- * Až poté se z této předpřipravené struktury vygeneruje hra a její mapa
- * pro každou jednu hru (od narození po úmrtí), nově od demo2 se také řeší prázdná políčka.
+ * Až poté (a to už se řeěí v game_intro.h) se z této předpřipravené struktury vygeneruje hra a její mapa
+ * pro každou jednu hru (od narození po úmrtí).
  */
 
 #ifndef GAME_BASE_H
@@ -67,6 +67,8 @@ class GameBase {
 		void load_floorobjects_(TiXmlElement *floorEl);
 		/// Načtení beden mapy.
 		void load_boxes_(TiXmlElement *boxesEl);
+		/// Připravení políček, na kterých nesmí být bedna.
+		void load_noboxes_(TiXmlElement *boxesEl);
 		/// Načtení bonusů.
 		void load_bonuses_(TiXmlElement *bonusEl);
 		/// Načtení příšer.

@@ -21,11 +21,15 @@
 class AI {
 	public:
 		/// Vytvoří umělou inteligenci.
-		static AI* new_ai(Creature *creature, Uint16 intelligence);
+		static AI* new_ai(Creature *creature, Sint16 intelligence);
+		/// Okopíruje umělou inteligenci.
+		static AI* new_ai(Creature *creature, const AI * ai);
 		/// Uloží rodičovskou nestvůru.
 		AI(Creature *creature);
 		/// Hýbne nestvůrou.
 		virtual void move()=0;
+		/// Typ inteligence.
+		virtual Sint16 type() const =0;
 		/// Pomocná struktura pro otočení a souřadnice při posunu.
 		typedef struct{ DIRECTION d; Uint16 x, y; } position_t;
 		/// Destruktor.
@@ -54,6 +58,8 @@ class AI_0 : public AI {
 		AI_0(Creature *creature);
 		/// Hýbne nestvůrou.
 		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const { return 0; }
 		/// Destruktor.
 		virtual ~AI_0() {};
 	private:
@@ -71,6 +77,8 @@ class AI_1 : public AI {
 		AI_1(Creature *creature);
 		/// Hýbne nestvůrou.
 		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const { return 1; }
 		/// Destruktor.
 		virtual ~AI_1() {};
 	private:
@@ -89,6 +97,8 @@ class AI_fromKeyboard : public AI {
 		AI_fromKeyboard(Creature *creature);
 		/// Hýbne nestvůrou.
 		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const { return -1; }
 		/// Destruktor.
 		virtual ~AI_fromKeyboard() {};
 	private:

@@ -25,13 +25,15 @@ class Creature: public DynamicMO {
 		Creature(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
-			Uint16 speed, Uint16 lives, Uint16 ai);
+			Uint16 speed, Uint16 lives, Sint16 ai);
+		/// Vytvoří nestvůru.
+		Creature(const Creature & creature, Uint16 x, Uint16 y);
 		/// Pohyb.
 		virtual void move();
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *window);
 		/// Typ objektu je nestvůra.
-		virtual OBJECT_TYPES type(){ return CREATURE; }
+		virtual OBJECT_TYPES type() const { return CREATURE; }
 		/// Destructor
 		virtual ~Creature();
 	protected:

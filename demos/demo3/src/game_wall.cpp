@@ -12,8 +12,11 @@
  * @param y souřadnice v pixelech
  * @see StaticMO::StaticMO()
  */
-Wall::Wall(const Animation & anim,	Uint16 x, Uint16 y):
+Wall::Wall(const Animation & anim, Uint16 x, Uint16 y):
 		StaticMO(x, y), anim_(anim) {}
+
+Wall::Wall(const Wall & wall, Uint16 x, Uint16 y):
+		StaticMO(x, y), anim_(wall.anim_) {}
 
 /** @details
  * @param window Surface, do kterého chceme zeď vykreslit.

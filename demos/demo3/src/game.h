@@ -14,7 +14,7 @@
 #include "SDL_lib.h"
 #include "game_base.h"
 #include "game_mapobjects.h"
-#include "tixml_helper.h"
+// #include "tixml_helper.h"
 
 /** Konkrétní hra.
  * Instance třídy Game obstarává jednu konkrétní hru.
@@ -37,10 +37,8 @@ class Game {
 		Game(const GameBase & base);
 		/// Uvolnění naalokovaaných objektů.
 		~Game();
-		/// TODO Spuštění hry. (zatim jeden tah)
-		void play();
-		/// Vykreslení scény.
-		void draw(SDL_Surface *window);
+		/// Spuštění hry.
+		void play(SDL_Surface *window);
 		/// Info o ukončení hry.
 		bool success() const;
 		/// Info o hráči.
@@ -50,10 +48,13 @@ class Game {
 		bool field_canGoOver(Uint16 x, Uint16 y);
 		/// Políčko lze přeletet.
 // 		bool field_canFlyOver(Uint16 x, Uint16 y);
-		/// Na políčku je příšera.
-		bool field_withCreature(Uint16 x, Uint16 y);
+		/// Na políčku je typ objektu.
+		bool field_withObject(Uint16 x, Uint16 y, OBJECT_TYPES objectType);
 		/// Vyhození objektu z mapy.
 		void remove_object(DynamicMO * obj);
+		/// Pohyb z políčka na políčko.
+		void change_position(Uint16 old_x, Uint16 old_y,
+			Uint16 new_x, Uint16 new_y, MapObject * obj);
 
 		/// Typ dvourozměrného pole mapy, na každém políčku seznam objektů s rozměry.
 		typedef std::vector< std::vector< std::list< MapObject* > > > map_array_t;
@@ -72,23 +73,31 @@ class Game {
 		/// Dvourozměrné pole mapy, na každém políčku seznam objektů na něm položených.
 		map_array_t map_array_;
 
+		/// Vykreslení scény.
+		void draw_(SDL_Surface *window);
+		/// Hýbnutí světem.
+		void move_();
+
 		/// Zkopírování pevně umístěných objektů.
 		void load_placed_MOs_(const GameBase::base_array_t & base_array);
 		/// Vygenerování neumístěných objektů.
-		void load_generated_MOs_(const GameBase::generatedMOs_t & generatedMOs);
+		void load_generated_MOs_(const GameBase & base);
 		/// Vygenerování beden.
-		void generate_boxes_(GameBase::generatedMOs_t::iteretor begin,
-				GameBase::generatedMOs_t::iterator end);
+		void generate_boxes_(const GameBase & base,
+			GameBase::generatedMOs_t::const_iterator begin,
+			GameBase::generatedMOs_t::const_iterator end);
 		/// Vygenerování bonusů.
-		void generate_bonuses_(GameBase::generatedMOs_t::iterator begin,
-			GameBase::generatedMOs_t::iterator end);
+		void generate_bonuses_(
+			GameBase::generatedMOs_t::const_iterator begin,
+			GameBase::generatedMOs_t::const_iterator end);
 		/// Vygenerování příšer.
-		void generate_creatures_(GameBase::generatedMOs_t::iterator begin,
-			GameBase::generatedMOs_t::iterator end);
+		void generate_creatures_(
+			GameBase::generatedMOs_t::const_iterator begin,
+			GameBase::generatedMOs_t::const_iterator end);
 
 		/// Vytvoření a vložení objektu do mapy.
-		void insert_MO_(const MapObject* mapObject, Uint16 width, Uint16 height,
-				Uint16 toplapping, Uint16 column, Uint16 field);
+		void insert_MO_(const MapObject* mapObject, Uint16 width,
+			Uint16 height, Uint16 column, Uint16 field);
 };
 
 #endif

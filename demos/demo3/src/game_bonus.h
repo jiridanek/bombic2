@@ -19,12 +19,14 @@ class Bonus: public DynamicMO{
 	public:
 		/// Vytvoří bonus.
 		Bonus(const Animation & anim, Uint16 x, Uint16 y);
+		/// Okopíruje bonus.
+		Bonus(const Bonus & bonus, Uint16 x, Uint16 y);
 		/// Obnova stavu.
 		virtual void move();
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *window);
 		/// Typ objektu je bonus.
-		virtual OBJECT_TYPES type(){ return BONUS; }
+		virtual OBJECT_TYPES type() const { return BONUS; }
 		/// Destructor
 		virtual ~Bonus() {};
 	private:

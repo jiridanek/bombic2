@@ -33,7 +33,7 @@ class MapObject{
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *)=0;
 		/// Typ objektu.
-		virtual OBJECT_TYPES type()=0;
+		virtual OBJECT_TYPES type() const =0;
 	protected:
 		/// Souřadnice polohy v pixelech.
 		Uint16 x_,
@@ -86,7 +86,7 @@ class isTypeOf {
 		/// Přidání typu.
 		isTypeOf & addType(OBJECT_TYPES type);
 		/// Vyprázdnění typů.
-		void clear();
+		isTypeOf & clear();
 		/// Volání predikátu.
 		bool operator()(MapObject * object);
 	private:

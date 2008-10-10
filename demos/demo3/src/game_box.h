@@ -21,12 +21,14 @@ class Box: public DynamicMO{
 		/// Vytvoří bednu.
 		Box(const Animation & anim, const Animation & anim_burning,
 			Uint16 toplapping, Uint16 x, Uint16 y);
+		/// Okopíruje bednu.
+		Box(const Box & box, Uint16 x, Uint16 y);
 		/// Zjištění, zda nemá shořet.
 		virtual void move();
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *window);
 		/// Typ objektu je bedna.
-		virtual OBJECT_TYPES type(){ return BOX; }
+		virtual OBJECT_TYPES type() const { return BOX; }
 		/// Destructor
 		virtual ~Box() {};
 	private:

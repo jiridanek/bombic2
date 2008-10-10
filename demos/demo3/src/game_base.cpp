@@ -1,10 +1,10 @@
 
 #include <iostream>
-#include <list>
+// #include <list>
 #include <vector>
 #include <string>
-#include <utility>
-#include <algorithm>
+// #include <utility>
+// #include <algorithm>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
 #include "stl_helper.h"
@@ -21,9 +21,10 @@
 
 using namespace std;
 
-/*************** class Game ******************************/
+/*************** class GameBase ******************************/
 
-/**
+/** @details
+ * Předpřipraví mapu, atd TODO
  * @param players_count počet hráčů
  * @param mapname název mapy
  */
@@ -32,7 +33,9 @@ GameBase::GameBase(Uint16 players_count, const std::string & mapname){
 	load_map_(players_count, mapname);
 }
 
-/**
+/** @details
+ * Načte mapu z XML souborů, umístí do ní pevně dané objekty,
+ * vytvoří struktury s generovanými objekty.
  * @param players_count počet hráčů
  * @param mapname název mapy
  */
@@ -66,7 +69,7 @@ void GameBase::load_map_(Uint16 players_count, const std::string & mapname){
 	// nacteni pozadi
 	string str;
 	try {
-		readAttr(map_el, "background", str))
+		readAttr(map_el, "background", str);
 	}
 	catch(const string & s){
 		TiXmlError(filename, s);
@@ -87,13 +90,14 @@ void GameBase::load_map_(Uint16 players_count, const std::string & mapname){
 	load_bonuses_(map_el->FirstChildElement("bonuses"));
 	// nacteni priser
 	load_creatures_(map_el->FirstChildElement("creatures"));
-	// vyhozeni nulovych pointeru
-	clear_null_objects();
 	// vytvoreni mapy prazdnych policek pro generovane boxy
-	load_noboxes_(map_el->FirstChildElement("boxes");
+	load_noboxes_(map_el->FirstChildElement("boxes"));
+	// vyhozeni nulovych pointeru
+	clear_null_objects_();
 }
 
-/**
+/** @details
+ * Vytvoří z XML a vloží do mapy její pozadí.
  * @param bgname název pozadí mapy
  */
 void GameBase::load_background_(const std::string & bgname){
@@ -178,7 +182,8 @@ void GameBase::load_background_(const std::string & bgname){
 	}
 }
 
-/**
+/** @details
+ * Načte z XML a vloží do mapy hráče.
  * @param playersEl element v XML souboru specifikující výchozí pozici hráče
  * @param count počet hráčů
  */
@@ -245,7 +250,8 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 	}
 }
 
-/**
+/** @details
+ * Načte z XML a vloží do mapy zdi.
  * @param wallsEl element v XML souboru specifikující zdi mapy
  */
 void GameBase::load_walls_(TiXmlElement *wallsEl){
@@ -337,7 +343,8 @@ void GameBase::load_walls_(TiXmlElement *wallsEl){
 	}
 }
 
-/**
+/** @details
+ * Načte z XML a vloží do mapy objekty na zemi.
  * @param floorEl element v XML souboru specifikující objekt na zemi
  */
 void GameBase::load_floorobjects_(TiXmlElement *floorEl){
@@ -384,7 +391,8 @@ void GameBase::load_floorobjects_(TiXmlElement *floorEl){
 	}
 }
 
-/**
+/** @details
+ * Načte z XML a vloží do mapy pevně dané bedny, ostatní připraví pro vygenerování.
  * @param boxesEl element v XML souboru specifikující bedny v mapě
  */
 void GameBase::load_boxes_(TiXmlElement *boxesEl){
@@ -492,8 +500,13 @@ void GameBase::load_boxes_(TiXmlElement *boxesEl){
 
 }
 
-
-void GameBase::load_noboxes_(boxesEl){
+/** @details
+ * Načte z XML informace o políčkách, na kterých nesmí být bedna.
+ * Na základě tohoto, a již umístěných objektů v mapě vytvoří strukturu
+ * políček vhodných k umístění beden, zároven uloží počet těchto políček.
+ * @param boxesEl element v XML souboru specifikující bedny v mapě
+ */
+void GameBase::load_noboxes_(TiXmlElement *boxesEl){
 	// vytvoreni rozmeru mapy prazdnych policek
 	boxes_array_.clear();
 	boxes_array_t::value_type column_noboxes;
@@ -521,11 +534,11 @@ void GameBase::load_noboxes_(boxesEl){
 		TiXmlError("in element <nobox ...>: "+s);
 	}
 	// obsazena policka v mape
-	isTypeOf isBG(BACKGROUND);
+	isTypeOf isBG(BACKGROUND); isBG.addType(FLOOROBJECT);
 	boxes_array_count_= 0;
 	for(x=0; x<base_array_.size() ; ++x){
 		for(y=0 ; y<base_array_[x].size() ; ++y){
-			if(!boxes_array_count_[x][y]) continue;
+			if(!boxes_array_[x][y]) continue;
 			if(!isBG(base_array_[x][y].back()))
 				boxes_array_count_[x][y] = false;
 			else
@@ -534,7 +547,8 @@ void GameBase::load_noboxes_(boxesEl){
 	}
 }
 
-/**
+/** @details
+ * Načte z XML a připraví pro pozdější vygenerování bonusy.
  * @param bonusEl element v XML souboru specifikující bonus
  */
 void GameBase::load_bonuses_(TiXmlElement *bonusEl){
@@ -565,7 +579,6 @@ void GameBase::load_bonuses_(TiXmlElement *bonusEl){
 			load_subEl_animation_(rootEl, "img", anim, sur_src);
 			// do seznamu nezarazenych bonusu pridam bonus count krat
 			while(count--){
-				// TODO ruzne bonusy
 				insert_bonus_(anim);
 			}
 			bonusEl= bonusEl->NextSiblingElement("bonuses");
@@ -574,38 +587,11 @@ void GameBase::load_bonuses_(TiXmlElement *bonusEl){
 	catch(const string & s){
 		TiXmlError(filename,s);
 	}
-/*
-	// spocitani policek pro nahodne bonusy
-	double count_free= 0.0;
-	isTypeOf isBox(BOX);
-	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
-		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
-			// bonus muzu umistit pouze na policko s bednou
-			if(isBox(map_array_[x][y].back()))
-				++count_free;
-		}
-	}
-
-	// projdu mapu a rozmistim nahodne bonusy
-	for(x=0; x<static_cast<Sint16>(map_array_.size()) ; ++x){
-		for(y=0 ; y<static_cast<Sint16>(map_array_[x].size()) ; ++y){
-			if(!isBox(map_array_[x][y].back())) continue;
-			// rozmistit ci nikoli
-			count = bonuses.size();
-			if(count==0) return;
-			if(count/count_free >= SDL_Rand()){
-				// nahodny bonus
-				it = bonuses.begin()+ rand() % count;
-				insert_bonus_(*it, x, y);
-				// vyhozeni umisteneho bonusu
-				bonuses.erase(it);
-			}
-			if(--count_free<=0) return;
-		}
-	}*/
 }
 
-/**
+/** @details
+ * Načte z XML a vloží do mapy pevně umístěné nestvůry,
+ * ostatní připraví pro pozdější vygenerování.
  * @param creaturesEl element v XML souboru specifikující nestvůry
  */
 void GameBase::load_creatures_(TiXmlElement *creaturesEl){
@@ -614,19 +600,7 @@ void GameBase::load_creatures_(TiXmlElement *creaturesEl){
 		speed, lives, intelligence;
 	Surface sur_src, sur_src_s;
 	isTypeOf isBadType(BOX); isBadType.addType(WALL).addType(BONUS);
-/*	// seznam prazdnych policek
-	vector< pair<Uint16, Uint16> > empty_fields;
-	vector< pair<Uint16, Uint16> >::iterator it;
-	// naplneni seznamu prazdnych policek
-	for(x=0; x<static_cast<int>(map_array_.size()) ; ++x){
-		for(y=0 ; y<static_cast<int>(map_array_[x].size()) ; ++y){
-			if(!isBadType(map_array_[x][y].back()))
-				empty_fields.push_back(make_pair(x,y));
-		}
-	}
-	// neni kam pridat jakoukoli priseru
-	if(empty_fields.empty()) return;
-*/
+
 	TiXmlDocument doc;
 	TiXmlElement *rootEl, *El;
 	try{
@@ -688,12 +662,7 @@ void GameBase::load_creatures_(TiXmlElement *creaturesEl){
 			while(count--){
 				insert_creature_(anim_up, anim_right, anim_down,
 					anim_left, anim_burned, speed, lives, intelligence);
-/*				// nahodne policko
-				it = empty_fields.begin()+ rand() % empty_fields.size();
-				insert_creature_(anim_up, anim_right, anim_down,
-					anim_left, anim_burned, it->first, it->second,
-					speed, lives, intelligence);
-*/			}
+			}
 			creaturesEl= creaturesEl->NextSiblingElement("creatures");
 		}
 	}
@@ -981,7 +950,7 @@ void GameBase::insert_player_(const Animation & anim_up, const Animation & anim_
  * Nyní chceme tyto falešné nulové objekty vyhodit, jednak jsou nám už k ničemu
  * a jednak by nám vadili při dalším použití base_array_.
  */
-void GameBase::clear_null_objects(){
+void GameBase::clear_null_objects_(){
 	Uint16 field, column;
 	for(field = 0 ; field<base_array_[0].size() ; ++field){
 		for(column=0 ; column< base_array_.size() ; ++column){
@@ -1036,5 +1005,5 @@ void GameBase::set_player(Uint16 player_num, Uint16 lives,
 }
 
 
-/*************** END OF class Game ******************************/
+/*************** END OF class GameBase ******************************/
 
