@@ -11,7 +11,8 @@
 		<bind key="jmeno klavesy" action="right" />
 		<bind key="jmeno klavesy" action="up" />
 		<bind key="jmeno klavesy" action="down" />
-		<bind key="jmeno klavesy" action="fire" />
+		<bind key="jmeno klavesy" action="plant" />
+		<bind key="jmeno klavesy" action="timer" />
 	</player1>
 
 	<player2>
@@ -19,7 +20,8 @@
 		<bind key="jmeno klavesy" action="right" />
 		<bind key="jmeno klavesy" action="up" />
 		<bind key="jmeno klavesy" action="down" />
-		<bind key="jmeno klavesy" action="fire" />
+		<bind key="jmeno klavesy" action="plant" />
+		<bind key="jmeno klavesy" action="timer" />
 	</player2>
 
 	<player3>
@@ -27,7 +29,8 @@
 		<bind key="jmeno klavesy" action="right" />
 		<bind key="jmeno klavesy" action="up" />
 		<bind key="jmeno klavesy" action="down" />
-		<bind key="jmeno klavesy" action="fire" />
+		<bind key="jmeno klavesy" action="plant" />
+		<bind key="jmeno klavesy" action="timer" />
 	</player3>
 
 	<player4>
@@ -35,14 +38,15 @@
 		<bind key="jmeno klavesy" action="right" />
 		<bind key="jmeno klavesy" action="up" />
 		<bind key="jmeno klavesy" action="down" />
-		<bind key="jmeno klavesy" action="fire" />
+		<bind key="jmeno klavesy" action="plant" />
+		<bind key="jmeno klavesy" action="timer" />
 	</player4>
-	
+
 	<!-- nejsem si jisty, jestli dokazu najit na disku jen podle toho ze tam jsou
 		soubory s ulezenymi hrami, pokud ano nasledujici definici vyhodit,
-		pokud ne, zde se definuje, ktere ty soubory by tam meli byt -->
+		pokud ne, zde se definuje, ktere ty soubory by tam meli byt (9.10.2008 nejspis ANO)
 	<savedgames>
 		<_game name="jmeno hry, zaroven jmeno souboru s ulozenou hrou" />
 		<_game name="jmeno jine ulozene hry" />
-	</savedgames>
+	</savedgames> -->
 </config>
