@@ -26,6 +26,10 @@ int main(int argc, char ** argv){
 	catch(int val){
 		return_val = val;
 	}
+	catch(const string & err){
+		return_val = 10;
+		cerr << err << endl;
+	}
 	if(g_window) SDL_FreeSurface(g_window);
 	return return_val;
 }

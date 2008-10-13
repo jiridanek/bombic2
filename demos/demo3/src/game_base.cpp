@@ -553,7 +553,7 @@ void GameBase::load_noboxes_(TiXmlElement *boxesEl){
  */
 void GameBase::load_bonuses_(TiXmlElement *bonusEl){
 	string filename;
-	Uint16 x,y, count;
+	Uint16 count;
 
 	Surface sur_src;
 	Animation anim;

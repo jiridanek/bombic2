@@ -65,8 +65,7 @@ void Game::load_placed_MOs_(const GameBase::base_array_t & base_array){
 	// okopirovani objektu
 	GameBase::base_array_t::value_type::value_type::const_iterator it;
 
-	Uint16 field, column, x, y;
-	MapObject *new_obj;
+	Uint16 field, column;
 
 	for(field = 0 ; field<base_array[0].size() ; ++field){
 		for(column=0 ; column< base_array.size() ; ++column){
@@ -90,6 +89,7 @@ void Game::load_generated_MOs_(const GameBase & base){
 		it_first= base.generatedMOs_.begin(),
 		it_second= it_first,
 		end_it= base.generatedMOs_.end();
+	
 	// bedny
 	if(it_first==end_it) return;
 	isTypeOf isCurType(BOX);
@@ -98,14 +98,14 @@ void Game::load_generated_MOs_(const GameBase & base){
 	it_first= it_second;
 	// bonusy
 	if(it_first==end_it) return;
-	isCurType.clear();
-	isCurType.addType(BONUS);
+	isCurType.clear().addType(BONUS);
 	while(isCurType(*it_second) && ++it_second!=end_it);
 	generate_bonuses_(it_first, it_second);
 	it_first= it_second;
 	// nestvury
 	if(it_first==end_it) return;
 	isCurType.clear().addType(CREATURE);
+
 	while(isCurType(*it_second) && ++it_second!=end_it);
 	generate_creatures_(it_first, it_second);
 
@@ -384,6 +384,7 @@ void Game::move_(){
 	dynamicMOs_t::iterator it;
 	for(it= dynamicMOs_.begin() ; it!= dynamicMOs_.end() ; ++it){
 		(*it)->move();
+		// TODO predelat na bool DynamicMO::move() a zde rusit....
 	}
 }
 

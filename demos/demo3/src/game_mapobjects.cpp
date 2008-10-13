@@ -68,6 +68,7 @@ isTypeOf & isTypeOf::addType(OBJECT_TYPES type){
 isTypeOf & isTypeOf::clear(){
 	types_.clear();
 	types_.insert(types_.end(), OBJECT_TYPES_COUNT, false);
+	return *this;
 }
 
 bool isTypeOf::operator()(MapObject * object){
