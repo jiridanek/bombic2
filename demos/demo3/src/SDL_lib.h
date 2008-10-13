@@ -171,8 +171,7 @@ void draw_surface(int x, int y, SDL_Surface* surface_src, SDL_Surface* surface_d
 void draw_center_surface(SDL_Surface* surface_src, SDL_Surface* surface_dst);
 
 /// Vybarvení místa v surface_dst, na kterém by byl surface_src.
-void clear_surface(int x, int y, SDL_Color color,
-			SDL_Surface* surface_src, SDL_Surface* surface_dst);
+void clear_surface(SDL_Color color, SDL_Surface* surface);
 
 /// Nakreslení pixelu do surface.
 void draw_pixel(SDL_Surface* surface, int x, int y, SDL_Color color);

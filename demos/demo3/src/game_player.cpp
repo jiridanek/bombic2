@@ -41,7 +41,7 @@ Player::~Player(){
  */
 void Player::move(){
 	Creature::move();
-	if(Game::field_withCreature(x_/CELL_SIZE, y_/CELL_SIZE))
+	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, CREATURE))
 		d_=BURNED;
 }
 

@@ -189,7 +189,7 @@ void GameBase::load_background_(const std::string & bgname){
  */
 void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 	string filename;
-	Uint16 column, field, width, height, count;
+	Uint16 column, field, width, height;
 	// TODO
 	Uint16 speed, lives, intelligence;
 	Surface sur_src, sur_src_s;
@@ -539,8 +539,8 @@ void GameBase::load_noboxes_(TiXmlElement *boxesEl){
 	for(x=0; x<base_array_.size() ; ++x){
 		for(y=0 ; y<base_array_[x].size() ; ++y){
 			if(!boxes_array_[x][y]) continue;
-			if(!isBG(base_array_[x][y].back()))
-				boxes_array_count_[x][y] = false;
+			if(!isBG(base_array_[x][y].back().o))
+				boxes_array_[x][y] = false;
 			else
 				++boxes_array_count_;
 		}
@@ -748,10 +748,11 @@ SDL_Surface* GameBase::load_src_surface_(TiXmlElement *El,
  */
 void GameBase::insert_background_(const Animation & anim,
 			const Animation & anim_burned, Uint16 x, Uint16 y){
-	MapObject* new_obj =
-		new Background(anim, anim_burned, x*CELL_SIZE, y*CELL_SIZE);
+	proportionedMO_t new_obj= {
+		new Background(anim, anim_burned, x*CELL_SIZE, y*CELL_SIZE),
+		1, 1};
 	// ulozit do mapy na spravne policko
-	base_array_[x][y].push_back({new_obj, 1, 1});
+	base_array_[x][y].push_back(new_obj);
 }
 
 /** @details
@@ -765,18 +766,21 @@ void GameBase::insert_background_(const Animation & anim,
  */
 void GameBase::insert_wall_(const Animation & anim,
 				Uint16 toplapping, Uint16 x, Uint16 y, Uint16 w, Uint16 h){
-	MapObject* new_obj =
-		new Wall(anim, x*CELL_SIZE, (y-toplapping)*CELL_SIZE);
 	// ulozit do mapy na spravna policka
 	if(x>=base_array_.size() && y>=base_array_[0].size())
 		return;
-	base_array_[x][y].push_back( {new_obj, w, h});
+	
+	proportionedMO_t new_obj= {
+		new Wall(anim, x*CELL_SIZE, (y-toplapping)*CELL_SIZE),
+		w, h };
+	base_array_[x][y].push_back( new_obj);
+	new_obj.o= 0; new_obj.w= new_obj.h= 0; 
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
 	for(Uint16 column=1; column<w ; ++column){
 		for(Uint16 field=1 ; field<h ; ++field){
 			if(x+column>=base_array_.size() || y+field>=base_array_[0].size())
 				continue;
-			base_array_[x+column][y+field].push_back({0,0,0});
+			base_array_[x+column][y+field].push_back(new_obj);
 		}
 	}
 
@@ -791,19 +795,22 @@ void GameBase::insert_wall_(const Animation & anim,
  */
 void GameBase::insert_floorobject_(const Animation & anim,
 			Uint16 x, Uint16 y, Uint16 w, Uint16 h){
-	// vytvorit
-	MapObject* new_obj =
-		new Floorobject(anim, x*CELL_SIZE, y*CELL_SIZE);
 	// ulozit do mapy
 	if(x>=base_array_.size() || y>=base_array_[0].size())
 		return;
-	base_array_[x][y].push_back( {new_obj, w, h});
+	
+	// vytvorit
+	proportionedMO_t new_obj= {
+		new Floorobject(anim, x*CELL_SIZE, y*CELL_SIZE),
+		w, h };
+	base_array_[x][y].push_back( new_obj);
+	new_obj.o= 0; new_obj.w= new_obj.h= 0;
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
 	for(Uint16 column=1; column<w ; ++column){
 		for(Uint16 field=1 ; field<h ; ++field){
 			if(x+column>=base_array_.size() || y+field>=base_array_[0].size())
 				continue;
-			base_array_[x+column][y+field].push_back({0,0,0});
+			base_array_[x+column][y+field].push_back(new_obj);
 		}
 	}
 }
@@ -835,19 +842,22 @@ void GameBase::insert_box_(const Animation & anim, const Animation & anim_burnin
  */
 void GameBase::insert_box_(const Animation & anim, const Animation & anim_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y, Uint16 w, Uint16 h){
-	// vytvorit
-	MapObject* new_obj =
-		new Box(anim, anim_burning, toplapping, x*CELL_SIZE, y*CELL_SIZE);
 	// ulozit do mapy na spravna policka
 	if(x>=base_array_.size() || y>=base_array_[0].size())
 		return;
-	base_array_[x][y].push_back( {new_obj, w, h});
+
+	// vytvorit
+	proportionedMO_t new_obj= {
+		new Box(anim, anim_burning, toplapping, x*CELL_SIZE, y*CELL_SIZE),
+		w, h };
+	base_array_[x][y].push_back( new_obj);
+	new_obj.o= 0; new_obj.w= new_obj.h= 0;
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
 	for(Uint16 column=1; column<w ; ++column){
 		for(Uint16 field=1 ; field<h ; ++field){
 			if(x+column>=base_array_.size() || y+field>=base_array_[0].size())
 				continue;
-			base_array_[x+column][y+field].push_back({0,0,0});
+			base_array_[x+column][y+field].push_back(new_obj);
 		}
 	}
 }
@@ -901,16 +911,17 @@ void GameBase::insert_creature_(const Animation & anim_up, const Animation & ani
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives, Uint16 ai){
-
-	// vytvorit
-	MapObject* new_obj =
-		new Creature(anim_up, anim_right, anim_down, anim_left, anim_burned,
-			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
-			speed, lives, ai) );
 	// ulozit do mapy na spravne policko
 	if(x>=base_array_.size() || y>=base_array_[0].size())
 		return;
-	base_array_[x][y].push_back({ new_obj, 1, 1 });
+	
+	// vytvorit
+	proportionedMO_t new_obj= {
+		new Creature(anim_up, anim_right, anim_down, anim_left, anim_burned,
+			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
+			speed, lives, ai),
+		1, 1 };
+	base_array_[x][y].push_back( new_obj);
 }
 
 
@@ -930,15 +941,19 @@ void GameBase::insert_player_(const Animation & anim_up, const Animation & anim_
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives){
-	// vytvorit
-	MapObject* new_obj = new Player(
-			anim_up, anim_right, anim_down, anim_left, anim_burned,
-			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
-			speed, lives) );
 	// ulozit do mapy na spravne policko
 	if(x>=base_array_.size() || y>=base_array_[0].size())
 		return;
-	base_array_[x][y].push_back({ new_obj, 1, 1});
+
+	// vytvorit
+	proportionedMO_t new_obj= {
+		new Player(
+			anim_up, anim_right, anim_down, anim_left, anim_burned,
+			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
+			speed, lives),
+		1, 1 };
+		
+	base_array_[x][y].push_back( new_obj);
 }
 
 
@@ -952,9 +967,16 @@ void GameBase::insert_player_(const Animation & anim_up, const Animation & anim_
  */
 void GameBase::clear_null_objects_(){
 	Uint16 field, column;
+	base_array_t::value_type::value_type::iterator it;
 	for(field = 0 ; field<base_array_[0].size() ; ++field){
 		for(column=0 ; column< base_array_.size() ; ++column){
-			base_array_[column][field].remove({0,0,0});
+			it= base_array_[column][field].begin();
+			while(it!= base_array_[column][field].end()){
+				if(!it->o)
+					it= base_array_[column][field].erase(it);
+				else
+					++it;
+			}
 		}
 	}
 }
@@ -963,7 +985,7 @@ void GameBase::clear_null_objects_(){
 /**
  * @see destroy_()
  */
-GameBase::~Game(){
+GameBase::~GameBase(){
 	destroy_();
 }
 

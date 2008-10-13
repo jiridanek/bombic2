@@ -1,6 +1,8 @@
 
 #include <iostream>
+#include <string>
 #include "SDL_lib.h"
+#include "game_intro.h"
 #include "game_base.h"
 #include "game.h"
 
@@ -17,7 +19,7 @@ GameIntro::~GameIntro(){
 }
 
 extern SDL_Surface *g_window;
-extern g_font;
+extern Fonts g_font;
 
 /** @details
  * Ukáže úvodní obrazovku levelu, vygeneruje konkrétní hru,
@@ -39,11 +41,11 @@ void GameIntro::show_screen(){
 		game_ = new Game(*gameBase_);
 
 		// pockame na klavesu, pri pokusu o ukonceni ukoncime
-		if(wait_event_isquit(SDLK_ESC))
+		if(wait_event_isquit(SDLK_ESCAPE))
 			return;
 
 		// jinak hrajeme
-		game_.play();
+		game_->play(g_window);
 		// TODO check jak hra skoncila
 	}
 }
