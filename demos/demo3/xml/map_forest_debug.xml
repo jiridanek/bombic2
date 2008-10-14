@@ -37,7 +37,7 @@
 		<box x="4" y="2" />
 		<box x="4" y="5" />
 	</boxes>
-<!--
+<!---->
 	<bonuses name="bonus_flame" count="1" />
 	<bonuses name="bonus_bomb" count="1" />
 	<bonuses name="bonus_illness" count="1" />
@@ -50,11 +50,15 @@
 	<bonuses name="bonus_othersillness" count="1" />
 	<bonuses name="bonus_slider" count="1" />
 	<bonuses name="bonus_fireman" count="1" />
--->
+<!---->
 	<creatures name="creature_rat" count="10">
 		<creature x="2" y="10" />
 	</creatures>
-	<creatures name="creature_ghost" count="5">
+	<creatures name="creature_ghost" count="10">
 		<creature x="6" y="10" />
 	</creatures>
+	<!-- TODO -->
+	<nocreatures>
+		<nocreature x="2" y="2" />
+	</nocreatures>
 </map>

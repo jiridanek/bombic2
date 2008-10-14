@@ -146,7 +146,7 @@ class Animation {
 		bool draw_shadow_;
 		/// Délka zobrazení jednoho framu.
 		Uint16 frame_period_,
-		/// Timestamp posledního přístupu.
+		/// Doba od posledního posunu framu.
 			last_access_;
 
 };

@@ -77,7 +77,8 @@ class Game {
 		void draw_(SDL_Surface *window);
 		/// Hýbnutí světem.
 		void move_();
-
+		/// Posunutí animací.
+		void update_();
 		/// Zkopírování pevně umístěných objektů.
 		void load_placed_MOs_(const GameBase::base_array_t & base_array);
 		/// Vygenerování neumístěných objektů.

@@ -29,9 +29,11 @@ class Creature: public DynamicMO {
 		/// Vytvoří nestvůru.
 		Creature(const Creature & creature, Uint16 x, Uint16 y);
 		/// Pohyb.
-		virtual void move();
+		virtual bool move();
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *window);
+		/// Posun animace.
+		virtual void update();
 		/// Typ objektu je nestvůra.
 		virtual OBJECT_TYPES type() const { return CREATURE; }
 		/// Destructor
@@ -40,7 +42,7 @@ class Creature: public DynamicMO {
 		/// Animace pro daný směr.
 		Animation & anim_(DIRECTION d_);
 		/// Přejde na další fázi umírání.
-		void die();
+		bool die();
 
 		Animation anim_up_, ///< Animace pro pohyb vzhůru.
 			anim_right_, ///< Animace pro pohyb vpravo.

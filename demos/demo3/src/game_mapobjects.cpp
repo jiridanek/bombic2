@@ -72,5 +72,5 @@ isTypeOf & isTypeOf::clear(){
 }
 
 bool isTypeOf::operator()(MapObject * object){
-	return types_[object->type()];
+	return object && types_[object->type()];
 }

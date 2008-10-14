@@ -293,8 +293,13 @@ void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
 	shadow_frames_.push_back(sur);
 }
 
+/** @details
+ * Nastaví počítadlo na počáteční frame,
+ * vynuluje dobu od posledního posunu framu.
+ */
 void Animation::reset(){
 	next_frame_=0;
+	last_access_=0;
 }
 
 /** @details

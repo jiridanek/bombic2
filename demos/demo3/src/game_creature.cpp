@@ -32,7 +32,12 @@ Creature::Creature(const Animation & anim_up, const Animation & anim_right,
 	// pro zjednoduseni zachazeni s rychlosti
 	speed_diff_((speed-1)/7+1), speed_rate_((speed-1)%7+2+speed_diff_) {}
 
-// TODO
+/** @details
+ * Jakýsi copycontructor, který navíc k okopírování objektu nastaví souřadnice.
+ * @param creature objekt k okopírování
+ * @param x souřadnice středu v pixelech
+ * @param y souřadnice středu v pixelech
+ */
 Creature::Creature(const Creature & creature, Uint16 x, Uint16 y):
 	DynamicMO(x, y),
 	anim_up_(creature.anim_up_), anim_right_(creature.anim_right_),
@@ -53,13 +58,12 @@ Creature::~Creature(){
 /** @details
  * Pomocí umělé inteligence hýbne s nestvůrou,
  * posune frame animace.
+ * @return Vrací TRUE pokud se má objekt zahodit.
  */
-void Creature::move(){
+bool Creature::move(){
 	// mrtvoly se nehybou
-	if(d_==BURNED){
-		die();
-		return;
-	}
+	if(d_==BURNED)
+		return die();
 
 	Uint16 accessed = ++access_counter_%speed_rate_;
 	if(accessed!=0 && accessed!=speed_rate_/2){
@@ -75,22 +79,19 @@ void Creature::move(){
 		if(old_d!=d_)
 			anim_(old_d).reset();
 		// nastavit priznak, zda se pohyboval
-		moved_ = old_x!=x_ | old_y!=y_;
+		moved_ = old_x!=x_ || old_y!=y_;
 	}
 
-	if(moved_)
-		anim_(d_).update();
-	else
-		anim_(d_).reset();
+	return false;
 }
 
 /** @details
  * Posune frame umírací animace,
  * když animace doběhne, vyhodí objekt z mapy.
+ * @return Vrací TRUE pokud už se má objekt zahodit.
  */
-void Creature::die(){
-	if(anim_burned_.update())
-		Game::get_instance()->remove_object(this);
+bool Creature::die(){
+	return anim_burned_.update();
 }
 
 extern Fonts g_font;
@@ -112,6 +113,16 @@ void Creature::draw(SDL_Surface *window){
 		Color::yellow);
 	draw_surface(x-CELL_SIZE, y, sur.GetSurface(), window);
 	//*/
+}
+
+void Creature::update(){
+	if(d_==BURNED)
+		// toto se resi v die
+		return;
+	if(moved_)
+		anim_(d_).update();
+	else
+		anim_(d_).reset();
 }
 
 /**

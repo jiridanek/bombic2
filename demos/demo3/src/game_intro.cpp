@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include "SDL_lib.h"
+#include "constants.h"
 #include "game_intro.h"
 #include "game_base.h"
 #include "game.h"
@@ -33,7 +34,7 @@ void GameIntro::show_screen(){
 
 	while(true){
 		// uvodni obrazovka levelu
-		clear_surface(Color::blue, g_window);
+		clear_surface(Color::black, g_window);
 		SDL_Flip(g_window);
 
 		// vygenerovani nove hry

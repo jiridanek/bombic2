@@ -31,17 +31,20 @@ Player::Player(const Player & player, Uint16 x, Uint16 y):
 }
 
 Player::~Player(){
-	if(ai_)
+	if(ai_){
+		std::cout << "Player::~Player()" << std::endl;
 		delete ai_;
+	}
 }
 
 /** @details
  * Navíc hlídá, zda ho nesezrala nestvůra.
  * @see Creature::move()
+ * @return Vrací TRUE, pokud se má objekt zahodit.
  */
-void Player::move(){
-	Creature::move();
+bool Player::move(){
 	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, CREATURE))
 		d_=BURNED;
+	return Creature::move();
 }
 

@@ -29,7 +29,7 @@ class Player: public Creature {
 		Player(const Player & player, Uint16 x, Uint16 y);
 
 		/// Pohyb.
-		virtual void move();
+		virtual bool move();
 		/// Typ objektu je bombic.
 		virtual OBJECT_TYPES type() const { return PLAYER; }
 		/// Destructor

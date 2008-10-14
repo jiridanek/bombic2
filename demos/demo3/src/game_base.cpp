@@ -769,15 +769,15 @@ void GameBase::insert_wall_(const Animation & anim,
 	// ulozit do mapy na spravna policka
 	if(x>=base_array_.size() && y>=base_array_[0].size())
 		return;
-	
+
 	proportionedMO_t new_obj= {
 		new Wall(anim, x*CELL_SIZE, (y-toplapping)*CELL_SIZE),
 		w, h };
 	base_array_[x][y].push_back( new_obj);
-	new_obj.o= 0; new_obj.w= new_obj.h= 0; 
+	new_obj.o= 0; new_obj.w= new_obj.h= 0;
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
-	for(Uint16 column=1; column<w ; ++column){
-		for(Uint16 field=1 ; field<h ; ++field){
+	for(Uint16 column=0; column<w ; ++column){
+		for(Uint16 field=0 ; field<h ; ++field){
 			if(x+column>=base_array_.size() || y+field>=base_array_[0].size())
 				continue;
 			base_array_[x+column][y+field].push_back(new_obj);
@@ -798,7 +798,7 @@ void GameBase::insert_floorobject_(const Animation & anim,
 	// ulozit do mapy
 	if(x>=base_array_.size() || y>=base_array_[0].size())
 		return;
-	
+
 	// vytvorit
 	proportionedMO_t new_obj= {
 		new Floorobject(anim, x*CELL_SIZE, y*CELL_SIZE),
@@ -806,8 +806,8 @@ void GameBase::insert_floorobject_(const Animation & anim,
 	base_array_[x][y].push_back( new_obj);
 	new_obj.o= 0; new_obj.w= new_obj.h= 0;
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
-	for(Uint16 column=1; column<w ; ++column){
-		for(Uint16 field=1 ; field<h ; ++field){
+	for(Uint16 column=0; column<w ; ++column){
+		for(Uint16 field=0 ; field<h ; ++field){
 			if(x+column>=base_array_.size() || y+field>=base_array_[0].size())
 				continue;
 			base_array_[x+column][y+field].push_back(new_obj);
@@ -853,8 +853,8 @@ void GameBase::insert_box_(const Animation & anim, const Animation & anim_burnin
 	base_array_[x][y].push_back( new_obj);
 	new_obj.o= 0; new_obj.w= new_obj.h= 0;
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
-	for(Uint16 column=1; column<w ; ++column){
-		for(Uint16 field=1 ; field<h ; ++field){
+	for(Uint16 column=0; column<w ; ++column){
+		for(Uint16 field=0 ; field<h ; ++field){
 			if(x+column>=base_array_.size() || y+field>=base_array_[0].size())
 				continue;
 			base_array_[x+column][y+field].push_back(new_obj);
@@ -914,7 +914,7 @@ void GameBase::insert_creature_(const Animation & anim_up, const Animation & ani
 	// ulozit do mapy na spravne policko
 	if(x>=base_array_.size() || y>=base_array_[0].size())
 		return;
-	
+
 	// vytvorit
 	proportionedMO_t new_obj= {
 		new Creature(anim_up, anim_right, anim_down, anim_left, anim_burned,
@@ -952,7 +952,7 @@ void GameBase::insert_player_(const Animation & anim_up, const Animation & anim_
 			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
 			speed, lives),
 		1, 1 };
-		
+
 	base_array_[x][y].push_back( new_obj);
 }
 

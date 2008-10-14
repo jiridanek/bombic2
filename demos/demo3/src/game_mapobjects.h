@@ -32,6 +32,8 @@ class MapObject{
 		virtual Uint16 getZ() const =0;
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *)=0;
+		/// Posunutí animace.
+		virtual void update()=0;
 		/// Typ objektu.
 		virtual OBJECT_TYPES type() const =0;
 	protected:
@@ -55,7 +57,7 @@ class DynamicMO: public MapObject{
 		/// z-ová souřadnice.
 		virtual Uint16 getZ() const;
 		/// Pohyb.
-		virtual void move()=0;
+		virtual bool move()=0;
 	protected:
 		/// Nastavení správného políčka v mapě.
 		void setFieldInMap(Uint16 old_x, Uint16 old_y);

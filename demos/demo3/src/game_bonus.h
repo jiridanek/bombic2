@@ -22,9 +22,11 @@ class Bonus: public DynamicMO{
 		/// Okopíruje bonus.
 		Bonus(const Bonus & bonus, Uint16 x, Uint16 y);
 		/// Obnova stavu.
-		virtual void move();
+		virtual bool move();
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *window);
+		/// Posun animace.
+		virtual void update();
 		/// Typ objektu je bonus.
 		virtual OBJECT_TYPES type() const { return BONUS; }
 		/// Destructor

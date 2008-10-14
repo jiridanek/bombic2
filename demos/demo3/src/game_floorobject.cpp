@@ -24,3 +24,6 @@ void Floorobject::draw(SDL_Surface* window){
 	anim_.draw(window, x_, y_);
 }
 
+void Floorobject::update(){
+	anim_.update();
+}

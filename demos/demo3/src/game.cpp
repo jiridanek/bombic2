@@ -52,6 +52,25 @@ Game::Game(const GameBase & base){
 }
 
 /** @details
+ * Zruší nejdříve všechny statické,
+ * následně všechny dynamické objekty v mapě.
+ * Vynuluje myself_pointer_.
+ */
+Game::~Game(){
+	// zrusit staticke objekty
+	for(Uint16 i=0; i< staticMOs_.size() ; ++i){
+		delete (staticMOs_[i]);
+	}
+	// zrusit dynamicke objekty
+	dynamicMOs_t::iterator it;
+	for(it= dynamicMOs_.begin(); it!=dynamicMOs_.end(); ++it){
+		delete (*it);
+	}
+
+	myself_ptr_ = 0;
+}
+
+/** @details
  * Okopíruje zadanou mapu, jednak vytvoří základní rozměry mapy,
  * jednak okopíruje umístěné objekty.
  * @param base_array pole s pevně umístěnými objekty
@@ -89,7 +108,7 @@ void Game::load_generated_MOs_(const GameBase & base){
 		it_first= base.generatedMOs_.begin(),
 		it_second= it_first,
 		end_it= base.generatedMOs_.end();
-	
+
 	// bedny
 	if(it_first==end_it) return;
 	isTypeOf isCurType(BOX);
@@ -252,7 +271,7 @@ void Game::insert_MO_(const MapObject* mapObject,
 			break;
 		case WALL:
 			new_obj = new Wall(
-				*static_cast<const Wall*>(mapObject), x, y);
+				*static_cast<const Wall*>(mapObject), x, y, height);
 			staticMOs_.push_back(static_cast<StaticMO*>(new_obj));
 			break;
 		case BOX:
@@ -267,12 +286,14 @@ void Game::insert_MO_(const MapObject* mapObject,
 			break;
 		case CREATURE:
 			new_obj = new Creature(
-				*static_cast<const Creature*>(mapObject), x, y);
+				*static_cast<const Creature*>(mapObject),
+					x+CELL_SIZE/2, y+CELL_SIZE/2);
 			dynamicMOs_.push_back(static_cast<DynamicMO*>(new_obj));
 			break;
 		case PLAYER:
 			new_obj = new Player(
-				*static_cast<const Player*>(mapObject), x, y);
+				*static_cast<const Player*>(mapObject),
+					x+CELL_SIZE/2, y+CELL_SIZE/2);
 			dynamicMOs_.push_back(static_cast<DynamicMO*>(new_obj));
 			break;
 		default:
@@ -282,28 +303,15 @@ void Game::insert_MO_(const MapObject* mapObject,
 	for(x=column ; x< column+width ; ++x){
 		for(y=field ; y< field+height ; ++y){
 			// pokud se vejde do mapy
-			if(x<map_array_.size() && y<map_array_[x].size())
-				map_array_[x][y].push_back(new_obj);
+			if(x<map_array_.size() && y<map_array_[x].size()){
+				if(new_obj->type()==BACKGROUND)
+					map_array_[x][y].push_front(new_obj);
+				else
+					map_array_[x][y].push_back(new_obj);
+			}
 		}
 	}
 }
-
-/** @details
- * Zruší nejdříve všechny statické,
- * následně všechny dynamické objekty v mapě.
- */
-Game::~Game(){
-	// zrusit staticke objekty
-	for(Uint16 i=0; i< staticMOs_.size() ; ++i){
-		delete (staticMOs_[i]);
-	}
-	// zrusit dynamicke objekty
-	dynamicMOs_t::iterator it;
-	for(it= dynamicMOs_.begin(); it!=dynamicMOs_.end(); ++it){
-		delete (*it);
-	}
-}
-
 
 /** @details
  * V realtime modelu spustí hru jako takovou, vykresluje objekty,
@@ -312,8 +320,8 @@ Game::~Game(){
  */
 void Game::play(SDL_Surface* window){
 	// konstrukce zarizujici spravny pocet obrazku za sekundu
-	Uint8 fps=10;
-	Uint32 fps_last= 0;
+// 	Uint8 fps=10;
+// 	Uint32 fps_last= 0;
 
 	int last_time = SDL_GetTicks(),
 		time_to_use = 0, this_time=last_time;
@@ -324,14 +332,17 @@ void Game::play(SDL_Surface* window){
 		draw_(window);
 
 		// cekani - chceme presny pocet obrazku za sekundu
-		fps_last= SDL_fps(fps_last, fps);
+// 		fps_last= SDL_fps(fps_last, fps);
 		// zobrazeni na obrazovku
 		SDL_Flip(window);
 
 		this_time = SDL_GetTicks();
 		time_to_use += this_time - last_time;
 		for( ; time_to_use > MOVE_PERIOD; time_to_use -= MOVE_PERIOD){
+			// hýbne světem
 			move_();
+			// posune animace
+			update_();
 		}
 		last_time = this_time;
 	}
@@ -368,6 +379,7 @@ void Game::draw_(SDL_Surface* window){
 			for(it= map_array_[column][field].begin() ;
 					it!= map_array_[column][field].end() ;
 					++it){
+
 				if(!isBgType(*it))
 					(*it)->draw(window);
 			}
@@ -378,13 +390,39 @@ void Game::draw_(SDL_Surface* window){
 
 /** @details
  * Projde všechny dynamické objekty hry a zavolá na nich fci move().
+ * V průběhu shromažduje objekty, které nakonec vyhodí.
  * @see DynamicMO::move()
+ * @see remove_object()
  */
 void Game::move_(){
 	dynamicMOs_t::iterator it;
+	dynamicMOs_t removedDynamicMOs;
+	// tahnout
 	for(it= dynamicMOs_.begin() ; it!= dynamicMOs_.end() ; ++it){
-		(*it)->move();
-		// TODO predelat na bool DynamicMO::move() a zde rusit....
+		if( (*it)->move() )
+			removedDynamicMOs.push_back(*it);
+	}
+	// zahodit
+	for(it= removedDynamicMOs.begin() ;
+			it!= removedDynamicMOs.end() ; ++it){
+		remove_object(*it);
+	}
+}
+
+/** @details
+ * Projde všechny dynamické i statické objekty hry a zavolá na nich fci update().
+ * @see MapObject::update()
+ */
+void Game::update_(){
+	dynamicMOs_t::iterator d_it;
+	staticMOs_t::iterator s_it;
+	// dynamicke
+	for(d_it= dynamicMOs_.begin() ; d_it!= dynamicMOs_.end() ; ++d_it){
+		(*d_it)->update();
+	}
+	// staticke
+	for(s_it= staticMOs_.begin() ; s_it!= staticMOs_.end() ; ++s_it){
+		(*s_it)->update();
 	}
 }
 

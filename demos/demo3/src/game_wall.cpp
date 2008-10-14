@@ -15,13 +15,20 @@
 Wall::Wall(const Animation & anim, Uint16 x, Uint16 y):
 		StaticMO(x, y), anim_(anim) {}
 
-Wall::Wall(const Wall & wall, Uint16 x, Uint16 y):
-		StaticMO(x, y), anim_(wall.anim_) {}
+Wall::Wall(const Wall & wall, Uint16 x, Uint16 y, Uint16 height):
+		// posunu nahoru o celou vysku, dolu o vysku zabranou v mape
+		// => ve vysledku posunu o toplapping nahoru
+		StaticMO(x, y - wall.anim_.height() + height*CELL_SIZE),
+		anim_(wall.anim_) {}
 
 /** @details
  * @param window Surface, do kterého chceme zeď vykreslit.
  */
 void Wall::draw(SDL_Surface* window){
 	anim_.draw(window, x_, y_);
+}
+
+void Wall::update(){
+	anim_.update();
 }
 
