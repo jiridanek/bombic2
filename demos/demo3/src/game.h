@@ -11,10 +11,14 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <map>
 #include "SDL_lib.h"
 #include "game_base.h"
 #include "game_mapobjects.h"
 // #include "tixml_helper.h"
+
+
+class Player;
 
 /** Konkrétní hra.
  * Instance třídy Game obstarává jednu konkrétní hru.
@@ -92,13 +96,18 @@ class Game {
 			GameBase::generatedMOs_t::const_iterator begin,
 			GameBase::generatedMOs_t::const_iterator end);
 		/// Vygenerování příšer.
-		void generate_creatures_(
+		void generate_creatures_(const GameBase & base,
 			GameBase::generatedMOs_t::const_iterator begin,
 			GameBase::generatedMOs_t::const_iterator end);
 
 		/// Vytvoření a vložení objektu do mapy.
 		void insert_MO_(const MapObject* mapObject, Uint16 width,
 			Uint16 height, Uint16 column, Uint16 field);
+
+		/// Počet žijících příšer.
+		Uint16 remaining_creatures_;
+		/// Pointery na hráče.
+		std::map<Uint16, Player*> players_;
 };
 
 #endif

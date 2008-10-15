@@ -71,6 +71,15 @@
 				y="souradnice umisteni"
 				/>
 	</_creatures>
+	<!-- jeden nepovinny tag pro policka na ktera nechceme generovat prisery -->
+	<_nocreatures>
+		<!-- pro kazde policko, ktere chceme vynutit bez prisery jeden tag -->
+		<_nocreature
+			x="souradnice vynuceneho policka bez prisery v polickach"
+			y="souradnice policka bez prisery v polickach"
+			/>
+	</_nocreatures>
+
 	<!-- v deathmatchi se nastaveni bonusu prekryje nastavenim
 		z menu, cili pro ciste deathmatchove mapy je zbytecne
 		zde jakekoli bonusy nastavovat -->

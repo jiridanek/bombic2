@@ -57,8 +57,15 @@
 	<creatures name="creature_ghost" count="10">
 		<creature x="6" y="10" />
 	</creatures>
-	<!-- TODO -->
 	<nocreatures>
+		<nocreature x="1" y="2" />
+		<nocreature x="1" y="3" />
+		<nocreature x="1" y="4" />
+		<nocreature x="1" y="5" />
 		<nocreature x="2" y="2" />
+		<nocreature x="2" y="3" />
+		<nocreature x="2" y="4" />
+		<nocreature x="3" y="2" />
+		<nocreature x="3" y="3" />
 	</nocreatures>
 </map>

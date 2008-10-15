@@ -51,10 +51,10 @@
 	<bonuses name="bonus_slider" count="1" />
 	<bonuses name="bonus_fireman" count="1" />
 -->
-	<creatures name="creature_rat" count="10">
+	<creatures name="creature_rat" count="1">
 		<creature x="2" y="10" />
 	</creatures>
-	<creatures name="creature_ghost" count="5">
+	<creatures name="creature_ghost" count="1">
 		<creature x="6" y="10" />
 	</creatures>
 </map>

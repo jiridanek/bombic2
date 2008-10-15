@@ -42,7 +42,9 @@ void GameIntro::show_screen(){
 		game_ = new Game(*gameBase_);
 
 		// pockame na klavesu, pri pokusu o ukonceni ukoncime
-		if(wait_event_isquit(SDLK_ESCAPE))
+		SDL_Delay(500);
+		if(get_event_isquit(SDLK_ESCAPE))
+// 		if(wait_event_isquit(SDLK_ESCAPE))
 			return;
 
 		// jinak hrajeme

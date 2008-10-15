@@ -15,7 +15,7 @@
 		</animation>
 	</up>
 	<left x="1" y="0" shadow_x="1" shadow_y="0">
-		<animation rate="16" >
+		<animation rate="10" >
 			<animation_item x="52" y="0" shadow_x="52" shadow_y="0" />
 			<animation_item x="103" y="0" shadow_x="103" shadow_y="0" />
 			<animation_item x="154" y="0" shadow_x="154" shadow_y="0" />
@@ -27,7 +27,7 @@
 		</animation>
 	</left>
 	<down x="1" y="214" shadow_x="1" shadow_y="214">
-		<animation rate="16" >
+		<animation rate="10" >
 			<animation_item x="52" y="214" shadow_x="52" shadow_y="214" />
 			<animation_item x="103" y="214" shadow_x="103" shadow_y="214" />
 			<animation_item x="154" y="214" shadow_x="154" shadow_y="214" />
@@ -39,7 +39,7 @@
 		</animation>
 	</down>
 	<right x="1" y="72" shadow_x="1" shadow_y="72">
-		<animation rate="16" >
+		<animation rate="10" >
 			<animation_item x="52" y="72" shadow_x="52" shadow_y="72" />
 			<animation_item x="103" y="72" shadow_x="103" shadow_y="72" />
 			<animation_item x="154" y="72" shadow_x="154" shadow_y="72" />
@@ -52,7 +52,7 @@
 	</right>
 	<!-- specifikace umirani -->
 	<burned x="1" y="285">
-		<animation rate="16" >
+		<animation rate="10" >
 				<animation_item x="52" y="285" />
 				<animation_item x="103" y="285" />
 				<animation_item x="154" y="285" />

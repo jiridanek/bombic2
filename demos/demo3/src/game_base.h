@@ -41,17 +41,18 @@ class GameBase {
 		typedef struct { MapObject* o; Uint16 w, h; } proportionedMO_t;
 		/// Typ dvourozměrného pole mapy, na každém políčku seznam objektů s rozměry.
 		typedef std::vector< std::vector< std::list< proportionedMO_t > > > base_array_t;
+		typedef struct { bool box, creature; } allowed_field_t;
 		/// Typ dvourozměrného pole, na každém políčku TRUE, pokud je možné vygenerovat box.
-		typedef std::vector< std::vector< bool> > boxes_array_t;
+		typedef std::vector< std::vector< allowed_field_t> > allowed_array_t;
 		/// Typ seznamu generovaných objektů.
 		typedef std::vector< MapObject* > generatedMOs_t;
 	private:
 		/// Pole mapy.
 		base_array_t base_array_;
 		/// Pole mapy, na každém políčku TRUE, pokud je možné vygenerovat box.
-		boxes_array_t boxes_array_;
+		allowed_array_t allowed_array_;
 		/// Počet volných políček v boxes_array_.
-		Uint16 boxes_array_count_;
+		Uint16 allowed_boxes_count_;
 		/// Seznam neumístěných objektů.
 		generatedMOs_t generatedMOs_;
 
@@ -73,6 +74,8 @@ class GameBase {
 		void load_bonuses_(TiXmlElement *bonusEl);
 		/// Načtení příšer.
 		void load_creatures_(TiXmlElement *creaturesEl);
+		/// Připravení políček, na kterých nesmí být příšery.
+		void load_nocreatures_(TiXmlElement *nocreaturesEl);
 
 		/// Načtení animace podelementu.
 		Uint16 load_subEl_animation_(TiXmlElement *El, const char* name_subEl,
@@ -111,7 +114,7 @@ class GameBase {
 		void insert_player_(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
-			Uint16 speed, Uint16 lives);
+			Uint16 speed, Uint16 lives, Uint16 num);
 		/// Vyhození nulových pointerů z base_array_.
 		void clear_null_objects_();
 		/// Odalokování všech zde vytvořených objektů.

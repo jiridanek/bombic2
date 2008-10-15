@@ -66,6 +66,17 @@ void GameBase::load_map_(Uint16 players_count, const std::string & mapname){
 	column.insert(column.end(), height, empty_list);
 	base_array_.insert(base_array_.end(), width, column);
 
+	// vytvoreni rozmeru mapy povolenych policek pro generovani
+	allowed_field_t allowed_field = {true, true};
+	allowed_array_t::value_type allowed_column;
+
+	allowed_column.insert(allowed_column.end(),
+		base_array_[0].size(), allowed_field);
+
+	allowed_array_.clear();
+	allowed_array_.insert(allowed_array_.end(),
+		base_array_.size(), allowed_column);
+
 	// nacteni pozadi
 	string str;
 	try {
@@ -92,6 +103,8 @@ void GameBase::load_map_(Uint16 players_count, const std::string & mapname){
 	load_creatures_(map_el->FirstChildElement("creatures"));
 	// vytvoreni mapy prazdnych policek pro generovane boxy
 	load_noboxes_(map_el->FirstChildElement("boxes"));
+	// vytvoreni mapy prazdnych policek pro generovane prisery
+	load_nocreatures_(map_el->FirstChildElement("nocreatures"));
 	// vyhozeni nulovych pointeru
 	clear_null_objects_();
 }
@@ -242,7 +255,7 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 					anim_burned(subElement(rootEl,"burned"),
 						width, height, sur_src);
 			insert_player_(anim_up, anim_right, anim_down, anim_left,
-				anim_burned, column, field, speed, lives);
+				anim_burned, column, field, speed, lives, count);
 		}
 	}
 	catch(const string & s){
@@ -507,11 +520,6 @@ void GameBase::load_boxes_(TiXmlElement *boxesEl){
  * @param boxesEl element v XML souboru specifikující bedny v mapě
  */
 void GameBase::load_noboxes_(TiXmlElement *boxesEl){
-	// vytvoreni rozmeru mapy prazdnych policek
-	boxes_array_.clear();
-	boxes_array_t::value_type column_noboxes;
-	column_noboxes.insert(column_noboxes.end(), base_array_[0].size(), true);
-	boxes_array_.insert(boxes_array_.end(), base_array_.size(), column_noboxes);
 
 	if(!boxesEl) return;
 
@@ -525,25 +533,53 @@ void GameBase::load_noboxes_(TiXmlElement *boxesEl){
 			readAttr(El, "y", y);
 
 			// vlozeni do mapy zakazanych policek
-			if(x<boxes_array_.size() && y<boxes_array_[x].size())
-				boxes_array_[x][y]=false;
+			if(x<allowed_array_.size() && y<allowed_array_[x].size())
+				allowed_array_[x][y].box = false;
 			El= El->NextSiblingElement("nobox");
 		}
 	}
 	catch(const string & s){
 		TiXmlError("in element <nobox ...>: "+s);
 	}
-	// obsazena policka v mape
-	isTypeOf isBG(BACKGROUND); isBG.addType(FLOOROBJECT);
-	boxes_array_count_= 0;
+	// spocitam neobsazena policka v mape
+	allowed_boxes_count_= 0;
 	for(x=0; x<base_array_.size() ; ++x){
 		for(y=0 ; y<base_array_[x].size() ; ++y){
-			if(!boxes_array_[x][y]) continue;
-			if(!isBG(base_array_[x][y].back().o))
-				boxes_array_[x][y] = false;
-			else
-				++boxes_array_count_;
+			if(allowed_array_[x][y].box)
+				++allowed_boxes_count_;
 		}
+	}
+}
+
+/** @details
+ * Načte z XML informace o políčkách, na kterých nesmí být příšera.
+ * Na základě tohoto, a již umístěných objektů v mapě doplní do struktury
+ * políček vhodných k umístění.
+ * @param nocreaturesEl element v XML souboru specifikující políčka v mapě,
+ * na kterých nechceme příšery.
+ * @see GameBase::load_noboxes_()
+ */
+void GameBase::load_nocreatures_(TiXmlElement *nocreaturesEl){
+
+	if(!nocreaturesEl) return;
+
+	TiXmlElement *El;
+	Uint16 x, y;
+	// zakazana policka z XML
+	El= nocreaturesEl->FirstChildElement("nocreature");
+	try{
+		while(El){
+			readAttr(El, "x", x);
+			readAttr(El, "y", y);
+
+			// vlozeni do mapy zakazanych policek
+			if(x<allowed_array_.size() && y<allowed_array_[x].size())
+				allowed_array_[x][y].creature = false;
+			El= El->NextSiblingElement("nocreature");
+		}
+	}
+	catch(const string & s){
+		TiXmlError("in element <nocreature ...>: "+s);
 	}
 }
 
@@ -758,6 +794,7 @@ void GameBase::insert_background_(const Animation & anim,
 /** @details
  * Vytvoří zed na zadaných souřadnicích a vloží ji do mapy.
  * Zed vkládá do mapy na všechna políčka, které zabírá.
+ * Zakáže políčka pro vygenerování příšery i bedny.
  * @param anim animace vkládané zdi
  * @param toplapping počet políček odshora obrázku,
  * které nezabírají místo v mapě
@@ -775,12 +812,14 @@ void GameBase::insert_wall_(const Animation & anim,
 		w, h };
 	base_array_[x][y].push_back( new_obj);
 	new_obj.o= 0; new_obj.w= new_obj.h= 0;
+	allowed_field_t not_allowed_field = {false, false};
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
 	for(Uint16 column=0; column<w ; ++column){
 		for(Uint16 field=0 ; field<h ; ++field){
 			if(x+column>=base_array_.size() || y+field>=base_array_[0].size())
 				continue;
 			base_array_[x+column][y+field].push_back(new_obj);
+			allowed_array_[x+column][y+field] = not_allowed_field;
 		}
 	}
 
@@ -833,6 +872,7 @@ void GameBase::insert_box_(const Animation & anim, const Animation & anim_burnin
 /** @details
  * Vytvoří bednu na zadaných souřadnicích a vloží ji do mapy.
  * Bednu vkládá do mapy na všechna políčka, která zabírá.
+ * Zakáže vygenerování další bedny a příšery.
  * @param anim animace vkládané bedny
  * @param anim_burning animace hořící bedny
  * @param toplapping počet políček odshora obrázku,
@@ -852,12 +892,14 @@ void GameBase::insert_box_(const Animation & anim, const Animation & anim_burnin
 		w, h };
 	base_array_[x][y].push_back( new_obj);
 	new_obj.o= 0; new_obj.w= new_obj.h= 0;
+	allowed_field_t not_allowed_field = {false, false};
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
 	for(Uint16 column=0; column<w ; ++column){
 		for(Uint16 field=0 ; field<h ; ++field){
 			if(x+column>=base_array_.size() || y+field>=base_array_[0].size())
 				continue;
 			base_array_[x+column][y+field].push_back(new_obj);
+			allowed_array_[x+column][y+field] = not_allowed_field;
 		}
 	}
 }
@@ -874,7 +916,8 @@ void GameBase::insert_bonus_(const Animation & anim){
 }
 
 /** @details
- * Vytvoří nestvůru na zadaných souřadnicích a vloží ji do mapy.
+ * Vytvoří nestvůru na zadaných souřadnicích
+ * a vloží ji do seznamu pro pozdější vygenerování.
  * @param anim_left animace pro otočení doleva
  * @param anim_up animace pro otočení nahoru
  * @param anim_right animace pro otočení doprava
@@ -896,6 +939,7 @@ void GameBase::insert_creature_(const Animation & anim_up, const Animation & ani
 }
 /** @details
  * Vytvoří nestvůru na zadaných souřadnicích a vloží ji do mapy.
+ * Zakáže vygenerovat na tomto místě bendu.
  * @param anim_left animace pro otočení doleva
  * @param anim_up animace pro otočení nahoru
  * @param anim_right animace pro otočení doprava
@@ -922,11 +966,13 @@ void GameBase::insert_creature_(const Animation & anim_up, const Animation & ani
 			speed, lives, ai),
 		1, 1 };
 	base_array_[x][y].push_back( new_obj);
+	allowed_array_[x][y].box = false;
 }
 
 
 /** @details
  * Vytvoří hráče na zadaných souřadnicích a vloží jej do mapy.
+ * Zakáže na tomto místě a v nejbližším okolí vygenerovat příšeru a bednu.
  * @param anim_left animace pro otočení doleva
  * @param anim_up animace pro otočení nahoru
  * @param anim_right animace pro otočení doprava
@@ -936,11 +982,12 @@ void GameBase::insert_creature_(const Animation & anim_up, const Animation & ani
  * @param y souřadnice hráče v mapě
  * @param speed rychlost v pixelech za jednu časovou jednotku
  * @param lives počet životů
+ * @param num číslo (pořadí) hráče
  */
 void GameBase::insert_player_(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
-			Uint16 speed, Uint16 lives){
+			Uint16 speed, Uint16 lives, Uint16 num){
 	// ulozit do mapy na spravne policko
 	if(x>=base_array_.size() || y>=base_array_[0].size())
 		return;
@@ -950,10 +997,17 @@ void GameBase::insert_player_(const Animation & anim_up, const Animation & anim_
 		new Player(
 			anim_up, anim_right, anim_down, anim_left, anim_burned,
 			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
-			speed, lives),
+			speed, lives, num),
 		1, 1 };
 
 	base_array_[x][y].push_back( new_obj);
+	// zakazu generovani na policka okolo
+	allowed_field_t not_allowed_field = {false, false};
+	for(Sint8 i=-1; i<=1 ; ++i){
+		allowed_array_[x+i][y] = not_allowed_field;
+		allowed_array_[x][y+i] = not_allowed_field;
+	}
+
 }
 
 

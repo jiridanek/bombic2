@@ -41,6 +41,11 @@ Game::Game(const GameBase & base){
 	if(myself_ptr_)
 		throw string("in Game constructor: another Game instance created.");
 	myself_ptr_ = this;
+	// pripravit prostor pro ctyry hrace
+	for(Uint16 i=1; i<=4 ; ++i){
+		players_[i]=0;
+	}
+	// zkusit nahrat umistene a vygenerovat ostatni objekty
 	try{
 		load_placed_MOs_(base.base_array_);
 		load_generated_MOs_(base);
@@ -112,21 +117,25 @@ void Game::load_generated_MOs_(const GameBase & base){
 	// bedny
 	if(it_first==end_it) return;
 	isTypeOf isCurType(BOX);
+
 	while(isCurType(*it_second) && ++it_second!=end_it);
 	generate_boxes_(base, it_first, it_second);
+
 	it_first= it_second;
 	// bonusy
 	if(it_first==end_it) return;
 	isCurType.clear().addType(BONUS);
+
 	while(isCurType(*it_second) && ++it_second!=end_it);
 	generate_bonuses_(it_first, it_second);
+
 	it_first= it_second;
 	// nestvury
 	if(it_first==end_it) return;
 	isCurType.clear().addType(CREATURE);
 
 	while(isCurType(*it_second) && ++it_second!=end_it);
-	generate_creatures_(it_first, it_second);
+	generate_creatures_(base, it_first, it_second);
 
 	if(it_second!=end_it)
 		throw string("in Game::load_generated_MOs_(): unexpected object type to generate or objects in wrong order.");
@@ -135,6 +144,7 @@ void Game::load_generated_MOs_(const GameBase & base){
 /** @details
  * Zjistí volná políčka pro vygenerování beden a pokusí se náhodně
  * rozmístit všechny bedny v zadaném intervalu.
+ * @param base reference na GameBase kvuli allowed_array_ a allowed_boxes_count_
  * @param begin iterator s nahodnym pristupem, začátek beden
  * @param end iterator s nahodnym pristupem za koncem beden
  */
@@ -144,7 +154,7 @@ void Game::generate_boxes_(const GameBase & base,
 
 	Uint16 x, y,
 		// pocet zbyvajicich volnych policek
-		count_free = base.boxes_array_count_,
+		count_free = base.allowed_boxes_count_,
 		// pocet zbyvajicich boxu k rozdeleni
 		count = end-begin;
 
@@ -152,7 +162,7 @@ void Game::generate_boxes_(const GameBase & base,
 		for(y=0 ; y<map_array_[x].size() ; ++y){
 			// neni jiz zadne volne policko, nebo co rozdelovat
 			if(!count_free || !count) return;
-			if(!base.boxes_array_[x][y]) continue;
+			if(!base.allowed_array_[x][y].box) continue;
 
 			if(count> rand()%count_free){
 				insert_MO_(*(begin+count-1), 1, 1, x, y);
@@ -203,10 +213,11 @@ void Game::generate_bonuses_(
 /** @details
  * Zjistí volná políčka pro vygenerování příšer a pokusí se náhodně
  * rozmístit všechny příšery v zadaném intervalu.
+ * @param base reference na GameBase kvuli allowed_array_
  * @param begin začátek příšer
  * @param end konec příšer
  */
-void Game::generate_creatures_(
+void Game::generate_creatures_(const GameBase & base,
 			GameBase::generatedMOs_t::const_iterator begin,
 			GameBase::generatedMOs_t::const_iterator end){
 
@@ -221,6 +232,9 @@ void Game::generate_creatures_(
 	// zjisteni policek pro vygenerovani prisery
 	for(x=0 ; x<map_array_.size() ; ++x){
 		for(y=0 ; y<map_array_[x].size() ; ++y){
+			// pokud je zakazano z GameBase
+			if(!base.allowed_array_[x][y].creature) continue;
+
 			for(map_it=map_array_[x][y].begin();
 				map_it!=map_array_[x][y].end(); ++map_it){
 					if(isBad(*map_it)) break;
@@ -289,12 +303,17 @@ void Game::insert_MO_(const MapObject* mapObject,
 				*static_cast<const Creature*>(mapObject),
 					x+CELL_SIZE/2, y+CELL_SIZE/2);
 			dynamicMOs_.push_back(static_cast<DynamicMO*>(new_obj));
+			// zvysim pocet priser
+			++remaining_creatures_;
 			break;
 		case PLAYER:
 			new_obj = new Player(
-				*static_cast<const Player*>(mapObject),
+				*static_cast<const Player *>(mapObject),
 					x+CELL_SIZE/2, y+CELL_SIZE/2);
 			dynamicMOs_.push_back(static_cast<DynamicMO*>(new_obj));
+			// pridam hrace mezi hrace
+			players_[static_cast<Player *>(new_obj)->player_num()] =
+				static_cast<Player *>(new_obj);
 			break;
 		default:
 			throw string("in Game::insert_MO_(): unhandled object type");
@@ -345,6 +364,11 @@ void Game::play(SDL_Surface* window){
 			update_();
 		}
 		last_time = this_time;
+
+		for(Uint16 i=4 ; true ; --i){
+			if(i==0) return;
+			if(players_[i]) break;
+		}
 	}
 }
 
@@ -481,6 +505,15 @@ void Game::remove_object(DynamicMO * obj){
 	}
 	// vyhodim obj ze seznamu dynamickych objektu
 	dynamicMOs_.remove(obj);
+	switch(obj->type()){
+		case CREATURE:
+			--remaining_creatures_;
+			break;
+		case PLAYER:
+			players_[static_cast<Player *>(obj)->player_num()]=0;
+			break;
+		default: ;
+	}
 	// zahodim obj
 	delete obj;
 }
