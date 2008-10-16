@@ -171,6 +171,9 @@ Surface & Surface::operator= (SDL_Surface * sur_SDL){
 SDL_Surface* Surface::GetSurface() const {
 	return surface_;
 }
+SDL_Surface* Surface::getSurface() const {
+	return surface_;
+}
 Uint16 Surface::width() const {
 	return !surface_ ? 0 : surface_->w;
 }

@@ -1,53 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- s podtrzitkem pisu nepovinne tagy a atributy
-			- v realnem xml uz podtrzitka nepsat!!-->
-<!-- souradnice x,y jsou vzdy v pixelech,
-	width a height nekdy v polickach nekdy v polickach, pozor na to -->
-<gametools src="cesta ke zdrojovemu obrazku">
-	<!-- souradnice v polickach -->
+
+<gametools src="img/gametools.bmp">
 	<!-- obrazek plamene, ruzne smery -->
-	<flame timeperiod="doba v sekundach po kterou hori plameny bomby">
-		<top 	x="souradnice obrazku v pixelech"
-			y="souradnice v pixelech"
-			>
-			<_animation rate="pocet obrazku za sekundu">
-			<!-- kazda faze animace ma svuj tag animation_item
-				povinny je alespon jeden, jako prvni obrazek
-				se pouzije x,y z nadrazeneho tagu,
-				potom v poradi jak je uvedeno -->
-				<animation_item
-					x="souradnice na ktere je obrazek v pixelech"
-					y="souradnice na ktere je obrazek" />
-			</_animation>
+	<flame timeperiod="1">
+		<top x="205" y="1">
+			<animation rate="10">
+				<animation_item x="205" y="52" />
+				<animation_item x="205" y="103" />
+			</animation>
 		</top>
-		<bottom x="sour v pixelech" y="sour v pixelech">
-			<_animation rate="pocet obrazku za sekundu">
-				<animation_item x="sour v pixelech" y="sour v pixelech" />
-			</_animation>
+		<bottom x="307" y="1">
+			<animation rate="10">
+				<animation_item x="307" y="52" />
+				<animation_item x="307" y="103" />
+			</animation>
 		</bottom>
-		<!-- dalsi tagy mohou obsahovat nepovinne <animation ...> -->
-		<topbottom x="sour" y="sour"> </topbottom>
-		<left x="sour" y="sour"> </left>
-		<right x="sour" y="sour"> </right>
-		<leftright x="sour" y="sour"> </leftright>
-		<cross x="sour" y="sour"> </cross>
+		<topbottom x="256" y="1">
+			<animation rate="10">
+				<animation_item x="256" y="52" />
+				<animation_item x="256" y="103" />
+			</animation>
+		</topbottom>
+		<left x="1" y="1">
+			<animation rate="10">
+				<animation_item x="1" y="52" />
+				<animation_item x="1" y="103" />
+			</animation>
+		</left>
+		<right x="103" y="1">
+			<animation rate="10">
+				<animation_item x="103" y="52" />
+				<animation_item x="103" y="103" />
+			</animation>
+		</right>
+		<leftright x="52" y="1">
+			<animation rate="10">
+				<animation_item x="52" y="52" />
+				<animation_item x="52" y="103" />
+			</animation>
+		</leftright>
+		<cross x="154" y="1">
+			<animation rate="10">
+				<animation_item x="154" y="52" />
+				<animation_item x="154" y="103" />
+			</animation>
+		</cross>
 	</flame>
 	<!-- obrazek bomb -->
-	<!-- bomba bouchne kdyz dojde jedna animace (bez animace za sekundu -->
 	<bombs>
-		<normal x="souradnice obrazku v pixelech" y="souradnice">
-			<_animation rate="pocet obrazku za sekundu">
-				<animation_item
-					x="souradnice na ktere je obrazek v pixelech"
-					y="souradnice na ktere je obrazek" />
-			</_animation>
+		<normal x="1" y="154">
+			<animation rate="2">
+				<animation_item x="52" y="154" />
+				<animation_item x="103" y="154" />
+				<animation_item x="154" y="154" />
+				<animation_item x="205" y="154" />
+				<animation_item x="256" y="154" />
+				<animation_item x="307" y="154" />
+			</animation>
 		</normal>
-		<mega x="souradnice obrazku v pixelech" y="souradnice">
-			<_animation rate="pocet obrazku za sekundu">
-				<animation_item
-					x="souradnice na ktere je obrazek v pixelech"
-					y="souradnice na ktere je obrazek" />
-			</_animation>
+		<mega x="1" y="205">
+			<animation rate="2">
+				<animation_item x="52" y="205" />
+				<animation_item x="103" y="205" />
+				<animation_item x="154" y="205" />
+				<animation_item x="205" y="205" />
+				<animation_item x="256" y="205" />
+				<animation_item x="307" y="205" />
+			</animation>
 		</mega>
 	</bombs>
 	<!-- obrazky zobrazovacich panelu jednotlivych bombicu -->

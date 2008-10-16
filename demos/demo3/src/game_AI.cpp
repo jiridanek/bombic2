@@ -7,6 +7,9 @@
 #include "game_mapobjects.h"
 #include "game_AI.h"
 #include "game_creature.h"
+#include "game_player.h"
+#include "game_bomb.h"
+#include "game_flame.h" // TODO
 
 /** @details
  * Statická fce, pouze rozhodne, která třída AI se použije.
@@ -366,16 +369,16 @@ AI_fromKeyboard::AI_fromKeyboard(Creature *creature): AI(creature) {
 
 // TODO klávesy
 void AI_fromKeyboard::move() {
-	SDLKey up=SDLK_UP, right=SDLK_RIGHT, down=SDLK_DOWN, left=SDLK_LEFT;
+	Player * player = static_cast<Player *>(creature_);
 	// update pozic pro pohyb jako bych byl otoceny nahoru
-	DIRECTION cur_d = creature_->d_;
-	creature_->d_ = UP;
+	DIRECTION cur_d = player->d_;
+	player->d_ = UP;
 	updatePositions();
 	// souradnice v polickach
 	Uint16 x,y;
 
-	if(keystate_[up]){
-		creature_->d_ = UP;
+	if(keystate_[player->key_up_]){
+		player->d_ = UP;
 		x=positions_[1].x/CELL_SIZE; y=positions_[1].y/CELL_SIZE;
 		if(Game::get_instance()->field_canGoOver(x, y)){
 			if(!Game::get_instance()->field_canGoOver(x, y-1)
@@ -386,8 +389,8 @@ void AI_fromKeyboard::move() {
 				setPosition(positions_[1]);
 		}
 	}
-	else if(keystate_[right]){
-		creature_->d_ = RIGHT;
+	else if(keystate_[player->key_right_]){
+		player->d_ = RIGHT;
 		x=positions_[2].x/CELL_SIZE; y=positions_[2].y/CELL_SIZE;
 		if(Game::get_instance()->field_canGoOver(x, y)){
 			if(!Game::get_instance()->field_canGoOver(x+1, y)
@@ -397,8 +400,8 @@ void AI_fromKeyboard::move() {
 				setPosition(positions_[2]);
 		}
 	}
-	else if(keystate_[down]){
-		creature_->d_ = DOWN;
+	else if(keystate_[player->key_down_]){
+		player->d_ = DOWN;
 		x=positions_[3].x/CELL_SIZE; y=positions_[3].y/CELL_SIZE;
 		if(Game::get_instance()->field_canGoOver(x, y)){
 			if(!Game::get_instance()->field_canGoOver(x, y+1)
@@ -408,8 +411,8 @@ void AI_fromKeyboard::move() {
 				setPosition(positions_[3]);
 		}
 	}
-	else if(keystate_[left]){
-		creature_->d_ = LEFT;
+	else if(keystate_[player->key_left_]){
+		player->d_ = LEFT;
 		x=positions_[4].x/CELL_SIZE; y=positions_[4].y/CELL_SIZE;
 		if(Game::get_instance()->field_canGoOver(x, y)){
 			if(!Game::get_instance()->field_canGoOver(x-1, y)
@@ -419,6 +422,14 @@ void AI_fromKeyboard::move() {
 				setPosition(positions_[4]);
 		}
 	}
-	else creature_->d_ = cur_d;
+	else player->d_ = cur_d;
 
+	if(keystate_[player->key_plant_]){
+		Game * game = Game::get_instance();
+		x = player->x_/CELL_SIZE;
+		y = player->y_/CELL_SIZE;
+		game->insert_object(x, y,
+			game->tools->bomb_normal(x, y) );
+	}
+	// TODO timer
 }

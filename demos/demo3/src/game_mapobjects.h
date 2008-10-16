@@ -14,8 +14,9 @@
  * @see MapObject::type() and derived
  * @see isTypeOf::clear()
  */
-enum OBJECT_TYPES { BACKGROUND, FLOOROBJECT, WALL, BOX, BONUS, CREATURE, PLAYER };
-#define OBJECT_TYPES_COUNT 7
+enum OBJECT_TYPES { BACKGROUND, FLOOROBJECT, WALL,
+	BOX, BONUS, CREATURE, PLAYER, FLAME, BOMB };
+#define OBJECT_TYPES_COUNT 9
 
 /// Čtyři směry + hoření
 enum DIRECTION { UP, RIGHT, DOWN, LEFT, BURNED };

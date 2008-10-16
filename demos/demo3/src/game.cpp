@@ -19,6 +19,8 @@
 #include "game_bonus.h"
 #include "game_creature.h"
 #include "game_player.h"
+#include "game_bomb.h"
+#include "game_flame.h"
 
 using namespace std;
 
@@ -36,7 +38,7 @@ Game* Game::get_instance(){
  * @param players_count počet hráčů
  * @param mapname název mapy
  */
-Game::Game(const GameBase & base){
+Game::Game(const GameBase & base, GameTools * gameTools): tools(gameTools) {
 // 	bool deathmatch, bool creatures, bool bombsatend){
 	if(myself_ptr_)
 		throw string("in Game constructor: another Game instance created.");
@@ -488,6 +490,18 @@ bool Game::field_withObject(Uint16 x, Uint16 y, OBJECT_TYPES objectType){
 	end = map_array_[x][y].end();
 
 	return find_if(begin, end, isType)!=end;
+}
+
+/** @details
+ * Vloží dynamický objekt do mapy a seznamu dynamických objektů.
+ * Instance Game se později postará o jeho dealokování.
+ * @param x souřadnice políčka pro vložení
+ * @param y souřadnice políčka pro vložení
+ * @param obj objekt, který chceme vložit
+ */
+void Game::insert_object(Uint16 x, Uint16 y, DynamicMO * obj){
+	dynamicMOs_.push_back(obj);
+	map_array_[x][y].push_back(obj);
 }
 
 /** @details

@@ -2,5 +2,11 @@
 
 <box 	name="box_barrel" src="img/mapa0.bmp">
 	<img x="205" y="102" toplapping="1" />
-	<burning x="256" y="152" />
+	<burning x="256" y="102" toplapping="1">
+		<animation rate="10" >
+			<animation_item x="307" y="102" />
+			<animation_item x="358" y="102" />
+			<animation_item x="409" y="102" />
+		</animation>
+	</burning>
 </box>

@@ -38,7 +38,7 @@ class Game {
 		static Game* get_instance();
 
 		/// Inicializace hry.
-		Game(const GameBase & base);
+		Game(const GameBase & base, GameTools * gameTools);
 		/// Uvolnění naalokovaaných objektů.
 		~Game();
 		/// Spuštění hry.
@@ -54,8 +54,12 @@ class Game {
 // 		bool field_canFlyOver(Uint16 x, Uint16 y);
 		/// Na políčku je typ objektu.
 		bool field_withObject(Uint16 x, Uint16 y, OBJECT_TYPES objectType);
+
 		/// Vyhození objektu z mapy.
 		void remove_object(DynamicMO * obj);
+		/// Vloží objekt na políčko.
+		void insert_object(Uint16 x, Uint16 y, DynamicMO * obj);
+
 		/// Pohyb z políčka na políčko.
 		void change_position(Uint16 old_x, Uint16 old_y,
 			Uint16 new_x, Uint16 new_y, MapObject * obj);
@@ -67,6 +71,8 @@ class Game {
 		/// Typ seznamu statickych objektu.
 		typedef std::vector< StaticMO* > staticMOs_t;
 
+		/// Pointer pro nadstavbové věci pro hru.
+		GameTools * tools;
 	private:
 		/// Pointer na jedinou instanci třídy.
 		static Game* myself_ptr_;

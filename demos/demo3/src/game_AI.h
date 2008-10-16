@@ -11,6 +11,7 @@
 #include "game.h"
 #include "game_mapobjects.h"
 #include "game_creature.h"
+#include "game_player.h"
 
 /** Umělá inteligence.
  * AI je abstraktní třída, která implementuje vlastnosti a metody

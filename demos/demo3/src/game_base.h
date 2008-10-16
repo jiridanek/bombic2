@@ -18,6 +18,21 @@
 #include "game_mapobjects.h"
 #include "tixml_helper.h"
 
+
+/** Loader animace a surface z xml.
+ * Pomocná třída, která implementuje obecné fce pro loadování
+ * animace z elementu a zdrojového surface z atributu elementu.
+ */
+class GameBaseLoader {
+	protected:
+		/// Načtení animace podelementu.
+		Uint16 load_subEl_animation_(TiXmlElement *El, const char* name_subEl,
+				Animation & anim, const Surface & sur_src);
+		/// Načtení surface bitmapy.
+		SDL_Surface* load_src_surface_(TiXmlElement *El,
+				const char* attr_name="src", bool force=true);
+};
+
 /** Základ hry.
  * Třída GameBase řeší první načtení mapy a jejích objektů z XML,
  * připraví hrací pole a vloží do něj (a nikam jinam) pevně umístěné objekty.
@@ -27,7 +42,7 @@
  * Z této předpřipravené struktury se vytvoří konkrétní hra, proto je friend s třídou Game.
  * @see GameIntro, DeathmatchIntro.
  */
-class GameBase {
+class GameBase: public GameBaseLoader {
 	friend class Game;
 	public:
 		/// Inicializace hry.
@@ -77,13 +92,6 @@ class GameBase {
 		/// Připravení políček, na kterých nesmí být příšery.
 		void load_nocreatures_(TiXmlElement *nocreaturesEl);
 
-		/// Načtení animace podelementu.
-		Uint16 load_subEl_animation_(TiXmlElement *El, const char* name_subEl,
-				Animation & anim, const Surface & sur_src);
-		/// Načtení surface bitmapy.
-		SDL_Surface* load_src_surface_(TiXmlElement *El,
-				const char* attr_name="src", bool force=true);
-
 		/// Vytvoření a vložení pozadí do mapy.
 		void insert_background_(const Animation & anim,
 				const Animation & anim_burned, Uint16 x, Uint16 y);
@@ -119,6 +127,38 @@ class GameBase {
 		void clear_null_objects_();
 		/// Odalokování všech zde vytvořených objektů.
 		void destroy_();
+};
+
+
+class Flame;
+class Bomb;
+
+/** Nadstavbové věci pro hru.
+ * Třída GameTools naloaduje z XML věci potřebné ke hře
+ * a poskytuje je v podobě jednoduchého interface.
+ */
+class GameTools: public GameBaseLoader{
+	public:
+		GameTools();
+		Flame* flame_top(Uint16 x, Uint16 y) const;
+		Flame* flame_bottom(Uint16 x, Uint16 y) const;
+		Flame* flame_topbottom(Uint16 x, Uint16 y) const;
+		Flame* flame_left(Uint16 x, Uint16 y) const;
+		Flame* flame_right(Uint16 x, Uint16 y) const;
+		Flame* flame_leftright(Uint16 x, Uint16 y) const;
+		Flame* flame_cross(Uint16 x, Uint16 y) const;
+		Bomb* bomb_normal(Uint16 x, Uint16 y) const;
+		Bomb* bomb_mega(Uint16 x, Uint16 y) const;
+	private:
+		void load_flame_(TiXmlElement *flameEl, const Surface & sur_src);
+		void load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src);
+
+		Uint16 flame_period_;
+		Animation flame_top_, flame_bottom_, flame_topbottom_,
+			flame_left_, flame_right_, flame_leftright_, flame_cross_;
+		Uint16 bomb_period_;
+		Animation bomb_normal_, bomb_mega_;
+		// TODO panels, bonuses
 };
 
 #endif

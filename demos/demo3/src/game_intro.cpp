@@ -10,11 +10,14 @@
 using namespace std;
 
 
-GameIntro::GameIntro(): gameBase_(0), game_(0) {}
+GameIntro::GameIntro(): gameBase_(0),
+	gameTools_(new GameTools), game_(0) {}
 
 GameIntro::~GameIntro(){
 	if(gameBase_)
 		delete gameBase_;
+	if(gameTools_)
+		delete gameTools_;
 	if(game_)
 		delete game_;
 }
@@ -39,7 +42,7 @@ void GameIntro::show_screen(){
 
 		// vygenerovani nove hry
 		if(game_) delete game_;
-		game_ = new Game(*gameBase_);
+		game_ = new Game(*gameBase_, gameTools_);
 
 		// pockame na klavesu, pri pokusu o ukonceni ukoncime
 		SDL_Delay(500);

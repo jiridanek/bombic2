@@ -1,10 +1,7 @@
 
 #include <iostream>
-// #include <list>
 #include <vector>
 #include <string>
-// #include <utility>
-// #include <algorithm>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
 #include "stl_helper.h"
@@ -18,8 +15,82 @@
 #include "game_bonus.h"
 #include "game_creature.h"
 #include "game_player.h"
+#include "game_bomb.h"
+#include "game_flame.h"
 
 using namespace std;
+
+/********************** class GameBaseLoader ************************/
+
+/** @details
+ * Vytvoří Animation objektu popsaného podelementem se zadaným jménem.
+ * Vrácené surface má nastavenou průhlednou barvu, nikoli však průhlednost.
+ * Zjistí také jaké měl podelement nastavené toplapping (výška nevyužitá v mapě).
+ * @throw string Při chybě (nenalezení podelementu nebo některého povinného atributu)
+ * vyvolá výjimku s chybovým hlášením.
+ * @param El rodič hledaného podelementu
+ * @param name_subEl název hledaného podelementu
+ * @param sur_src zdrojový surface
+ * @param anim_dst
+ * @return Vrací toplapping - hodnotu atributu nebo nulu pokud nebyl nalezen.
+ * @see subElement(), readAttr()
+ */
+Uint16 GameBaseLoader::load_subEl_animation_( TiXmlElement *El, const char* name_subEl,
+			Animation & anim_dst, const Surface & sur_src){
+
+	Uint16 w, h, toplapping;
+	El = subElement(El,name_subEl);
+	if(!readAttr(El, "width", w, false))
+			w= CELL_SIZE;
+	else if(w<1)
+		throw string("the value of width must be higher than 0");
+	else	w*= CELL_SIZE;
+	if(!readAttr(El, "height", h, false))
+			h= CELL_SIZE;
+	else if(h<1)
+		throw string("the value of height must be higher than 0");
+	else	h*= CELL_SIZE;
+	if(!readAttr(El, "toplapping", toplapping, false))
+		toplapping=0;
+	else	h+= CELL_SIZE*toplapping;
+
+	Animation anim_new(El, w, h, sur_src);
+	anim_dst = anim_new;
+
+	return toplapping;
+}
+
+/** @details
+ * Vytvoří SDL_Surface bmp souboru s cestou definovanou v atributu attr_name(defaultně src).
+ * Vrácené surface má nastavenou průhlednou barvu, nikoli však průhlednost.
+ * Při chybě (nenalezení atributu nebo nevytvoření surface)
+ * vyvolá výjimku typu string s chybovým hlášením.
+ * @param El element v nemz se hleda atribut src
+ * @param attr_name jmeno atributu, v nemz se ma hledat cesta k surface
+ * defaultně "src"
+ * @param force false pro volitelný atribut
+ * defaultně true (povinný atribut)
+ * @return Výsledný surface patřící nalezenému elementu.
+ * @throw string pokud je nastaven atribut force a
+ */
+SDL_Surface* GameBaseLoader::load_src_surface_(TiXmlElement *El,
+			const char* attr_name, bool force){
+	string str;
+	SDL_Surface *sur_SDL=0;
+
+	if(readAttr(El, attr_name, str, force)){
+		sur_SDL=SDL_LoadBMP(str.c_str());
+		if(!sur_SDL)
+			throw string("the value of ")+attr_name+
+				" isn't valid path to file with BMP.";
+		// nastavim pruhlednost
+		set_transparent_color(sur_SDL, Color::transparent);
+	}
+
+	return sur_SDL;
+}
+
+/**************** END OF class GameBaseLoader ************************/
 
 /*************** class GameBase ******************************/
 
@@ -708,74 +779,6 @@ void GameBase::load_creatures_(TiXmlElement *creaturesEl){
 }
 
 /** @details
- * Vytvoří Animation objektu popsaného podelementem se zadaným jménem.
- * Vrácené surface má nastavenou průhlednou barvu, nikoli však průhlednost.
- * Zjistí také jaké měl podelement nastavené toplapping (výška nevyužitá v mapě).
- * @throw string Při chybě (nenalezení podelementu nebo některého povinného atributu)
- * vyvolá výjimku s chybovým hlášením.
- * @param El rodič hledaného podelementu
- * @param name_subEl název hledaného podelementu
- * @param sur_src zdrojový surface
- * @param anim_dst
- * @return Vrací toplapping - hodnotu atributu nebo nulu pokud nebyl nalezen.
- * @see subElement(), readAttr()
- */
-Uint16 GameBase::load_subEl_animation_( TiXmlElement *El, const char* name_subEl,
-			Animation & anim_dst, const Surface & sur_src){
-
-	Uint16 w, h, toplapping;
-	El = subElement(El,name_subEl);
-	if(!readAttr(El, "width", w, false))
-			w= CELL_SIZE;
-	else if(w<1)
-		throw string("the value of width must be higher than 0");
-	else	w*= CELL_SIZE;
-	if(!readAttr(El, "height", h, false))
-			h= CELL_SIZE;
-	else if(h<1)
-		throw string("the value of height must be higher than 0");
-	else	h*= CELL_SIZE;
-	if(!readAttr(El, "toplapping", toplapping, false))
-		toplapping=0;
-	else	h+= CELL_SIZE*toplapping;
-
-	Animation anim_new(El, w, h, sur_src);
-	anim_dst = anim_new;
-
-	return toplapping;
-}
-
-/** @details
- * Vytvoří SDL_Surface bmp souboru s cestou definovanou v atributu attr_name(defaultně src).
- * Vrácené surface má nastavenou průhlednou barvu, nikoli však průhlednost.
- * Při chybě (nenalezení atributu nebo nevytvoření surface)
- * vyvolá výjimku typu string s chybovým hlášením.
- * @param El element v nemz se hleda atribut src
- * @param attr_name jmeno atributu, v nemz se ma hledat cesta k surface
- * defaultně "src"
- * @param force false pro volitelný atribut
- * defaultně true (povinný atribut)
- * @return Výsledný surface patřící nalezenému elementu.
- * @throw string pokud je nastaven atribut force a
- */
-SDL_Surface* GameBase::load_src_surface_(TiXmlElement *El,
-			const char* attr_name, bool force){
-	string str;
-	SDL_Surface *sur_SDL=0;
-
-	if(readAttr(El, attr_name, str, force)){
-		sur_SDL=SDL_LoadBMP(str.c_str());
-		if(!sur_SDL)
-			throw string("the value of ")+attr_name+
-				" isn't valid path to file with BMP.";
-		// nastavim pruhlednost
-		set_transparent_color(sur_SDL, Color::transparent);
-	}
-
-	return sur_SDL;
-}
-
-/** @details
  * Vytvoří pozadí na zadaných souřadnicích a vloží ho do mapy.
  * @param anim animace pozadí
  * @param anim_burned animace ohořelého
@@ -1080,6 +1083,91 @@ void GameBase::set_player(Uint16 player_num, Uint16 lives,
 	Uint16 bombs, Uint16 flames, Uint16 boots){
 }
 
-
 /*************** END OF class GameBase ******************************/
+
+/******************* class GameTools ******************************/
+
+GameTools::GameTools(){
+	TiXmlDocument doc;
+	TiXmlElement *root_el;
+	string filename("gametools");
+	// nacteni XML souboru
+	root_el = TiXmlRootElement(doc, filename, "gametools", false);
+	try{
+		// nacteni zdrojoveho surface
+		Surface sur_src= load_src_surface_(root_el);
+		// nacteni plamenu
+		load_flame_(root_el->FirstChildElement("flame"), sur_src);
+		// nacteni bomb
+		load_bombs_(root_el->FirstChildElement("bombs"), sur_src);
+	}
+	catch(const string & err){
+		TiXmlError(filename, err);
+	}
+}
+
+void GameTools::load_flame_(TiXmlElement *flameEl, const Surface & sur_src){
+	if(!flameEl)
+		throw string("missing element flame");
+	readAttr(flameEl, "timeperiod", flame_period_);
+
+	load_subEl_animation_(flameEl, "top", flame_top_, sur_src);
+	load_subEl_animation_(flameEl, "bottom", flame_bottom_, sur_src);
+	load_subEl_animation_(flameEl, "topbottom", flame_topbottom_, sur_src);
+	load_subEl_animation_(flameEl, "left", flame_left_, sur_src);
+	load_subEl_animation_(flameEl, "right", flame_right_, sur_src);
+	load_subEl_animation_(flameEl, "leftright", flame_leftright_, sur_src);
+	load_subEl_animation_(flameEl, "cross", flame_cross_, sur_src);
+}
+
+void GameTools::load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src){
+	if(!bombsEl)
+		throw string("missing element bombs");
+
+	load_subEl_animation_(bombsEl, "normal", bomb_normal_, sur_src);
+	load_subEl_animation_(bombsEl, "mega", bomb_mega_, sur_src);
+}
+
+Flame* GameTools::flame_top(Uint16 x, Uint16 y) const {
+	return new Flame(flame_top_, x*CELL_SIZE, y*CELL_SIZE, flame_period_);
+}
+
+Flame* GameTools::flame_bottom(Uint16 x, Uint16 y) const {
+	return new Flame(flame_bottom_, x*CELL_SIZE, y*CELL_SIZE, flame_period_);
+}
+
+Flame* GameTools::flame_topbottom(Uint16 x, Uint16 y) const {
+	return new Flame(flame_topbottom_, x*CELL_SIZE, y*CELL_SIZE, flame_period_);
+}
+
+Flame* GameTools::flame_left(Uint16 x, Uint16 y) const {
+	return new Flame(flame_left_, x*CELL_SIZE, y*CELL_SIZE, flame_period_);
+}
+
+Flame* GameTools::flame_right(Uint16 x, Uint16 y) const {
+	return new Flame(flame_right_, x*CELL_SIZE, y*CELL_SIZE, flame_period_);
+}
+
+Flame* GameTools::flame_leftright(Uint16 x, Uint16 y) const {
+	return new Flame(flame_leftright_, x*CELL_SIZE, y*CELL_SIZE, flame_period_);
+}
+
+Flame* GameTools::flame_cross(Uint16 x, Uint16 y) const {
+	return new Flame(flame_cross_, x*CELL_SIZE, y*CELL_SIZE, flame_period_);
+}
+
+Bomb* GameTools::bomb_normal(Uint16 x, Uint16 y) const {
+	return new Bomb(bomb_normal_,
+		x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
+		bomb_period_);
+}
+
+Bomb* GameTools::bomb_mega(Uint16 x, Uint16 y) const {
+	return new Bomb(bomb_mega_,
+		x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
+		bomb_period_);
+}
+
+
+/************** END OF class GameTools ******************************/
 

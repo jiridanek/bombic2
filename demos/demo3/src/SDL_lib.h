@@ -83,6 +83,7 @@ class Surface {
 		Surface & operator= (SDL_Surface *sur_SDL);
 		/// SDL_Surface konkrétní instance.
 		SDL_Surface* GetSurface() const;
+		SDL_Surface* getSurface() const;
 		/// Šířka surface.
 		Uint16 width() const;
 		/// Výška surface.

@@ -32,7 +32,7 @@ typedef struct {
  * a zastřešuje tvorbu mapy z XML souborů až po vygenerování konkrétního levelu.
  * Tvoří rozhraní mezi menu a hrou. Udržuje informace o rezehraném kole,
  * stavu hráčů atd.
- * @see GameBase, Game.
+ * @see GameBase, GameTools, Game.
  */
 class GameIntro {
 	public:
@@ -49,9 +49,10 @@ class GameIntro {
 			const PlayerConfig & player1, const PlayerConfig & player2,
 			const PlayerConfig & player3, const PlayerConfig & player4);
 	private:
-
 		/// Základ pro konkrétní level.
 		GameBase * gameBase_;
+		/// Nadstavbové věci pro hru.
+		GameTools * gameTools_;
 		/// Konkrétní hra.
 		Game * game_;
 };
