@@ -8,7 +8,7 @@
 		<player4 x="1" y="10" />
 	</players>
 
-	<walls 	name="wall_winnersculpture" width="3">
+	<walls 	name="wall_stone" width="1">
 		<wall x="1" y="9" />
 		<wall x="4" y="9" />
 		<wall x="7" y="9" />
@@ -51,11 +51,9 @@
 	<bonuses name="bonus_slider" count="1" />
 	<bonuses name="bonus_fireman" count="1" />
 <!---->
-	<creatures name="creature_rat" count="10">
-		<creature x="2" y="10" />
+	<creatures name="creature_rat" count="1">
 	</creatures>
 	<creatures name="creature_ghost" count="10">
-		<creature x="6" y="10" />
 	</creatures>
 	<nocreatures>
 		<nocreature x="1" y="2" />

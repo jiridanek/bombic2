@@ -61,6 +61,8 @@ Creature::~Creature(){
  * @return Vrací TRUE pokud se má objekt zahodit.
  */
 bool Creature::move(){
+	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, FLAME))
+		d_=BURNED;
 	// mrtvoly se nehybou
 	if(d_==BURNED)
 		return die();
