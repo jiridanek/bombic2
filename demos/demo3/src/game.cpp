@@ -360,7 +360,7 @@ void Game::play(SDL_Surface* window){
 		SDL_Flip(window);
 
 		this_time = SDL_GetTicks();
-		time_to_use += this_time - last_time;
+		time_to_use += (this_time - last_time)%(100*MOVE_PERIOD);
 		for( ; time_to_use > MOVE_PERIOD; time_to_use -= MOVE_PERIOD){
 			// hýbne světem
 			move_();
@@ -553,7 +553,12 @@ void Game::remove_object(DynamicMO * obj){
 }
 
 /** @details
- * @TODO
+ * Vyhodí objekt ze starého políčka a vloží jej na nové.
+ * @param old_x stará souřadnice v políčkách
+ * @param old_y stará souřadnice v políčkách
+ * @param new_x nová souřadnice v políčkách
+ * @param new_y nová souřadnice v políčkách
+ * @param obj pointer na objekt, který chceme přesunout
  */
 void Game::change_position(Uint16 old_x, Uint16 old_y,
 			Uint16 new_x, Uint16 new_y, MapObject * obj){
@@ -561,26 +566,50 @@ void Game::change_position(Uint16 old_x, Uint16 old_y,
 	map_array_[new_x][new_y].push_back(obj);
 }
 
-/**
- * @TODO
+/** @details
+ * Umístí bombu do mapy,
+ * přidá bombu do seznamu hráčových bomb.
+ * @param player_num číslo hráče
+ * @param x souřadnice bomby v políčkách
+ * @param y souřadnice bomby v políčkách
+ * @param bomb pointer na bombu, kterou chceme položit
  */
 void Game::plant_bomb(Uint16 player_num, Uint16 x, Uint16 y, Bomb* bomb){
 	insert_object(x, y, bomb);
 	players_[player_num].second.push_back(bomb);
 }
 
-/**
- * @TODO
+/** @details
+ * Spočítá položené nevybouchlé bomby hráče.
+ * @param player_num číslo hráče
+ * @return Počet bomb.
  */
 Uint16 Game::count_bombs(Uint16 player_num){
 	return players_[player_num].second.size();
 }
 
+/** @details
+ * Nechá vybouchnout první bombu hráče, pokud nějaká je.
+ * @param player_num číslo hráče
+ * @return Vrací TRUE pokud má hráč položenou alespon jednu bombu.
+ */
 bool Game::explode_bomb(Uint16 player_num){
 	if(players_[player_num].second.empty())
 		return false;
 	players_[player_num].second.front()->explode();
 	return true;
+}
+
+/** @details
+ * Projde hráčovy bomby a všechny nechá vybouchnout.
+ * @param player_num číslo hráče
+ */
+void Game::explode_bombs(Uint16 player_num){
+	bombs_t::iterator it;
+	for(it = players_[player_num].second.begin() ;
+				it!=players_[player_num].second.end() ; ++it){
+		(*it)->explode();
+	}
 }
 
 /*************** END OF class Game ******************************/

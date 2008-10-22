@@ -71,6 +71,8 @@ class Game {
 		Uint16 count_bombs(Uint16 player_num);
 		/// Pro hráče: nechat bouchnout první bombu.
 		bool explode_bomb(Uint16 player_num);
+		/// Pro hráče: nechat bouchnout všechny bomby.
+		void explode_bombs(Uint16 player_num);
 
 		/// Typ dvourozměrného pole mapy, na každém políčku seznam objektů s rozměry.
 		typedef std::vector< std::vector< std::list< MapObject* > > > map_array_t;

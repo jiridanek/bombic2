@@ -51,7 +51,6 @@ Creature::Creature(const Creature & creature, Uint16 x, Uint16 y):
  * Destruuje umělou inteligenci.
  */
 Creature::~Creature(){
-	std::cout << "dest creature" << std::endl;
 	if(ai_)
 		delete ai_;
 }

@@ -11,6 +11,9 @@
 #include "game_mapobjects.h"
 #include "game_creature.h"
 
+/// Doba mezi odpaly.
+#define TIMER_PERIOD 300
+
 class AI; // forward declaration
 
 /** Postava Bombiče.
@@ -32,16 +35,16 @@ class Player: public Creature {
 		virtual bool move();
 		/// Typ objektu je bombic.
 		virtual OBJECT_TYPES type() const { return PLAYER; }
-		/// Destructor
-		virtual ~Player();
+
+		virtual ~Player() {};
 
 		/// Číslo hráče.
 		Uint16 player_num() const { return num_; }
 	private:
 		Uint16 num_, ///< Číslo hráče.
 			flamesize_, ///< Velikost plamene.
-			bombs_; ///< Počet bomb.
-
+			bombs_, ///< Počet bomb.
+			next_timer_; ///< Doba do dalšího odpalu.
 
 		SDLKey key_up_, ///< Klávesa nahoru.
 			key_right_, ///< Klávesa vpravo.

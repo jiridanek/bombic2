@@ -367,7 +367,6 @@ AI_fromKeyboard::AI_fromKeyboard(Creature *creature): AI(creature) {
 	 keystate_= SDL_GetKeyState(0);
 }
 
-// TODO klávesy
 void AI_fromKeyboard::move() {
 	Player * player = static_cast<Player *>(creature_);
 	// update pozic pro pohyb jako bych byl otoceny nahoru
@@ -433,8 +432,10 @@ void AI_fromKeyboard::move() {
 			game->plant_bomb(player->player_num(), x, y,
 				game->tools->bomb_normal(x, y, player->flamesize_) );
 	}
-	if(keystate_[player->key_timer_]){
+
+	if(keystate_[player->key_timer_] && player->next_timer_ < MOVE_PERIOD){
 		Game::get_instance()->explode_bomb(player->player_num());
+		player->next_timer_ = TIMER_PERIOD;
 	}
 
 	// TODO timer

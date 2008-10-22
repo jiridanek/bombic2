@@ -27,7 +27,7 @@ class Wall: public StaticMO{
 		virtual void update();
 		/// Typ objektu je zeď.
 		virtual OBJECT_TYPES type() const { return WALL; }
-		/// Destructor
+
 		virtual ~Wall() {};
 	private:
 		/// Animace zdi.
