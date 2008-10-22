@@ -17,7 +17,7 @@
 class Bomb: public DynamicMO {
 	public:
 		/// Vytvoří bombu.
-		Bomb(const Animation & anim, Uint16 x, Uint16 y, Uint16 period);
+		Bomb(const Animation & anim, Uint16 x, Uint16 y, Uint16 flamesize);
 		/// Pohyb.
 		virtual bool move();
 		/// Vykreslení.
@@ -36,6 +36,8 @@ class Bomb: public DynamicMO {
 		Animation anim_;
 		/// Exploduje-li bomba.
 		bool explodes_;
+		/// Velikost plamene.
+		Uint16 flamesize_;
 };
 
 #endif

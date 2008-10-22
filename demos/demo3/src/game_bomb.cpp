@@ -13,9 +13,9 @@
  * @param y souřadnice středu v pixelech
  * @param period délka života bomby v sekundách
  */
-Bomb::Bomb(const Animation & anim, Uint16 x, Uint16 y, Uint16 period):
+Bomb::Bomb(const Animation & anim, Uint16 x, Uint16 y, Uint16 flamesize):
 	DynamicMO(x, y),
-	anim_(anim), explodes_(false) {}
+	anim_(anim), explodes_(false), flamesize_(flamesize) {}
 
 /** @details
  * Posouvá animaci sám,
@@ -23,31 +23,83 @@ Bomb::Bomb(const Animation & anim, Uint16 x, Uint16 y, Uint16 period):
  * jestli nejsme v plamenech,
  * vytváří plameny.
  * @return Vrací TRUE pokud se má objekt zahodit.
+ * @see explode()
  */
 bool Bomb::move(){
-	if(anim_.update())
+	if(anim_.update()
+	|| Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, FLAME))
 		explode();
-
-	// TODO check flames
 	return explodes_;
 }
 
+/** @details
+ * Nastaví flag pro výbuch.
+ * Vytvoří plameny s ohledem na okolí.
+ * Ohlídá si, aby běžela pouze jednou,
+ * protože nemá smysl vytvářet plameny dvakrát.
+ */
 void Bomb::explode(){
+	// explode() muze bezet jen jednou
+	if(explodes_) return;
+
 	explodes_ = true;
 	Game * game = Game::get_instance();
 	Uint16 x = x_/CELL_SIZE,
 		y = y_/CELL_SIZE;
-	// TODO velikost plamene
+
 	game->insert_object(x, y,
 		game->tools->flame_cross(x, y) );
-	game->insert_object(x-1, y,
-		game->tools->flame_left(x-1, y) );
-	game->insert_object(x+1, y,
-		game->tools->flame_right(x+1, y) );
-	game->insert_object(x, y-1,
-		game->tools->flame_top(x, y-1) );
-	game->insert_object(x, y+1,
-		game->tools->flame_bottom(x, y+1) );
+
+	Uint16 i, dir, next_x, next_y;
+	Sint16 factor_x, factor_y;
+	Flame* flame;
+	bool field_withBomb;
+	// pres vsechny smery
+	for(dir=0 ; dir<4 ; ++dir){
+		factor_x = factor_y = 0;
+		if(dir%2)
+			factor_x = 2-dir;
+		else
+			factor_y = 1-dir;;
+		// pro velikost plamene
+		for(i=1 ; i<=flamesize_ ; ++i){
+			// souradnice pro novy plamen
+			next_x = x+ i*factor_x;
+			next_y = y+ i*factor_y;
+			// zarazi se na zdi a konec
+			if(game->field_withObject(next_x, next_y, WALL))
+				break;
+			// priprava noveho plamene
+			if(field_withBomb
+					= game->field_withObject(next_x, next_y, BOMB)){
+				flame = game->tools->flame_cross(next_x, next_y);
+			}
+			else switch(dir){
+				case 0: flame= i==flamesize_
+					? game->tools->flame_bottom(next_x, next_y)
+					: game->tools->flame_topbottom(next_x, next_y);
+					break;
+				case 2: flame= i==flamesize_
+					? game->tools->flame_top(next_x, next_y)
+					: game->tools->flame_topbottom(next_x, next_y);
+					break;
+				case 1: flame= i==flamesize_
+					? game->tools->flame_right(next_x, next_y)
+					: game->tools->flame_leftright(next_x, next_y);
+					break;
+				case 3: flame= i==flamesize_
+					? game->tools->flame_left(next_x, next_y)
+					: game->tools->flame_leftright(next_x, next_y);
+					break;
+			}
+			// vlozeni plamene do hry
+			game->insert_object(next_x, next_y, flame);
+			// zarazi se za bednou nebo bombou (obecne veci ktere maji bouchnout ale nemaji plamen)
+			if(game->field_withObject(next_x, next_y, BOX)
+			|| field_withBomb)
+				break;
+		}
+	}
 }
 
 /**

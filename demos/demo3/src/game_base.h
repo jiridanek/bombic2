@@ -147,8 +147,8 @@ class GameTools: public GameBaseLoader{
 		Flame* flame_right(Uint16 x, Uint16 y) const;
 		Flame* flame_leftright(Uint16 x, Uint16 y) const;
 		Flame* flame_cross(Uint16 x, Uint16 y) const;
-		Bomb* bomb_normal(Uint16 x, Uint16 y) const;
-		Bomb* bomb_mega(Uint16 x, Uint16 y) const;
+		Bomb* bomb_normal(Uint16 x, Uint16 y, Uint16 flamesize) const;
+		Bomb* bomb_mega(Uint16 x, Uint16 y, Uint16 flamesize) const;
 	private:
 		void load_flame_(TiXmlElement *flameEl, const Surface & sur_src);
 		void load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src);
@@ -156,7 +156,6 @@ class GameTools: public GameBaseLoader{
 		Uint16 flame_period_;
 		Animation flame_top_, flame_bottom_, flame_topbottom_,
 			flame_left_, flame_right_, flame_leftright_, flame_cross_;
-		Uint16 bomb_period_;
 		Animation bomb_normal_, bomb_mega_;
 		// TODO panels, bonuses
 };

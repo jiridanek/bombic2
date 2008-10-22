@@ -38,14 +38,15 @@ Game* Game::get_instance(){
  * @param players_count počet hráčů
  * @param mapname název mapy
  */
-Game::Game(const GameBase & base, GameTools * gameTools): tools(gameTools) {
+Game::Game(const GameBase & base, GameTools * gameTools):
+			tools(gameTools), remaining_creatures_(0), remaining_periods_(500) {
 // 	bool deathmatch, bool creatures, bool bombsatend){
 	if(myself_ptr_)
 		throw string("in Game constructor: another Game instance created.");
 	myself_ptr_ = this;
 	// pripravit prostor pro ctyry hrace
 	for(Uint16 i=1; i<=4 ; ++i){
-		players_[i]=0;
+		players_[i].first= 0;
 	}
 	// zkusit nahrat umistene a vygenerovat ostatni objekty
 	try{
@@ -314,7 +315,7 @@ void Game::insert_MO_(const MapObject* mapObject,
 					x+CELL_SIZE/2, y+CELL_SIZE/2);
 			dynamicMOs_.push_back(static_cast<DynamicMO*>(new_obj));
 			// pridam hrace mezi hrace
-			players_[static_cast<Player *>(new_obj)->player_num()] =
+			players_[static_cast<Player *>(new_obj)->player_num()].first =
 				static_cast<Player *>(new_obj);
 			break;
 		default:
@@ -346,6 +347,7 @@ void Game::play(SDL_Surface* window){
 
 	int last_time = SDL_GetTicks(),
 		time_to_use = 0, this_time=last_time;
+	bool at_end=false;
 	// iterace dokud neni vyvolano zavreni okna
 	while(!get_event_isquit(SDLK_ESCAPE)) {
 		SDL_PumpEvents();// obnoveni stavu klavesnice
@@ -364,13 +366,20 @@ void Game::play(SDL_Surface* window){
 			move_();
 			// posune animace
 			update_();
+			// pokud jsme na konci, vycka zbyvajici dobu
+			if(at_end && --remaining_periods_==0)
+				return;
 		}
 		last_time = this_time;
 
-		for(Uint16 i=4 ; true ; --i){
-			if(i==0) return;
-			if(players_[i]) break;
+		// zbyvaji nejaci hraci?
+		for(Uint16 i=4 ; !at_end ; --i){
+			if(i==0) at_end=true;
+			else if(players_[i].first) break;
 		}
+		// zbyvaji nejake prisery?
+		if(!remaining_creatures_)
+			at_end=true;
 	}
 }
 
@@ -466,9 +475,12 @@ void Game::player(Uint16 player_num, Uint16 & lives,
  * @param y y-ová souřadnice políčka
  * @return Vrací TRUE pokud lze zadané políčko přejít (není na něm zed ani bedna).
  */
-bool Game::field_canGoOver(Uint16 x, Uint16 y){
+bool Game::field_canGoOver(Uint16 x, Uint16 y, bool check_bomb){
 	map_array_t::value_type::value_type::const_iterator begin, end;
-	isTypeOf isBlockedObject; isBlockedObject.addType(WALL).addType(BOX);
+	isTypeOf isBlockedObject;
+	isBlockedObject.addType(WALL).addType(BOX);
+	if(check_bomb)
+		isBlockedObject.addType(BOMB);
 
 	begin = map_array_[x][y].begin();
 	end = map_array_[x][y].end();
@@ -524,7 +536,15 @@ void Game::remove_object(DynamicMO * obj){
 			--remaining_creatures_;
 			break;
 		case PLAYER:
-			players_[static_cast<Player *>(obj)->player_num()]=0;
+			// zahodit hrace ze seznamu hrajicich
+			players_[static_cast<Player *>(obj)->player_num()].first=0;
+			break;
+		case BOMB:
+			// vyhodit bombu ze seznamu hrace
+			for(Uint16 player_num=1 ; player_num<=4 ; ++player_num){
+				players_[player_num].second.
+					remove(static_cast<Bomb *>(obj));
+			}
 			break;
 		default: ;
 	}
@@ -539,6 +559,28 @@ void Game::change_position(Uint16 old_x, Uint16 old_y,
 			Uint16 new_x, Uint16 new_y, MapObject * obj){
 	map_array_[old_x][old_y].remove(obj);
 	map_array_[new_x][new_y].push_back(obj);
+}
+
+/**
+ * @TODO
+ */
+void Game::plant_bomb(Uint16 player_num, Uint16 x, Uint16 y, Bomb* bomb){
+	insert_object(x, y, bomb);
+	players_[player_num].second.push_back(bomb);
+}
+
+/**
+ * @TODO
+ */
+Uint16 Game::count_bombs(Uint16 player_num){
+	return players_[player_num].second.size();
+}
+
+bool Game::explode_bomb(Uint16 player_num){
+	if(players_[player_num].second.empty())
+		return false;
+	players_[player_num].second.front()->explode();
+	return true;
 }
 
 /*************** END OF class Game ******************************/

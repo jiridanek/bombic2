@@ -16,7 +16,7 @@
 Box::Box(const Animation & anim, const Animation & anim_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y):
 	DynamicMO(x,y), anim_(anim), anim_burning_(anim_burning),
-	toplapping_(toplapping),
+	burning_(false), toplapping_(toplapping),
 	height_((anim.height()-toplapping)/CELL_SIZE),
 	width_(anim.width()/CELL_SIZE){}
 
@@ -28,19 +28,24 @@ Box::Box(const Animation & anim, const Animation & anim_burning,
  */
 Box::Box(const Box & box, Uint16 x, Uint16 y):
 	DynamicMO(x,y), anim_(box.anim_), anim_burning_(box.anim_burning_),
-	toplapping_(box.toplapping_),
+	burning_(false), toplapping_(box.toplapping_),
 	height_(box.height_), width_(box.width_){}
 
-// TODO hlidat plameny
-
 /** @details
+ * Ohlídá plameny, pokud hoří, posune sám frame animace.
+ * @return Vrací TRUE pokud je již vhodné objekt odstranit.
  */
 bool Box::move(){
-	return false;
+	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, FLAME))
+		burning_=true;
+	if(burning_)
+		return anim_burning_.update();
+	else
+		return false;
 }
 
 /** @details
- * Posune frame animace.
+ * Posune frame normální animace.
  */
 void Box::update(){
 	anim_.update();
@@ -50,7 +55,10 @@ void Box::update(){
  * @param window surface okna pro vykreslení
  */
 void Box::draw(SDL_Surface *window){
-	anim_.draw(window, x_, y_- toplapping_*CELL_SIZE);
+	if(burning_)
+		anim_burning_.draw(window, x_, y_- toplapping_*CELL_SIZE);
+	else
+		anim_.draw(window, x_, y_- toplapping_*CELL_SIZE);
 }
 
 

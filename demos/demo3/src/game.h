@@ -19,6 +19,7 @@
 
 
 class Player;
+class Bomb;
 
 /** Konkrétní hra.
  * Instance třídy Game obstarává jednu konkrétní hru.
@@ -49,7 +50,7 @@ class Game {
 		void player(Uint16 player_num, Uint16 & lives,
 			Uint16 & bombs, Uint16 & flames, Uint16 & boots) const;
 		/// Políčko lze přejít.
-		bool field_canGoOver(Uint16 x, Uint16 y);
+		bool field_canGoOver(Uint16 x, Uint16 y, bool check_bomb=true);
 		/// Políčko lze přeletet.
 // 		bool field_canFlyOver(Uint16 x, Uint16 y);
 		/// Na políčku je typ objektu.
@@ -63,6 +64,13 @@ class Game {
 		/// Pohyb z políčka na políčko.
 		void change_position(Uint16 old_x, Uint16 old_y,
 			Uint16 new_x, Uint16 new_y, MapObject * obj);
+
+		/// Pro hráče: položit bombu.
+		void plant_bomb(Uint16 player_num, Uint16 x, Uint16 y, Bomb* bomb);
+		/// Pro hráče: spočítat položené bomby.
+		Uint16 count_bombs(Uint16 player_num);
+		/// Pro hráče: nechat bouchnout první bombu.
+		bool explode_bomb(Uint16 player_num);
 
 		/// Typ dvourozměrného pole mapy, na každém políčku seznam objektů s rozměry.
 		typedef std::vector< std::vector< std::list< MapObject* > > > map_array_t;
@@ -112,8 +120,12 @@ class Game {
 
 		/// Počet žijících příšer.
 		Uint16 remaining_creatures_;
-		/// Pointery na hráče.
-		std::map<Uint16, Player*> players_;
+		/// Doba do ukončení hry po zabití.
+		Uint16 remaining_periods_;
+		/// Typ seznamu bomb.
+		typedef std::list<Bomb*> bombs_t;
+		/// Pointery na hráče a seznam jejich bomb.
+		std::map<Uint16, std::pair<Player*, bombs_t> > players_;
 };
 
 #endif

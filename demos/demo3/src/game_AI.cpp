@@ -380,8 +380,8 @@ void AI_fromKeyboard::move() {
 	if(keystate_[player->key_up_]){
 		player->d_ = UP;
 		x=positions_[1].x/CELL_SIZE; y=positions_[1].y/CELL_SIZE;
-		if(Game::get_instance()->field_canGoOver(x, y)){
-			if(!Game::get_instance()->field_canGoOver(x, y-1)
+		if(Game::get_instance()->field_canGoOver(x, y, false)){
+			if(!Game::get_instance()->field_canGoOver(x, y-1, true)
 			&& positions_[1].y%CELL_SIZE<CELL_SIZE/2){
 				positions_[1].y =y*CELL_SIZE+CELL_SIZE/2;
 			}
@@ -392,8 +392,8 @@ void AI_fromKeyboard::move() {
 	else if(keystate_[player->key_right_]){
 		player->d_ = RIGHT;
 		x=positions_[2].x/CELL_SIZE; y=positions_[2].y/CELL_SIZE;
-		if(Game::get_instance()->field_canGoOver(x, y)){
-			if(!Game::get_instance()->field_canGoOver(x+1, y)
+		if(Game::get_instance()->field_canGoOver(x, y, false)){
+			if(!Game::get_instance()->field_canGoOver(x+1, y, true)
 			&& positions_[2].x%CELL_SIZE>CELL_SIZE/2)
 				positions_[2].x =x*CELL_SIZE+CELL_SIZE/2;
 			if(positions_[2].x>positions_[0].x)
@@ -403,8 +403,8 @@ void AI_fromKeyboard::move() {
 	else if(keystate_[player->key_down_]){
 		player->d_ = DOWN;
 		x=positions_[3].x/CELL_SIZE; y=positions_[3].y/CELL_SIZE;
-		if(Game::get_instance()->field_canGoOver(x, y)){
-			if(!Game::get_instance()->field_canGoOver(x, y+1)
+		if(Game::get_instance()->field_canGoOver(x, y, false)){
+			if(!Game::get_instance()->field_canGoOver(x, y+1, true)
 			&& positions_[3].y%CELL_SIZE>CELL_SIZE/2)
 				positions_[3].y =y*CELL_SIZE+CELL_SIZE/2;
 			if(positions_[3].y>positions_[0].y)
@@ -414,8 +414,8 @@ void AI_fromKeyboard::move() {
 	else if(keystate_[player->key_left_]){
 		player->d_ = LEFT;
 		x=positions_[4].x/CELL_SIZE; y=positions_[4].y/CELL_SIZE;
-		if(Game::get_instance()->field_canGoOver(x, y)){
-			if(!Game::get_instance()->field_canGoOver(x-1, y)
+		if(Game::get_instance()->field_canGoOver(x, y, false)){
+			if(!Game::get_instance()->field_canGoOver(x-1, y, true)
 			&& positions_[4].x%CELL_SIZE<CELL_SIZE/2)
 				positions_[4].x =x*CELL_SIZE+CELL_SIZE/2;
 			if(positions_[4].x<positions_[0].x)
@@ -428,8 +428,14 @@ void AI_fromKeyboard::move() {
 		Game * game = Game::get_instance();
 		x = player->x_/CELL_SIZE;
 		y = player->y_/CELL_SIZE;
-		game->insert_object(x, y,
-			game->tools->bomb_normal(x, y) );
+		if(game->count_bombs(player->player_num())< player->bombs_
+		&& game->field_canGoOver(x, y, true))
+			game->plant_bomb(player->player_num(), x, y,
+				game->tools->bomb_normal(x, y, player->flamesize_) );
 	}
+	if(keystate_[player->key_timer_]){
+		Game::get_instance()->explode_bomb(player->player_num());
+	}
+
 	// TODO timer
 }

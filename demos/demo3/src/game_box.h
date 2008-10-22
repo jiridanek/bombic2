@@ -36,6 +36,8 @@ class Box: public DynamicMO{
 	private:
 		/// Animace, animace hoření.
 		Animation anim_, anim_burning_;
+		/// Hoří-li.
+		bool burning_;
 
 		Uint16 toplapping_, ///< Horní přesah.
 			height_, ///< Výška v políčkách.

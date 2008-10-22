@@ -37,6 +37,8 @@ class MapObject{
 		virtual void update()=0;
 		/// Typ objektu.
 		virtual OBJECT_TYPES type() const =0;
+
+		virtual ~MapObject();
 	protected:
 		/// Souřadnice polohy v pixelech.
 		Uint16 x_,
@@ -59,6 +61,8 @@ class DynamicMO: public MapObject{
 		virtual Uint16 getZ() const;
 		/// Pohyb.
 		virtual bool move()=0;
+
+		virtual ~DynamicMO();
 	protected:
 		/// Nastavení správného políčka v mapě.
 		void setFieldInMap(Uint16 old_x, Uint16 old_y);
@@ -74,6 +78,8 @@ class StaticMO: public MapObject{
 		StaticMO(Uint16 x, Uint16 y):MapObject(x, y) {};
 		/// z-ová souřadnice.
 		virtual Uint16 getZ() const;
+
+		virtual ~StaticMO();
 };
 
 /** Predikát na zjištění typu objektu mapy.
