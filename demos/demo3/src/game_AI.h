@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <utility>
 #include "SDL_lib.h"
 #include "game.h"
 #include "game_mapobjects.h"
@@ -46,6 +48,9 @@ class AI {
 		void setPosition(position_t & position);
 		/// Partikulárně centruje souřadnici dostředu políčka.
 		void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign);
+		/// Zjistí, zda je možné vstoupit na políčko.
+		bool checkField(
+			const position_t & position, const isTypeOf & isBlocked);
 };
 
 /** Umělá inteligence nulté úrovně.
@@ -64,8 +69,7 @@ class AI_0 : public AI {
 		/// Destruktor.
 		virtual ~AI_0() {};
 	private:
-		/// Zjistí, zda je možné vstoupit na políčko.
-		bool checkfield_(const position_t & position);
+		isTypeOf isBlocked_;
 };
 
 /** Umělá inteligence první úrovně.
@@ -83,8 +87,46 @@ class AI_1 : public AI {
 		/// Destruktor.
 		virtual ~AI_1() {};
 	private:
-		/// Zjistí, zda je možné vstoupit na políčko.
-		bool checkfield_(const position_t & position);
+		isTypeOf isBlocked_;
+};
+
+#define AI_10_MAX_TRACE 10
+
+/** Umělá inteligence první úrovně.
+ * AI_10 je velice inteligentní útočná úroveň,
+ * řeší plameny, jejich předpovědi (a pozici hráče).
+ */
+class AI_10 : public AI {
+	public:
+		/// Zavolá konstruktor AI
+		AI_10(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const { return 10; }
+		/// Destruktor.
+		virtual ~AI_10() {};
+	private:
+		typedef std::vector< std::vector< Sint16 > > trace_array_t;
+		typedef std::queue< std::pair< Uint16, Uint16 > > fields_queue_t;
+
+		trace_array_t empty_trace_array_;
+		trace_array_t trace_array_;
+
+		isTypeOf isBlocked_, isBad_;
+
+		void update_trace_array_();
+		void eval_trace_array_(fields_queue_t & fields_queue);
+
+		position_t & get_position_(Uint16 x, Uint16 y);
+		position_t & get_random_position_();
+
+		Uint16
+			old_x_, ///< Moje stará souřadnice.
+			old_y_, ///< Moje stará souřadnice.
+			target_x_, ///< Souřadnice cíle.
+			target_y_; ///< Souřadnice cíle.
+
 };
 
 /** NEumělá inteligence.

@@ -220,6 +220,16 @@ const Animation & Animation::initialize(TiXmlElement* el,
 	draw_shadow_ = sur_shadow_src.GetSurface()!=0;
 
 	if(!el) throw std::string("missing element");
+
+	// pruhlednost animace
+	Uint16 transparency;
+	if(readAttr(el, "transparency", transparency, false)){
+		if(transparency > SDL_ALPHA_OPAQUE)
+			throw std::string("attribute transparency must be lesser than 255");
+		transparency_ = static_cast<Uint8>(transparency);
+	}
+	else transparency_ = SDL_ALPHA_OPAQUE;
+
 	// atributy
 	loadItem_(el, width, height, sur_src, sur_shadow_src);
 
@@ -231,7 +241,7 @@ const Animation & Animation::initialize(TiXmlElement* el,
 	Uint16 frame_rate;
 	readAttr(el, "rate", frame_rate);
 	if(frame_rate==0)
-		throw std::string("attribute rate must be higher than 0");
+		throw std::string("attribute rate must be greater than 0");
 	frame_period_ /= frame_rate;
 
 	// vsechny slozky animace
@@ -281,6 +291,8 @@ void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
 	Surface sur= create_transparent_surface(width, height, false);
 	SDL_Rect rect={x,y,width,height};
 	SDL_BlitSurface(sur_src.GetSurface(), &rect, sur.GetSurface(), 0);
+	if(transparency_<SDL_ALPHA_OPAQUE)
+		set_transparency(sur.GetSurface(), transparency_);
 	frames_.push_back(sur);
 
 	if(!draw_shadow_) return;
@@ -412,7 +424,7 @@ SDL_Surface* create_surface(Uint16 w, Uint16 h, SDL_Color color){
 	return sur;
 }
 /**
- * @param sur surface, kteremu chceme nastavit průhlednou barvu
+ * @param sur surface, kterému chceme nastavit průhlednou barvu
  * @param color průhledná barva
  * @see SDL_SetColorKey()
  */
@@ -420,6 +432,16 @@ void set_transparent_color(SDL_Surface *sur, SDL_Color color){
 	if(!sur) return;
 	SDL_SetColorKey(sur, SDL_SRCCOLORKEY,
 		SDL_MapRGB(sur->format, color.r, color.g, color.b));
+}
+
+/**
+ * @param sur surface, kterému chceme nastavit průhlednost
+ * @param alpha míra průhlednosti (0 - průhledné, 255 - neprůhledné)
+ * @see SDL_SetAlpha()
+ */
+void set_transparency(SDL_Surface *sur, Uint8 alpha){
+	if(!sur) return;
+	SDL_SetAlpha(sur, SDL_SRCALPHA | SDL_RLEACCEL, alpha);
 }
 
 /**
@@ -435,7 +457,7 @@ SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h, bool transparent){
 	set_transparent_color(sur, Color::transparent);
 	//nastavim pruhlednost
 	if(transparent)
-		SDL_SetAlpha(sur, SDL_SRCALPHA | SDL_RLEACCEL, 128);
+		set_transparency(sur, 128);
 	return sur;
 }
 

@@ -38,6 +38,14 @@ class Bomb: public DynamicMO {
 		bool explodes_;
 		/// Velikost plamene.
 		Uint16 flamesize_;
+		/// Seznam presumpcí.
+		std::vector< Presumption* > presumptions_;
+		/// Vytvořit presumpce.
+		void create_presumptions_();
+		/// Posunout presumpce.
+		void move_presumptions_();
+		/// Odstranit presumpce.
+		void remove_presumptions_();
 };
 
 #endif

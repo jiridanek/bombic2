@@ -6,6 +6,7 @@
 #include "game_mapobjects.h"
 #include "game_bomb.h"
 #include "game_flame.h"
+#include "game_presumption.h"
 
 /**
  * @param anim animace
@@ -15,7 +16,10 @@
  */
 Bomb::Bomb(const Animation & anim, Uint16 x, Uint16 y, Uint16 flamesize):
 	DynamicMO(x, y),
-	anim_(anim), explodes_(false), flamesize_(flamesize) {}
+	anim_(anim), explodes_(false), flamesize_(flamesize) {
+
+	create_presumptions_();
+}
 
 /** @details
  * Posouvá animaci sám,
@@ -41,6 +45,8 @@ bool Bomb::move(){
 void Bomb::explode(){
 	// explode() muze bezet jen jednou
 	if(explodes_) return;
+	// vyhodit predpoved, ted tam bude plamen
+	remove_presumptions_();
 
 	explodes_ = true;
 	Game * game = Game::get_instance();
@@ -100,6 +106,66 @@ void Bomb::explode(){
 				break;
 		}
 	}
+}
+
+/**
+ */
+void Bomb::create_presumptions_(){
+	Game * game = Game::get_instance();
+	Uint16 x = x_/CELL_SIZE,
+		y = y_/CELL_SIZE;
+
+	Uint16 i, dir, next_x, next_y;
+	Sint16 factor_x, factor_y;
+
+	Presumption* presumption = game->tools->presumption(x, y);
+	game->insert_object(x, y, presumption);
+	presumptions_.push_back(presumption);
+
+	// pres vsechny smery
+	for(dir=0 ; dir<4 ; ++dir){
+		factor_x = factor_y = 0;
+		if(dir%2)
+			factor_x = 2-dir;
+		else
+			factor_y = 1-dir;;
+		// pro velikost plamene
+		for(i=1 ; i<=flamesize_ ; ++i){
+			// souradnice pro novou presumpci
+			next_x = x+ i*factor_x;
+			next_y = y+ i*factor_y;
+			// zarazi se pred zdi nebo pred bednou
+			if(game->field_withObject(next_x, next_y, WALL)
+			|| game->field_withObject(next_x, next_y, BOX))
+				break;
+			// priprava nove presumpce
+			presumption = game->tools->presumption(next_x, next_y);
+			// vlozeni presumpce do hry
+			game->insert_object(next_x, next_y, presumption);
+			// vlozeni do seznamu presumpci
+			presumptions_.push_back(presumption);
+			// zarazi se za bombou
+			if(game->field_withObject(next_x, next_y, BOMB))
+				break;
+		}
+	}
+}
+
+/**
+ */
+void Bomb::move_presumptions_(){
+}
+
+/** @details
+ * Vyhodí všechny presumpce bomby.
+ * @see Game::remove_object()
+ */
+void Bomb::remove_presumptions_(){
+	Game * game = Game::get_instance();
+	for(Uint16 i=0 ; i<presumptions_.size() ; ++i){
+		game->remove_object(presumptions_[i]);
+	}
+	presumptions_.clear();
 }
 
 /**

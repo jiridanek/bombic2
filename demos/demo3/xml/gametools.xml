@@ -68,6 +68,12 @@
 				<animation_item x="307" y="205" />
 			</animation>
 		</mega>
+		<presumption x="358" y="1" transparency="10">
+			<animation rate="20">
+				<animation_item x="358" y="52" />
+				<animation_item x="358" y="103" />
+			</animation>
+		</presumption>
 	</bombs>
 	<!-- obrazky zobrazovacich panelu jednotlivych bombicu -->
 	<!-- rozmery a souradnice v pixelech -->

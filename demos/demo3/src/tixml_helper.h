@@ -12,7 +12,7 @@
 
 #include "tinyxml.h"
 #include "stl_helper.h"
-#include "SDL_lib.h" // TODO
+#include "SDL.h"
 
 /// Načte dokument a v něm najde RootElement, variabilně kontroluje atribut name.
 TiXmlElement* TiXmlRootElement(TiXmlDocument & doc,

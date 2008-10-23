@@ -21,6 +21,7 @@
 #include "game_player.h"
 #include "game_bomb.h"
 #include "game_flame.h"
+#include "game_presumption.h"
 
 using namespace std;
 
@@ -476,16 +477,12 @@ void Game::player(Uint16 player_num, Uint16 & lives,
  * @return Vrací TRUE pokud lze zadané políčko přejít (není na něm zed ani bedna).
  */
 bool Game::field_canGoOver(Uint16 x, Uint16 y, bool check_bomb){
-	map_array_t::value_type::value_type::const_iterator begin, end;
 	isTypeOf isBlockedObject;
 	isBlockedObject.addType(WALL).addType(BOX);
 	if(check_bomb)
 		isBlockedObject.addType(BOMB);
 
-	begin = map_array_[x][y].begin();
-	end = map_array_[x][y].end();
-
-	return find_if(begin, end, isBlockedObject)==end;
+	return !field_withObject(x, y, isBlockedObject);
 }
 
 /**
@@ -494,9 +491,8 @@ bool Game::field_canGoOver(Uint16 x, Uint16 y, bool check_bomb){
  * @param objectType typ objektu, na který se ptáme
  * @return Vrací TRUE pokud je na zadaném políčku objekt zadaného typu.
  */
-bool Game::field_withObject(Uint16 x, Uint16 y, OBJECT_TYPES objectType){
+bool Game::field_withObject(Uint16 x, Uint16 y, const isTypeOf & isType){
 	map_array_t::value_type::value_type::const_iterator begin, end;
-	isTypeOf isType(objectType);
 
 	begin = map_array_[x][y].begin();
 	end = map_array_[x][y].end();
@@ -593,23 +589,17 @@ Uint16 Game::count_bombs(Uint16 player_num){
  * @param player_num číslo hráče
  * @return Vrací TRUE pokud má hráč položenou alespon jednu bombu.
  */
-bool Game::explode_bomb(Uint16 player_num){
-	if(players_[player_num].second.empty())
-		return false;
-	players_[player_num].second.front()->explode();
-	return true;
+void Game::explode_bomb(Uint16 player_num){
+	if(!players_[player_num].second.empty())
+		players_[player_num].second.front()->explode();
 }
 
-/** @details
- * Projde hráčovy bomby a všechny nechá vybouchnout.
- * @param player_num číslo hráče
- */
-void Game::explode_bombs(Uint16 player_num){
-	bombs_t::iterator it;
-	for(it = players_[player_num].second.begin() ;
-				it!=players_[player_num].second.end() ; ++it){
-		(*it)->explode();
-	}
+Uint16 Game::map_height() const {
+	return map_array_[0].size();
+}
+
+Uint16 Game::map_width() const {
+	return map_array_.size();
 }
 
 /*************** END OF class Game ******************************/

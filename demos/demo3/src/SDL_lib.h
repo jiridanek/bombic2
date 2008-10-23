@@ -9,6 +9,7 @@
 
 #include "SDL.h"
 #include "SDL_ttf.h"
+#include "tinyxml.h"
 #include <iostream>
 #include <map>
 #include <vector>
@@ -95,9 +96,6 @@ class Surface {
 		Uint16* references_;
 };
 
-// forward
-class TiXmlElement;
-
 /**
  * Animace jednoho jevu, jako posloupnost obrázků.
  * Inicializace XML elementem a zdrojovým surface,
@@ -149,6 +147,8 @@ class Animation {
 		Uint16 frame_period_,
 		/// Doba od posledního posunu framu.
 			last_access_;
+		/// Míra průhlednosti.
+		Uint8 transparency_;
 
 };
 
@@ -162,6 +162,8 @@ SDL_Surface* get_text(TTF_Font* font, const char* str, SDL_Color color);
 SDL_Surface* create_surface(Uint16 w, Uint16 h, SDL_Color color);
 /// Nastavení průhledné barvy pro surface.
 void set_transparent_color(SDL_Surface *sur, SDL_Color color);
+/// Nastavení průhlednosti surface.
+void set_transparency(SDL_Surface *sur, Uint8 alpha);
 /// Vytvoření surface s průhlednou barvou (volitelně celé poloprůhledně).
 SDL_Surface* create_transparent_surface(Uint16 w, Uint16 h, bool transparent=false);
 

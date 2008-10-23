@@ -44,11 +44,6 @@ bool Player::move(){
 	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, CREATURE))
 		d_=BURNED;
 	// pohyb jako prisera
-	if(Creature::move()){
-		// TODO if timer
-		Game::get_instance()->explode_bombs(num_);
-		return true;
-	}
-	return false;
+	return Creature::move();
 }
 

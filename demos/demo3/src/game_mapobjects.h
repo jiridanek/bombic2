@@ -15,8 +15,8 @@
  * @see isTypeOf::clear()
  */
 enum OBJECT_TYPES { BACKGROUND, FLOOROBJECT, WALL,
-	BOX, BONUS, CREATURE, PLAYER, FLAME, BOMB };
-#define OBJECT_TYPES_COUNT 9
+	BOX, BONUS, CREATURE, PLAYER, FLAME, PRESUMPTION, BOMB };
+#define OBJECT_TYPES_COUNT 10
 
 /// Čtyři směry + hoření
 enum DIRECTION { UP, RIGHT, DOWN, LEFT, BURNED };
@@ -91,7 +91,7 @@ class isTypeOf {
 		/// Bez požadovaného typu.
 		isTypeOf();
 		/// Inicializuje predikát požadovaným typem.
-		explicit isTypeOf(OBJECT_TYPES type);
+		isTypeOf(OBJECT_TYPES type);
 		/// Přidání typu.
 		isTypeOf & addType(OBJECT_TYPES type);
 		/// Vyprázdnění typů.

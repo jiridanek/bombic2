@@ -17,6 +17,7 @@
 #include "game_player.h"
 #include "game_bomb.h"
 #include "game_flame.h"
+#include "game_presumption.h"
 
 using namespace std;
 
@@ -40,16 +41,19 @@ Uint16 GameBaseLoader::load_subEl_animation_( TiXmlElement *El, const char* name
 
 	Uint16 w, h, toplapping;
 	El = subElement(El,name_subEl);
+	// sirska
 	if(!readAttr(El, "width", w, false))
 			w= CELL_SIZE;
 	else if(w<1)
 		throw string("the value of width must be higher than 0");
 	else	w*= CELL_SIZE;
+	// vyska
 	if(!readAttr(El, "height", h, false))
 			h= CELL_SIZE;
 	else if(h<1)
 		throw string("the value of height must be higher than 0");
 	else	h*= CELL_SIZE;
+	// horni presah
 	if(!readAttr(El, "toplapping", toplapping, false))
 		toplapping=0;
 	else	h+= CELL_SIZE*toplapping;
@@ -1126,6 +1130,7 @@ void GameTools::load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src){
 
 	load_subEl_animation_(bombsEl, "normal", bomb_normal_, sur_src);
 	load_subEl_animation_(bombsEl, "mega", bomb_mega_, sur_src);
+	load_subEl_animation_(bombsEl, "presumption", presumption_, sur_src);
 }
 
 Flame* GameTools::flame_top(Uint16 x, Uint16 y) const {
@@ -1164,6 +1169,11 @@ Bomb* GameTools::bomb_normal(Uint16 x, Uint16 y, Uint16 flamesize) const {
 Bomb* GameTools::bomb_mega(Uint16 x, Uint16 y, Uint16 flamesize) const {
 	return new Bomb(bomb_mega_,
 		x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2, flamesize*2);
+}
+
+Presumption* GameTools::presumption(Uint16 x, Uint16 y) const {
+	return new Presumption(presumption_,
+		x*CELL_SIZE, y*CELL_SIZE);
 }
 
 

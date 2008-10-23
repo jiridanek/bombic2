@@ -54,7 +54,7 @@ class Game {
 		/// Políčko lze přeletet.
 // 		bool field_canFlyOver(Uint16 x, Uint16 y);
 		/// Na políčku je typ objektu.
-		bool field_withObject(Uint16 x, Uint16 y, OBJECT_TYPES objectType);
+		bool field_withObject(Uint16 x, Uint16 y, const isTypeOf & isType);
 
 		/// Vyhození objektu z mapy.
 		void remove_object(DynamicMO * obj);
@@ -70,9 +70,12 @@ class Game {
 		/// Pro hráče: spočítat položené bomby.
 		Uint16 count_bombs(Uint16 player_num);
 		/// Pro hráče: nechat bouchnout první bombu.
-		bool explode_bomb(Uint16 player_num);
-		/// Pro hráče: nechat bouchnout všechny bomby.
-		void explode_bombs(Uint16 player_num);
+		void explode_bomb(Uint16 player_num);
+
+		/// Výška mapy.
+		Uint16 map_height() const;
+		/// Šířka mapy.
+		Uint16 map_width() const;
 
 		/// Typ dvourozměrného pole mapy, na každém políčku seznam objektů s rozměry.
 		typedef std::vector< std::vector< std::list< MapObject* > > > map_array_t;
