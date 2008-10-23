@@ -12,6 +12,8 @@
 
 class AI; // forward declaration
 
+/// Doba (ms), po kterou je příšera chráněna když je napadena.
+#define CREATURE_PROTECTION_LENGTH 3000
 
 /** Nestvůra.
  * Dynamický objekt, který zabíjí, umírá, chodí nebo létá.
@@ -30,6 +32,8 @@ class Creature: public DynamicMO {
 		Creature(const Creature & creature, Uint16 x, Uint16 y);
 		/// Pohyb.
 		virtual bool move();
+		/// Přejde na další fázi umírání.
+		void die();
 		/// Vykreslení.
 		virtual void draw(SDL_Surface *window);
 		/// Posun animace.
@@ -41,8 +45,6 @@ class Creature: public DynamicMO {
 	protected:
 		/// Animace pro daný směr.
 		Animation & anim_(DIRECTION d_);
-		/// Přejde na další fázi umírání.
-		bool die();
 
 		Animation anim_up_, ///< Animace pro pohyb vzhůru.
 			anim_right_, ///< Animace pro pohyb vpravo.
@@ -55,10 +57,11 @@ class Creature: public DynamicMO {
 		AI* ai_;
 		/// Hýbal se.
 		bool moved_;
-		/// Počítadlo přístupů.
-		Uint32 access_counter_;
-		/// Počet životů.
-		Uint16 lives_,
+
+		Uint16
+			access_counter_, ///< Počítadlo přístupů.
+			last_die_, ///< Doba od poslední smrti (odebrání života).
+			lives_, ///< Počet životů.
 			speed_diff_, ///< Velikost parciálního pohybu.
 			speed_rate_; ///< Míra parciálního pohybu.
 };

@@ -28,7 +28,7 @@ Creature::Creature(const Animation & anim_up, const Animation & anim_right,
 	anim_up_(anim_up), anim_right_(anim_right), anim_down_(anim_down),
 	anim_left_(anim_left), anim_burned_(anim_burned),
 	d_(static_cast<DIRECTION>(rand()%4)), ai_(AI::new_ai(this, ai)),
-	moved_(false), access_counter_(0), lives_(lives),
+	moved_(false), access_counter_(0), last_die_(0), lives_(lives),
 	// pro zjednoduseni zachazeni s rychlosti
 	speed_diff_((speed-1)/7+1), speed_rate_((speed-1)%7+2+speed_diff_) {}
 
@@ -43,7 +43,7 @@ Creature::Creature(const Creature & creature, Uint16 x, Uint16 y):
 	anim_up_(creature.anim_up_), anim_right_(creature.anim_right_),
 	anim_down_(creature.anim_down_), anim_left_(creature.anim_left_),
 	anim_burned_(creature.anim_burned_), d_(creature.d_), ai_(AI::new_ai(this, creature.ai_)),
-	moved_(false), access_counter_(0), lives_(creature.lives_),
+	moved_(false), access_counter_(0), last_die_(0), lives_(creature.lives_),
 	// pro zjednoduseni zachazeni s rychlosti
 	speed_diff_(creature.speed_diff_), speed_rate_(creature.speed_rate_) {}
 
@@ -62,10 +62,10 @@ Creature::~Creature(){
  */
 bool Creature::move(){
 	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, FLAME))
-		d_=BURNED;
+		die();
 	// mrtvoly se nehybou
 	if(d_==BURNED)
-		return die();
+		return anim_burned_.run_num()>0;
 
 	Uint16 accessed = ++access_counter_%speed_rate_;
 	if(accessed!=0 && accessed!=speed_rate_/2){
@@ -88,12 +88,18 @@ bool Creature::move(){
 }
 
 /** @details
- * Posune frame umírací animace,
- * když animace doběhne, vyhodí objekt z mapy.
- * @return Vrací TRUE pokud už se má objekt zahodit.
+ * Ubere život,
+ * pokud životy dojdou, nastaví direction pro hoření.
+ * Hlídá, kdy naposledy zemřel (přišel o život);
  */
-bool Creature::die(){
-	return anim_burned_.update();
+void Creature::die(){
+	if(last_die_ < CREATURE_PROTECTION_LENGTH)
+		return;
+	last_die_ = 0;
+	if(lives_>1)
+		--lives_;
+	else
+		d_ = BURNED;
 }
 
 extern Fonts g_font;
@@ -109,22 +115,23 @@ void Creature::draw(SDL_Surface *window){
 
 	/*/ TODO debug
 	draw_pixel(window, x_, y_, Color::red);
-	sur = get_text(g_font[10],
-		("["+x2string(x_/CELL_SIZE)+","+x2string(y_/CELL_SIZE)+","+x2string(this->getZ())+"] "
-			+x2string(speed_rate_)+":"+x2string(speed_diff_)).c_str(),
+	Surface sur = get_text(g_font[10],
+		x2string(lives_).c_str(),
+// 		("["+x2string(x_/CELL_SIZE)+","+x2string(y_/CELL_SIZE)+","+x2string(this->getZ())+"] "
+// 			+x2string(speed_rate_)+":"+x2string(speed_diff_)).c_str(),
 		Color::yellow);
-	draw_surface(x-CELL_SIZE, y, sur.GetSurface(), window);
+	draw_surface(x-CELL_SIZE, y, sur.getSurface(), window);
 	//*/
 }
 
 void Creature::update(){
-	if(d_==BURNED)
-		// toto se resi v die
-		return;
-	if(moved_)
+	if(moved_ || d_==BURNED)
 		anim_(d_).update();
 	else
 		anim_(d_).reset();
+
+	if(last_die_ <= CREATURE_PROTECTION_LENGTH)
+		last_die_ += MOVE_PERIOD;
 }
 
 /**

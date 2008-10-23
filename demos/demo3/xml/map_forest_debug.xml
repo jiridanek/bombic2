@@ -9,8 +9,8 @@
 	</players>
 
 	<walls 	name="wall_stone" width="1">
-		<wall x="1" y="3" />
-<!-- 		<wall x="2" y="2" /> -->
+<!-- 		<wall x="1" y="3" /> -->
+		<wall x="2" y="2" />
 		<wall x="1" y="9" />
 		<wall x="4" y="9" />
 		<wall x="7" y="9" />

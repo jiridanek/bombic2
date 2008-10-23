@@ -32,4 +32,17 @@ template<typename T> std::string x2string(const T & val){
 	return ss.str();
 }
 
+/** Absolutní hodnota rozdílu.
+ * požadavky na parametry:
+ * jednosměrná konverze
+ * bool operator<(T, T)
+ * T operator-(T, T)
+ * @param val1 menšenec
+ * @param val2 menšitel
+ * @return Vrací kladný rozdíl.
+ */
+template<typename T> T abs_minus(T val1, T val2){
+	return val1 < val2 ? val2-val1 : val1-val2;
+}
+
 #endif

@@ -42,7 +42,7 @@ bool Player::move(){
 		next_timer_ -= MOVE_PERIOD;
 	// prisery zabijeji
 	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, CREATURE))
-		d_=BURNED;
+		die();
 	// pohyb jako prisera
 	return Creature::move();
 }

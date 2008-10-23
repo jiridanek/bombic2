@@ -169,6 +169,7 @@ Surface & Surface::operator= (SDL_Surface * sur_SDL){
 }
 // TODO zmenit na getSurface()
 SDL_Surface* Surface::GetSurface() const {
+	std::cerr << "use getSurface instead of GetSurface" << std::endl;
 	return surface_;
 }
 SDL_Surface* Surface::getSurface() const {
@@ -186,7 +187,7 @@ Uint16 Surface::height() const {
 /*************** class Animation *********************/
 
 Animation::Animation(): next_frame_(0), draw_shadow_(0),
-			frame_period_(1000), last_access_(0) {
+			frame_period_(1000), last_access_(0), run_counter_(0) {
 	frames_.push_back(Surface());
 }
 
@@ -216,8 +217,8 @@ const Animation & Animation::initialize(TiXmlElement* el,
 			const Surface & sur_src, const Surface & sur_shadow_src){
 	// nastaveni defaultnich hodnot
 	frames_.clear(); shadow_frames_.clear();
-	frame_period_ = 1000; next_frame_ = last_access_ = 0;
-	draw_shadow_ = sur_shadow_src.GetSurface()!=0;
+	frame_period_ = 1000; next_frame_ = last_access_ = run_counter_ = 0;
+	draw_shadow_ = sur_shadow_src.getSurface()!=0;
 
 	if(!el) throw std::string("missing element");
 
@@ -258,13 +259,13 @@ const Animation & Animation::initialize(TiXmlElement* el,
 Animation::Animation(const Animation & anim):
 	frames_(anim.frames_), shadow_frames_(anim.shadow_frames_),
 	next_frame_(0), draw_shadow_(anim.draw_shadow_),
-	frame_period_(anim.frame_period_), last_access_(0) {}
+	frame_period_(anim.frame_period_), last_access_(0), run_counter_(0) {}
 
 const Animation & Animation::operator=(const Animation & anim){
 	if(&anim!=this){
 		frames_ = anim.frames_; shadow_frames_ = anim.shadow_frames_;
 		next_frame_ = 0; draw_shadow_ = anim.draw_shadow_;
-		frame_period_ = anim.frame_period_; last_access_ = 0;
+		frame_period_ = anim.frame_period_; last_access_ = run_counter_ = 0;
 	}
 	return *this;
 }
@@ -290,9 +291,9 @@ void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
 	// vytvorit surface
 	Surface sur= create_transparent_surface(width, height, false);
 	SDL_Rect rect={x,y,width,height};
-	SDL_BlitSurface(sur_src.GetSurface(), &rect, sur.GetSurface(), 0);
+	SDL_BlitSurface(sur_src.getSurface(), &rect, sur.getSurface(), 0);
 	if(transparency_<SDL_ALPHA_OPAQUE)
-		set_transparency(sur.GetSurface(), transparency_);
+		set_transparency(sur.getSurface(), transparency_);
 	frames_.push_back(sur);
 
 	if(!draw_shadow_) return;
@@ -304,7 +305,7 @@ void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
 	// vytvorit surface
 	sur= create_transparent_surface(width, height, true);
 	rect.x=x; rect.y=y;
-	SDL_BlitSurface(sur_shadow_src.GetSurface(), &rect, sur.GetSurface(), 0);
+	SDL_BlitSurface(sur_shadow_src.getSurface(), &rect, sur.getSurface(), 0);
 	shadow_frames_.push_back(sur);
 }
 
@@ -328,10 +329,22 @@ bool Animation::update(){
 		++next_frame_;
 		if(next_frame_>=frames_.size()){
 			next_frame_%= frames_.size();
+			++run_counter_;
 			at_end=true;
 		}
 	}
 	return at_end;
+}
+
+/**
+ * @return Pořadí běhu po následujícím update.
+ * @see update()
+ */
+Uint16 Animation::run_num() const {
+	if( (last_access_+MOVE_PERIOD) >= frame_period_
+	&&  (next_frame_+1) >= frames_.size())
+			return run_counter_+1;
+	return run_counter_;
 }
 
 /**
@@ -341,9 +354,9 @@ bool Animation::update(){
  */
 void Animation::draw(SDL_Surface* window, Uint16 x, Uint16 y) const {
 	if(draw_shadow_){
-		draw_surface(x, y, shadow_frames_[next_frame_].GetSurface(), window);
+		draw_surface(x, y, shadow_frames_[next_frame_].getSurface(), window);
 	}
-	draw_surface(x, y, frames_[next_frame_].GetSurface(), window);
+	draw_surface(x, y, frames_[next_frame_].getSurface(), window);
 }
 
 Uint16 Animation::height() const {

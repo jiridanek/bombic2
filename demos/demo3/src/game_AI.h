@@ -90,7 +90,8 @@ class AI_1 : public AI {
 		isTypeOf isBlocked_;
 };
 
-#define AI_10_MAX_TRACE 10
+#define AI_10_MAX_TRACE_DEPTH 10
+#define AI_10_MAX_UPDATE_PERIOD CELL_SIZE
 
 /** Umělá inteligence první úrovně.
  * AI_10 je velice inteligentní útočná úroveň,
@@ -116,17 +117,17 @@ class AI_10 : public AI {
 		isTypeOf isBlocked_, isBad_;
 
 		void update_trace_array_();
-		void eval_trace_array_(fields_queue_t & fields_queue);
+		void eval_trace_array_(fields_queue_t & fields_queue, bool in_danger);
 
-		position_t & get_position_(Uint16 x, Uint16 y);
+		position_t & get_position_();
 		position_t & get_random_position_();
 
 		Uint16
 			old_x_, ///< Moje stará souřadnice.
 			old_y_, ///< Moje stará souřadnice.
 			target_x_, ///< Souřadnice cíle.
-			target_y_; ///< Souřadnice cíle.
-
+			target_y_, ///< Souřadnice cíle.
+			last_trace_update_; ///< Čítač od poslední update trasy.
 };
 
 /** NEumělá inteligence.

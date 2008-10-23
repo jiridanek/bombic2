@@ -123,8 +123,10 @@ class Animation {
 
 		/// Nastavení prvního obrázku jako aktuální.
 		void reset();
-		/// Update stavu animace (typicky nastavení dalšího framu)
+		/// Update stavu animace (typicky nastavení dalšího framu).
 		bool update();
+		/// Počet opakování animace.
+		Uint16 run_num() const;
 		/// Vykreslení aktuálního framu.
 		void draw(SDL_Surface* window, Uint16 x, Uint16 y) const;
 		/// Výška animace.
@@ -143,10 +145,12 @@ class Animation {
 		frames_t::size_type next_frame_;
 		/// Vykreslovat stíny.
 		bool draw_shadow_;
-		/// Délka zobrazení jednoho framu.
-		Uint16 frame_period_,
-		/// Doba od posledního posunu framu.
-			last_access_;
+
+		Uint16
+			frame_period_, ///< Délka zobrazení jednoho framu.
+			last_access_, ///< Doba od posledního posunu framu.
+			run_counter_; /// Počítadlo běhů animace.
+
 		/// Míra průhlednosti.
 		Uint8 transparency_;
 
