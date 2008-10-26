@@ -1,7 +1,6 @@
 /** @file game.h
  * Samotná hra.
- * Game.h obsahuje stejnojmennou třídu obstarávající konkrétní hru jako celek
- * a jí podřízené třídy jako například mapObject.
+ * Game.h obsahuje stejnojmennou třídu obstarávající konkrétní hru jako celek.
  */
 
 #ifndef GAME_H
