@@ -6,6 +6,7 @@
 #include "tixml_helper.h"
 // #include "stl_helper.h"
 #include "constants.h"
+#include "config.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ Config::Config(const std::string & filename) {
 		empty_keys.insert(empty_keys.end(), KEY_ACTIONS_COUNT, SDLK_FIRST);
 		players_.insert(players_.end(), 4, empty_keys);
 		// naloadovat konfig z XML
-		load_configuration_();
+		// load_configuration_();
 	}
 	catch(...){
 		myself_ptr_ = 0;

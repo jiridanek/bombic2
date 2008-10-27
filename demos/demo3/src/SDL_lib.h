@@ -113,7 +113,7 @@ class Animation {
 		Animation(TiXmlElement* el, Uint16 width, Uint16 height,
 			const Surface & sur_src, const Surface & sur_shadow_src=0);
 		/// Inicializace z XML a zdrojového surface.
-		const Animation & Animation::initialize(TiXmlElement* el,
+		const Animation & initialize(TiXmlElement* el,
 					Uint16 width, Uint16 height,
 					const Surface & sur_src, const Surface & sur_shadow_src=0);
 		/// Okopírování animace.
@@ -135,7 +135,7 @@ class Animation {
 		Uint16 width() const;
 	private:
 		/// Uloží konkrétní surface zadané v elementu.
-		void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
+		void loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
 				const Surface & sur_src, const Surface & sur_shadow_src);
 
 		typedef std::vector<Surface> frames_t;

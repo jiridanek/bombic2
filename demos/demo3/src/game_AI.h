@@ -47,7 +47,7 @@ class AI {
 		/// Nastaví nestvůře novou pozici.
 		void setPosition(position_t & position);
 		/// Partikulárně centruje souřadnici dostředu políčka.
-		void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign);
+		void centerCoordinate(Uint16 & coordinate, Sint8 sign);
 		/// Zjistí, zda je možné vstoupit na políčko.
 		bool checkField(
 			const position_t & position, const isTypeOf & isBlocked);

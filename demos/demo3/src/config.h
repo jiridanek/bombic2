@@ -39,7 +39,7 @@ class Config {
 		/// Inicializace konfigu ze souboru.
 		Config(const std::string & filename);
 		/// Destruktor.
-		~Config().
+		~Config();
 		/// Kód zvoleného jazyka.
 		const std::string & language() const { return language_; }
 		/// Viditelná předpověď výbuchu.
@@ -49,17 +49,17 @@ class Config {
 		/// Perioda pohybu.
 		Uint16 move_period() const;
 		/// Zapnutý/vypnutý celoobrazovkový režim.
-		fullscreen() const { return fullscreen_; }
+		bool fullscreen() const { return fullscreen_; }
 		// Zapnutý/vypnutý zvuk.
-		sound() const { return sound_; }
+		bool sound() const { return sound_; }
 		/// Nastavená klávesa.
-		SDL_Key player(Uint16 player_num, KEY_ACTIONS action) const;
+		SDLKey player(Uint16 player_num, KEY_ACTIONS action) const;
 
 	private:
 		/// Pointer na jedinou instanci třídy.
 		static Config* myself_ptr_;
 		/// Typ seznamu hráčů a jejich kláves.
-		typedef std::vector< std::vector< SDL_Key > > players_t;
+		typedef std::vector< std::vector< SDLKey > > players_t;
 		/// Seznam kláves hráčů.
 		players_t players_;
 		std::string language_;
