@@ -17,7 +17,7 @@ int main(int argc, char ** argv){
 
 	int return_val=0;
 	try {
-		window_init(&g_window, 800, 600, "Bombic2 - Demo 2");
+		window_init(&g_window, 800, 600, "Bombic2 - Demo 3");
 
 		g_gameIntro.new_game(1, 1);
 		g_gameIntro.show_screen();
