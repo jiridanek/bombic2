@@ -1,28 +1,28 @@
 Pro pouzitelne klavesy ctete nasledujici tabulku
-	klavesa		|	nazev pouzivany v config.cfg
+	klavesa		|	nazev pouzivany v konfigu
 zvlastni klavesy ( nektere na sve klavesnici ani nemam )
 backspace		|		backspace
 tab			|		tab
 clear			|		clear
-return			|		return
+enter(return)		|		return
 pause			|		pause
 escape			|		escape
 space			|		space
 klasicke klavesy alfanumericke casti klavesnice
-!			|		exclaim
-"			|		quotedbl
-#			|		hash
-$			|		dollar
-&			|		ampersand
-'			|		quote
-(			|		Lparen
-)			|		Rparen
-*			|		asterisk
-+			|		plus
-,			|		comma
--			|		minus
-.			|		period
-/			|		slash
+!			|		!
+"			|		"
+#			|		#
+$			|		$
+&			|		&
+'			|		'
+(			|		(
+)			|		)
+*			|		*
++			|		+
+,			|		,
+-			|		-
+.			|		.
+/			|		/
 0			|		0
 1			|		1
 2			|		2
@@ -33,19 +33,19 @@ $			|		dollar
 7			|		7
 8			|		8
 9			|		9
-:			|		colon
-;			|		semicolon
-<			|		less
-=			|		equals
->			|		greater
-?			|		question
-@			|		at
-[			|		Lbracket
-\			|		backslash
-]			|		Rbracket
-^			|		caret
-_			|		underscore
-`			|		backquote
+:			|		:
+;			|		;
+<			|		<
+=			|		=
+>			|		>
+?			|		?
+@			|		@
+[			|		[
+\			|		\
+]			|		]
+^			|		^
+_			|		_
+`			|		`
 a			|		a
 b			|		b
 c			|		c
@@ -76,37 +76,37 @@ z			|		z
 tato sekce obsahuje narodni znaky, jako klavesy uvedu jen ty,
 ktere se pod temito znaky vyskytuji na ceske klavesnici.
 
-Ï			|		world 76
-π			|		world 25
-Ë			|		world 72
-¯			|		world 88
-æ			|		world 30
-˝			|		world 93
-·			|		world 65
-Ì			|		world 77
-È			|		world 73
-˙			|		world 90
-˘			|		world 89
-ß			|		world 7
+ƒõ			|		world 76
+≈°			|		world 25
+ƒç			|		world 72
+≈ô			|		world 88
+≈æ			|		world 30
+√Ω			|		world 93
+√°			|		world 65
+√≠			|		world 77
+√©			|		world 73
+√∫			|		world 90
+≈Ø			|		world 89
+¬ß			|		world 7
 
 klavesy numericke casti klavesnice
-0			|		kp_0
-1			|		kp_1
-2			|		kp_2
-3			|		kp_3
-4			|		kp_4
-5			|		kp_5
-6			|		kp_6
-7			|		kp_7
-8			|		kp_8
-9			|		kp_9
-,			|		kp_period
-/			|		kp_divide
-*			|		kp_multiply
--			|		kp_minus
-+			|		kp_plus
-enter			|		kp_enter
-=			|		kp_equals
+0			|		[0]
+1			|		[1]
+2			|		[2]
+3			|		[3]
+4			|		[4]
+5			|		[5]
+6			|		[6]
+7			|		[7]
+8			|		[8]
+9			|		[9]
+,			|		[.]
+/			|		[/]
+*			|		[*]
+-			|		[-]
++			|		[+]
+enter			|		enter
+=			|		equals
 
 klavesy navigacni (stredni) casti klavesnice
 up			|		up
@@ -117,8 +117,8 @@ insert			|		insert
 delete			|		delete
 home			|		home
 end			|		end
-pageup			|		pageup
-pagedown		|		pagedown
+page up			|		page up
+page down		|		page down
 
 funkcni klavesy
 f1			|		f1
@@ -138,24 +138,24 @@ f14			|		f14
 f15			|		f15
 
 ostatni metaklavesy
-scrolllock		|		scrolllock
-right shift		|		Rshift
-left shift		|		Lshift
-right ctrl		|		Rctrl
-left ctrl		|		Lctrl
-right alt		|		Ralt
-left alt		|		Lalt
-right meta		|		Rmeta
-left meta		|		Lmeta
-left super		|		Lsuper
-right super		|		Rsuper
-alt gr			|		altgr
+scroll lock		|		scroll lock
+right shift		|		right shift
+left shift		|		left shift
+right ctrl		|		right ctrl
+left ctrl		|		left ctrl
+right alt		|		right alt
+left alt		|		left alt
+right meta		|		right meta
+left meta		|		left meta
+right super		|		right super
+left super		|		left super
+alt gr			|		alt gr
 compose			|		compose
 
 dalsi zvlastni klavesy, nevyskytujici se na kazde klavesnici
 help			|		help
-printscreen		|		printscreen
-sysreq			|		sysreq
+print screen		|		print screen
+sys req			|		sys req
 break			|		break
 menu			|		menu
 power			|		power
