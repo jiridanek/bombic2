@@ -25,11 +25,18 @@ Bonus::Bonus(const Bonus & bonus, Uint16 x, Uint16 y):
 	DynamicMO(x,y), anim_(bonus.anim_), visible_(false) {}
 
 /** @details
- * Posune frame animace.
+ * Hlídá zviditelnění, odstranění a sežrání bonusu.
  */
 bool Bonus::move(){
+	Uint16 x = x_/CELL_SIZE, y = y_/CELL_SIZE;
+	Game * game = Game::get_instance();
+	if(game->field_canGoOver(x, y))
+		visible_ = true;
 	if(!visible_) return false;
-	// TODO hlídat plameny a sežrání
+	if(game->field_withObject(x, y, FLAME))
+		return true;
+	if(game->field_withObject(x, y, PLAYER))
+		return true;
 	return false;
 }
 

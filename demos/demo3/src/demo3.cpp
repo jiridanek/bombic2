@@ -6,6 +6,7 @@
 using namespace std;
 
 #include "SDL_lib.h"
+#include "config.h"
 #include "game_intro.h"
 
 Fonts g_font("fonts/verdana.ttf");
@@ -18,6 +19,8 @@ int main(int argc, char ** argv){
 	int return_val=0;
 	try {
 		window_init(&g_window, 800, 600, "Bombic2 - Demo 3");
+
+		Config config;
 
 		g_gameIntro.new_game(1, 1);
 		g_gameIntro.show_screen();

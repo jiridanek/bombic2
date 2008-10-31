@@ -18,8 +18,10 @@
 template<typename T> bool string2x(const std::string & s, T & val){
 	std::stringstream ss(s);
 	ss >> val;
-	return !ss.fail();
+	return !ss.fail() && ss.eof();
 }
+
+bool string2x(const std::string & s, std::string & val);
 
 /** Překonvertuje zadanou proměnnou na string.
  * @param val proměnná, jejíž hodnota se konvertuje,

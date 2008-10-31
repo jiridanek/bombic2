@@ -71,7 +71,8 @@ void Config::load_properties_(TiXmlElement * rootEl){
 	// TODO check lang
 	readAttr(rootEl, "visible_presumption", visible_presumption_);
 	readAttr(rootEl, "speed", speed_);
-	// TODO check speed
+	if(speed_ < 1 || speed_ > CONFIG_SPEED_MAX)
+		throw "attribute speed must be integer between 1 and "+ x2string(CONFIG_SPEED_MAX);
 	readAttr(rootEl, "fullscreen", fullscreen_);
 	readAttr(rootEl, "sound", sound_);
 }
@@ -79,23 +80,84 @@ void Config::load_properties_(TiXmlElement * rootEl){
 /**
  */
 void Config::load_players_(TiXmlElement * rootEl){
-	string el_name;
-	for(Uint16 num=0 ; num<4 ; ++num ){
-		el_name = "player"+x2string(num+1);
-		// TODO invers pro char *SDL_GetKeyName(SDLKey key);
-		/*
-		// nacteni hrace
-		wallsEl= wallsEl->FirstChildElement("wall");
-		rootEl = TiXmlRootElement(doc, filename, "creature", true);
-		// zdrojovy obrazek
-		sur_src = load_src_surface_(rootEl);
-		sur_src_s = load_src_surface_(rootEl, "shadow_src", false);
-
-		// vyska a sirska obrazku
-		readAttr(rootEl, "height", height);
-		readAttr(rootEl, "width", width);
-		*/
+	string el_name, key_name, action_name;
+	TiXmlElement * playerEl;
+	Uint16 num;
+	for(num=1 ; num<=4 ; ++num ){
+		el_name = "player"+x2string(num);
+		playerEl = subElement(rootEl, el_name.c_str());
+		playerEl = subElement(playerEl, "bind");
+		while(playerEl){
+			readAttr(playerEl, "action", action_name);
+			readAttr(playerEl, "key", key_name);
+			set_key_action_(num, name2action_(action_name),
+					keyNames_.name2key(key_name));
+			playerEl = playerEl->NextSiblingElement("bind");
+		}
 	}
 }
 
+/**
+ */
+void Config::set_key_action_(Uint16 player_num, KEY_ACTIONS action, SDLKey key){
+	--player_num;
+	if(player_num >= players_.size()
+	|| static_cast<Uint16>(action) >= players_[player_num].size()
+	|| key >= SDLK_LAST )
+		return;
+	players_[player_num][action] = key;
+}
+
+/**
+ */
+KEY_ACTIONS Config::name2action_(const std::string & name){
+	if(name=="up") return KEY_UP;
+	if(name=="right") return KEY_RIGHT;
+	if(name=="down") return KEY_DOWN;
+	if(name=="left") return KEY_LEFT;
+	if(name=="plant") return KEY_PLANT;
+	if(name=="timer") return KEY_TIMER;
+	throw string("Config::name2action(): unhandled key_action");
+	return KEY_TIMER;
+}
+
+
+SDLKey Config::player(Uint16 player_num, KEY_ACTIONS action) const {
+	--player_num;
+	if(player_num >= players_.size()
+	|| static_cast<Uint16>(action) >= players_[player_num].size() )
+		return SDLK_FIRST;
+	return players_[player_num][action];
+}
+
+Uint16 Config::move_period() const {
+	return MOVE_PERIOD + CONFIG_SPEED_MAX/2 - speed_;
+}
+
 /*************** END OF class Config ******************************/
+
+/********************** class KeyNames ****************************/
+
+KeyNames::KeyNames(){
+	SDLKey key;
+	for(key = SDLK_FIRST ; key != SDLK_LAST;
+				key = static_cast<SDLKey>(key+1)){
+		names_keys_[SDL_GetKeyName(key)] = key;
+	}
+	names_keys_.erase("unknown key");
+}
+
+SDLKey KeyNames::name2key(const std::string & name){
+	names_keys_t::iterator it = names_keys_.find(name);
+	if(it==names_keys_.end())
+		return SDLK_FIRST;
+	return it->second;
+}
+
+const char* KeyNames::key2name(SDLKey key){
+	return SDL_GetKeyName(key);
+}
+
+
+/*************** END OF class KeyNames ****************************/
+

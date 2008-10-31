@@ -32,6 +32,18 @@ Box::Box(const Box & box, Uint16 x, Uint16 y):
 	height_(box.height_), width_(box.width_){}
 
 /** @details
+ * Zetová souřadnice, zvýší se pokud bedna hoří.
+ * @return Vrací zetovou souřadnici objektu.
+ * @see DynamicMO::getZ()
+ */
+Uint16 Box::getZ() const {
+	if(burning_)
+		return DynamicMO::getZ()+CELL_SIZE;
+	else
+		return DynamicMO::getZ();
+}
+
+/** @details
  * Ohlídá plameny, pokud hoří, posune sám frame animace.
  * @return Vrací TRUE pokud je již vhodné objekt odstranit.
  */

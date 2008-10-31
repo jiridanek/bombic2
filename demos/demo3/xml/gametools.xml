@@ -77,55 +77,20 @@
 	</bombs>
 	<!-- obrazky zobrazovacich panelu jednotlivych bombicu -->
 	<!-- rozmery a souradnice v pixelech -->
-	<panels height="vyska panelu v pixelech" width="sirska panelu v pixelech">
-		<player1 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
-		<player2 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
-		<player3 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
-		<player4 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
+	<panels height="68" width="163">
+		<player1 x="1" y="358" />
+		<player2 x="1" y="289" />
+		<player3 x="165" y="358" />
+		<player4 x="165" y="289" />
 	</panels>
 	<!-- zmenseniny bonusu zobrazujici se v panelu hry -->
-	<bonuses>
-		<megabomb
-			x="souradnice symbolu zobrazovanych v panelu v pixelech"
-			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
-			/>
-		<shield
-			x="souradnice symbolu zobrazovanych v panelu v pixelech"
-			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
-			/>
-		<illness
-			x="souradnice symbolu zobrazovanych v panelu v pixelech"
-			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
-			/>
-		<timer
-			x="souradnice symbolu zobrazovanych v panelu v pixelech"
-			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
-			/>
-		<slider
-			x="souradnice symbolu zobrazovanych v panelu v pixelech"
-			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
-			/>
-		<kicker
-			x="souradnice symbolu zobrazovanych v panelu v pixelech"
-			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
-			/>
-		<fireman
-			x="souradnice symbolu zobrazovanych v panelu v pixelech"
-			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
-			/>
+	<bonuses height="24" width="24">
+		<megabomb x="1" y="427" draw_x="62" draw_y="21" />
+		<shield x="26" y="427"  draw_x="112" draw_y="1" />
+		<illness x="51" y="427" draw_x="112" draw_y="42" />
+		<timer x="76" y="427" draw_x="62" draw_y="42" />
+		<slider x="101" y="427" draw_x="2" draw_y="42" />
+		<kicker x="126" y="427" draw_x="34" draw_y="42" />
+		<fireman x="151" y="427" draw_x="112" draw_y="21" />
 	</bonuses>
 </gametools>

@@ -23,6 +23,8 @@ class Box: public DynamicMO{
 			Uint16 toplapping, Uint16 x, Uint16 y);
 		/// Okopíruje bednu.
 		Box(const Box & box, Uint16 x, Uint16 y);
+		/// Zetová souřadnice.
+		virtual Uint16 getZ() const;
 		/// Zjištění, zda nemá shořet.
 		virtual bool move();
 		/// Vykreslení.

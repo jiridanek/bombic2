@@ -9,6 +9,7 @@
 // #include "tixml_helper.h"
 // #include "stl_helper.h"
 #include "constants.h"
+#include "config.h"
 #include "game.h"
 #include "game_base.h"
 #include "game_mapobjects.h"
@@ -361,8 +362,9 @@ void Game::play(SDL_Surface* window){
 		SDL_Flip(window);
 
 		this_time = SDL_GetTicks();
-		time_to_use += (this_time - last_time)%(100*MOVE_PERIOD);
-		for( ; time_to_use > MOVE_PERIOD; time_to_use -= MOVE_PERIOD){
+		time_to_use += (this_time - last_time)%(100*Config::get_instance()->move_period());
+		while(time_to_use > MOVE_PERIOD){
+			time_to_use -= Config::get_instance()->move_period();
 			// hýbne světem
 			move_();
 			// posune animace

@@ -24,6 +24,36 @@ using namespace std;
 /********************** class GameBaseLoader ************************/
 
 /** @details
+ * Vytvoří Surface objektu popsaného podelementem se zadaným jménem.
+ * Vrácené surface má nastavenou průhlednou barvu, i průhlednost.
+ * @throw string Při chybě (nenalezení podelementu nebo některého povinného atributu)
+ * vyvolá výjimku s chybovým hlášením.
+ * @param El rodič hledaného podelementu
+ * @param name_subEl název hledaného podelementu
+ * @param sur_dst cílový obrázek
+ * @param width výška obrázku
+ * @param height šířka obrázku
+ * @param sur_src zdrojový surface
+ * @see subElement(), readAttr()
+ * @see create_transparent_surface()
+ */
+void GameBaseLoader::load_subEl_surface_( TiXmlElement *El, const char* name_subEl,
+			Surface & sur_dst, Uint16 width, Uint16 height, const Surface & sur_src){
+
+	El = subElement(El, name_subEl);
+
+	// atributy pro surface
+	Uint16 x, y;
+	readAttr(El, "x", x);
+	readAttr(El, "y", y);
+
+	// vytvorit surface
+	sur_dst= create_transparent_surface(width, height, true);
+	SDL_Rect rect={ x, y, width, height };
+	SDL_BlitSurface(sur_src.getSurface(), &rect, sur_dst.getSurface(), 0);
+}
+
+/** @details
  * Vytvoří Animation objektu popsaného podelementem se zadaným jménem.
  * Vrácené surface má nastavenou průhlednou barvu, nikoli však průhlednost.
  * Zjistí také jaké měl podelement nastavené toplapping (výška nevyužitá v mapě).
@@ -31,8 +61,8 @@ using namespace std;
  * vyvolá výjimku s chybovým hlášením.
  * @param El rodič hledaného podelementu
  * @param name_subEl název hledaného podelementu
+ * @param anim_dst cílová animace
  * @param sur_src zdrojový surface
- * @param anim_dst
  * @return Vrací toplapping - hodnotu atributu nebo nulu pokud nebyl nalezen.
  * @see subElement(), readAttr()
  */
@@ -1092,6 +1122,12 @@ void GameBase::set_player(Uint16 player_num, Uint16 lives,
 /******************* class GameTools ******************************/
 
 GameTools::GameTools(){
+	positioned_surface_t empty_positioned_sur = {0, 0, 0};
+	// pripravim seznam pro pozicovane obrazky
+	panels_.insert(panels_.end(), 4, empty_positioned_sur);
+	bonuses_.insert(bonuses_.end(),
+		GAMETOOLS_BONUSES_COUNT, empty_positioned_sur);
+
 	TiXmlDocument doc;
 	TiXmlElement *root_el;
 	string filename("gametools");
@@ -1101,9 +1137,13 @@ GameTools::GameTools(){
 		// nacteni zdrojoveho surface
 		Surface sur_src= load_src_surface_(root_el);
 		// nacteni plamenu
-		load_flame_(root_el->FirstChildElement("flame"), sur_src);
+		load_flame_(subElement(root_el, "flame"), sur_src);
 		// nacteni bomb
-		load_bombs_(root_el->FirstChildElement("bombs"), sur_src);
+		load_bombs_(subElement(root_el, "bombs"), sur_src);
+		// nacteni panelu
+		load_panels_(subElement(root_el, "panels"), sur_src);
+		// nacteni zmensenin bonusu
+		load_bonuses_(subElement(root_el, "bonuses"), sur_src);
 	}
 	catch(const string & err){
 		TiXmlError(filename, err);
@@ -1111,8 +1151,6 @@ GameTools::GameTools(){
 }
 
 void GameTools::load_flame_(TiXmlElement *flameEl, const Surface & sur_src){
-	if(!flameEl)
-		throw string("missing element flame");
 	readAttr(flameEl, "timeperiod", flame_period_);
 
 	load_subEl_animation_(flameEl, "top", flame_top_, sur_src);
@@ -1125,12 +1163,58 @@ void GameTools::load_flame_(TiXmlElement *flameEl, const Surface & sur_src){
 }
 
 void GameTools::load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src){
-	if(!bombsEl)
-		throw string("missing element bombs");
 
 	load_subEl_animation_(bombsEl, "normal", bomb_normal_, sur_src);
 	load_subEl_animation_(bombsEl, "mega", bomb_mega_, sur_src);
 	load_subEl_animation_(bombsEl, "presumption", presumption_, sur_src);
+}
+
+
+void GameTools::load_panels_(TiXmlElement *panelsEl, const Surface & sur_src){
+	extern SDL_Surface * g_window;
+	if(!g_window) throw string("in GameToolds::load_panels_(): Main window hasn't been created");
+	// sirska vyska
+	Uint16 width, height;
+	readAttr(panelsEl, "width", width);
+	readAttr(panelsEl, "height", height);
+
+	// panel hrace 1
+	load_subEl_surface_(panelsEl, "player1", panels_[0].sur,
+			width, height, sur_src);
+	panels_[0].x = 0;
+	panels_[0].y = 0;
+	// panel hrace 2
+	load_subEl_surface_(panelsEl, "player2", panels_[1].sur,
+			width, height, sur_src);
+	panels_[1].x = g_window->w - width;
+	panels_[1].y = g_window->h - height;
+	// panel hrace 3
+	load_subEl_surface_(panelsEl, "player3", panels_[2].sur,
+			width, height, sur_src);
+	panels_[2].x = 0;
+	panels_[2].y = g_window->h - height;
+	// panel hrace 4
+	load_subEl_surface_(panelsEl, "player4", panels_[3].sur,
+			width, height, sur_src);
+	panels_[3].x = g_window->w - width;
+	panels_[3].y = 0;
+}
+
+void GameTools::load_bonuses_(TiXmlElement *bonusesEl, const Surface & sur_src){
+	// sirska vyska
+	Uint16 width, height;
+	readAttr(bonusesEl, "width", width);
+	readAttr(bonusesEl, "height", height);
+
+	TiXmlElement * el;
+	char * bonuses_names[] = GAMETOOLS_BONUSES_NAMES;
+	for(Uint16 i =0 ; i< GAMETOOLS_BONUSES_COUNT ; ++i){
+		load_subEl_surface_(bonusesEl, bonuses_names[i],
+				bonuses_[i].sur, width, height, sur_src);
+		el = subElement(bonusesEl, bonuses_names[i]);
+		readAttr(el, "draw_x", bonuses_[i].x);
+		readAttr(el, "draw_y", bonuses_[i].y);
+	}
 }
 
 Flame* GameTools::flame_top(Uint16 x, Uint16 y) const {
@@ -1176,6 +1260,21 @@ Presumption* GameTools::presumption(Uint16 x, Uint16 y) const {
 		x*CELL_SIZE, y*CELL_SIZE);
 }
 
+void GameTools::draw_panel_player(SDL_Surface * window,
+			Uint16 player_num, Uint16 flames, Uint16 bombs,
+			Uint16 megabombs, bool slider, bool kicker){
+	extern g_font;
+	--player_num;
+	// panel
+	draw_surface(panels_[player_num].x, panels_[player_num].y,
+		panels_[player_num].sur.getSurface(), window);
+	// plameny
+	Surface text = get_text(g_font[GAMETOOLS_BONUSES_FONT_SIZE],
+		// TODO
+}
+void draw_panel_bonus(SDL_Surface * window,
+			Uint16 player_num, BONUSES bonus, const std::string & val){
+}
 
 /************** END OF class GameTools ******************************/
 

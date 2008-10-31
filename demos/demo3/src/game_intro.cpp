@@ -10,8 +10,7 @@
 using namespace std;
 
 
-GameIntro::GameIntro(): gameBase_(0),
-	gameTools_(new GameTools), game_(0) {}
+GameIntro::GameIntro(): gameBase_(0), gameTools_(0), game_(0) {}
 
 GameIntro::~GameIntro(){
 	if(gameBase_)
@@ -32,6 +31,8 @@ extern Fonts g_font;
  * @see new_game(), load_game();
  */
 void GameIntro::show_screen(){
+	if(!gameTools_)
+		throw string("in GameIntro::show_screen(): no gameTools created");
 	if(!gameBase_)
 		throw string("in GameIntro::show_screen(): no gameBase created");
 
@@ -53,12 +54,16 @@ void GameIntro::show_screen(){
 		// jinak hrajeme
 		game_->play(g_window);
 		// TODO check jak hra skoncila
+		// TODO delete game
 	}
 }
 
 
 /// Inicializace nové hry.
 void GameIntro::new_game(Uint16 episode, Uint16 players){
+	if(!gameTools_)
+		gameTools_ = new GameTools;
+
 	if(gameBase_)
 		delete gameBase_;
 	gameBase_ = new GameBase(players, "map_forest_debug");

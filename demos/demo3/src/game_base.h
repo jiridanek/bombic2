@@ -25,9 +25,12 @@
  */
 class GameBaseLoader {
 	protected:
+		/// Načtení surface podelementu.
+		void load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
+				Surface & sur_dst, Uint16 width, Uint16 height, const Surface & sur_src);
 		/// Načtení animace podelementu.
 		Uint16 load_subEl_animation_(TiXmlElement *El, const char* name_subEl,
-				Animation & anim, const Surface & sur_src);
+				Animation & anim_dst, const Surface & sur_src);
 		/// Načtení surface bitmapy.
 		SDL_Surface* load_src_surface_(TiXmlElement *El,
 				const char* attr_name="src", bool force=true);
@@ -151,16 +154,36 @@ class GameTools: public GameBaseLoader{
 		Bomb* bomb_normal(Uint16 x, Uint16 y, Uint16 flamesize) const;
 		Bomb* bomb_mega(Uint16 x, Uint16 y, Uint16 flamesize) const;
 		Presumption* presumption(Uint16 x, Uint16 y) const;
+
+		void draw_panel_player(SDL_Surface * window,
+			Uint16 player_num, Uint16 flames, Uint16 bombs,
+			Uint16 megabombs, bool slider, bool kicker);
+		void draw_panel_bonus(SDL_Surface * window,
+			Uint16 player_num, BONUSES bonus,
+			const std::string & val = "");
+
+		enum BONUSES { MEGABOMB, SHIELD, ILLNESS, TIMER, FIREMAN, SLIDER, KICKER };
+		#define GAMETOOLS_BONUSES_NAMES \
+		{ "megabomb", "shield", "illness", "timer", "fireman", "slider","kicker" }
+		#define GAMETOOLS_BONUSES_COUNT 7
+		#define GAMETOOLS_BONUSES_FONT_SIZE 10
 	private:
 		void load_flame_(TiXmlElement *flameEl, const Surface & sur_src);
 		void load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src);
+		void load_panels_(TiXmlElement *panelsEl, const Surface & sur_src);
+		void load_bonuses_(TiXmlElement *bonusesEl, const Surface & sur_src);
 
 		Uint16 flame_period_;
 		Animation flame_top_, flame_bottom_, flame_topbottom_,
 			flame_left_, flame_right_, flame_leftright_, flame_cross_;
 		Animation bomb_normal_, bomb_mega_;
 		Animation presumption_;
-		// TODO panels, bonuses
+
+		Surface panel_pl1_, panel_pl2_, panel_pl3_, panel_pl4_;
+
+		typedef struct { Surface sur; Uint16 x,y; } positioned_surface_t;
+		std::vector< positioned_surface_t > panels_;
+		std::vector< positioned_surface_t > bonuses_;
 };
 
 #endif

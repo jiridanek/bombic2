@@ -4,6 +4,7 @@
 #include "SDL_lib.h"
 #include "stl_helper.h"
 #include "constants.h"
+#include "config.h"
 #include "game.h"
 #include "game_mapobjects.h"
 #include "game_AI.h"
@@ -520,18 +521,20 @@ AI_fromKeyboard::AI_fromKeyboard(Creature *creature): AI(creature) {
 
 void AI_fromKeyboard::move() {
 	Player * player = static_cast<Player *>(creature_);
+	Game * game = Game::get_instance();
+	Config * config = Config::get_instance();
 	// update pozic pro pohyb jako bych byl otoceny nahoru
 	DIRECTION cur_d = player->d_;
 	player->d_ = UP;
 	updatePositions();
 	// souradnice v polickach
-	Uint16 x,y;
+	Uint16 x, y, num = player->player_num();
 
-	if(keystate_[player->key_up_]){
+	if(keystate_[config->player(num, KEY_UP)]){
 		player->d_ = UP;
 		x=positions_[1].x/CELL_SIZE; y=positions_[1].y/CELL_SIZE;
-		if(Game::get_instance()->field_canGoOver(x, y, false)){
-			if(!Game::get_instance()->field_canGoOver(x, y-1, true)
+		if(game->field_canGoOver(x, y, false)){
+			if(!game->field_canGoOver(x, y-1, true)
 			&& positions_[1].y%CELL_SIZE<CELL_SIZE/2){
 				positions_[1].y =y*CELL_SIZE+CELL_SIZE/2;
 			}
@@ -539,33 +542,33 @@ void AI_fromKeyboard::move() {
 				setPosition(positions_[1]);
 		}
 	}
-	else if(keystate_[player->key_right_]){
+	else if(keystate_[config->player(num, KEY_RIGHT)]){
 		player->d_ = RIGHT;
 		x=positions_[2].x/CELL_SIZE; y=positions_[2].y/CELL_SIZE;
-		if(Game::get_instance()->field_canGoOver(x, y, false)){
-			if(!Game::get_instance()->field_canGoOver(x+1, y, true)
+		if(game->field_canGoOver(x, y, false)){
+			if(!game->field_canGoOver(x+1, y, true)
 			&& positions_[2].x%CELL_SIZE>CELL_SIZE/2)
 				positions_[2].x =x*CELL_SIZE+CELL_SIZE/2;
 			if(positions_[2].x>positions_[0].x)
 				setPosition(positions_[2]);
 		}
 	}
-	else if(keystate_[player->key_down_]){
+	else if(keystate_[config->player(num, KEY_DOWN)]){
 		player->d_ = DOWN;
 		x=positions_[3].x/CELL_SIZE; y=positions_[3].y/CELL_SIZE;
-		if(Game::get_instance()->field_canGoOver(x, y, false)){
-			if(!Game::get_instance()->field_canGoOver(x, y+1, true)
+		if(game->field_canGoOver(x, y, false)){
+			if(!game->field_canGoOver(x, y+1, true)
 			&& positions_[3].y%CELL_SIZE>CELL_SIZE/2)
 				positions_[3].y =y*CELL_SIZE+CELL_SIZE/2;
 			if(positions_[3].y>positions_[0].y)
 				setPosition(positions_[3]);
 		}
 	}
-	else if(keystate_[player->key_left_]){
+	else if(keystate_[config->player(num, KEY_LEFT)]){
 		player->d_ = LEFT;
 		x=positions_[4].x/CELL_SIZE; y=positions_[4].y/CELL_SIZE;
-		if(Game::get_instance()->field_canGoOver(x, y, false)){
-			if(!Game::get_instance()->field_canGoOver(x-1, y, true)
+		if(game->field_canGoOver(x, y, false)){
+			if(!game->field_canGoOver(x-1, y, true)
 			&& positions_[4].x%CELL_SIZE<CELL_SIZE/2)
 				positions_[4].x =x*CELL_SIZE+CELL_SIZE/2;
 			if(positions_[4].x<positions_[0].x)
@@ -574,18 +577,17 @@ void AI_fromKeyboard::move() {
 	}
 	else player->d_ = cur_d;
 
-	if(keystate_[player->key_plant_]){
-		Game * game = Game::get_instance();
+	if(keystate_[config->player(num, KEY_PLANT)]){
 		x = player->x_/CELL_SIZE;
 		y = player->y_/CELL_SIZE;
-		if(game->count_bombs(player->player_num())< player->bombs_
+		if(game->count_bombs(num)< player->bombs_
 		&& game->field_canGoOver(x, y, true))
-			game->plant_bomb(player->player_num(), x, y,
+			game->plant_bomb(num, x, y,
 				game->tools->bomb_normal(x, y, player->flamesize_) );
 	}
 
-	if(keystate_[player->key_timer_] && player->next_timer_ < MOVE_PERIOD){
-		Game::get_instance()->explode_bomb(player->player_num());
+	if(keystate_[config->player(num, KEY_TIMER)] && player->next_timer_ < MOVE_PERIOD){
+		game->explode_bomb(num);
 		player->next_timer_ = TIMER_PERIOD;
 	}
 

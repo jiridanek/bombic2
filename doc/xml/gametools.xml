@@ -67,48 +67,48 @@
 		<player4 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
 	</panels>
 	<!-- zmenseniny bonusu zobrazujici se v panelu hry -->
-	<bonuses>
+	<bonuses height="vyska symbolu v pixelech" width="sirska symbolu v pixelech">
 		<megabomb
 			x="souradnice symbolu zobrazovanych v panelu v pixelech"
 			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
+			draw_x="souradnice v panelu, kam se ma symbol vykreslit"
+			draw_y="souradnice v panelu (zleva zhora v pixelech)"
 			/>
 		<shield
 			x="souradnice symbolu zobrazovanych v panelu v pixelech"
 			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
+			draw_x="souradnice v panelu, kam se ma symbol vykreslit"
+			draw_y="souradnice v panelu (zleva zhora v pixelech)"
 			/>
 		<illness
 			x="souradnice symbolu zobrazovanych v panelu v pixelech"
 			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
+			draw_x="souradnice v panelu, kam se ma symbol vykreslit"
+			draw_y="souradnice v panelu (zleva zhora v pixelech)"
 			/>
 		<timer
 			x="souradnice symbolu zobrazovanych v panelu v pixelech"
 			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
+			draw_x="souradnice v panelu, kam se ma symbol vykreslit"
+			draw_y="souradnice v panelu (zleva zhora v pixelech)"
 			/>
 		<slider
 			x="souradnice symbolu zobrazovanych v panelu v pixelech"
 			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
+			draw_x="souradnice v panelu, kam se ma symbol vykreslit"
+			draw_y="souradnice v panelu (zleva zhora v pixelech)"
 			/>
 		<kicker
 			x="souradnice symbolu zobrazovanych v panelu v pixelech"
 			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
+			draw_x="souradnice v panelu, kam se ma symbol vykreslit"
+			draw_y="souradnice v panelu (zleva zhora v pixelech)"
 			/>
 		<fireman
 			x="souradnice symbolu zobrazovanych v panelu v pixelech"
 			y="souradnice symbolu v pixelech"
-			height="vyska symbolu v pixelech"
-			width="sirska symbolu v pixelech"
+			draw_x="souradnice v panelu, kam se ma symbol vykreslit"
+			draw_y="souradnice v panelu (zleva zhora v pixelech)"
 			/>
 	</bonuses>
 </gametools>
