@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
+
 <gametools src="img/gametools.bmp">
 	<!-- obrazek plamene, ruzne smery -->
 	<flame timeperiod="1">

@@ -2,6 +2,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <map>
+#include <utility>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
 #include "stl_helper.h"
@@ -1263,17 +1265,70 @@ Presumption* GameTools::presumption(Uint16 x, Uint16 y) const {
 void GameTools::draw_panel_player(SDL_Surface * window,
 			Uint16 player_num, Uint16 flames, Uint16 bombs,
 			Uint16 megabombs, bool slider, bool kicker){
-	extern g_font;
 	--player_num;
 	// panel
 	draw_surface(panels_[player_num].x, panels_[player_num].y,
 		panels_[player_num].sur.getSurface(), window);
 	// plameny
-	Surface text = get_text(g_font[GAMETOOLS_BONUSES_FONT_SIZE],
-		// TODO
+	Surface text = text_(x2string(flames));
+	draw_surface(
+		panels_[player_num].x + bonuses_[MEGABOMB].x +
+			bonuses_[MEGABOMB].sur.width()*3/2 - text.width()/2,
+		panels_[player_num].y + bonuses_[SHIELD].y +
+			bonuses_[SHIELD].sur.height()/2 - text.height()/2,
+		text.getSurface(), window);
+	// normalni bomby
+	if(!megabombs){
+		text = text_(x2string(bombs));
+		draw_surface(
+			panels_[player_num].x + bonuses_[MEGABOMB].x +
+				bonuses_[MEGABOMB].sur.width()*3/2 - text.width()/2,
+			panels_[player_num].y + bonuses_[MEGABOMB].y +
+				bonuses_[MEGABOMB].sur.height()/2 - text.height()/2,
+			text.getSurface(), window);
+	}
+	// megabomby
+	else draw_panel_bonus(window, player_num, MEGABOMB, x2string(megabombs));
+	// posilani
+	if(slider)
+		draw_panel_bonus(window, player_num, SLIDER);
+	// kopani
+	if(kicker)
+		draw_panel_bonus(window, player_num, KICKER);
 }
-void draw_panel_bonus(SDL_Surface * window,
-			Uint16 player_num, BONUSES bonus, const std::string & val){
+
+void GameTools::draw_panel_bonus(SDL_Surface * window,
+			Uint16 player_num, BONUSES bonus, const std::string & val){
+	// obrazek
+	draw_surface(
+		panels_[player_num].x + bonuses_[bonus].x,
+		panels_[player_num].y + bonuses_[bonus].y,
+		bonuses_[bonus].sur.getSurface(), window);
+	// hodnota
+	if(!val.empty()){
+		Surface text = text_(val);
+		draw_surface(
+			panels_[player_num].x + bonuses_[bonus].x +
+				bonuses_[bonus].sur.width()*3/2 - text.width()/2,
+			panels_[player_num].y + bonuses_[bonus].y +
+				bonuses_[bonus].sur.height()/2 - text.height()/2,
+			text.getSurface(), window);
+	}
+}
+
+const Surface & GameTools::text_(const std::string & text){
+	texts_t::iterator it;
+	it= texts_.find(text);
+	// zjistim jestli uz byl text vytvoren
+	if(it==texts_.end()){
+		extern Fonts g_font;
+		// vytvorim surface
+		Surface sur = get_text( g_font[GAMETOOLS_BONUSES_FONT_SIZE],
+					text.c_str(), Color::white);
+		// a ulozim do mapy
+		it = texts_.insert(it, make_pair(text, sur));
+	}
+	return it->second; // vracim jiz vytvoreny text
 }
 
 /************** END OF class GameTools ******************************/

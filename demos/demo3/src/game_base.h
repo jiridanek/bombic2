@@ -14,6 +14,7 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <map>
 #include "SDL_lib.h"
 #include "game_mapobjects.h"
 #include "tixml_helper.h"
@@ -155,18 +156,18 @@ class GameTools: public GameBaseLoader{
 		Bomb* bomb_mega(Uint16 x, Uint16 y, Uint16 flamesize) const;
 		Presumption* presumption(Uint16 x, Uint16 y) const;
 
+		enum BONUSES { MEGABOMB, SHIELD, ILLNESS, TIMER, FIREMAN, SLIDER, KICKER };
+		#define GAMETOOLS_BONUSES_NAMES \
+				{ "megabomb", "shield", "illness", "timer", "fireman", "slider", "kicker" }
+		#define GAMETOOLS_BONUSES_COUNT 7
+		#define GAMETOOLS_BONUSES_FONT_SIZE 10
+
 		void draw_panel_player(SDL_Surface * window,
 			Uint16 player_num, Uint16 flames, Uint16 bombs,
 			Uint16 megabombs, bool slider, bool kicker);
 		void draw_panel_bonus(SDL_Surface * window,
 			Uint16 player_num, BONUSES bonus,
-			const std::string & val = "");
-
-		enum BONUSES { MEGABOMB, SHIELD, ILLNESS, TIMER, FIREMAN, SLIDER, KICKER };
-		#define GAMETOOLS_BONUSES_NAMES \
-		{ "megabomb", "shield", "illness", "timer", "fireman", "slider","kicker" }
-		#define GAMETOOLS_BONUSES_COUNT 7
-		#define GAMETOOLS_BONUSES_FONT_SIZE 10
+			const std::string & val = "");
 	private:
 		void load_flame_(TiXmlElement *flameEl, const Surface & sur_src);
 		void load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src);
@@ -179,11 +180,13 @@ class GameTools: public GameBaseLoader{
 		Animation bomb_normal_, bomb_mega_;
 		Animation presumption_;
 
-		Surface panel_pl1_, panel_pl2_, panel_pl3_, panel_pl4_;
-
 		typedef struct { Surface sur; Uint16 x,y; } positioned_surface_t;
 		std::vector< positioned_surface_t > panels_;
 		std::vector< positioned_surface_t > bonuses_;
+
+		typedef std::map< std::string, Surface > texts_t;
+		texts_t texts_;
+		const Surface & text_(const std::string & text);
 };
 
 #endif
