@@ -11,12 +11,12 @@
 	</player1>
 
 	<player2>
-		<bind key="jmeno klavesy" action="left" />
-		<bind key="jmeno klavesy" action="right" />
-		<bind key="jmeno klavesy" action="up" />
-		<bind key="jmeno klavesy" action="down" />
-		<bind key="jmeno klavesy" action="plant" />
-		<bind key="jmeno klavesy" action="timer" />
+		<bind key="a" action="left" />
+		<bind key="d" action="right" />
+		<bind key="w" action="up" />
+		<bind key="s" action="down" />
+		<bind key="e" action="plant" />
+		<bind key="f" action="timer" />
 	</player2>
 
 	<player3>

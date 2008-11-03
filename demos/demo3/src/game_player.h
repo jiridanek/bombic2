@@ -33,6 +33,10 @@ class Player: public Creature {
 
 		/// Pohyb.
 		virtual bool move();
+		/// Posun animace.
+		virtual void update();
+		/// Vykreslení panelu
+		void drawPanel(SDL_Surface *window);
 		/// Typ objektu je bombic.
 		virtual OBJECT_TYPES type() const { return PLAYER; }
 

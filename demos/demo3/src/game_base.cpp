@@ -50,7 +50,7 @@ void GameBaseLoader::load_subEl_surface_( TiXmlElement *El, const char* name_sub
 	readAttr(El, "y", y);
 
 	// vytvorit surface
-	sur_dst= create_transparent_surface(width, height, true);
+	sur_dst= create_transparent_surface(width, height, false);
 	SDL_Rect rect={ x, y, width, height };
 	SDL_BlitSurface(sur_src.getSurface(), &rect, sur_dst.getSurface(), 0);
 }
@@ -1183,21 +1183,25 @@ void GameTools::load_panels_(TiXmlElement *panelsEl, const Surface & sur_src){
 	// panel hrace 1
 	load_subEl_surface_(panelsEl, "player1", panels_[0].sur,
 			width, height, sur_src);
+	set_transparency(panels_[0].sur.getSurface(), 200);
 	panels_[0].x = 0;
 	panels_[0].y = 0;
 	// panel hrace 2
 	load_subEl_surface_(panelsEl, "player2", panels_[1].sur,
 			width, height, sur_src);
+	set_transparency(panels_[1].sur.getSurface(), 200);
 	panels_[1].x = g_window->w - width;
 	panels_[1].y = g_window->h - height;
 	// panel hrace 3
 	load_subEl_surface_(panelsEl, "player3", panels_[2].sur,
 			width, height, sur_src);
+	set_transparency(panels_[2].sur.getSurface(), 200);
 	panels_[2].x = 0;
 	panels_[2].y = g_window->h - height;
 	// panel hrace 4
 	load_subEl_surface_(panelsEl, "player4", panels_[3].sur,
 			width, height, sur_src);
+	set_transparency(panels_[3].sur.getSurface(), 200);
 	panels_[3].x = g_window->w - width;
 	panels_[3].y = 0;
 }
@@ -1270,7 +1274,7 @@ void GameTools::draw_panel_player(SDL_Surface * window,
 	draw_surface(panels_[player_num].x, panels_[player_num].y,
 		panels_[player_num].sur.getSurface(), window);
 	// plameny
-	Surface text = text_(x2string(flames));
+	Surface text = text_(x2string(flames)+"x");
 	draw_surface(
 		panels_[player_num].x + bonuses_[MEGABOMB].x +
 			bonuses_[MEGABOMB].sur.width()*3/2 - text.width()/2,
@@ -1279,7 +1283,7 @@ void GameTools::draw_panel_player(SDL_Surface * window,
 		text.getSurface(), window);
 	// normalni bomby
 	if(!megabombs){
-		text = text_(x2string(bombs));
+		text = text_(x2string(bombs)+"x");
 		draw_surface(
 			panels_[player_num].x + bonuses_[MEGABOMB].x +
 				bonuses_[MEGABOMB].sur.width()*3/2 - text.width()/2,
@@ -1287,8 +1291,10 @@ void GameTools::draw_panel_player(SDL_Surface * window,
 				bonuses_[MEGABOMB].sur.height()/2 - text.height()/2,
 			text.getSurface(), window);
 	}
+	++player_num;
 	// megabomby
-	else draw_panel_bonus(window, player_num, MEGABOMB, x2string(megabombs));
+	if(megabombs)
+		draw_panel_bonus(window, player_num, MEGABOMB, x2string(megabombs)+"x");
 	// posilani
 	if(slider)
 		draw_panel_bonus(window, player_num, SLIDER);
@@ -1299,6 +1305,7 @@ void GameTools::draw_panel_player(SDL_Surface * window,
 
 void GameTools::draw_panel_bonus(SDL_Surface * window,
 			Uint16 player_num, BONUSES bonus, const std::string & val){
+	--player_num;
 	// obrazek
 	draw_surface(
 		panels_[player_num].x + bonuses_[bonus].x,

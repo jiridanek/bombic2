@@ -90,8 +90,8 @@
 		<shield x="26" y="427"  draw_x="112" draw_y="1" />
 		<illness x="51" y="427" draw_x="112" draw_y="42" />
 		<timer x="76" y="427" draw_x="62" draw_y="42" />
-		<slider x="101" y="427" draw_x="2" draw_y="42" />
-		<kicker x="126" y="427" draw_x="34" draw_y="42" />
+		<slider x="101" y="427" draw_x="2" draw_y="43" />
+		<kicker x="126" y="427" draw_x="38" draw_y="43" />
 		<fireman x="151" y="427" draw_x="112" draw_y="21" />
 	</bonuses>
 </gametools>

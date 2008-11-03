@@ -22,7 +22,7 @@ int main(int argc, char ** argv){
 
 		Config config;
 
-		g_gameIntro.new_game(1, 1);
+		g_gameIntro.new_game(1, 2);
 		g_gameIntro.show_screen();
 
 	}

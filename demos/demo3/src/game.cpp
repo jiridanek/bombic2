@@ -388,7 +388,7 @@ void Game::play(SDL_Surface* window){
 
 /** @details
  * Vykreslí nejdříve objekty pozadí (background, floorobject)
- * následně ostatní.
+ * následně ostatní, až poté panely.
  * @param window surface okna pro vykreslení
  */
 void Game::draw_(SDL_Surface* window){
@@ -423,6 +423,12 @@ void Game::draw_(SDL_Surface* window){
 			}
 		}
 	}
+	// vykreslim panel kazdeho hrace
+	for(Uint16 i=1 ; i<=4 ; ++i){
+		if(players_[i].first)
+			players_[i].first->drawPanel(window);
+	}
+
 }
 
 

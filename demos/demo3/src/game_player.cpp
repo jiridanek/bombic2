@@ -42,3 +42,24 @@ bool Player::move(){
 	return Creature::move();
 }
 
+/** @details
+ * Posune animaci.
+ * Obnoví stav všech bonusů, které vlastní.
+ * Ty, které už nemají působit zruší.
+ * @see Creature::update()
+ */
+void Player::update(){
+	Creature::update();
+	// TODO update all my bonuses
+}
+
+/** @details
+ * Vykreslí svůj panel a všechny svoje bonusy a jejich hodnoty do něj.
+ * @param window surface okna pro vykreslení
+ */
+void Player::drawPanel(SDL_Surface *window){
+	Game * game = Game::get_instance();
+	game->tools->draw_panel_player(
+		window, num_, flamesize_, bombs_ - game->count_bombs(num_),
+		0, false, false);
+}
