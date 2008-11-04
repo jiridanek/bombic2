@@ -30,6 +30,8 @@ class Player: public Creature {
 			Uint16 speed, Uint16 lives, Uint16 num);
 		/// Okopíruje hráče.
 		Player(const Player & player, Uint16 x, Uint16 y);
+		/// Zjistí, zda je hráč na stejné pozici.
+		bool operator==(const Player & player) const;
 
 		/// Pohyb.
 		virtual bool move();

@@ -14,8 +14,6 @@
 #include "SDL_lib.h"
 #include "game_base.h"
 #include "game_mapobjects.h"
-// #include "tixml_helper.h"
-
 
 class Player;
 class Bomb;

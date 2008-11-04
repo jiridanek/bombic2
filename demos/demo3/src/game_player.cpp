@@ -22,9 +22,23 @@ Player::Player(const Animation & anim_up, const Animation & anim_right,
 	d_ = DOWN;
 }
 
+/** @details
+ * @param player hráč, jehož položky se mají okopírovat
+ * @param x nové souřadnice středu v pixelech
+ * @param y nové souřadnice středu v pixelech
+ */
 Player::Player(const Player & player, Uint16 x, Uint16 y):
 	Creature(player, x, y), num_(player.num_),
 	flamesize_(player.flamesize_), bombs_(player.bombs_), next_timer_(0) {}
+
+/** @details
+ * @param player hráč pro srovnání
+ * @return Vrací TRUE, pokud mají hráči stejné souřadnice i směr otočení.
+ * Ve hře to znamená, že se překrývají, tudíž spodní není vůbec vidět.
+ */
+bool Player::operator==(const Player & player) const {
+	return x_==player.x_ && y_==player.y_ && d_==player.d_;
+}
 
 /** @details
  * Navíc hlídá, zda ho nesezrala nestvůra.
@@ -62,4 +76,7 @@ void Player::drawPanel(SDL_Surface *window){
 	game->tools->draw_panel_player(
 		window, num_, flamesize_, bombs_ - game->count_bombs(num_),
 		0, false, false);
+	game->tools->draw_panel_player(
+		window, num_+2, flamesize_, bombs_ - game->count_bombs(num_),
+		5, true, true);
 }

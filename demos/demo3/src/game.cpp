@@ -1,13 +1,10 @@
 
 #include <iostream>
-// #include <list>
 #include <vector>
 #include <string>
 #include <utility>
 #include <algorithm>
 #include "SDL_lib.h"
-// #include "tixml_helper.h"
-// #include "stl_helper.h"
 #include "constants.h"
 #include "config.h"
 #include "game.h"
@@ -407,6 +404,7 @@ void Game::draw_(SDL_Surface* window){
 				(*it)->draw(window);
 				++it;
 			}
+			// objekty na policku seradim
 			map_array_[column][field].sort(isUnder);
 		}
 	}
@@ -418,8 +416,21 @@ void Game::draw_(SDL_Surface* window){
 					it!= map_array_[column][field].end() ;
 					++it){
 
-				if(!isBgType(*it))
-					(*it)->draw(window);
+				if(isBgType(*it)) continue;
+
+				// v praxi potrebuju prohodit dva hrace pokud jsou v zakrytu
+				// spodniho vykreslim vzdycky, horniho bud preskocim nebo vykreslim
+				if( (*it)->type() == PLAYER && rand()%2 ){
+					Player * player1 = static_cast<Player *>(*it);
+					// !! jeste nevim jestli player2 je opravdu PLAYER !!
+					--it;
+					Player * player2 = static_cast<Player *>(*it);
+					++it;
+					if(player2->type() == PLAYER && *player1 == *player2)
+						continue;
+				}
+
+				(*it)->draw(window);
 			}
 		}
 	}
