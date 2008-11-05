@@ -188,7 +188,10 @@ void Game::generate_bonuses_(
 	vector< pair<Uint16, Uint16> > fields;
 	vector< pair<Uint16, Uint16> >::iterator field_it;
 
-	Uint16 x, y;
+	list< const MapObject * > bonuses(begin, end);
+	list< const MapObject * >::iterator bonus_it;
+
+	Uint16 x, y, random;
 
 	// zjisteni policek s bednami
 	for(x=0 ; x<map_array_.size() ; ++x){
@@ -201,11 +204,16 @@ void Game::generate_bonuses_(
 		// pocet zbyvajicich volnych policek
 	Uint16 count_fields = fields.size(),
 		// pocet zbyvajicich bonusu k rozdeleni
-		count_bonuses = end-begin;
+		count_bonuses = bonuses.size();
 
 	for(field_it=fields.begin() ; count_fields && count_bonuses ; ++field_it){
-		if(count_bonuses> rand()%count_fields){
-			insert_MO_(*(begin+count_bonuses-1), 1, 1, field_it->first, field_it->second);
+		random = rand();
+		if(count_bonuses> random%count_fields){
+			bonus_it = bonuses.begin();
+			random%=count_bonuses;
+			while(random--) ++bonus_it;
+			insert_MO_(*(bonus_it), 1, 1, field_it->first, field_it->second);
+			bonuses.erase(bonus_it);
 			--count_bonuses;
 		}
 		--count_fields;
@@ -437,7 +445,7 @@ void Game::draw_(SDL_Surface* window){
 	// vykreslim panel kazdeho hrace
 	for(Uint16 i=1 ; i<=4 ; ++i){
 		if(players_[i].first)
-			players_[i].first->drawPanel(window);
+			players_[i].first->draw_panel(window);
 	}
 
 }
@@ -517,6 +525,23 @@ bool Game::field_withObject(Uint16 x, Uint16 y, const isTypeOf & isType){
 	end = map_array_[x][y].end();
 
 	return find_if(begin, end, isType)!=end;
+}
+
+/**
+ * @param x x-ová souřadnice políčka
+ * @param y y-ová souřadnice políčka
+ * @param objectType typ objektu, na který se ptáme
+ * @return Vrací pointer na první objekt splnující náš požadavek,
+ * pokud na zadaném políčku takový objekt není, vrací 0.
+ */
+MapObject * Game::field_getObject(Uint16 x, Uint16 y, const isTypeOf & isType){
+	map_array_t::value_type::value_type::const_iterator begin, end;
+
+	begin = map_array_[x][y].begin();
+	end = map_array_[x][y].end();
+
+	return (begin = find_if(begin, end, isType))!=end
+		? *begin : 0;
 }
 
 /** @details

@@ -106,27 +106,34 @@ class GameBase: public GameBaseLoader {
 		void insert_floorobject_(const Animation & anim,
 				Uint16 x, Uint16 y, Uint16 w, Uint16 h);
 		/// Pouze vytvoření bedny.
-		void insert_box_(const Animation & anim, const Animation & sur_burning,
+		void insert_box_(
+				const Animation & anim, const Animation & sur_burning,
 				Uint16 toplapping);
 		/// Vytvoření a vložení bedny do mapy.
-		void insert_box_(const Animation & anim, const Animation & sur_burning,
+		void insert_box_(
+				const Animation & anim, const Animation & sur_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y, Uint16 w, Uint16 h);
 		/// Pouze vytvoření bonusu.
-		void insert_bonus_(const Animation & anim);
+		void insert_bonus_(const std::string & bonus_name,
+				const Animation & anim);
 		/// Pouze vytvoření příšery.
-		void insert_creature_(const Animation & anim_up, const Animation & anim_right,
-			const Animation & anim_down, const Animation & anim_left,
-			const Animation & anim_burned, Uint16 speed, Uint16 lives, Uint16 ai);
+		void insert_creature_(
+				const Animation & anim_up, const Animation & anim_right,
+				const Animation & anim_down, const Animation & anim_left,
+				const Animation & anim_burned,
+				Uint16 speed, Uint16 lives, Uint16 ai);
 		/// Vytvoření a vložení příšery do mapy.
-		void insert_creature_(const Animation & anim_up, const Animation & anim_right,
-			const Animation & anim_down, const Animation & anim_left,
-			const Animation & anim_burned, Uint16 x, Uint16 y,
-			Uint16 speed, Uint16 lives, Uint16 ai);
+		void insert_creature_(
+				const Animation & anim_up, const Animation & anim_right,
+				const Animation & anim_down, const Animation & anim_left,
+				const Animation & anim_burned, Uint16 x, Uint16 y,
+				Uint16 speed, Uint16 lives, Uint16 ai);
 		/// Vytvoření a vložení hráče do mapy.
-		void insert_player_(const Animation & anim_up, const Animation & anim_right,
-			const Animation & anim_down, const Animation & anim_left,
-			const Animation & anim_burned, Uint16 x, Uint16 y,
-			Uint16 speed, Uint16 lives, Uint16 num);
+		void insert_player_(
+				const Animation & anim_up, const Animation & anim_right,
+				const Animation & anim_down, const Animation & anim_left,
+				const Animation & anim_burned, Uint16 x, Uint16 y,
+				Uint16 speed, Uint16 lives, Uint16 num);
 		/// Vyhození nulových pointerů z base_array_.
 		void clear_null_objects_();
 		/// Odalokování všech zde vytvořených objektů.
@@ -156,9 +163,9 @@ class GameTools: public GameBaseLoader{
 		Bomb* bomb_mega(Uint16 x, Uint16 y, Uint16 flamesize) const;
 		Presumption* presumption(Uint16 x, Uint16 y) const;
 
-		enum BONUSES { MEGABOMB, SHIELD, ILLNESS, TIMER, FIREMAN, SLIDER, KICKER };
+		enum BONUSES { MEGABOMB, TIMER, SHIELD, ILLNESS, FIREMAN, SLIDER, KICKER };
 		#define GAMETOOLS_BONUSES_NAMES \
-				{ "megabomb", "shield", "illness", "timer", "fireman", "slider", "kicker" }
+				{ "megabomb", "timer", "shield", "illness", "fireman", "slider", "kicker" }
 		#define GAMETOOLS_BONUSES_COUNT 7
 		#define GAMETOOLS_BONUSES_FONT_SIZE 10
 

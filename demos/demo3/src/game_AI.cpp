@@ -580,10 +580,23 @@ void AI_fromKeyboard::move() {
 	if(keystate_[config->player(num, KEY_PLANT)]){
 		x = player->x_/CELL_SIZE;
 		y = player->y_/CELL_SIZE;
-		if(game->count_bombs(num)< player->bombs_
-		&& game->field_canGoOver(x, y, true))
-			game->plant_bomb(num, x, y,
-				game->tools->bomb_normal(x, y, player->flamesize_) );
+		isTypeOf isBlocked(WALL);
+		isBlocked.addType(BOX).addType(BOMB).addType(FLAME);
+		if(!game->field_withObject(x, y, isBlocked)){
+			Bomb * bomb =0;
+			if(player->bonus_fireman_){
+				bomb = game->tools->bomb_normal(x, y, 1);
+				bomb->explode();
+			}
+			else if(player->megabombs_){
+				bomb = game->tools->bomb_mega(x, y, player->flamesize_);
+				--player->megabombs_;
+			}
+			else if(game->count_bombs(num)< player->bombs_)
+				bomb = game->tools->bomb_normal(x, y, player->flamesize_);
+			if(bomb)
+				game->plant_bomb(num, x, y, bomb);
+		}
 	}
 
 	if(keystate_[config->player(num, KEY_TIMER)] && player->next_timer_ < MOVE_PERIOD){
@@ -591,5 +604,4 @@ void AI_fromKeyboard::move() {
 		player->next_timer_ = TIMER_PERIOD;
 	}
 
-	// TODO timer
 }

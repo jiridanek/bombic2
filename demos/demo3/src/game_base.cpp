@@ -695,21 +695,22 @@ void GameBase::load_nocreatures_(TiXmlElement *nocreaturesEl){
  * @param bonusEl element v XML souboru specifikující bonus
  */
 void GameBase::load_bonuses_(TiXmlElement *bonusEl){
-	string filename;
+	string filename, bonus_name;
 	Uint16 count;
 
 	Surface sur_src;
 	Animation anim;
 
-	vector< Animation > bonuses;
-	vector< Animation >::iterator it;
+// 	vector< Animation > bonuses;
+// 	vector< Animation >::iterator it;
 
 	TiXmlDocument doc;
 	TiXmlElement *rootEl;
 	try{
 		while(bonusEl){
 			try{
-				readAttr(bonusEl, "name", filename);
+				readAttr(bonusEl, "name", bonus_name);
+				filename = bonus_name;
 				readAttr(bonusEl, "count", count);
 			}
 			catch(const string & s){
@@ -722,7 +723,7 @@ void GameBase::load_bonuses_(TiXmlElement *bonusEl){
 			load_subEl_animation_(rootEl, "img", anim, sur_src);
 			// do seznamu nezarazenych bonusu pridam bonus count krat
 			while(count--){
-				insert_bonus_(anim);
+				insert_bonus_(bonus_name, anim);
 			}
 			bonusEl= bonusEl->NextSiblingElement("bonuses");
 		}
@@ -945,11 +946,13 @@ void GameBase::insert_box_(const Animation & anim, const Animation & anim_burnin
 
 /** @details
  * Vytvoří bonus a vloží ho do seznamu pro pozdější náhodné vygenerování.
+ * @param bonus_name jméno bonusu v XML
  * @param anim animace vkládaného bonusu (do mapy)
  */
-void GameBase::insert_bonus_(const Animation & anim){
+void GameBase::insert_bonus_(const std::string & bonus_name,
+					const Animation & anim){
 	// vytvorit
-	MapObject* new_obj = new Bonus(anim, 0, 0);
+	MapObject* new_obj = new Bonus(bonus_name, anim, 0, 0);
 	// ulozit do seznamu generovanych objektu
 	generatedMOs_.push_back( new_obj);
 }
@@ -966,7 +969,8 @@ void GameBase::insert_bonus_(const Animation & anim){
  * @param lives počet životů
  * @param ai kvalita umělé inteligence
  */
-void GameBase::insert_creature_(const Animation & anim_up, const Animation & anim_right,
+void GameBase::insert_creature_(
+			const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 speed, Uint16 lives, Uint16 ai){
 	// vytvorit
@@ -990,7 +994,8 @@ void GameBase::insert_creature_(const Animation & anim_up, const Animation & ani
  * @param lives počet životů
  * @param ai kvalita umělé inteligence
  */
-void GameBase::insert_creature_(const Animation & anim_up, const Animation & anim_right,
+void GameBase::insert_creature_(
+			const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives, Uint16 ai){
@@ -1023,7 +1028,8 @@ void GameBase::insert_creature_(const Animation & anim_up, const Animation & ani
  * @param lives počet životů
  * @param num číslo (pořadí) hráče
  */
-void GameBase::insert_player_(const Animation & anim_up, const Animation & anim_right,
+void GameBase::insert_player_(
+			const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives, Uint16 num){

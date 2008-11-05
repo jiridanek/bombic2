@@ -6,6 +6,7 @@
 #define GAME_PLAYER_H
 
 #include <iostream>
+#include <list>
 #include "SDL_lib.h"
 #include "game.h"
 #include "game_mapobjects.h"
@@ -14,7 +15,7 @@
 /// Doba mezi odpaly.
 #define TIMER_PERIOD 300
 
-class AI; // forward declaration
+class BonusApplication;
 
 /** Postava Bombiče.
  * Dynamický objekt, který vytváří bomby,
@@ -22,6 +23,16 @@ class AI; // forward declaration
  */
 class Player: public Creature {
 	friend class AI_fromKeyboard;
+	friend class BonusApplication;
+	friend class BonusFlame;
+	friend class BonusBomb;
+	friend class BonusMegabomb;
+	friend class BonusKicker;
+	friend class BonusSlider;
+	friend class BonusTimer;
+	friend class BonusShield;
+	friend class BonusFireman;
+
 	public:
 		/// Vytvoří bombiče.
 		Player(const Animation & anim_up, const Animation & anim_right,
@@ -38,11 +49,11 @@ class Player: public Creature {
 		/// Posun animace.
 		virtual void update();
 		/// Vykreslení panelu
-		void drawPanel(SDL_Surface *window);
+		void draw_panel(SDL_Surface *window);
 		/// Typ objektu je bombic.
 		virtual OBJECT_TYPES type() const { return PLAYER; }
 
-		virtual ~Player() {};
+		virtual ~Player();
 
 		/// Číslo hráče.
 		Uint16 player_num() const { return num_; }
@@ -50,7 +61,14 @@ class Player: public Creature {
 		Uint16 num_, ///< Číslo hráče.
 			flamesize_, ///< Velikost plamene.
 			bombs_, ///< Počet bomb.
+			megabombs_, ///< Počet megabomb.
 			next_timer_; ///< Doba do dalšího odpalu.
+		bool bonus_kicker_, ///< Má kopání.
+			bonus_slider_, ///< Má posílání.
+			bonus_fireman_; ///< Má firemana.
+
+		typedef std::list< BonusApplication * > bonuses_t;
+		bonuses_t bonuses_;
 };
 
 #endif

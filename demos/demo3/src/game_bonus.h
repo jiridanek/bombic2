@@ -6,6 +6,7 @@
 #define GAME_BONUS_H
 
 #include <iostream>
+#include <string>
 #include "SDL_lib.h"
 #include "game.h"
 #include "game_mapobjects.h"
@@ -18,7 +19,8 @@
 class Bonus: public DynamicMO{
 	public:
 		/// Vytvoří bonus.
-		Bonus(const Animation & anim, Uint16 x, Uint16 y);
+		Bonus(const std::string & bonus_name,
+				const Animation & anim, Uint16 x, Uint16 y);
 		/// Okopíruje bonus.
 		Bonus(const Bonus & bonus, Uint16 x, Uint16 y);
 		/// Obnova stavu.
@@ -36,6 +38,8 @@ class Bonus: public DynamicMO{
 		Animation anim_;
 		/// Je-li vidět.
 		bool visible_;
+		/// Jméno bonusu.
+		std::string bonus_name_;
 };
 
 #endif

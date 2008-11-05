@@ -52,6 +52,8 @@ class Game {
 // 		bool field_canFlyOver(Uint16 x, Uint16 y);
 		/// Na políčku je typ objektu.
 		bool field_withObject(Uint16 x, Uint16 y, const isTypeOf & isType);
+		/// První objekt zadaného typu.
+		MapObject * field_getObject(Uint16 x, Uint16 y, const isTypeOf & isType);
 
 		/// Vyhození objektu z mapy.
 		void remove_object(DynamicMO * obj);

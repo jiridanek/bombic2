@@ -15,8 +15,8 @@
 		<bind key="d" action="right" />
 		<bind key="w" action="up" />
 		<bind key="s" action="down" />
-		<bind key="e" action="plant" />
-		<bind key="f" action="timer" />
+		<bind key="tab" action="plant" />
+		<bind key="left shift" action="timer" />
 	</player2>
 
 	<player3>

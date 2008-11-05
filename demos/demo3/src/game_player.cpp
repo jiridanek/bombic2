@@ -7,6 +7,7 @@
 #include "game_mapobjects.h"
 #include "game_player.h"
 #include "game_AI.h"
+#include "game_bonus_application.h"
 
 
 /**
@@ -17,7 +18,8 @@ Player::Player(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 lives, Uint16 num):
 	Creature(anim_up, anim_right, anim_down, anim_left, anim_burned, x, y, speed, lives, -1),
-	num_(num), flamesize_(3), bombs_(3), next_timer_(0){
+	num_(num), flamesize_(3), bombs_(3), megabombs_(0), next_timer_(0),
+	bonus_kicker_(false), bonus_slider_(false), bonus_fireman_(false){
 
 	d_ = DOWN;
 }
@@ -29,7 +31,15 @@ Player::Player(const Animation & anim_up, const Animation & anim_right,
  */
 Player::Player(const Player & player, Uint16 x, Uint16 y):
 	Creature(player, x, y), num_(player.num_),
-	flamesize_(player.flamesize_), bombs_(player.bombs_), next_timer_(0) {}
+	flamesize_(player.flamesize_), bombs_(player.bombs_),
+	megabombs_(0), next_timer_(0),
+	bonus_kicker_(false), bonus_slider_(false), bonus_fireman_(false) {}
+
+Player::~Player(){
+	bonuses_t::iterator it;
+	for(it = bonuses_.begin() ; it!=bonuses_.end() ; ++it)
+		delete *it;
+}
 
 /** @details
  * @param player hráč pro srovnání
@@ -49,6 +59,7 @@ bool Player::move(){
 	// zmensime dobu dalsiho odpalu
 	if(next_timer_ >= MOVE_PERIOD)
 		next_timer_ -= MOVE_PERIOD;
+
 	// prisery zabijeji
 	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, CREATURE))
 		die();
@@ -64,19 +75,30 @@ bool Player::move(){
  */
 void Player::update(){
 	Creature::update();
-	// TODO update all my bonuses
+
+	bonuses_t::iterator it;
+	for(it = bonuses_.begin() ; it!=bonuses_.end() ; ++it){
+		if((*it)->update()){
+			delete *it;
+			*it = 0;
+		}
+	}
+	bonuses_.remove(0);
 }
 
 /** @details
  * Vykreslí svůj panel a všechny svoje bonusy a jejich hodnoty do něj.
  * @param window surface okna pro vykreslení
  */
-void Player::drawPanel(SDL_Surface *window){
+void Player::draw_panel(SDL_Surface *window){
 	Game * game = Game::get_instance();
+	// vykreslit svuj panel
 	game->tools->draw_panel_player(
 		window, num_, flamesize_, bombs_ - game->count_bombs(num_),
-		0, false, false);
-	game->tools->draw_panel_player(
-		window, num_+2, flamesize_, bombs_ - game->count_bombs(num_),
-		5, true, true);
+		megabombs_, bonus_slider_, bonus_kicker_);
+	// do nej svoje bonusy
+	bonuses_t::iterator it;
+	for(it = bonuses_.begin() ; it!=bonuses_.end() ; ++it){
+		(*it)->draw_panel(window);
+	}
 }
