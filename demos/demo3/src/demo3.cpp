@@ -18,11 +18,11 @@ int main(int argc, char ** argv){
 
 	int return_val=0;
 	try {
-		window_init(&g_window, 400, 300, "Bombic2 - Demo 3");
+		window_init(&g_window, 3*400, 3*300, "Bombic2 - Demo 3");
 
 		Config config;
 
-		g_gameIntro.new_game(1, 1);
+		g_gameIntro.new_game(1, 2);
 		g_gameIntro.show_screen();
 
 	}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<creature name="player1" src="img/player_1.bmp" shadow_src="img/player_s.bmp"
-		height="70"	width="50" speed="10" lives="2" intelligence="0">
+<creature name="player1" src="img/player1.bmp" shadow_src="img/player_s.bmp"
+		height="70"	width="50" speed="10" lives="2" intelligence="5">
 	<!-- specifikace smeru -->
 	<up x="1" y="143" shadow_x="1" shadow_y="143" >
 		<animation rate="10" >

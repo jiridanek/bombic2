@@ -61,10 +61,10 @@
 	<!-- obrazky zobrazovacich panelu jednotlivych bombicu -->
 	<!-- rozmery a souradnice v pixelech -->
 	<panels height="vyska panelu v pixelech" width="sirska panelu v pixelech">
+		<player0 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
 		<player1 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
 		<player2 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
 		<player3 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
-		<player4 x="souradnice obrazku panelu ve zdroji" y="souradnice v pixelech" />
 	</panels>
 	<!-- zmenseniny bonusu zobrazujici se v panelu hry -->
 	<bonuses height="vyska symbolu v pixelech" width="sirska symbolu v pixelech">

@@ -5,12 +5,12 @@
 	>
 	<!-- pro kazdeho hrace jeden tag playerN -->
 	<!-- pouze prenositelne bonusy -->
-	<player1 	lives="pocet zivotu"
+	<player0 	lives="pocet zivotu"
 			bombs="pocet sezbiranych bomb"
 			flames="pocet plaminku"
 			boots="pocet sezbiranych bot"
 			/>
-	<_player2 	lives="pocet zivotu"
+	<_player1 	lives="pocet zivotu"
 			bombs="pocet sezbiranych bomb"
 			flames="pocet plaminku"
 			boots="pocet sezbiranych bot"

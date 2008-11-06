@@ -44,13 +44,19 @@ Game::Game(const GameBase & base, GameTools * gameTools):
 		throw string("in Game constructor: another Game instance created.");
 	myself_ptr_ = this;
 	// pripravit prostor pro ctyry hrace
-	for(Uint16 i=1; i<=4 ; ++i){
-		players_[i].first= 0;
-	}
+	bombs_t empty_bombs;
+	players_.insert(players_.end(), 4,
+			pair<Player* , bombs_t>::pair(0, empty_bombs));
 	// zkusit nahrat umistene a vygenerovat ostatni objekty
 	try{
 		load_placed_MOs_(base.base_array_);
 		load_generated_MOs_(base);
+
+		// vyhodit nezarazene hrace
+		for(Uint16 i=0 ; i<players_.size() ; ++i){
+			if(players_[i].first) continue;
+			players_.erase(players_.begin()+i, players_.end());
+		}
 	}
 	catch(...){
 		myself_ptr_ = 0;
@@ -380,13 +386,9 @@ void Game::play(SDL_Surface* window){
 		}
 		last_time = this_time;
 
-		// zbyvaji nejaci hraci?
-		for(Uint16 i=4 ; !at_end ; --i){
-			if(i==0) at_end=true;
-			else if(players_[i].first) break;
-		}
-		// zbyvaji nejake prisery?
-		if(!remaining_creatures_)
+		// zbyvaji nejaci hraci nebo prisery?
+		// TODO deatchmatch
+		if(!players_.size() || !remaining_creatures_)
 			at_end=true;
 	}
 }
@@ -400,6 +402,7 @@ void Game::draw_(SDL_Surface* window){
 	Uint16 column, field;
 	map_array_t::value_type::value_type::iterator it, end_it;
 	isTypeOf isBgType;
+
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
 	isBgType.addType(BACKGROUND).addType(FLOOROBJECT);
@@ -442,10 +445,9 @@ void Game::draw_(SDL_Surface* window){
 			}
 		}
 	}
-	// vykreslim panel kazdeho hrace
-	for(Uint16 i=1 ; i<=4 ; ++i){
-		if(players_[i].first)
-			players_[i].first->draw_panel(window);
+	// vykreslim mapu s panelem kazdemu hraci
+	for(Uint16 i=0 ; i< players_.size() ; ++i){
+		players_[i].first->draw_panel(window);
 	}
 
 }
@@ -571,19 +573,22 @@ void Game::remove_object(DynamicMO * obj){
 	}
 	// vyhodim obj ze seznamu dynamickych objektu
 	dynamicMOs_.remove(obj);
+	// jeste provedu akce zavisle na typu objektu
 	switch(obj->type()){
 		case CREATURE:
+			// snizit pocet zbyvajicich priser
 			--remaining_creatures_;
 			break;
 		case PLAYER:
 			// zahodit hrace ze seznamu hrajicich
-			players_[static_cast<Player *>(obj)->player_num()].first=0;
+			players_.erase(players_.begin()+
+				static_cast<Player *>(obj)->player_num() );
 			break;
 		case BOMB:
 			// vyhodit bombu ze seznamu hrace
-			for(Uint16 player_num=1 ; player_num<=4 ; ++player_num){
-				players_[player_num].second.
-					remove(static_cast<Bomb *>(obj));
+			for(Uint16 i=0 ; i< players_.size() ; ++i){
+				players_[i].second.remove(
+					static_cast<Bomb *>(obj) );
 			}
 			break;
 		default: ;

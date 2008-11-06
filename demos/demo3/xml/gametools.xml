@@ -79,10 +79,10 @@
 	<!-- obrazky zobrazovacich panelu jednotlivych bombicu -->
 	<!-- rozmery a souradnice v pixelech -->
 	<panels height="68" width="163">
-		<player1 x="1" y="358" />
-		<player2 x="1" y="289" />
-		<player3 x="165" y="358" />
-		<player4 x="165" y="289" />
+		<player0 x="1" y="358" />
+		<player1 x="1" y="289" />
+		<player2 x="165" y="358" />
+		<player3 x="165" y="289" />
 	</panels>
 	<!-- zmenseniny bonusu zobrazujici se v panelu hry -->
 	<bonuses height="24" width="24">

@@ -137,6 +137,7 @@ SDL_Surface* GameBaseLoader::load_src_surface_(TiXmlElement *El,
  */
 GameBase::GameBase(Uint16 players_count, const std::string & mapname){
 // 	bool deathmatch, bool creatures, bool bombsatend){
+	players_.insert(players_.end(), players_count, 0);
 	load_map_(players_count, mapname);
 }
 
@@ -330,7 +331,7 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 	TiXmlDocument doc;
 	TiXmlElement *rootEl;
 	try{
-		for( ; count>0 ; --count ){
+		while( count-- ){
 			filename = "player"+x2string(count);
 			// nacteni hrace
 			rootEl = TiXmlRootElement(doc, filename, "creature", true);
@@ -1038,12 +1039,11 @@ void GameBase::insert_player_(
 		return;
 
 	// vytvorit
-	proportionedMO_t new_obj= {
-		new Player(
+	players_[num] = new Player(
 			anim_up, anim_right, anim_down, anim_left, anim_burned,
 			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
-			speed, lives, num),
-		1, 1 };
+			speed, lives, num);
+	proportionedMO_t new_obj= { players_[num], 1, 1 };
 
 	base_array_[x][y].push_back( new_obj);
 	// zakazu generovani na policka okolo
@@ -1123,16 +1123,19 @@ void GameBase::destroy_(){
  */
 void GameBase::set_player(Uint16 player_num, Uint16 lives,
 	Uint16 bombs, Uint16 flames, Uint16 boots){
+	// TODO
+
 }
 
 /*************** END OF class GameBase ******************************/
 
 /******************* class GameTools ******************************/
 
-GameTools::GameTools(){
+GameTools::GameTools(Uint16 players_count){
 	positioned_surface_t empty_positioned_sur = {0, 0, 0};
 	// pripravim seznam pro pozicovane obrazky
-	panels_.insert(panels_.end(), 4, empty_positioned_sur);
+	panels_.insert(panels_.end(),
+		players_count, empty_positioned_sur);
 	bonuses_.insert(bonuses_.end(),
 		GAMETOOLS_BONUSES_COUNT, empty_positioned_sur);
 
@@ -1149,7 +1152,7 @@ GameTools::GameTools(){
 		// nacteni bomb
 		load_bombs_(subElement(root_el, "bombs"), sur_src);
 		// nacteni panelu
-		load_panels_(subElement(root_el, "panels"), sur_src);
+		load_panels_(subElement(root_el, "panels"), players_count, sur_src);
 		// nacteni zmensenin bonusu
 		load_bonuses_(subElement(root_el, "bonuses"), sur_src);
 	}
@@ -1178,7 +1181,8 @@ void GameTools::load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src){
 }
 
 
-void GameTools::load_panels_(TiXmlElement *panelsEl, const Surface & sur_src){
+void GameTools::load_panels_(TiXmlElement *panelsEl,
+				Uint16 count, const Surface & sur_src){
 	extern SDL_Surface * g_window;
 	if(!g_window) throw string("in GameToolds::load_panels_(): Main window hasn't been created");
 	// sirska vyska
@@ -1186,30 +1190,31 @@ void GameTools::load_panels_(TiXmlElement *panelsEl, const Surface & sur_src){
 	readAttr(panelsEl, "width", width);
 	readAttr(panelsEl, "height", height);
 
-	// panel hrace 1
-	load_subEl_surface_(panelsEl, "player1", panels_[0].sur,
-			width, height, sur_src);
-	set_transparency(panels_[0].sur.getSurface(), 200);
-	panels_[0].x = 0;
-	panels_[0].y = 0;
-	// panel hrace 2
-	load_subEl_surface_(panelsEl, "player2", panels_[1].sur,
-			width, height, sur_src);
-	set_transparency(panels_[1].sur.getSurface(), 200);
-	panels_[1].x = g_window->w - width;
-	panels_[1].y = g_window->h - height;
-	// panel hrace 3
-	load_subEl_surface_(panelsEl, "player3", panels_[2].sur,
-			width, height, sur_src);
-	set_transparency(panels_[2].sur.getSurface(), 200);
-	panels_[2].x = 0;
-	panels_[2].y = g_window->h - height;
-	// panel hrace 4
-	load_subEl_surface_(panelsEl, "player4", panels_[3].sur,
-			width, height, sur_src);
-	set_transparency(panels_[3].sur.getSurface(), 200);
-	panels_[3].x = g_window->w - width;
-	panels_[3].y = 0;
+	string el_name;
+	while( count-- ){
+		el_name = "player"+x2string(count);
+
+		load_subEl_surface_(panelsEl, el_name.c_str(), panels_[count].sur,
+				width, height, sur_src);
+		set_transparency(panels_[count].sur.getSurface(), 200);
+		switch(count){
+			case 0:
+				panels_[0].x = 0;
+				panels_[0].y = 0;
+				break;
+			case 1:
+				panels_[1].x = g_window->w - width;
+				panels_[1].y = g_window->h - height;
+				break;
+			case 2:
+				panels_[2].x = 0;
+				panels_[2].y = g_window->h - height;
+				break;
+			case 3:
+				panels_[3].x = g_window->w - width;
+				panels_[3].y = 0;
+		}
+	}
 }
 
 void GameTools::load_bonuses_(TiXmlElement *bonusesEl, const Surface & sur_src){
@@ -1279,7 +1284,6 @@ Presumption* GameTools::presumption(Uint16 x, Uint16 y) const {
 void GameTools::draw_panel_player(SDL_Surface * window,
 			Uint16 player_num, Uint16 flames, Uint16 bombs,
 			Uint16 megabombs, bool slider, bool kicker){
-	--player_num;
 	// panel
 	draw_surface(panels_[player_num].x, panels_[player_num].y,
 		panels_[player_num].sur.getSurface(), window);
@@ -1301,7 +1305,6 @@ void GameTools::draw_panel_player(SDL_Surface * window,
 				bonuses_[MEGABOMB].sur.height()/2 - text.height()/2,
 			text.getSurface(), window);
 	}
-	++player_num;
 	// megabomby
 	if(megabombs)
 		draw_panel_bonus(window, player_num, MEGABOMB, x2string(megabombs)+"x");
@@ -1315,7 +1318,6 @@ void GameTools::draw_panel_player(SDL_Surface * window,
 
 void GameTools::draw_panel_bonus(SDL_Surface * window,
 			Uint16 player_num, BONUSES bonus, const std::string & val){
-	--player_num;
 	// obrazek
 	draw_surface(
 		panels_[player_num].x + bonuses_[bonus].x,

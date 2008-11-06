@@ -6,6 +6,15 @@
 		sound="1|0"
 		>
 	<!-- pro jmena klaves viz doc/keys.txt -->
+	<player0>
+		<bind key="jmeno klavesy" action="left" />
+		<bind key="jmeno klavesy" action="right" />
+		<bind key="jmeno klavesy" action="up" />
+		<bind key="jmeno klavesy" action="down" />
+		<bind key="jmeno klavesy" action="plant" />
+		<bind key="jmeno klavesy" action="timer" />
+	</player0>
+
 	<player1>
 		<bind key="jmeno klavesy" action="left" />
 		<bind key="jmeno klavesy" action="right" />
@@ -32,15 +41,6 @@
 		<bind key="jmeno klavesy" action="plant" />
 		<bind key="jmeno klavesy" action="timer" />
 	</player3>
-
-	<player4>
-		<bind key="jmeno klavesy" action="left" />
-		<bind key="jmeno klavesy" action="right" />
-		<bind key="jmeno klavesy" action="up" />
-		<bind key="jmeno klavesy" action="down" />
-		<bind key="jmeno klavesy" action="plant" />
-		<bind key="jmeno klavesy" action="timer" />
-	</player4>
 
 	<!-- nejsem si jisty, jestli dokazu najit na disku jen podle toho ze tam jsou
 		soubory s ulezenymi hrami, pokud ano nasledujici definici vyhodit,

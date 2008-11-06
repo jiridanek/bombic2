@@ -82,8 +82,7 @@ void Config::load_properties_(TiXmlElement * rootEl){
 void Config::load_players_(TiXmlElement * rootEl){
 	string el_name, key_name, action_name;
 	TiXmlElement * playerEl;
-	Uint16 num;
-	for(num=1 ; num<=4 ; ++num ){
+	for(Uint16 num=0 ; num<players_.size() ; ++num ){
 		el_name = "player"+x2string(num);
 		playerEl = subElement(rootEl, el_name.c_str());
 		playerEl = subElement(playerEl, "bind");
@@ -100,9 +99,7 @@ void Config::load_players_(TiXmlElement * rootEl){
 /**
  */
 void Config::set_key_action_(Uint16 player_num, KEY_ACTIONS action, SDLKey key){
-	--player_num;
-	if(player_num >= players_.size()
-	|| static_cast<Uint16>(action) >= players_[player_num].size()
+	if( static_cast<Uint16>(action) >= players_[player_num].size()
 	|| key >= SDLK_LAST )
 		return;
 	players_[player_num][action] = key;
@@ -123,9 +120,7 @@ KEY_ACTIONS Config::name2action_(const std::string & name){
 
 
 SDLKey Config::player(Uint16 player_num, KEY_ACTIONS action) const {
-	--player_num;
-	if(player_num >= players_.size()
-	|| static_cast<Uint16>(action) >= players_[player_num].size() )
+	if(static_cast<Uint16>(action) >= players_[player_num].size() )
 		return SDLK_FIRST;
 	return players_[player_num][action];
 }

@@ -62,7 +62,7 @@ void GameIntro::show_screen(){
 /// Inicializace nové hry.
 void GameIntro::new_game(Uint16 episode, Uint16 players){
 	if(!gameTools_)
-		gameTools_ = new GameTools;
+		gameTools_ = new GameTools(players);
 
 	if(gameBase_)
 		delete gameBase_;

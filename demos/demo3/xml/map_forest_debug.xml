@@ -2,10 +2,10 @@
 <map name="map_forest_debug" height="12" width="16" background="bg_forest">
 
 	<players x="1" y="2">
-		<player1 x="1" y="2" />
-		<player2 x="14" y="10" />
-		<player3 x="14" y="2" />
-		<player4 x="1" y="10" />
+		<player0 x="1" y="2" />
+		<player1 x="14" y="10" />
+		<player2 x="14" y="2" />
+		<player3 x="1" y="10" />
 	</players>
 
 	<walls 	name="wall_stone" width="1">

@@ -10,7 +10,6 @@
 #include <list>
 #include <vector>
 #include <string>
-#include <map>
 #include "SDL_lib.h"
 #include "game_base.h"
 #include "game_mapobjects.h"
@@ -131,7 +130,7 @@ class Game {
 		/// Typ seznamu bomb.
 		typedef std::list<Bomb*> bombs_t;
 		/// Pointery na hráče a seznam jejich bomb.
-		std::map<Uint16, std::pair<Player*, bombs_t> > players_;
+		std::vector<std::pair<Player*, bombs_t> > players_;
 };
 
 #endif

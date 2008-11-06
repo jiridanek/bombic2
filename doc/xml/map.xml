@@ -11,10 +11,10 @@
 		v deathmatchi se hraci narodi na souradnicich
 		definovanych v subelementech playerN -->
 	<players x="souradnice v bezne hre" y="souradnice v polickach">
-		<player1 x="souradnice hrace 1 v deathmatchi" y="souradnice v polickach" />
-                <player2 x="souradnice hrace 2 v deathmatchi" y="souradnice v polickach" />
-                <player3 x="souradnice hrace 3 v deathmatchi" y="souradnice v polickach" />
-                <player4 x="souradnice hrace 4 v deathmatchi" y="souradnice v polickach" />
+		<player0 x="souradnice hrace 1 v deathmatchi" y="souradnice v polickach" />
+                <player1 x="souradnice hrace 2 v deathmatchi" y="souradnice v polickach" />
+                <player2 x="souradnice hrace 3 v deathmatchi" y="souradnice v polickach" />
+                <player3 x="souradnice hrace 4 v deathmatchi" y="souradnice v polickach" />
 	</players>
 	<!-- hodnoty neuvedenych atributu se podedi z nadrazeneho tagu -->
 	<!-- atributy height a width maji defaultne hodnotu jedna,

@@ -37,6 +37,8 @@ class GameBaseLoader {
 				const char* attr_name="src", bool force=true);
 };
 
+class Player;
+
 /** Základ hry.
  * Třída GameBase řeší první načtení mapy a jejích objektů z XML,
  * připraví hrací pole a vloží do něj (a nikam jinam) pevně umístěné objekty.
@@ -74,6 +76,8 @@ class GameBase: public GameBaseLoader {
 		Uint16 allowed_boxes_count_;
 		/// Seznam neumístěných objektů.
 		generatedMOs_t generatedMOs_;
+		/// Seznam hráčů.
+		std::vector< Player* > players_;
 
 		/// Načtení mapy pro hru.
 		void load_map_(Uint16 players_count, const std::string & mapname);
@@ -151,7 +155,7 @@ class Presumption;
  */
 class GameTools: public GameBaseLoader{
 	public:
-		GameTools();
+		GameTools(Uint16 players_count);
 		Flame* flame_top(Uint16 x, Uint16 y) const;
 		Flame* flame_bottom(Uint16 x, Uint16 y) const;
 		Flame* flame_topbottom(Uint16 x, Uint16 y) const;
@@ -178,10 +182,14 @@ class GameTools: public GameBaseLoader{
 			Uint16 player_num, BONUSES bonus,
 			const std::string & val = "");
 	private:
-		void load_flame_(TiXmlElement *flameEl, const Surface & sur_src);
-		void load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src);
-		void load_panels_(TiXmlElement *panelsEl, const Surface & sur_src);
-		void load_bonuses_(TiXmlElement *bonusesEl, const Surface & sur_src);
+		void load_flame_(TiXmlElement *flameEl,
+				const Surface & sur_src);
+		void load_bombs_(TiXmlElement *bombsEl,
+				const Surface & sur_src);
+		void load_panels_(TiXmlElement *panelsEl,
+				Uint16 players_count, const Surface & sur_src);
+		void load_bonuses_(TiXmlElement *bonusesEl,
+				const Surface & sur_src);
 
 		Uint16 flame_period_;
 		Animation flame_top_, flame_bottom_, flame_topbottom_,
