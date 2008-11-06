@@ -40,18 +40,18 @@
 		<box x="4" y="5" />
 	</boxes>
 <!---->
-	<bonuses name="bonus_flame" count="5" />
-	<bonuses name="bonus_bomb" count="5" />
+	<bonuses name="bonus_flame" count="1" />
+	<bonuses name="bonus_bomb" count="1" />
 <!-- 	<bonuses name="bonus_illness" count="1" /> -->
-<!-- 	<bonuses name="bonus_speed" count="1" /> -->
-<!-- 	<bonuses name="bonus_timer" count="1" /> -->
-<!-- 	<bonuses name="bonus_megabomb" count="5" /> -->
-<!-- 	<bonuses name="bonus_live" count="1" /> -->
-<!-- 	<bonuses name="bonus_shield" count="1" /> -->
-<!-- 	<bonuses name="bonus_kicker" count="5" /> -->
+	<bonuses name="bonus_speed" count="1" />
+	<bonuses name="bonus_timer" count="10" />
+	<bonuses name="bonus_megabomb" count="1" />
+	<bonuses name="bonus_live" count="1" />
+	<bonuses name="bonus_shield" count="1" />
+	<bonuses name="bonus_kicker" count="1" />
 <!-- 	<bonuses name="bonus_othersillness" count="1" /> -->
-<!-- 	<bonuses name="bonus_slider" count="5" /> -->
-	<bonuses name="bonus_fireman" count="10" />
+	<bonuses name="bonus_slider" count="1" />
+	<bonuses name="bonus_fireman" count="1" />
 <!---->
 	<creatures name="creature_rat" count="0">
 	</creatures>

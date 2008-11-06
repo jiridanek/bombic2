@@ -28,7 +28,8 @@ Creature::Creature(const Animation & anim_up, const Animation & anim_right,
 	anim_up_(anim_up), anim_right_(anim_right), anim_down_(anim_down),
 	anim_left_(anim_left), anim_burned_(anim_burned),
 	d_(static_cast<DIRECTION>(rand()%4)), ai_(AI::new_ai(this, ai)),
-	moved_(false), access_counter_(0), last_die_(0), lives_(lives),
+	moved_(false), access_counter_(0),
+	last_die_(CREATURE_PROTECTION_LENGTH), lives_(lives),
 	// pro zjednoduseni zachazeni s rychlosti
 	speed_diff_((speed-1)/7+1), speed_rate_((speed-1)%7+2+speed_diff_) {}
 
@@ -43,7 +44,8 @@ Creature::Creature(const Creature & creature, Uint16 x, Uint16 y):
 	anim_up_(creature.anim_up_), anim_right_(creature.anim_right_),
 	anim_down_(creature.anim_down_), anim_left_(creature.anim_left_),
 	anim_burned_(creature.anim_burned_), d_(creature.d_), ai_(AI::new_ai(this, creature.ai_)),
-	moved_(false), access_counter_(0), last_die_(0), lives_(creature.lives_),
+	moved_(false), access_counter_(0),
+	last_die_(CREATURE_PROTECTION_LENGTH), lives_(creature.lives_),
 	// pro zjednoduseni zachazeni s rychlosti
 	speed_diff_(creature.speed_diff_), speed_rate_(creature.speed_rate_) {}
 
@@ -95,9 +97,10 @@ bool Creature::move(){
 void Creature::die(){
 	if(last_die_ < CREATURE_PROTECTION_LENGTH)
 		return;
-	last_die_ = 0;
-	if(lives_>1)
+	if(lives_>1){
 		--lives_;
+		last_die_ = 0;
+	}
 	else
 		d_ = BURNED;
 }
@@ -108,6 +111,7 @@ extern Fonts g_font;
  * @param window surface okna pro vykreslení
  */
 void Creature::draw(SDL_Surface *window){
+
 	int x=x_-anim_up_.width()+CELL_SIZE/2;
 	int y=y_-anim_up_.height()+CELL_SIZE/2;
 

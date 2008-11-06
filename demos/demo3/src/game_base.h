@@ -159,8 +159,10 @@ class GameTools: public GameBaseLoader{
 		Flame* flame_right(Uint16 x, Uint16 y) const;
 		Flame* flame_leftright(Uint16 x, Uint16 y) const;
 		Flame* flame_cross(Uint16 x, Uint16 y) const;
-		Bomb* bomb_normal(Uint16 x, Uint16 y, Uint16 flamesize) const;
-		Bomb* bomb_mega(Uint16 x, Uint16 y, Uint16 flamesize) const;
+		Bomb* bomb_normal(Uint16 x, Uint16 y,
+				Uint16 flamesize, bool timer=false) const;
+		Bomb* bomb_mega(Uint16 x, Uint16 y,
+				Uint16 flamesize, bool timer=false) const;
 		Presumption* presumption(Uint16 x, Uint16 y) const;
 
 		enum BONUSES { MEGABOMB, TIMER, SHIELD, ILLNESS, FIREMAN, SLIDER, KICKER };

@@ -10,7 +10,7 @@
 #include <queue>
 #include <utility>
 #include "SDL_lib.h"
-#include "game.h"
+// #include "game.h"
 #include "game_mapobjects.h"
 #include "game_creature.h"
 #include "game_player.h"

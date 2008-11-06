@@ -2,10 +2,12 @@
  * Aplikace bonusu na hráče.
  * Game_bonus_application.h obsahuje třídy obstarávající aplikaci bonusu na hráče.
  * Pro přidání bonusu s jménem NAME je třeba udělat následující kroky:
+ *	* přidat položku NAME do BonusApplication::TYPE
+ *	* přidat do BonusApplication::new_bonus() větev s BonusNAME
  *	* přidat třídu BonusNAME
  *	* implementovat BonusNAME::BonusNAME(Player * player)
  *	* implementovat BonusNAME::name() { return "bonus_NAME"; }
- *	* do BonusApplication::new_bonus() přidat větev s BonusNAME
+ *	* implementovat BonusNAME::type() { return NAME; }
  *	* přidat do třídy Player třídu BonusNAME jako friend
  */
 #ifndef GAME_BONUS_APPLICATION_H
@@ -27,6 +29,9 @@ class BonusApplication {
 		/// Vytvoří instanci bonusu podle jména.
 		static BonusApplication * new_bonus(
 				const std::string & bonus_name, Player * player);
+		/// Typy aplikací bonusů.
+		enum TYPE { EMPTY, FLAME, BOMB, MEGABOMB, KICKER, SLIDER,
+			FIREMAN, TIMER, SHIELD, SPEED, LIVE };
 		/// Constructor.
 		BonusApplication(Player * player);
 		/// Vykreslení do panelu.
@@ -36,6 +41,9 @@ class BonusApplication {
 		/// Jméno bonusu z XML.
 		static const char * name()
 			{ return ""; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return EMPTY; }
 		/// Destructor.
 		virtual ~BonusApplication() {};
 	protected:
@@ -50,6 +58,9 @@ class BonusFlame: public BonusApplication {
 		/// Jméno bonusu z XML.
 		static const char * name()
 			{ return "bonus_flame"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return FLAME; }
 };
 
 class BonusBomb: public BonusApplication {
@@ -59,6 +70,10 @@ class BonusBomb: public BonusApplication {
 		/// Jméno bonusu z XML.
 		static const char * name()
 			{ return "bonus_bomb"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return BOMB; }
+
 };
 
 
@@ -70,6 +85,33 @@ class BonusMegabomb: public BonusApplication {
 		/// Jméno bonusu z XML.
 		static const char * name()
 			{ return "bonus_megabomb"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return MEGABOMB; }
+};
+
+class BonusSpeed: public BonusApplication {
+	public:
+		/// Vytvoření.
+		BonusSpeed(Player * player);
+		/// Jméno bonusu z XML.
+		static const char * name()
+			{ return "bonus_speed"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return SPEED; }
+};
+
+class BonusLive: public BonusApplication {
+	public:
+		/// Vytvoření.
+		BonusLive(Player * player);
+		/// Jméno bonusu z XML.
+		static const char * name()
+			{ return "bonus_live"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return LIVE; }
 };
 
 class BonusKicker: public BonusApplication {
@@ -79,6 +121,9 @@ class BonusKicker: public BonusApplication {
 		/// Jméno bonusu z XML.
 		static const char * name()
 			{ return "bonus_kicker"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return KICKER; }
 };
 
 class BonusSlider: public BonusApplication {
@@ -88,6 +133,30 @@ class BonusSlider: public BonusApplication {
 		/// Jméno bonusu z XML.
 		static const char * name()
 			{ return "bonus_slider"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return SLIDER; }
+};
+
+class BonusShield: public BonusApplication {
+	#define BONUS_SHIELD_PERIODS (20000/MOVE_PERIOD)
+	public:
+		/// Vytvoření.
+		BonusShield(Player * player);
+		/// Vykreslení do panelu.
+		virtual void draw_panel(SDL_Surface *window) const;
+		/// Aktualizace stavu.
+		virtual bool update();
+		/// Jméno bonusu z XML.
+		static const char * name()
+			{ return "bonus_shield"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return SHIELD; }
+		/// Destructor.
+		virtual ~BonusShield();
+	protected:
+		Uint16 remaining_periods_;
 };
 
 class BonusFireman: public BonusApplication {
@@ -102,8 +171,32 @@ class BonusFireman: public BonusApplication {
 		/// Jméno bonusu z XML.
 		static const char * name()
 			{ return "bonus_fireman"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return FIREMAN; }
 		/// Destructor.
 		virtual ~BonusFireman();
+	protected:
+		Uint16 remaining_periods_;
+};
+
+class BonusTimer: public BonusApplication {
+	#define BONUS_TIMER_PERIODS (30000/MOVE_PERIOD)
+	public:
+		/// Vytvoření.
+		BonusTimer(Player * player);
+		/// Vykreslení do panelu.
+		virtual void draw_panel(SDL_Surface *window) const;
+		/// Aktualizace stavu.
+		virtual bool update();
+		/// Jméno bonusu z XML.
+		static const char * name()
+			{ return "bonus_timer"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return TIMER; }
+		/// Destructor.
+		virtual ~BonusTimer();
 	protected:
 		Uint16 remaining_periods_;
 };

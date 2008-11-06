@@ -1257,14 +1257,18 @@ Flame* GameTools::flame_cross(Uint16 x, Uint16 y) const {
 	return new Flame(flame_cross_, x*CELL_SIZE, y*CELL_SIZE, flame_period_);
 }
 
-Bomb* GameTools::bomb_normal(Uint16 x, Uint16 y, Uint16 flamesize) const {
+Bomb* GameTools::bomb_normal(Uint16 x, Uint16 y,
+				Uint16 flamesize, bool timer) const {
 	return new Bomb(bomb_normal_,
-		x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2, flamesize);
+		x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
+		flamesize, timer);
 }
 
-Bomb* GameTools::bomb_mega(Uint16 x, Uint16 y, Uint16 flamesize) const {
+Bomb* GameTools::bomb_mega(Uint16 x, Uint16 y,
+				Uint16 flamesize, bool timer) const {
 	return new Bomb(bomb_mega_,
-		x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2, flamesize*2);
+		x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
+		flamesize*2, timer);
 }
 
 Presumption* GameTools::presumption(Uint16 x, Uint16 y) const {

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <list>
 #include "SDL_lib.h"
-#include "game.h"
+// #include "game.h"
 #include "game_mapobjects.h"
 #include "game_creature.h"
 
@@ -32,6 +32,9 @@ class Player: public Creature {
 	friend class BonusTimer;
 	friend class BonusShield;
 	friend class BonusFireman;
+	friend class BonusSpeed;
+	friend class BonusLive;
+
 
 	public:
 		/// Vytvoří bombiče.
@@ -56,7 +59,14 @@ class Player: public Creature {
 		virtual ~Player();
 
 		/// Číslo hráče.
-		Uint16 player_num() const { return num_; }
+		Uint16 player_num() const
+				{ return num_; }
+		/// Souřadnice X.
+		Uint16 getX() const
+				{ return x_; }
+		/// Souřadnice Y.
+		Uint16 getY() const
+				{ return y_; }
 	private:
 		Uint16 num_, ///< Číslo hráče.
 			flamesize_, ///< Velikost plamene.
@@ -65,6 +75,7 @@ class Player: public Creature {
 			next_timer_; ///< Doba do dalšího odpalu.
 		bool bonus_kicker_, ///< Má kopání.
 			bonus_slider_, ///< Má posílání.
+			bonus_timer_, ///< Má ruční odpalování bomb.
 			bonus_fireman_; ///< Má firemana.
 
 		typedef std::list< BonusApplication * > bonuses_t;

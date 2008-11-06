@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include "SDL_lib.h"
-#include "game.h"
+// #include "game.h"
 #include "game_mapobjects.h"
 
 /** Bomba.
@@ -17,7 +17,8 @@
 class Bomb: public DynamicMO {
 	public:
 		/// Vytvoří bombu.
-		Bomb(const Animation & anim, Uint16 x, Uint16 y, Uint16 flamesize);
+		Bomb(const Animation & anim, Uint16 x, Uint16 y,
+				Uint16 flamesize, bool timer);
 		/// Pohyb.
 		virtual bool move();
 		/// Vykreslení.
@@ -31,11 +32,14 @@ class Bomb: public DynamicMO {
 
 		/// Přinutí bombu k explozi.
 		void explode();
+		/// Odstranění ručního odpalování.
+		void remove_timer();
 	protected:
 		/// Animace.
 		Animation anim_;
-		/// Exploduje-li bomba.
-		bool explodes_;
+
+		bool explodes_, ///< Exploduje-li bomba.
+			timer_; ///< Odpaluje se ručně.
 		/// Velikost plamene.
 		Uint16 flamesize_;
 		/// Seznam presumpcí.

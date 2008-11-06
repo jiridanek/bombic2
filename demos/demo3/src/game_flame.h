@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include "SDL_lib.h"
-#include "game.h"
+// #include "game.h"
 #include "game_mapobjects.h"
 
 

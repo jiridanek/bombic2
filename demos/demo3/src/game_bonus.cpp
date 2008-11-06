@@ -44,6 +44,7 @@ bool Bonus::move(){
 	// necham se spalit
 	if(game->field_withObject(x, y, FLAME))
 		return true;
+	// necham se vzit hracem
 	Player * player = static_cast< Player *>(
 		game->field_getObject(x, y, PLAYER) );
 	if(player){

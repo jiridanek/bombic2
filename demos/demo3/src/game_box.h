@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include "SDL_lib.h"
-#include "game.h"
+// #include "game.h"
 #include "game_mapobjects.h"
 
 /** Bedna.
@@ -38,8 +38,8 @@ class Box: public DynamicMO{
 	private:
 		/// Animace, animace hoření.
 		Animation anim_, anim_burning_;
-		/// Hoří-li.
-		bool burning_;
+		bool burning_, ///< Hoří.
+			burned_; /// Už shořel.
 
 		Uint16 toplapping_, ///< Horní přesah.
 			height_, ///< Výška v políčkách.

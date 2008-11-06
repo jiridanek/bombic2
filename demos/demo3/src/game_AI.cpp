@@ -582,24 +582,29 @@ void AI_fromKeyboard::move() {
 		y = player->y_/CELL_SIZE;
 		isTypeOf isBlocked(WALL);
 		isBlocked.addType(BOX).addType(BOMB).addType(FLAME);
-		if(!game->field_withObject(x, y, isBlocked)){
-			Bomb * bomb =0;
-			if(player->bonus_fireman_){
-				bomb = game->tools->bomb_normal(x, y, 1);
-				bomb->explode();
-			}
-			else if(player->megabombs_){
-				bomb = game->tools->bomb_mega(x, y, player->flamesize_);
+
+		Bomb * bomb =0;
+		if(player->bonus_fireman_  && player->next_timer_ < MOVE_PERIOD){
+			bomb = game->tools->bomb_normal(x, y, 1);
+			bomb->explode();
+			player->next_timer_ = TIMER_PERIOD;
+		}
+		else if(!game->field_withObject(x, y, isBlocked)){
+			if(player->megabombs_){
+				bomb = game->tools->bomb_mega(x, y,
+							player->flamesize_, player->bonus_timer_);
 				--player->megabombs_;
 			}
 			else if(game->count_bombs(num)< player->bombs_)
-				bomb = game->tools->bomb_normal(x, y, player->flamesize_);
-			if(bomb)
-				game->plant_bomb(num, x, y, bomb);
+				bomb = game->tools->bomb_normal(x, y,
+							player->flamesize_, player->bonus_timer_);
 		}
+		if(bomb)
+			game->plant_bomb(num, x, y, bomb);
 	}
 
-	if(keystate_[config->player(num, KEY_TIMER)] && player->next_timer_ < MOVE_PERIOD){
+	if(keystate_[config->player(num, KEY_TIMER)]
+	&& player->bonus_timer_	&& player->next_timer_ < MOVE_PERIOD){
 		game->explode_bomb(num);
 		player->next_timer_ = TIMER_PERIOD;
 	}

@@ -629,6 +629,18 @@ Uint16 Game::count_bombs(Uint16 player_num){
 }
 
 /** @details
+ * Odstraní položeným bombám hráče ruční odpalování.
+ * @param player_num číslo hráče
+ */
+void Game::remove_bombs_timer(Uint16 player_num){
+	bombs_t::iterator it;
+	for(it = players_[player_num].second.begin() ;
+			it != players_[player_num].second.end() ; ++it){
+		(*it)->remove_timer();
+	}
+}
+
+/** @details
  * Nechá vybouchnout první bombu hráče, pokud nějaká je.
  * @param player_num číslo hráče
  * @return Vrací TRUE pokud má hráč položenou alespon jednu bombu.

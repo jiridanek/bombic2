@@ -68,6 +68,8 @@ class Game {
 		void plant_bomb(Uint16 player_num, Uint16 x, Uint16 y, Bomb* bomb);
 		/// Pro hráče: spočítat položené bomby.
 		Uint16 count_bombs(Uint16 player_num);
+		/// Pro hráče: odstranit ruční odpalování u bomb.
+		void remove_bombs_timer(Uint16 player_num);
 		/// Pro hráče: nechat bouchnout první bombu.
 		void explode_bomb(Uint16 player_num);
 

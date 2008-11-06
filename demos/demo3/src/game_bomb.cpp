@@ -14,9 +14,10 @@
  * @param y souřadnice středu v pixelech
  * @param period délka života bomby v sekundách
  */
-Bomb::Bomb(const Animation & anim, Uint16 x, Uint16 y, Uint16 flamesize):
+Bomb::Bomb(const Animation & anim, Uint16 x, Uint16 y,
+					Uint16 flamesize, bool timer):
 	DynamicMO(x, y),
-	anim_(anim), explodes_(false), flamesize_(flamesize) {
+	anim_(anim), explodes_(false), timer_(timer), flamesize_(flamesize) {
 
 	create_presumptions_();
 }
@@ -30,7 +31,7 @@ Bomb::Bomb(const Animation & anim, Uint16 x, Uint16 y, Uint16 flamesize):
  * @see explode()
  */
 bool Bomb::move(){
-	if(anim_.update()
+	if( ( !timer_ && anim_.update() )
 	|| Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, FLAME))
 		explode();
 	return explodes_;
@@ -106,6 +107,12 @@ void Bomb::explode(){
 				break;
 		}
 	}
+}
+
+/**
+ */
+void Bomb::remove_timer(){
+	timer_=false;
 }
 
 /**

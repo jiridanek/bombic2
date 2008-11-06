@@ -19,7 +19,8 @@ Player::Player(const Animation & anim_up, const Animation & anim_right,
 			Uint16 speed, Uint16 lives, Uint16 num):
 	Creature(anim_up, anim_right, anim_down, anim_left, anim_burned, x, y, speed, lives, -1),
 	num_(num), flamesize_(3), bombs_(3), megabombs_(0), next_timer_(0),
-	bonus_kicker_(false), bonus_slider_(false), bonus_fireman_(false){
+	bonus_kicker_(false), bonus_slider_(false),
+	bonus_timer_(false), bonus_fireman_(false){
 
 	d_ = DOWN;
 }
@@ -33,7 +34,8 @@ Player::Player(const Player & player, Uint16 x, Uint16 y):
 	Creature(player, x, y), num_(player.num_),
 	flamesize_(player.flamesize_), bombs_(player.bombs_),
 	megabombs_(0), next_timer_(0),
-	bonus_kicker_(false), bonus_slider_(false), bonus_fireman_(false) {}
+	bonus_kicker_(false), bonus_slider_(false),
+	bonus_timer_(false), bonus_fireman_(false) {}
 
 Player::~Player(){
 	bonuses_t::iterator it;
