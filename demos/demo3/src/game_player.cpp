@@ -92,15 +92,16 @@ void Player::update(){
  * Vykreslí svůj panel a všechny svoje bonusy a jejich hodnoty do něj.
  * @param window surface okna pro vykreslení
  */
-void Player::draw_panel(SDL_Surface *window){
+void Player::draw_panel(SDL_Surface *window, const SDL_Rect & rect){
 	Game * game = Game::get_instance();
 	// vykreslit svuj panel
 	game->tools->draw_panel_player(
-		window, num_, flamesize_, bombs_ - game->count_bombs(num_),
+		window, rect, num_,
+		lives_, flamesize_, bombs_ - game->count_bombs(num_),
 		megabombs_, bonus_slider_, bonus_kicker_);
 	// do nej svoje bonusy
 	bonuses_t::iterator it;
 	for(it = bonuses_.begin() ; it!=bonuses_.end() ; ++it){
-		(*it)->draw_panel(window);
+		(*it)->draw_panel(window, rect);
 	}
 }

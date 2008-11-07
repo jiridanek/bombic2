@@ -22,7 +22,7 @@ class Wall: public StaticMO{
 		/// Okopíruje zeď.
 		Wall(const Wall & wall, Uint16 x, Uint16 y, Uint16 height);
 		/// Vykreslení.
-		virtual void draw(SDL_Surface *window);
+		virtual void draw(SDL_Surface *window, const SDL_Rect & rect);
 		/// Posun animace.
 		virtual void update();
 		/// Typ objektu je zeď.

@@ -21,7 +21,7 @@ class Floorobject: public StaticMO{
 		/// Okopíruje objekt.
 		Floorobject(const Floorobject & floorobject, Uint16 x, Uint16 y);
 		/// Vykreslení.
-		virtual void draw(SDL_Surface *window);
+		virtual void draw(SDL_Surface *window, const SDL_Rect & rect);
 		/// Posun animace.
 		virtual void update();
 		/// Typ objekt na zemi.

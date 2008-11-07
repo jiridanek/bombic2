@@ -2,7 +2,7 @@
 #include <iostream>
 #include "SDL_lib.h"
 #include "constants.h"
-#include "game.h"
+// #include "game.h"
 #include "game_mapobjects.h"
 #include "game_flame.h"
 
@@ -28,8 +28,8 @@ bool Flame::move(){
 /**
  * @param window surface okna pro vykreslení
  */
-void Flame::draw(SDL_Surface *window){
-	anim_.draw(window, x_, y_);
+void Flame::draw(SDL_Surface *window, const SDL_Rect & rect){
+	anim_.draw(window, x_ +rect.x, y_ +rect.y);
 }
 
 void Flame::update(){

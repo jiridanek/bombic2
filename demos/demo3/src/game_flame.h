@@ -22,7 +22,7 @@ class Flame: public DynamicMO {
 		/// Pohyb.
 		virtual bool move();
 		/// Vykreslení.
-		virtual void draw(SDL_Surface *window);
+		virtual void draw(SDL_Surface *window, const SDL_Rect & rect);
 		/// Posun animace.
 		virtual void update();
 		/// Typ objektu je plamen.

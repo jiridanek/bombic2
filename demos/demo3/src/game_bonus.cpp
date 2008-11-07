@@ -57,9 +57,9 @@ bool Bonus::move(){
 /**
  * @param window surface okna pro vykreslení
  */
-void Bonus::draw(SDL_Surface *window){
+void Bonus::draw(SDL_Surface *window, const SDL_Rect & rect){
 	if(visible_)
-		anim_.draw(window, x_, y_);
+		anim_.draw(window, x_+rect.x, y_+rect.y);
 }
 
 void Bonus::update(){

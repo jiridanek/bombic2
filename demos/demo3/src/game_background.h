@@ -23,9 +23,11 @@ class Background: public StaticMO{
 		/// Okopíruje pozadí jednoho políčka.
 		Background(const Background & background, Uint16 x, Uint16 y);
 		/// Vykreslení.
-		virtual void draw(SDL_Surface *window);
+		virtual void draw(SDL_Surface *window, const SDL_Rect & rect);
 		/// Posun animace.
 		virtual void update();
+		/// Spálení.
+		void set_burned() { burned_ = true; }
 		/// Typ objektu je pozadí.
 		virtual OBJECT_TYPES type() const { return BACKGROUND; }
 		/// Destructor
@@ -35,6 +37,8 @@ class Background: public StaticMO{
 		Animation anim_clean_,
 		/// Animace po výbuchu.
 			anim_burned_;
+		/// Je spálený.
+		bool burned_;
 };
 
 

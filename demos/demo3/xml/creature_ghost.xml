@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <creature name="creature_ghost" src="img/creature_ghost.bmp" _shadow_src="img/creature_ghost_s.bmp"
-		height="72" width="50" speed="5" lives="1" intelligence="0" >
+		height="72" width="50" speed="5" lives="1" intelligence="1" >
 
 	<up x="0" y="144" shadow_x="0" shadow_y="144" transparency="180">
 		<animation rate="4" >

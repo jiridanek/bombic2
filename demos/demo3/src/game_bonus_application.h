@@ -35,7 +35,8 @@ class BonusApplication {
 		/// Constructor.
 		BonusApplication(Player * player);
 		/// Vykreslení do panelu.
-		virtual void draw_panel(SDL_Surface *window) const {}
+		virtual void draw_panel(SDL_Surface *window,
+				const SDL_Rect & rect) const {}
 		/// Aktualizace stavu.
 		virtual bool update() { return true; }
 		/// Jméno bonusu z XML.
@@ -144,7 +145,8 @@ class BonusShield: public BonusApplication {
 		/// Vytvoření.
 		BonusShield(Player * player);
 		/// Vykreslení do panelu.
-		virtual void draw_panel(SDL_Surface *window) const;
+		virtual void draw_panel(SDL_Surface *window,
+				const SDL_Rect & rect) const;
 		/// Aktualizace stavu.
 		virtual bool update();
 		/// Jméno bonusu z XML.
@@ -165,7 +167,8 @@ class BonusFireman: public BonusApplication {
 		/// Vytvoření.
 		BonusFireman(Player * player);
 		/// Vykreslení do panelu.
-		virtual void draw_panel(SDL_Surface *window) const;
+		virtual void draw_panel(SDL_Surface *window,
+				const SDL_Rect & rect) const;
 		/// Aktualizace stavu.
 		virtual bool update();
 		/// Jméno bonusu z XML.
@@ -186,7 +189,8 @@ class BonusTimer: public BonusApplication {
 		/// Vytvoření.
 		BonusTimer(Player * player);
 		/// Vykreslení do panelu.
-		virtual void draw_panel(SDL_Surface *window) const;
+		virtual void draw_panel(SDL_Surface *window,
+				const SDL_Rect & rect) const;
 		/// Aktualizace stavu.
 		virtual bool update();
 		/// Jméno bonusu z XML.

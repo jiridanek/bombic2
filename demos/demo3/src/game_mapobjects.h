@@ -31,8 +31,10 @@ class MapObject{
 		MapObject(Uint16 x, Uint16 y):x_(x),y_(y) {};
 		/// z-ová souřadnice.
 		virtual Uint16 getZ() const =0;
+		/// Porovnání podle y-ové souřadnice.
+		virtual bool isUpwards(const MapObject & obj) const;
 		/// Vykreslení.
-		virtual void draw(SDL_Surface *)=0;
+		virtual void draw(SDL_Surface * window, const SDL_Rect & rect)=0;
 		/// Posunutí animace.
 		virtual void update()=0;
 		/// Typ objektu.
@@ -48,6 +50,8 @@ class MapObject{
 
 /// Porovnání obejktů mapy podle souřadnice z (výšky pro vykreslení).
 bool isUnder(const MapObject * a, const MapObject * b);
+/// Porovnání obejktů mapy podle souřadnice y (výšky na obrazovce).
+bool isUpwards(const MapObject * a, const MapObject * b);
 
 /** Dynamický objekt hry.
  * Objekt v mapě, který během hry vzniká, zaniká

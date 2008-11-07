@@ -20,21 +20,21 @@
 	</player1>
 
 	<player2>
-		<bind key="jmeno klavesy" action="left" />
-		<bind key="jmeno klavesy" action="right" />
-		<bind key="jmeno klavesy" action="up" />
-		<bind key="jmeno klavesy" action="down" />
-		<bind key="jmeno klavesy" action="plant" />
-		<bind key="jmeno klavesy" action="timer" />
+		<bind key="b" action="left" />
+		<bind key="m" action="right" />
+		<bind key="h" action="up" />
+		<bind key="n" action="down" />
+		<bind key="v" action="plant" />
+		<bind key="c" action="timer" />
 	</player2>
 
 	<player3>
-		<bind key="jmeno klavesy" action="left" />
-		<bind key="jmeno klavesy" action="right" />
-		<bind key="jmeno klavesy" action="up" />
-		<bind key="jmeno klavesy" action="down" />
-		<bind key="jmeno klavesy" action="plant" />
-		<bind key="jmeno klavesy" action="timer" />
+		<bind key="[1]" action="left" />
+		<bind key="[3]" action="right" />
+		<bind key="[5]" action="up" />
+		<bind key="[2]" action="down" />
+		<bind key="page up" action="plant" />
+		<bind key="page down" action="timer" />
 	</player3>
 
 </config>

@@ -1183,8 +1183,6 @@ void GameTools::load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src){
 
 void GameTools::load_panels_(TiXmlElement *panelsEl,
 				Uint16 count, const Surface & sur_src){
-	extern SDL_Surface * g_window;
-	if(!g_window) throw string("in GameToolds::load_panels_(): Main window hasn't been created");
 	// sirska vyska
 	Uint16 width, height;
 	readAttr(panelsEl, "width", width);
@@ -1196,22 +1194,22 @@ void GameTools::load_panels_(TiXmlElement *panelsEl,
 
 		load_subEl_surface_(panelsEl, el_name.c_str(), panels_[count].sur,
 				width, height, sur_src);
-		set_transparency(panels_[count].sur.getSurface(), 200);
+		set_transparency(panels_[count].sur.getSurface(), 128);
 		switch(count){
 			case 0:
 				panels_[0].x = 0;
 				panels_[0].y = 0;
 				break;
 			case 1:
-				panels_[1].x = g_window->w - width;
-				panels_[1].y = g_window->h - height;
+				panels_[1].x = width;
+				panels_[1].y = height;
 				break;
 			case 2:
 				panels_[2].x = 0;
-				panels_[2].y = g_window->h - height;
+				panels_[2].y = height;
 				break;
 			case 3:
-				panels_[3].x = g_window->w - width;
+				panels_[3].x = width;
 				panels_[3].y = 0;
 		}
 	}
@@ -1281,55 +1279,77 @@ Presumption* GameTools::presumption(Uint16 x, Uint16 y) const {
 		x*CELL_SIZE, y*CELL_SIZE);
 }
 
-void GameTools::draw_panel_player(SDL_Surface * window,
-			Uint16 player_num, Uint16 flames, Uint16 bombs,
+Uint16 GameTools::get_panel_x_(Uint16 player_num, const SDL_Rect & rect){
+	return panels_[player_num].x
+		? rect.x+rect.w - panels_[player_num].x
+		: rect.x+panels_[player_num].x;
+}
+Uint16 GameTools::get_panel_y_(Uint16 player_num, const SDL_Rect & rect){
+	return panels_[player_num].y
+		? rect.y+rect.h - panels_[player_num].y
+		: rect.y+panels_[player_num].y;
+}
+
+void GameTools::draw_panel_player(SDL_Surface * window, const SDL_Rect & rect,
+			Uint16 player_num, Uint16 lives, Uint16 flames, Uint16 bombs,
 			Uint16 megabombs, bool slider, bool kicker){
 	// panel
-	draw_surface(panels_[player_num].x, panels_[player_num].y,
-		panels_[player_num].sur.getSurface(), window);
-	// plameny
-	Surface text = text_(x2string(flames)+"x");
 	draw_surface(
-		panels_[player_num].x + bonuses_[MEGABOMB].x +
+		get_panel_x_(player_num, rect), get_panel_y_(player_num, rect),
+		panels_[player_num].sur.getSurface(), window);
+	// pocet zivotu
+	Surface text = text_(x2string(lives)+"x");
+	draw_surface(
+		get_panel_x_(player_num, rect) + 8,
+		get_panel_y_(player_num, rect) + 4,
+		text.getSurface(), window);
+
+	// plameny
+	text = text_(x2string(flames)+"x");
+	draw_surface(
+		get_panel_x_(player_num, rect) + bonuses_[MEGABOMB].x +
 			bonuses_[MEGABOMB].sur.width()*3/2 - text.width()/2,
-		panels_[player_num].y + bonuses_[SHIELD].y +
+		get_panel_y_(player_num, rect) + bonuses_[SHIELD].y +
 			bonuses_[SHIELD].sur.height()/2 - text.height()/2,
 		text.getSurface(), window);
 	// normalni bomby
 	if(!megabombs){
 		text = text_(x2string(bombs)+"x");
 		draw_surface(
-			panels_[player_num].x + bonuses_[MEGABOMB].x +
+			get_panel_x_(player_num, rect) + bonuses_[MEGABOMB].x +
 				bonuses_[MEGABOMB].sur.width()*3/2 - text.width()/2,
-			panels_[player_num].y + bonuses_[MEGABOMB].y +
+			get_panel_y_(player_num, rect) + bonuses_[MEGABOMB].y +
 				bonuses_[MEGABOMB].sur.height()/2 - text.height()/2,
 			text.getSurface(), window);
 	}
 	// megabomby
 	if(megabombs)
-		draw_panel_bonus(window, player_num, MEGABOMB, x2string(megabombs)+"x");
+		draw_panel_bonus(window, rect, player_num,
+			MEGABOMB, x2string(megabombs)+"x");
 	// posilani
 	if(slider)
-		draw_panel_bonus(window, player_num, SLIDER);
+		draw_panel_bonus(window, rect, player_num,
+			SLIDER);
 	// kopani
 	if(kicker)
-		draw_panel_bonus(window, player_num, KICKER);
+		draw_panel_bonus(window, rect, player_num,
+			KICKER);
 }
 
-void GameTools::draw_panel_bonus(SDL_Surface * window,
+void GameTools::draw_panel_bonus(SDL_Surface * window, const SDL_Rect & rect,
 			Uint16 player_num, BONUSES bonus, const std::string & val){
 	// obrazek
 	draw_surface(
-		panels_[player_num].x + bonuses_[bonus].x,
-		panels_[player_num].y + bonuses_[bonus].y,
+		 get_panel_x_(player_num, rect) + bonuses_[bonus].x,
+		 get_panel_y_(player_num, rect) + bonuses_[bonus].y,
 		bonuses_[bonus].sur.getSurface(), window);
 	// hodnota
 	if(!val.empty()){
 		Surface text = text_(val);
 		draw_surface(
-			panels_[player_num].x + bonuses_[bonus].x +
+			get_panel_x_(player_num, rect) + bonuses_[bonus].x +
 				bonuses_[bonus].sur.width()*3/2 - text.width()/2,
-			panels_[player_num].y + bonuses_[bonus].y +
+			get_panel_y_(player_num, rect) + bonuses_[bonus].y +
 				bonuses_[bonus].sur.height()/2 - text.height()/2,
 			text.getSurface(), window);
 	}

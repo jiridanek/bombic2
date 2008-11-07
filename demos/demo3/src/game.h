@@ -96,10 +96,20 @@ class Game {
 		/// Dvourozměrné pole mapy, na každém políčku seznam objektů na něm položených.
 		map_array_t map_array_;
 
-		/// Vykreslení scény.
-		void draw_(SDL_Surface *window);
+		/// Nastavení pohledů pro hráče.
+		void set_players_view_(SDL_Surface *window);
+		/// Spočítá posun mapy podle pozice hráče.
+		Uint16 Game::count_rect_shift_(Uint16 player_coor,
+				Uint16 rect_half_size, Uint16 map_size) const;
+
+		/// Vykreslení scény hráče.
+		void draw_(SDL_Surface *window, Uint16 player_num);
+		/// Vykreslení kousku scény.
+		void draw_map_(bool bg, SDL_Surface* window, const SDL_Rect & map_view,
+			Uint16 from_x, Uint16 from_y, Uint16 to_x, Uint16 to_y );
+
 		/// Hýbnutí světem.
-		void move_();
+		bool move_();
 		/// Posunutí animací.
 		void update_();
 		/// Zkopírování pevně umístěných objektů.
@@ -129,8 +139,12 @@ class Game {
 		Uint16 remaining_periods_;
 		/// Typ seznamu bomb.
 		typedef std::list<Bomb*> bombs_t;
+		typedef struct{ Player* player; SDL_Rect win_view, map_view; bombs_t bombs;
+					} player_t;
+		typedef std::map< Uint16, player_t > players_t;
+		typedef players_t::iterator players_it;
 		/// Pointery na hráče a seznam jejich bomb.
-		std::vector<std::pair<Player*, bombs_t> > players_;
+		players_t players_;
 };
 
 #endif

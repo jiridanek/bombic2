@@ -52,7 +52,7 @@ class Player: public Creature {
 		/// Posun animace.
 		virtual void update();
 		/// Vykreslení panelu
-		void draw_panel(SDL_Surface *window);
+		void draw_panel(SDL_Surface *window, const SDL_Rect & rect);
 		/// Typ objektu je bombic.
 		virtual OBJECT_TYPES type() const { return PLAYER; }
 

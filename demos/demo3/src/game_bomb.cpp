@@ -7,6 +7,7 @@
 #include "game_bomb.h"
 #include "game_flame.h"
 #include "game_presumption.h"
+#include "game_background.h"
 
 /**
  * @param anim animace
@@ -107,6 +108,10 @@ void Bomb::explode(){
 				break;
 		}
 	}
+	// spali policko na kterym byla
+	Background * bg = static_cast<Background *>(
+		game->field_getObject(x, y, BACKGROUND) );
+	if(bg) bg->set_burned();
 }
 
 /**
@@ -178,8 +183,9 @@ void Bomb::remove_presumptions_(){
 /**
  * @param window surface okna pro vykreslení
  */
-void Bomb::draw(SDL_Surface *window){
-	anim_.draw(window, x_-anim_.width()/2, y_-anim_.height()/2);
+void Bomb::draw(SDL_Surface *window, const SDL_Rect & rect){
+	anim_.draw(window,
+		x_-anim_.width()/2 +rect.x, y_-anim_.height()/2 +rect.y);
 }
 
 /** @details

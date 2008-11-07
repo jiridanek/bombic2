@@ -6,6 +6,7 @@
 using namespace std;
 
 #include "SDL_lib.h"
+#include "stl_helper.h"
 #include "config.h"
 #include "game_intro.h"
 
@@ -18,11 +19,16 @@ int main(int argc, char ** argv){
 
 	int return_val=0;
 	try {
-		window_init(&g_window, 3*400, 3*300, "Bombic2 - Demo 3");
+		Uint16 w= 1024, h=768;
+		if(argc>=3){
+			string2x(argv[1], w);
+			string2x(argv[2], h);
+		}
+		window_init(&g_window, w, h, "Bombic2 - Demo 3");
 
 		Config config;
 
-		g_gameIntro.new_game(1, 2);
+		g_gameIntro.new_game(1, 4);
 		g_gameIntro.show_screen();
 
 	}

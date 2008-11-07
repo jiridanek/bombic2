@@ -8,7 +8,7 @@
 #include "game_mapobjects.h"
 
 
-/**************** getZ **************************/
+/**************** getZ and others **************************/
 
 /**
  * @param a objekt mapy k porovnání
@@ -34,6 +34,20 @@ Uint16 StaticMO::getZ() const {
 Uint16 DynamicMO::getZ() const {
 	return y_;
 }
+
+/**
+ * @param a objekt mapy k porovnání
+ * @param b objekt mapy k porovnání
+ * @return TRUE pokud je objekt a výše v mapě než objekt b.
+ */
+bool isUpwards(const MapObject * a, const MapObject * b){
+	return a->isUpwards( *b);
+}
+
+bool MapObject::isUpwards(const MapObject & obj) const{
+	return y_ < obj.y_;
+}
+
 /********************** DynamicMO ****************/
 
 /** @details

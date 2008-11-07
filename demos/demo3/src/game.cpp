@@ -43,20 +43,10 @@ Game::Game(const GameBase & base, GameTools * gameTools):
 	if(myself_ptr_)
 		throw string("in Game constructor: another Game instance created.");
 	myself_ptr_ = this;
-	// pripravit prostor pro ctyry hrace
-	bombs_t empty_bombs;
-	players_.insert(players_.end(), 4,
-			pair<Player* , bombs_t>::pair(0, empty_bombs));
 	// zkusit nahrat umistene a vygenerovat ostatni objekty
 	try{
 		load_placed_MOs_(base.base_array_);
 		load_generated_MOs_(base);
-
-		// vyhodit nezarazene hrace
-		for(Uint16 i=0 ; i<players_.size() ; ++i){
-			if(players_[i].first) continue;
-			players_.erase(players_.begin()+i, players_.end());
-		}
 	}
 	catch(...){
 		myself_ptr_ = 0;
@@ -328,7 +318,7 @@ void Game::insert_MO_(const MapObject* mapObject,
 					x+CELL_SIZE/2, y+CELL_SIZE/2);
 			dynamicMOs_.push_back(static_cast<DynamicMO*>(new_obj));
 			// pridam hrace mezi hrace
-			players_[static_cast<Player *>(new_obj)->player_num()].first =
+			players_[static_cast<Player *>(new_obj)->player_num()].player =
 				static_cast<Player *>(new_obj);
 			break;
 		default:
@@ -361,11 +351,23 @@ void Game::play(SDL_Surface* window){
 	int last_time = SDL_GetTicks(),
 		time_to_use = 0, this_time=last_time;
 	bool at_end=false;
+	players_it player_it;
+	set_players_view_(window);
 	// iterace dokud neni vyvolano zavreni okna
 	while(!get_event_isquit(SDLK_ESCAPE)) {
 		SDL_PumpEvents();// obnoveni stavu klavesnice
 
-		draw_(window);
+		// vykresleni scen pro jednotlive hrace
+		for(player_it = players_.begin() ;
+				player_it!=players_.end() ; ++player_it){
+
+			SDL_SetClipRect(window, &player_it->second.win_view);
+			draw_(window, player_it->first);
+			player_it->second.player->draw_panel(
+				window, player_it->second.win_view);
+		}
+		SDL_SetClipRect(window, 0);
+
 
 		// cekani - chceme presny pocet obrazku za sekundu
 // 		fps_last= SDL_fps(fps_last, fps);
@@ -377,7 +379,13 @@ void Game::play(SDL_Surface* window){
 		while(time_to_use > MOVE_PERIOD){
 			time_to_use -= Config::get_instance()->move_period();
 			// hýbne světem
-			move_();
+			if(move_()){
+				// TODO deatchmatch
+				if(!players_.size())
+					return;
+
+				set_players_view_(window);
+			}
 			// posune animace
 			update_();
 			// pokud jsme na konci, vycka zbyvajici dobu
@@ -386,80 +394,197 @@ void Game::play(SDL_Surface* window){
 		}
 		last_time = this_time;
 
-		// zbyvaji nejaci hraci nebo prisery?
+		// zbyvaji nejake prisery?
 		// TODO deatchmatch
-		if(!players_.size() || !remaining_creatures_)
+		if(!remaining_creatures_)
 			at_end=true;
 	}
 }
 
+/**
+ */
+void Game::set_players_view_(SDL_Surface* window){
+	clear_surface(Color::black, window);
+
+	Uint16 half_w = window->w/2, half_h = window->h/2,
+		win_w = window->w, win_h = window->h,
+		map_w = map_width()*CELL_SIZE, map_h = map_height()*CELL_SIZE;
+	players_it it, it2;
+	switch(players_.size()){
+		case 0: break;
+		case 1:
+			it = players_.begin();
+			it->second.win_view.x =0;
+			it->second.win_view.y =0;
+			it->second.win_view.w = min(win_w, map_w);
+			it->second.win_view.h =	min(win_h, map_h);
+			break;
+		case 3:
+		case 4:
+			for(it = players_.begin() ; it!=players_.end() ; ++it){
+				it->second.win_view.w =
+						min( static_cast<Uint16>(half_w-1), map_w);
+				it->second.win_view.h =
+						min( static_cast<Uint16>(half_h-1), map_h);
+				switch(it->first){
+					case 0:
+						it->second.win_view.x =0;
+						it->second.win_view.y =0;
+						break;
+					case 1:
+						it->second.win_view.x =half_w+1;
+						it->second.win_view.y =half_h+1;
+						break;
+					case 2:
+						it->second.win_view.x =0;
+						it->second.win_view.y =half_h+1;
+						break;
+					case 3:
+						it->second.win_view.x =half_w+1;
+						it->second.win_view.y =0;
+						break;
+				}
+			}
+			break;
+		case 2:
+			it = it2 = players_.begin();
+			// rozdelit svisle
+			if(map_w < window->w){
+
+				// kdo bude vlevo
+				if(it->first==1)
+					++it;
+				else
+					++it2;
+				it->second.win_view.x = 0;
+				it2->second.win_view.x = half_w+1;
+				it->second.win_view.y = it2->second.win_view.y = 0;
+				it->second.win_view.w = it2->second.win_view.w =
+					min( static_cast<Uint16>(half_w-1), map_w);
+				it->second.win_view.h = it2->second.win_view.h =
+					min( win_h, map_h);
+			}
+			// rozdelit vodorovne
+			else{
+				// kdo bude nahore
+				if(it->first==1 || it->first==2)
+					++it;
+				else
+					++it2;
+				it->second.win_view.x = it2->second.win_view.x = 0;
+				it->second.win_view.y = 0;
+				it2->second.win_view.y = half_h+1;
+				it->second.win_view.w = it2->second.win_view.w =
+					min( win_w, map_w);
+				it->second.win_view.h = it2->second.win_view.h =
+					min( static_cast<Uint16>(half_h-1), map_h);
+			}
+			break;
+	}
+}
+
+Uint16 Game::count_rect_shift_(Uint16 player_coor,
+			Uint16 rect_half_size, Uint16 map_size) const{
+	Uint16 rect_shift=0;
+	if(player_coor > rect_half_size){
+		rect_shift+= player_coor - rect_half_size;
+		if(map_size-player_coor < rect_half_size){
+			Uint16 rect_unshift = rect_half_size - (map_size-player_coor);
+			if(rect_shift < rect_unshift)
+				return 0;
+			else
+				rect_shift-= rect_unshift;
+		}
+	}
+	return rect_shift;
+}
+
+
+void Game::draw_(SDL_Surface* window, Uint16 player_num){
+	// obnovim map_view
+	Uint16 i,
+		shift_x = count_rect_shift_(players_[player_num].player->getX(),
+			players_[player_num].win_view.w/2, map_width()*CELL_SIZE),
+		shift_y = count_rect_shift_(players_[player_num].player->getY(),
+			players_[player_num].win_view.h/2, map_height()*CELL_SIZE);
+
+	players_[player_num].map_view.x=
+		players_[player_num].win_view.x - shift_x;
+	players_[player_num].map_view.y=
+		players_[player_num].win_view.y - shift_y;
+	// vykreslim pozadi a pak prisery
+	for(i=0 ; i<2 ; ++i){
+		draw_map_(i==0, window, players_[player_num].map_view,
+			shift_x/CELL_SIZE, shift_y/CELL_SIZE,
+			(shift_x+players_[player_num].win_view.w)/CELL_SIZE,
+			(shift_y+players_[player_num].win_view.h)/CELL_SIZE );
+	}
+}
 /** @details
  * Vykreslí nejdříve objekty pozadí (background, floorobject)
  * následně ostatní, až poté panely.
  * @param window surface okna pro vykreslení
  */
-void Game::draw_(SDL_Surface* window){
+void Game::draw_map_(bool bg, SDL_Surface* window, const SDL_Rect & map_view,
+			Uint16 from_x, Uint16 from_y, Uint16 to_x, Uint16 to_y){
+
 	Uint16 column, field;
 	map_array_t::value_type::value_type::iterator it, end_it;
-	isTypeOf isBgType;
+	isTypeOf isBgType(BACKGROUND); isBgType.addType(FLOOROBJECT);
 
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
-	isBgType.addType(BACKGROUND).addType(FLOOROBJECT);
-	for(field = 0 ; field<map_array_[0].size() ; ++field){
-		for(column=0 ; column< map_array_.size() ; ++column){
-			it = map_array_[column][field].begin();
-			end_it = map_array_[column][field].end();
-			// vykreslim pozadi a objekt na zemi
-			while( (it=find_if(it, end_it, isBgType)) !=end_it){
-				(*it)->draw(window);
-				++it;
-			}
-			// objekty na policku seradim
-			map_array_[column][field].sort(isUnder);
-		}
-	}
-
-	// podruhe projdu mapu a vykreslim ostatni objekty
-	for(field = 0 ; field<map_array_[0].size() ; ++field){
-		for(column=0 ; column< map_array_.size() ; ++column){
-			for(it= map_array_[column][field].begin() ;
-					it!= map_array_[column][field].end() ;
-					++it){
-
-				if(isBgType(*it)) continue;
-
-				// v praxi potrebuju prohodit dva hrace pokud jsou v zakrytu
-				// spodniho vykreslim vzdycky, horniho bud preskocim nebo vykreslim
-				if( (*it)->type() == PLAYER && rand()%2 ){
-					Player * player1 = static_cast<Player *>(*it);
-					// !! jeste nevim jestli player2 je opravdu PLAYER !!
-					--it;
-					Player * player2 = static_cast<Player *>(*it);
+	for(field = from_y ; field<map_array_[0].size() ; ++field){
+		for(column= from_x ; column< map_array_.size() ; ++column){
+			if(bg){
+				it = map_array_[column][field].begin();
+				end_it = map_array_[column][field].end();
+				// vykreslim pozadi a objekt na zemi
+				while( (it=find_if(it, end_it, isBgType)) !=end_it){
+					(*it)->draw(window, map_view);
 					++it;
-					if(player2->type() == PLAYER && *player1 == *player2)
-						continue;
 				}
-
-				(*it)->draw(window);
 			}
-		}
-	}
-	// vykreslim mapu s panelem kazdemu hraci
-	for(Uint16 i=0 ; i< players_.size() ; ++i){
-		players_[i].first->draw_panel(window);
-	}
+			else {
+				// objekty na policku seradim
+				map_array_[column][field].sort(isUnder);
+				// vykreslim ty co nejsou pozadi
+				for(it= map_array_[column][field].begin() ;
+						it!= map_array_[column][field].end() ;
+						++it){
 
+					if(isBgType(*it)) continue;
+
+					// v praxi potrebuju prohodit dva hrace pokud jsou v zakrytu
+					// spodniho vykreslim vzdycky, horniho bud preskocim nebo vykreslim
+					if( (*it)->type() == PLAYER && rand()%2 ){
+						Player * player1 = static_cast<Player *>(*it);
+						// !! jeste nevim jestli player2 je opravdu PLAYER !!
+						--it;
+						Player * player2 = static_cast<Player *>(*it);
+						++it;
+						if(player2->type() == PLAYER && *player1 == *player2)
+							continue;
+					}
+					(*it)->draw(window, map_view);
+				}
+			}
+			if(column > to_x) break;
+		}
+		if(field > to_y) break;
+	}
 }
 
 
 /** @details
  * Projde všechny dynamické objekty hry a zavolá na nich fci move().
  * V průběhu shromažduje objekty, které nakonec vyhodí.
+ * @return Vrací TRUE, pokud byl zahozen nějaký hráč.
  * @see DynamicMO::move()
  * @see remove_object()
  */
-void Game::move_(){
+bool Game::move_(){
+	bool removed_player = false;
 	dynamicMOs_t::iterator it;
 	dynamicMOs_t removedDynamicMOs;
 	// tahnout
@@ -470,8 +595,11 @@ void Game::move_(){
 	// zahodit
 	for(it= removedDynamicMOs.begin() ;
 			it!= removedDynamicMOs.end() ; ++it){
+
+		if((*it)->type()==PLAYER) removed_player = true;
 		remove_object(*it);
 	}
+	return removed_player;
 }
 
 /** @details
@@ -581,14 +709,13 @@ void Game::remove_object(DynamicMO * obj){
 			break;
 		case PLAYER:
 			// zahodit hrace ze seznamu hrajicich
-			players_.erase(players_.begin()+
-				static_cast<Player *>(obj)->player_num() );
+			players_.erase( static_cast<Player *>(obj)->player_num() );
 			break;
 		case BOMB:
 			// vyhodit bombu ze seznamu hrace
-			for(Uint16 i=0 ; i< players_.size() ; ++i){
-				players_[i].second.remove(
-					static_cast<Bomb *>(obj) );
+			for(players_it it = players_.begin() ;
+							it!=players_.end() ; ++it){
+				it->second.bombs.remove( static_cast<Bomb *>(obj) );
 			}
 			break;
 		default: ;
@@ -621,7 +748,7 @@ void Game::change_position(Uint16 old_x, Uint16 old_y,
  */
 void Game::plant_bomb(Uint16 player_num, Uint16 x, Uint16 y, Bomb* bomb){
 	insert_object(x, y, bomb);
-	players_[player_num].second.push_back(bomb);
+	players_[player_num].bombs.push_back(bomb);
 }
 
 /** @details
@@ -630,7 +757,7 @@ void Game::plant_bomb(Uint16 player_num, Uint16 x, Uint16 y, Bomb* bomb){
  * @return Počet bomb.
  */
 Uint16 Game::count_bombs(Uint16 player_num){
-	return players_[player_num].second.size();
+	return players_[player_num].bombs.size();
 }
 
 /** @details
@@ -639,8 +766,8 @@ Uint16 Game::count_bombs(Uint16 player_num){
  */
 void Game::remove_bombs_timer(Uint16 player_num){
 	bombs_t::iterator it;
-	for(it = players_[player_num].second.begin() ;
-			it != players_[player_num].second.end() ; ++it){
+	for(it = players_[player_num].bombs.begin() ;
+			it != players_[player_num].bombs.end() ; ++it){
 		(*it)->remove_timer();
 	}
 }
@@ -651,8 +778,8 @@ void Game::remove_bombs_timer(Uint16 player_num){
  * @return Vrací TRUE pokud má hráč položenou alespon jednu bombu.
  */
 void Game::explode_bomb(Uint16 player_num){
-	if(!players_[player_num].second.empty())
-		players_[player_num].second.front()->explode();
+	if(!players_[player_num].bombs.empty())
+		players_[player_num].bombs.front()->explode();
 }
 
 Uint16 Game::map_height() const {

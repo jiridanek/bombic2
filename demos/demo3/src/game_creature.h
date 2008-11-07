@@ -35,7 +35,7 @@ class Creature: public DynamicMO {
 		/// Přejde na další fázi umírání.
 		void die();
 		/// Vykreslení.
-		virtual void draw(SDL_Surface *window);
+		virtual void draw(SDL_Surface *window, const SDL_Rect & rect);
 		/// Posun animace.
 		virtual void update();
 		/// Typ objektu je nestvůra.

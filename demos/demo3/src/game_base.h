@@ -175,10 +175,10 @@ class GameTools: public GameBaseLoader{
 		#define GAMETOOLS_BONUSES_COUNT 7
 		#define GAMETOOLS_BONUSES_FONT_SIZE 10
 
-		void draw_panel_player(SDL_Surface * window,
-			Uint16 player_num, Uint16 flames, Uint16 bombs,
+		void draw_panel_player(SDL_Surface * window, const SDL_Rect & rect,
+			Uint16 player_num, Uint16 lives, Uint16 flames, Uint16 bombs,
 			Uint16 megabombs, bool slider, bool kicker);
-		void draw_panel_bonus(SDL_Surface * window,
+		void draw_panel_bonus(SDL_Surface * window, const SDL_Rect & rect,
 			Uint16 player_num, BONUSES bonus,
 			const std::string & val = "");
 	private:
@@ -190,6 +190,8 @@ class GameTools: public GameBaseLoader{
 				Uint16 players_count, const Surface & sur_src);
 		void load_bonuses_(TiXmlElement *bonusesEl,
 				const Surface & sur_src);
+		Uint16 get_panel_x_(Uint16 player_num, const SDL_Rect & rect);
+		Uint16 get_panel_y_(Uint16 player_num, const SDL_Rect & rect);
 
 		Uint16 flame_period_;
 		Animation flame_top_, flame_bottom_, flame_topbottom_,

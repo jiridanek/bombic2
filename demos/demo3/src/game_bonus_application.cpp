@@ -120,9 +120,10 @@ bool BonusShield::update() {
 	return false;
 }
 
-void BonusShield::draw_panel(SDL_Surface *window) const {
+void BonusShield::draw_panel(SDL_Surface *window,
+					const SDL_Rect & rect) const {
 	Game::get_instance()->tools->draw_panel_bonus(
-		window, player_->player_num(), GameTools::SHIELD,
+		window, rect, player_->player_num(), GameTools::SHIELD,
 		x2string( 100*remaining_periods_/BONUS_SHIELD_PERIODS)+"%" );
 }
 
@@ -159,9 +160,10 @@ bool BonusFireman::update() {
 	return false;
 }
 
-void BonusFireman::draw_panel(SDL_Surface *window) const {
+void BonusFireman::draw_panel(SDL_Surface *window,
+					const SDL_Rect & rect) const {
 	Game::get_instance()->tools->draw_panel_bonus(
-		window, player_->player_num(), GameTools::FIREMAN,
+		window, rect, player_->player_num(), GameTools::FIREMAN,
 		x2string( 100*remaining_periods_/BONUS_FIREMAN_PERIODS)+"%" );
 }
 
@@ -196,8 +198,9 @@ bool BonusTimer::update() {
 	return false;
 }
 
-void BonusTimer::draw_panel(SDL_Surface *window) const {
+void BonusTimer::draw_panel(SDL_Surface *window,
+					const SDL_Rect & rect) const {
 	Game::get_instance()->tools->draw_panel_bonus(
-		window, player_->player_num(), GameTools::TIMER,
+		window, rect, player_->player_num(), GameTools::TIMER,
 		x2string( 100*remaining_periods_/BONUS_TIMER_PERIODS)+"%" );
 }
