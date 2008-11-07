@@ -31,7 +31,7 @@ class Bomb: public DynamicMO {
 		virtual ~Bomb() {};
 
 		/// Přinutí bombu k explozi.
-		void explode();
+		virtual void explode();
 		/// Odstranění ručního odpalování.
 		void remove_timer();
 	protected:
@@ -45,11 +45,22 @@ class Bomb: public DynamicMO {
 		/// Seznam presumpcí.
 		std::vector< Presumption* > presumptions_;
 		/// Vytvořit presumpce.
-		void create_presumptions_();
+		virtual void create_presumptions_();
 		/// Posunout presumpce.
-		void move_presumptions_();
+		virtual void move_presumptions_();
 		/// Odstranit presumpce.
 		void remove_presumptions_();
+};
+
+class MegaBomb: public Bomb {
+	public:
+		MegaBomb(const Animation & anim, Uint16 x, Uint16 y,
+				Uint16 flamesize, bool timer);
+		/// Přinutí bombu k explozi.
+		virtual void explode();
+	protected:
+		/// Vytvořit presumpce.
+		virtual void create_presumptions_();
 };
 
 #endif

@@ -19,16 +19,29 @@ int main(int argc, char ** argv){
 
 	int return_val=0;
 	try {
-		Uint16 w= 1024, h=768;
-		if(argc>=3){
-			string2x(argv[1], w);
-			string2x(argv[2], h);
+		Uint16 w= 1024, h=768, players=1;
+		switch(argc){
+			case 1:
+				break;
+			case 2:
+				string2x(argv[1], players);
+				break;
+			case 3:
+				string2x(argv[1], w);
+				string2x(argv[2], h);
+				break;
+			case 4:
+			default:
+				string2x(argv[1], players);
+				string2x(argv[2], w);
+				string2x(argv[3], h);
+				break;
 		}
 		window_init(&g_window, w, h, "Bombic2 - Demo 3");
 
 		Config config;
 
-		g_gameIntro.new_game(1, 4);
+		g_gameIntro.new_game(1, players);
 		g_gameIntro.show_screen();
 
 	}

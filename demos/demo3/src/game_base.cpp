@@ -309,6 +309,9 @@ void GameBase::load_background_(const std::string & bgname){
  * @param count počet hráčů
  */
 void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
+	if(!playersEl)
+		throw string("missing element players");
+
 	string filename;
 	Uint16 column, field, width, height;
 	// TODO
@@ -1269,9 +1272,9 @@ Bomb* GameTools::bomb_normal(Uint16 x, Uint16 y,
 
 Bomb* GameTools::bomb_mega(Uint16 x, Uint16 y,
 				Uint16 flamesize, bool timer) const {
-	return new Bomb(bomb_mega_,
+	return new MegaBomb(bomb_mega_,
 		x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
-		flamesize*2, timer);
+		flamesize, timer);
 }
 
 Presumption* GameTools::presumption(Uint16 x, Uint16 y) const {

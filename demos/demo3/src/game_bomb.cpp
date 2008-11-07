@@ -193,3 +193,65 @@ void Bomb::draw(SDL_Surface *window, const SDL_Rect & rect){
  */
 void Bomb::update(){
 }
+
+
+/****** class MegaBomb ********/
+
+MegaBomb::MegaBomb(const Animation & anim, Uint16 x, Uint16 y,
+					Uint16 flamesize, bool timer):
+	Bomb(anim, x, y, 2*flamesize, timer){
+
+	create_presumptions_();
+}
+
+
+
+/** @details
+ * Nastaví flag pro výbuch.
+ * Vytvoří plameny s ohledem na okolí.
+ * Ohlídá si, aby běžela pouze jednou,
+ * protože nemá smysl vytvářet plameny dvakrát.
+ */
+void MegaBomb::explode(){
+	if(explodes_) return;
+	Game * game = Game::get_instance();
+	Uint16 old_x = x_, old_y = y_, x, y;
+	isTypeOf isBlocked(WALL); isBlocked.addType(BOX);
+	// vytvorit dlouhe plameny
+	for(x_= old_x-CELL_SIZE ; x_<= old_x+CELL_SIZE ; x_+=CELL_SIZE)
+	for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE){
+		if(!game->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, isBlocked)){
+			Bomb::explode();
+			explodes_ = false;
+		}
+	}
+	explodes_ = true;
+	x_ = old_x;
+	y_ = old_y;
+	old_x/=CELL_SIZE;
+	old_y/=CELL_SIZE;
+	// vlozit do stredu krize at to vypada hezky
+	for(x = old_x-1 ; x<= old_x+1 ; ++x)
+	for(y = old_y-1 ; y<= old_y+1 ; ++y){
+		if(!game->field_withObject(x, y, isBlocked)){
+			game->insert_object(x, y,
+				game->tools->flame_cross(x, y) );
+
+		}
+	}
+}
+
+/**
+ */
+void MegaBomb::create_presumptions_(){
+	Uint16 old_x = x_, old_y = y_;
+	isTypeOf isBlocked(WALL); isBlocked.addType(BOX);
+	for(x_= old_x-CELL_SIZE ; x_<= old_x+CELL_SIZE ; x_+=CELL_SIZE)
+	for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE){
+		if(!Game::get_instance()->field_withObject(
+				x_/CELL_SIZE, y_/CELL_SIZE, isBlocked))
+			Bomb::create_presumptions_();
+	}
+	x_ = old_x;
+	y_ = old_y;
+}
