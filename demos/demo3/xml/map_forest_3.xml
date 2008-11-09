@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<map name="map_forest_3" height="12" width="20" background="bg_forest">
+
+	<players x="1" y="2">
+		<player0 x="1" y="2" />
+		<player1 x="14" y="10" />
+		<player2 x="14" y="2" />
+		<player3 x="1" y="10" />
+	</players>
+
+	<walls 	name="wall_stone">
+		<wall x="2" y="3" />
+		<wall x="2" y="5" />
+		<wall x="2" y="7" />
+		<wall x="4" y="3" />
+		<wall x="4" y="5" />
+		<wall x="4" y="7" />
+		<wall x="4" y="9" />
+		<wall x="6" y="3" />
+		<wall x="6" y="7" />
+		<wall x="7" y="5" />
+		<wall x="8" y="3" />
+		<wall x="8" y="7" />
+		<wall x="8" y="9" />
+		<wall x="10" y="5" />
+		<wall x="10" y="7" />
+		<wall x="11" y="3" />
+		<wall x="11" y="9" />
+		<wall x="12" y="2" />
+		<wall x="12" y="8" />
+		<wall x="13" y="2" />
+		<wall x="13" y="6" />
+		<wall x="13" y="7" />
+		<wall x="13" y="10" />
+		<wall x="15" y="3" />
+		<wall x="15" y="5" />
+		<wall x="15" y="6" />
+		<wall x="15" y="8" />
+		<wall x="16" y="9" />
+		<wall x="17" y="4" />
+		<wall x="18" y="2" />
+		<wall x="18" y="7" />
+		<wall x="18" y="10" />
+	</walls>
+	<boxes 	name="box_barrel" count="58">
+		<box x="3" y="2" />
+		<box x="2" y="4" />
+		<box x="3" y="4" />
+		<box x="4" y="4" />
+		<box x="5" y="4" />
+		<box x="1" y="6" />
+		<box x="2" y="6" />
+		<nobox x="1" y="4" />
+		<nobox x="1" y="5" />
+		<nobox x="1" y="7" />
+		<nobox x="1" y="8" />
+		<nobox x="1" y="9" />
+		<nobox x="1" y="10" />
+	</boxes>
+
+	<bonuses name="bonus_flame" count="2" />
+	<bonuses name="bonus_bomb" count="2" />
+
+	<creatures name="creature_rat" count="10">
+		<creature x="3" y="3" />
+	</creatures>
+	<creatures name="creature_slug" count="3">
+		<creature x="1" y="10" />
+	</creatures>
+	<nocreatures>
+		<nocreature x="1" y="4" />
+		<nocreature x="1" y="5" />
+		<nocreature x="1" y="7" />
+		<nocreature x="1" y="8" />
+		<nocreature x="1" y="9" />
+		<nocreature x="1" y="10" />
+		<nocreature x="3" y="3" />
+	</nocreatures>
+</map>
