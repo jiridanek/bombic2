@@ -112,8 +112,8 @@ extern Fonts g_font;
  */
 void Creature::draw(SDL_Surface *window, const SDL_Rect & rect){
 
-	int x=x_-anim_up_.width()+CELL_SIZE/2;
-	int y=y_-anim_up_.height()+CELL_SIZE/2;
+	int x=x_-anim_up_.width()/2;
+	int y=y_-anim_up_.height()/2;
 
 	anim_(d_).draw(window, x+rect.x, y+rect.y);
 

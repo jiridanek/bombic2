@@ -66,7 +66,7 @@ void GameIntro::new_game(Uint16 episode, Uint16 players){
 
 	if(gameBase_)
 		delete gameBase_;
-	gameBase_ = new GameBase(players, "map_forest");
+	gameBase_ = new GameBase(players, "map_forest_3");
 
 	while(players--){
 		gameBase_->set_player(players, 1, 1, 1, 0);

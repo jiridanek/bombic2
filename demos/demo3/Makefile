@@ -1,7 +1,7 @@
 
 LIBS=`sdl-config --libs` -g -lSDL_ttf -ltinyxml 
 CFLAGS= `sdl-config --cflags ` -g -Wall #-I./libs/tinyxml
-CC= ccache g++
+CC= g++
 
 TARGET        = demo3
 OBJECTFILES= $(shell find src -name '*.cpp' | sed 's/.cpp/.o/')

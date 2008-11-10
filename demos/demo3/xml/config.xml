@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<config language="en|cs" visible_presumption="1" speed="6" fullscreen="0" sound="0">
+<config language="en|cs" visible_presumption="1" speed="1" fullscreen="0" sound="0">
 	<!-- pro jmena klaves viz doc/keys.txt -->
 	<player0>
 		<bind key="left" action="left" />
