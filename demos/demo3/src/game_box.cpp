@@ -5,6 +5,7 @@
 #include "game.h"
 #include "game_mapobjects.h"
 #include "game_box.h"
+#include "game_background.h"
 
 /**
  * @param anim animace pro normální stav
@@ -48,17 +49,25 @@ Uint16 Box::getZ() const {
  * @return Vrací TRUE pokud je již vhodné objekt odstranit.
  */
 bool Box::move(){
-	bool withFlame = Game::get_instance()->
-		field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, FLAME);
+	Game * game = Game::get_instance();
+	bool withFlame = game->field_withObject(
+				x_/CELL_SIZE, y_/CELL_SIZE, FLAME);
 	// je v ohni => hori
 	if(withFlame)
 		burning_=true;
 	// hori, jeste neshorel => obnovim animaci, nastavim jestli shorel
 	if(burning_ && !burned_)
 		burned_ = anim_burning_.update();
-	// hori, uz shorel => zjistim, jestli neni na policku ohen
-	if(burning_ && burned_)
-		return !withFlame;
+	// hori, uz shorel, neni na policku ohen
+	//		=> spalim pozadi pod sebou a koncim
+	if(burning_ && burned_ && !withFlame){
+		// spali policko na kterym byl
+		Background * bg = static_cast<Background *>(
+			game->field_getObject(
+				x_/CELL_SIZE, y_/CELL_SIZE, BACKGROUND) );
+		if(bg) bg->set_burned();
+		return true;
+	}
 	return false;
 }
 

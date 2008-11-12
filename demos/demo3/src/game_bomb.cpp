@@ -7,7 +7,6 @@
 #include "game_bomb.h"
 #include "game_flame.h"
 #include "game_presumption.h"
-#include "game_background.h"
 
 /**
  * @param anim animace
@@ -108,10 +107,6 @@ void Bomb::explode(){
 				break;
 		}
 	}
-	// spali policko na kterym byla
-	Background * bg = static_cast<Background *>(
-		game->field_getObject(x, y, BACKGROUND) );
-	if(bg) bg->set_burned();
 }
 
 /**

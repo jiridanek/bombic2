@@ -42,11 +42,6 @@
 
 	<bonuses name="bonus_flame" count="2" />
 	<bonuses name="bonus_bomb" count="2" />
-        <bonuses name="bonus_megabomb" count="5" />
-        <bonuses name="bonus_timer" count="2" />
-        <bonuses name="bonus_fireman" count="2" />
-        <bonuses name="bonus_shield" count="2" />
-        <bonuses name="bonus_live" count="2" />
 
 	<creatures name="creature_rat" count="4">
 	</creatures>
