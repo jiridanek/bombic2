@@ -584,10 +584,12 @@ void AI_fromKeyboard::move() {
 		isBlocked.addType(BOX).addType(BOMB).addType(FLAME);
 
 		Bomb * bomb =0;
-		if(player->bonus_fireman_  && player->next_timer_ < MOVE_PERIOD){
-			bomb = game->tools->bomb_normal(x, y, 1);
-			bomb->explode();
-			player->next_timer_ = TIMER_PERIOD;
+		if(player->bonus_fireman_){
+			if(player->next_timer_ < MOVE_PERIOD){
+				bomb = game->tools->bomb_normal(x, y, 1);
+				bomb->explode();
+				player->next_timer_ = TIMER_PERIOD;
+			}
 		}
 		else if(!game->field_withObject(x, y, isBlocked)){
 			if(player->megabombs_){

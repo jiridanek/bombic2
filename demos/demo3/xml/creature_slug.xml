@@ -37,11 +37,11 @@
 			<animation_item x="350" y="70" shadow_x="350" shadow_y="70" />
 		</animation>
 	</right>
-	<burned x="0" y="280" shadow_x="0" shadow_y="280">
+	<burned x="0" y="280">
 		<animation rate="5" >
-			<animation_item x="70" y="280" shadow_x="70" shadow_y="280" />
-			<animation_item x="140" y="280" shadow_x="140" shadow_y="280" />
-			<animation_item x="210" y="280" shadow_x="210" shadow_y="280" />
+			<animation_item x="70" y="280" />
+			<animation_item x="140" y="280" />
+			<animation_item x="210" y="280" />
 		</animation>
 	</burned>
 </creature>

@@ -55,8 +55,11 @@
 <!---->
 	<creatures name="creature_rat" count="0">
 	</creatures>
-	<creatures name="creature_ghost" count="10">
+	<creatures name="creature_cloud" count="5">
 	</creatures>
+	<creatures name="creature_moon" count="10">
+	</creatures>
+
 	<nocreatures>
 		<nocreature x="1" y="2" />
 		<nocreature x="1" y="3" />

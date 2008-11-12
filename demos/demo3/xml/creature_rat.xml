@@ -29,10 +29,10 @@
 			<animation_item x="154" y="72" shadow_x="154" shadow_y="72" />
 		</animation>
 	</right>
-	<burned x="0" y="288" shadow_x="0" shadow_y="288">
+	<burned x="0" y="288">
 		<animation rate="10" >
-			<animation_item x="52" y="288" shadow_x="52" shadow_y="288" />
-			<animation_item x="103" y="288" shadow_x="103" shadow_y="288" />
+			<animation_item x="52" y="288" />
+			<animation_item x="103" y="288" />
 		</animation>
 	</burned>
 </creature>
