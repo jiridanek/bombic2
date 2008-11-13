@@ -1,5 +1,5 @@
 
-LIBS=`sdl-config --libs` -g -lSDL_ttf -ltinyxml 
+LIBS=`sdl-config --libs` -g -lSDL_ttf -lSDL_image -ltinyxml 
 CFLAGS= `sdl-config --cflags ` -g -Wall #-I./libs/tinyxml
 CC= ccache g++
 

@@ -313,9 +313,7 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 		throw string("missing element players");
 
 	string filename;
-	Uint16 column, field, width, height;
-	// TODO
-	Uint16 speed, lives, intelligence;
+	Uint16 column, field, width, height, speed;
 	Surface sur_src, sur_src_s;
 
 	isTypeOf isWall(WALL);
@@ -345,10 +343,8 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 			// vyska a sirska obrazku
 			readAttr(rootEl, "height", height);
 			readAttr(rootEl, "width", width);
+			readAttr(rootEl, "speed", speed);
 
-			// TODO vyhodit
-			// rychlost, pocet zivotu a inteligence prisery
-			attr_SpeedLivesIntelligence(rootEl, speed, lives, intelligence);
 			if(speed>CELL_SIZE/2){
 				cerr << "Maximal allowed creature's speed is "
 					<< CELL_SIZE/2 << endl;
@@ -366,7 +362,7 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 					anim_burned(subElement(rootEl,"burned"),
 						width, height, sur_src);
 			insert_player_(anim_up, anim_right, anim_down, anim_left,
-				anim_burned, column, field, speed, lives, count);
+				anim_burned, column, field, speed, count);
 		}
 	}
 	catch(const string & s){
@@ -1036,7 +1032,7 @@ void GameBase::insert_player_(
 			const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
-			Uint16 speed, Uint16 lives, Uint16 num){
+			Uint16 speed, Uint16 num){
 	// ulozit do mapy na spravne policko
 	if(x>=base_array_.size() || y>=base_array_[0].size())
 		return;
@@ -1044,8 +1040,7 @@ void GameBase::insert_player_(
 	// vytvorit
 	players_[num] = new Player(
 			anim_up, anim_right, anim_down, anim_left, anim_burned,
-			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2,
-			speed, lives, num);
+			x*CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2, speed, num);
 	proportionedMO_t new_obj= { players_[num], 1, 1 };
 
 	base_array_[x][y].push_back( new_obj);
@@ -1085,16 +1080,9 @@ void GameBase::clear_null_objects_(){
 
 
 /**
- * @see destroy_()
- */
-GameBase::~GameBase(){
-	destroy_();
-}
-
-/** @details
  * Zruší všechny umístěné i generované objekty.
  */
-void GameBase::destroy_(){
+GameBase::~GameBase(){
 	base_array_t::value_type::value_type::iterator it;
 	Uint16 field, column;
 	// umistene
@@ -1116,7 +1104,6 @@ void GameBase::destroy_(){
 	generatedMOs_.clear();
 }
 
-
 /**
  * @param player_num číslo (pořadí) hráče
  * @param lives počet životů
@@ -1124,10 +1111,8 @@ void GameBase::destroy_(){
  * @param flames velikost plamene
  * @param boots počet botiček
  */
-void GameBase::set_player(Uint16 player_num, Uint16 lives,
-	Uint16 bombs, Uint16 flames, Uint16 boots){
-	// TODO
-
+void GameBase::set_player(Uint16 player_num, const PlayerProperties & prop){
+	players_[player_num]->set_properties(prop);
 }
 
 /*************** END OF class GameBase ******************************/

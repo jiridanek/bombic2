@@ -41,7 +41,7 @@ int main(int argc, char ** argv){
 
 		Config config;
 
-		g_gameIntro.new_game(1, players);
+		g_gameIntro.new_game(0, players);
 		g_gameIntro.show_screen();
 
 	}

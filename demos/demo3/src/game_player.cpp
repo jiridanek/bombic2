@@ -16,9 +16,9 @@
 Player::Player(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
-			Uint16 speed, Uint16 lives, Uint16 num):
-	Creature(anim_up, anim_right, anim_down, anim_left, anim_burned, x, y, speed, lives, -1),
-	num_(num), flamesize_(3), bombs_(3), megabombs_(0), next_timer_(0),
+			Uint16 speed, Uint16 num):
+	Creature(anim_up, anim_right, anim_down, anim_left, anim_burned, x, y, speed, 1, -1),
+	num_(num), flamesize_(1), bombs_(1), megabombs_(0), boots_(0), next_timer_(0),
 	bonus_kicker_(false), bonus_slider_(false),
 	bonus_timer_(false), bonus_fireman_(false){
 
@@ -33,7 +33,7 @@ Player::Player(const Animation & anim_up, const Animation & anim_right,
 Player::Player(const Player & player, Uint16 x, Uint16 y):
 	Creature(player, x, y), num_(player.num_),
 	flamesize_(player.flamesize_), bombs_(player.bombs_),
-	megabombs_(0), next_timer_(0),
+	megabombs_(0), boots_(player.boots_), next_timer_(0),
 	bonus_kicker_(false), bonus_slider_(false),
 	bonus_timer_(false), bonus_fireman_(false) {}
 
@@ -41,6 +41,29 @@ Player::~Player(){
 	bonuses_t::iterator it;
 	for(it = bonuses_.begin() ; it!=bonuses_.end() ; ++it)
 		delete *it;
+}
+
+/**
+ */
+void Player::set_properties(const PlayerProperties & prop){
+	lives_ = prop.lives;
+	bombs_ = prop.bombs;
+	flamesize_ = prop.flames;
+	// odecist stare
+	speed_rate_ -= boots_;
+	// nastavit nove
+	boots_ = prop.boots;
+	// pricist nove
+	speed_rate_ += boots_;
+}
+
+/**
+ */
+void Player::get_properties(PlayerProperties & prop) const {
+	prop.lives = lives_;
+	prop.bombs = bombs_;
+	prop.flames = flamesize_;
+	prop.boots = boots_;
 }
 
 /** @details

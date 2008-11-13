@@ -12,20 +12,14 @@
 #define GAME_INTRO_H
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <utility>
 #include "SDL_lib.h"
 #include "game_base.h"
 #include "game.h"
-
-/** Konfigurace hráče.
- * Konfigurace obsahuje počet životů
- * a počet sesbíraných persistentních bonusů.
- */
-typedef struct {
-	Uint16 lives, ///< Počet životů.
-		bombs, ///< Počet bomb.
-		flames, ///< Velikost plamene.
-		boots; ///< Počet botiček.
-	} PlayerConfig;
+#include "game_player.h"
 
 /** Obal pro samotnou hru.
  * Třída GameIntro řeší, jaké kolo se bude hrát, kdo vyhrál či prohrál
@@ -46,8 +40,8 @@ class GameIntro {
 		void new_game(Uint16 episode, Uint16 players);
 		/// Inicializace staré hry.
 		void load_game(Uint16 episode, Uint16 level,
-			const PlayerConfig & player1, const PlayerConfig & player2,
-			const PlayerConfig & player3, const PlayerConfig & player4);
+			const PlayerProperties & player1, const PlayerProperties & player2,
+			const PlayerProperties & player3, const PlayerProperties & player4);
 	private:
 		/// Základ pro konkrétní level.
 		GameBase * gameBase_;
@@ -55,6 +49,23 @@ class GameIntro {
 		GameTools * gameTools_;
 		/// Konkrétní hra.
 		Game * game_;
+
+		/// Načtení levelů.
+		void load_levels_(Uint16 episode);
+		/// Získání obrázku.
+		Surface & get_cur_image_();
+
+		/// Mapa a obrázek levelu.
+		typedef struct{ std::string map, img; } level_t;
+		/// Seznam levelů.
+		std::vector< level_t > levels_;
+
+		typedef std::map< std::string, Surface> images_t;
+		/// Surface příslušící jménu souboru.
+		images_t images_;
+
+		Uint16 cur_level_, ///< Aktuální level.
+			players_count_; ///< Počet hráčů.
 };
 
 #endif

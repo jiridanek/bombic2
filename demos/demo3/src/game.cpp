@@ -621,11 +621,22 @@ void Game::update_(){
 
 /// Info o ukončení hry.
 bool Game::success() const{
-	return true;
+	// TODO deatchmatch
+	return remaining_creatures_==0 && players_.size()>0;
 }
-/// Info o hráči.
-void Game::player(Uint16 player_num, Uint16 & lives,
-	Uint16 & bombs, Uint16 & flames, Uint16 & boots) const{
+
+/** @details
+ * Zjistí jestli hráč žije, nastaví jeho vlastnosti.
+ * @param player_num číslo hráče
+ * @param prop vlastnosti hráče
+ * @return Vrací TRUE, pokud hráč žije, jinak false.
+ */
+bool Game::get_player(Uint16 player_num, PlayerProperties & prop) const{
+	players_t::const_iterator it = players_.find(player_num);
+	if(it==players_.end())
+		return false;
+	it->second.player->get_properties(prop);
+	return true;
 }
 
 /**

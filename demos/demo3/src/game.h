@@ -13,9 +13,8 @@
 #include "SDL_lib.h"
 #include "game_base.h"
 #include "game_mapobjects.h"
-
-class Player;
-class Bomb;
+#include "game_player.h"
+#include "game_bomb.h"
 
 /** Konkrétní hra.
  * Instance třídy Game obstarává jednu konkrétní hru.
@@ -43,8 +42,7 @@ class Game {
 		/// Info o ukončení hry.
 		bool success() const;
 		/// Info o hráči.
-		void player(Uint16 player_num, Uint16 & lives,
-			Uint16 & bombs, Uint16 & flames, Uint16 & boots) const;
+		bool get_player(Uint16 player_num, PlayerProperties & prop) const;
 		/// Políčko lze přejít.
 		bool field_canGoOver(Uint16 x, Uint16 y, bool check_bomb=true);
 		/// Políčko lze přeletet.

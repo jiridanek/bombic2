@@ -3,9 +3,11 @@
 #include <string>
 #include "SDL_lib.h"
 #include "constants.h"
+#include "tixml_helper.h"
 #include "game_intro.h"
 #include "game_base.h"
 #include "game.h"
+#include "game_player.h"
 
 using namespace std;
 
@@ -33,50 +35,103 @@ extern Fonts g_font;
 void GameIntro::show_screen(){
 	if(!gameTools_)
 		throw string("in GameIntro::show_screen(): no gameTools created");
-	if(!gameBase_)
-		throw string("in GameIntro::show_screen(): no gameBase created");
 
-	while(true){
+	Uint16 old_level = cur_level_;
+	while(cur_level_ < levels_.size()){
 		// uvodni obrazovka levelu
 		clear_surface(Color::black, g_window);
+		draw_center_surface(get_cur_image_().getSurface(), g_window);
 		SDL_Flip(g_window);
 
-		// vygenerovani nove hry
+		// vygenerovani noveho levelu
+		if(old_level!=cur_level_ || !gameBase_){
+			old_level = cur_level_;
+			if(gameBase_) delete gameBase_;
+			gameBase_ = new GameBase(
+				players_count_, levels_[cur_level_].map);
+			// pokud mam odkud, nastavim hrace
+			if(game_){
+				PlayerProperties prop;
+				for(Uint16 i = 0 ; i < players_count_ ; ++i){
+					if(game_->get_player(i, prop))
+						gameBase_->set_player(i, prop);
+				}
+			}
+		}
+		// vygenerovani nove hry z pripraveneho zakladu
 		if(game_) delete game_;
 		game_ = new Game(*gameBase_, gameTools_);
 
 		// pockame na klavesu, pri pokusu o ukonceni ukoncime
-		SDL_Delay(500);
-		if(get_event_isquit(SDLK_ESCAPE))
-// 		if(wait_event_isquit(SDLK_ESCAPE))
+// 		SDL_Delay(500);
+// 		if(get_event_isquit(SDLK_ESCAPE))
+		if(wait_event_isquit(SDLK_ESCAPE))
 			return;
-
-		// jinak hrajeme
+		SDL_Delay(500);
+		// hrajeme
 		game_->play(g_window);
-		// TODO check jak hra skoncila
-		// TODO delete game
+		// hra skoncila uspesne => dalsi kolo
+		if(game_->success())
+			++cur_level_;
 	}
 }
 
 
 /// Inicializace nové hry.
 void GameIntro::new_game(Uint16 episode, Uint16 players){
+	cur_level_ = 0;
+	players_count_ = players;
+
+	load_levels_(episode);
+
 	if(!gameTools_)
 		gameTools_ = new GameTools(players);
 
 	if(gameBase_)
 		delete gameBase_;
-	gameBase_ = new GameBase(players, "map_forest_debug");
-
-	while(players--){
-		gameBase_->set_player(players, 1, 1, 1, 0);
-	}
 }
 
 /// Inicializace.
 void GameIntro::load_game(Uint16 episode, Uint16 level,
-	const PlayerConfig & player1, const PlayerConfig & player2,
-	const PlayerConfig & player3, const PlayerConfig & player4){
+	const PlayerProperties & player1, const PlayerProperties & player2,
+	const PlayerProperties & player3, const PlayerProperties & player4){
 		// TODO
+}
+
+void GameIntro::load_levels_(Uint16 episode){
+	string filename("levels");
+
+	// nacteni hodnot z xml
+	TiXmlDocument doc;
+	TiXmlElement *el;
+	el = TiXmlRootElement(doc, filename, "levels", false);
+	el = el->FirstChildElement("episode");
+	while(episode-- && el)
+		el = el->NextSiblingElement("episode");
+	if(!el)
+		TiXmlError(filename, "too few episodes");
+	// ulozeni vsech levelu do seznamu
+	levels_.clear();
+	level_t level;
+	for(el = el->FirstChildElement("level") ; el ;
+				el = el->NextSiblingElement("level")){
+		readAttr(el, "map", level.map);
+		readAttr(el, "img", level.img);
+		levels_.push_back(level);
+	}
+	// kontrola na pocet levelu
+	if(cur_level_ >= levels_.size())
+		TiXmlError(filename, "too few levels in episode");
+}
+
+Surface & GameIntro::get_cur_image_(){
+	string img_name = levels_[cur_level_].img;
+	images_t::iterator it = images_.find(img_name);
+	if(it!=images_.end())
+		return it->second;
+	SDL_Surface * sur = IMG_Load(img_name.c_str());
+	if(!sur)
+		throw "GameIntro::get_cur_image_(): Unable to load "+img_name;
+	return ( images_[img_name] = sur );
 }
 

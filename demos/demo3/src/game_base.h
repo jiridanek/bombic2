@@ -18,7 +18,7 @@
 #include "SDL_lib.h"
 #include "game_mapobjects.h"
 #include "tixml_helper.h"
-
+#include "game_player.h"
 
 /** Loader animace a surface z xml.
  * Pomocná třída, která implementuje obecné fce pro loadování
@@ -36,8 +36,6 @@ class GameBaseLoader {
 		SDL_Surface* load_src_surface_(TiXmlElement *El,
 				const char* attr_name="src", bool force=true);
 };
-
-class Player;
 
 /** Základ hry.
  * Třída GameBase řeší první načtení mapy a jejích objektů z XML,
@@ -57,8 +55,8 @@ class GameBase: public GameBaseLoader {
 		/// Uvolnění naalokovaaných objektů.
 		~GameBase();
 		/// Nastavení parametrů hráče.
-		void set_player(Uint16 player_num, Uint16 lives,
-			Uint16 bombs, Uint16 flames, Uint16 boots);
+		void set_player(Uint16 player_num, const PlayerProperties & prop);
+
 		typedef struct { MapObject* o; Uint16 w, h; } proportionedMO_t;
 		/// Typ dvourozměrného pole mapy, na každém políčku seznam objektů s rozměry.
 		typedef std::vector< std::vector< std::list< proportionedMO_t > > > base_array_t;
@@ -137,11 +135,9 @@ class GameBase: public GameBaseLoader {
 				const Animation & anim_up, const Animation & anim_right,
 				const Animation & anim_down, const Animation & anim_left,
 				const Animation & anim_burned, Uint16 x, Uint16 y,
-				Uint16 speed, Uint16 lives, Uint16 num);
+				Uint16 speed, Uint16 num);
 		/// Vyhození nulových pointerů z base_array_.
 		void clear_null_objects_();
-		/// Odalokování všech zde vytvořených objektů.
-		void destroy_();
 };
 
 
