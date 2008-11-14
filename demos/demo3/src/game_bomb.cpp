@@ -8,18 +8,29 @@
 #include "game_flame.h"
 #include "game_presumption.h"
 
+
 /**
  * @param anim animace
  * @param x souřadnice středu v pixelech
  * @param y souřadnice středu v pixelech
- * @param period délka života bomby v sekundách
+ * @param flamesize velikost plamene v políčkách
+ * @param speed rychlost jedoucí bomby
+ * @param timer odpaluje-li se rucne
  */
 Bomb::Bomb(const Animation & anim, Uint16 x, Uint16 y,
-					Uint16 flamesize, bool timer):
-	DynamicMO(x, y),
-	anim_(anim), explodes_(false), timer_(timer), flamesize_(flamesize) {
+					Uint16 flamesize, Uint16 speed, bool timer):
+		DynamicMO(x, y),
+		anim_(anim), explodes_(false), timer_(timer),
+		access_counter_(0), flamesize_(flamesize),
+		speed_diff_((speed-1)/7+1),
+		speed_rate_((speed-1)%7+2+speed_diff_), d_(BURNED) {}
 
-	create_presumptions_();
+/** @details
+ * Vyhodí zbylé presumpce.
+ * @see remove_presumptions_()
+ */
+Bomb::~Bomb(){
+	remove_presumptions_();
 }
 
 /** @details
@@ -27,13 +38,49 @@ Bomb::Bomb(const Animation & anim, Uint16 x, Uint16 y,
  * kontroluje jestli nejsme na konci,
  * jestli nejsme v plamenech,
  * vytváří plameny.
- * @return Vrací TRUE pokud se má objekt zahodit.
- * @see explode()
+ * @return Vrací TRUE pokud objekt explodoval.
  */
 bool Bomb::move(){
-	if( ( !timer_ && anim_.update() )
-	|| Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, FLAME))
-		explode();
+	Uint16 accessed = ++access_counter_%speed_rate_;
+	if(accessed!=0 && accessed!=speed_rate_/2){
+		if(d_!=BURNED){
+			// puvodni pozice
+			Uint16 old_x=x_, old_y=y_, x=x_/CELL_SIZE, y=y_/CELL_SIZE;
+			Game * game = Game::get_instance();
+			switch(d_){
+				case UP:
+					if(y_%CELL_SIZE>CELL_SIZE/2
+					|| game->field_canGoOver(x, y-1) )
+						y_-=speed_diff_;
+					break;
+				case RIGHT:
+					if(x_%CELL_SIZE<CELL_SIZE/2
+					|| game->field_canGoOver(x+1, y) )
+						x_+=speed_diff_;
+					break;
+				case DOWN:
+					if(y_%CELL_SIZE<CELL_SIZE/2
+					|| game->field_canGoOver(x, y+1) )
+						y_+=speed_diff_;
+					break;
+				case LEFT:
+					if(x_%CELL_SIZE>CELL_SIZE/2
+					|| game->field_canGoOver(x-1, y) )
+						x_-=speed_diff_;
+					break;
+				default: break;
+			}
+
+			if(old_x==x_ && old_y==y_)
+				kick(BURNED);
+			// nastavit novou pozici take v mape
+			if(setFieldInMap(old_x, old_y))
+				remove_presumptions_();
+
+		}
+		create_presumptions_();
+	}
+
 	return explodes_;
 }
 
@@ -46,8 +93,6 @@ bool Bomb::move(){
 void Bomb::explode(){
 	// explode() muze bezet jen jednou
 	if(explodes_) return;
-	// vyhodit predpoved, ted tam bude plamen
-	remove_presumptions_();
 
 	explodes_ = true;
 	Game * game = Game::get_instance();
@@ -60,7 +105,7 @@ void Bomb::explode(){
 	Uint16 i, dir, next_x, next_y;
 	Sint16 factor_x, factor_y;
 	Flame* flame;
-	bool field_withBomb;
+	MapObject * obj;
 	// pres vsechny smery
 	for(dir=0 ; dir<4 ; ++dir){
 		factor_x = factor_y = 0;
@@ -73,12 +118,14 @@ void Bomb::explode(){
 			// souradnice pro novy plamen
 			next_x = x+ i*factor_x;
 			next_y = y+ i*factor_y;
+			// zajimavy objekt na policku
+			obj = game->field_getObject(next_x, next_y,
+						isTypeOf::isWallBoxAnyBomb);
 			// zarazi se na zdi a konec
-			if(game->field_withObject(next_x, next_y, WALL))
+			if(obj && obj->type()==WALL)
 				break;
 			// priprava noveho plamene
-			if(field_withBomb
-					= game->field_withObject(next_x, next_y, BOMB)){
+			if(obj && obj->type()!=BOX){
 				flame = game->tools->flame_cross(next_x, next_y);
 			}
 			else switch(dir){
@@ -101,11 +148,42 @@ void Bomb::explode(){
 			}
 			// vlozeni plamene do hry
 			game->insert_object(next_x, next_y, flame);
-			// zarazi se za bednou nebo bombou (obecne veci ktere maji bouchnout ale nemaji plamen)
-			if(game->field_withObject(next_x, next_y, BOX)
-			|| field_withBomb)
+			// zarazi se za bednou nebo bombou
+			// (obecne veci ktere maji bouchnout ale nemaji plamen)
+			if(obj)
 				break;
 		}
+	}
+}
+
+/** @details
+ * Nastaví nový směr.
+ * Vycentruje bombu na políčku podle nového směru.
+ * Pokud je na dalším políčku ve směru pohybu bomba,
+ * posune sebe na vzdálenější okraj poíčka.
+ * @param d nový směr bomby
+ */
+void Bomb::kick(DIRECTION d){
+	d_ = d;
+	Uint16 x=x_/CELL_SIZE, y=y_/CELL_SIZE;
+	switch(d){
+		case UP:
+		case DOWN:
+			x_ = x*CELL_SIZE+CELL_SIZE/2;
+			if(Game::get_instance()->field_withObject(
+					x, y+ (d==UP ? -1 : +1), isTypeOf::isAnyBomb))
+				y_ = (y+ (d==UP ? 1 : 0) )*CELL_SIZE;
+			break;
+		case RIGHT:
+		case LEFT:
+			y_ = y*CELL_SIZE+CELL_SIZE/2;
+			if(Game::get_instance()->field_withObject(
+					x+ (d==LEFT ? -1 : +1), y, isTypeOf::isAnyBomb))
+				x_ = (x+ (d==LEFT ? 1 : 0) )*CELL_SIZE;
+			break;
+		default:
+			x_ = x*CELL_SIZE+CELL_SIZE/2;
+			y_ = y*CELL_SIZE+CELL_SIZE/2;
 	}
 }
 
@@ -118,17 +196,14 @@ void Bomb::remove_timer(){
 /**
  */
 void Bomb::create_presumptions_(){
-	Game * game = Game::get_instance();
-	Uint16 x = x_/CELL_SIZE,
+	Uint16 i, dir,
+		x = x_/CELL_SIZE,
 		y = y_/CELL_SIZE;
 
-	Uint16 i, dir, next_x, next_y;
 	Sint16 factor_x, factor_y;
 
-	Presumption* presumption = game->tools->presumption(x, y);
-	game->insert_object(x, y, presumption);
-	presumptions_.push_back(presumption);
-
+	// na svoje policko
+	add_presumption_(x, y);
 	// pres vsechny smery
 	for(dir=0 ; dir<4 ; ++dir){
 		factor_x = factor_y = 0;
@@ -138,29 +213,36 @@ void Bomb::create_presumptions_(){
 			factor_y = 1-dir;;
 		// pro velikost plamene
 		for(i=1 ; i<=flamesize_ ; ++i){
-			// souradnice pro novou presumpci
-			next_x = x+ i*factor_x;
-			next_y = y+ i*factor_y;
-			// zarazi se pred zdi nebo pred bednou
-			if(game->field_withObject(next_x, next_y, WALL)
-			|| game->field_withObject(next_x, next_y, BOX))
-				break;
-			// priprava nove presumpce
-			presumption = game->tools->presumption(next_x, next_y);
-			// vlozeni presumpce do hry
-			game->insert_object(next_x, next_y, presumption);
-			// vlozeni do seznamu presumpci
-			presumptions_.push_back(presumption);
-			// zarazi se za bombou
-			if(game->field_withObject(next_x, next_y, BOMB))
+			// pridam presumpci na nove souradnice
+			if(!add_presumption_(x+ i*factor_x, y+ i*factor_y))
 				break;
 		}
 	}
 }
 
-/**
+/** @details
+ * Vytvoří presumpci, pokud již na políčku není,
+ * vloží ji do mapy a do seznamu presumpcí bomby.
+ * @return Vrací FALSE, pokud je plamen v tomto smeru zastaven.
+ * Pokud je volno, vrací TRUE.
  */
-void Bomb::move_presumptions_(){
+bool Bomb::add_presumption_(Uint16 x, Uint16 y){
+	Game * game = Game::get_instance();
+	MapObject * blocking = game->field_getObject(x, y, isTypeOf::isWallBoxBomb);
+	// zarazi se pred zdi nebo pred bednou
+	if(blocking && blocking->type()!=BOMB_STAYING)
+		return false;
+	// na policku jeste neni presumpce
+	if(!game->field_withObject(x, y, isTypeOf::isPresumption)){
+		// priprava nove presumpce
+		Presumption * presumption = game->tools->presumption(x, y);
+		// vlozeni presumpce do hry
+		game->insert_object(x, y, presumption);
+		// vlozeni do seznamu presumpci
+		presumptions_.push_back(presumption);
+	}
+	// zarazi se za bombou
+	return blocking==0;
 }
 
 /** @details
@@ -184,20 +266,24 @@ void Bomb::draw(SDL_Surface *window, const SDL_Rect & rect){
 }
 
 /** @details
- * Nechává posun animace na Bomb::move().
+ * Posune frame animace, pokud není na ruční odpal.
+ * Pokud animace dobehne nebo je na policku bomby plamen,
+ * odpálí bombu.
+ * @see explode()
  */
 void Bomb::update(){
+	if( ( !timer_ && anim_.update() )
+	|| Game::get_instance()->field_withObject(
+				x_/CELL_SIZE, y_/CELL_SIZE, isTypeOf::isFlame))
+		explode();
 }
 
 
 /****** class MegaBomb ********/
 
 MegaBomb::MegaBomb(const Animation & anim, Uint16 x, Uint16 y,
-					Uint16 flamesize, bool timer):
-	Bomb(anim, x, y, 2*flamesize, timer){
-
-	create_presumptions_();
-}
+					Uint16 flamesize, Uint16 speed, bool timer):
+	Bomb(anim, x, y, 2*flamesize, speed, timer){}
 
 
 
@@ -208,17 +294,19 @@ MegaBomb::MegaBomb(const Animation & anim, Uint16 x, Uint16 y,
  * protože nemá smysl vytvářet plameny dvakrát.
  */
 void MegaBomb::explode(){
+
 	if(explodes_) return;
 	Game * game = Game::get_instance();
 	Uint16 old_x = x_, old_y = y_, x, y;
-	isTypeOf isBlocked(WALL); isBlocked.addType(BOX);
 	// vytvorit dlouhe plameny
-	for(x_= old_x-CELL_SIZE ; x_<= old_x+CELL_SIZE ; x_+=CELL_SIZE)
-	for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE){
-		if(!game->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, isBlocked)){
-			Bomb::explode();
-			explodes_ = false;
-		}
+	for(x_= old_x-CELL_SIZE ; x_<= old_x+CELL_SIZE ; x_+=CELL_SIZE){
+		for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE)
+			if(!game->field_withObject(
+						x_/CELL_SIZE, y_/CELL_SIZE,
+						isTypeOf::isWallBoxAnyBomb)){
+				Bomb::explode();
+				explodes_ = false;
+			}
 	}
 	explodes_ = true;
 	x_ = old_x;
@@ -226,13 +314,12 @@ void MegaBomb::explode(){
 	old_x/=CELL_SIZE;
 	old_y/=CELL_SIZE;
 	// vlozit do stredu krize at to vypada hezky
-	for(x = old_x-1 ; x<= old_x+1 ; ++x)
-	for(y = old_y-1 ; y<= old_y+1 ; ++y){
-		if(!game->field_withObject(x, y, isBlocked)){
-			game->insert_object(x, y,
-				game->tools->flame_cross(x, y) );
-
-		}
+	for(x = old_x-1 ; x<= old_x+1 ; ++x){
+		for(y = old_y-1 ; y<= old_y+1 ; ++y)
+			if(!game->field_withObject(x, y, isTypeOf::isWallBoxAnyBomb)){
+				game->insert_object(x, y,
+					game->tools->flame_cross(x, y) );
+			}
 	}
 }
 
@@ -240,12 +327,12 @@ void MegaBomb::explode(){
  */
 void MegaBomb::create_presumptions_(){
 	Uint16 old_x = x_, old_y = y_;
-	isTypeOf isBlocked(WALL); isBlocked.addType(BOX);
-	for(x_= old_x-CELL_SIZE ; x_<= old_x+CELL_SIZE ; x_+=CELL_SIZE)
-	for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE){
-		if(!Game::get_instance()->field_withObject(
-				x_/CELL_SIZE, y_/CELL_SIZE, isBlocked))
-			Bomb::create_presumptions_();
+
+	for(x_= old_x-CELL_SIZE ; x_<= old_x+CELL_SIZE ; x_+=CELL_SIZE){
+		for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE)
+			if(!Game::get_instance()->field_withObject(
+					x_/CELL_SIZE, y_/CELL_SIZE, isTypeOf::isWallBoxBomb))
+				Bomb::create_presumptions_();
 	}
 	x_ = old_x;
 	y_ = old_y;

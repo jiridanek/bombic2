@@ -9,6 +9,7 @@
 #include "SDL_lib.h"
 // #include "game.h"
 #include "game_mapobjects.h"
+#include "game_presumption.h"
 
 /** Bomba.
  * Dynamický objekt vytvářený především hráčem.
@@ -18,7 +19,7 @@ class Bomb: public DynamicMO {
 	public:
 		/// Vytvoří bombu.
 		Bomb(const Animation & anim, Uint16 x, Uint16 y,
-				Uint16 flamesize, bool timer);
+				Uint16 flamesize, Uint16 speed, bool timer);
 		/// Pohyb.
 		virtual bool move();
 		/// Vykreslení.
@@ -26,12 +27,18 @@ class Bomb: public DynamicMO {
 		/// Posun animace.
 		virtual void update();
 		/// Typ objektu je bomba.
-		virtual OBJECT_TYPES type() const { return BOMB; }
+		virtual OBJECT_TYPES type() const
+			{ return d_==BURNED ? BOMB_STAYING : BOMB_MOVING; }
 		/// Destructor
-		virtual ~Bomb() {};
+		virtual ~Bomb();
 
+		/// Ne, není megabomba.
+		virtual bool is_mega() const
+			{ return false; }
 		/// Přinutí bombu k explozi.
 		virtual void explode();
+		/// Kopne do bomby.
+		void kick(DIRECTION d);
 		/// Odstranění ručního odpalování.
 		void remove_timer();
 	protected:
@@ -40,14 +47,19 @@ class Bomb: public DynamicMO {
 
 		bool explodes_, ///< Exploduje-li bomba.
 			timer_; ///< Odpaluje se ručně.
-		/// Velikost plamene.
-		Uint16 flamesize_;
+		Uint16
+			access_counter_, ///< Počítadlo přístupů.
+			flamesize_, ///< Velikost plamene.
+			speed_diff_, ///< Velikost parciálního pohybu.
+			speed_rate_; ///< Míra parciálního pohybu.
+		/// Směr pohybu.
+		DIRECTION d_;
 		/// Seznam presumpcí.
 		std::vector< Presumption* > presumptions_;
 		/// Vytvořit presumpce.
 		virtual void create_presumptions_();
-		/// Posunout presumpce.
-		virtual void move_presumptions_();
+		/// Přidat presumpci.
+		bool add_presumption_(Uint16 x, Uint16 y);
 		/// Odstranit presumpce.
 		void remove_presumptions_();
 };
@@ -55,7 +67,10 @@ class Bomb: public DynamicMO {
 class MegaBomb: public Bomb {
 	public:
 		MegaBomb(const Animation & anim, Uint16 x, Uint16 y,
-				Uint16 flamesize, bool timer);
+				Uint16 flamesize, Uint16 speed, bool timer);
+		/// Ano, je megabomba.
+		virtual bool is_mega() const
+			{ return true; }
 		/// Přinutí bombu k explozi.
 		virtual void explode();
 	protected:

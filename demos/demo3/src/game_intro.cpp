@@ -6,6 +6,7 @@
 #include "tixml_helper.h"
 #include "game_intro.h"
 #include "game_base.h"
+#include "game_tools.h"
 #include "game.h"
 #include "game_player.h"
 
@@ -95,7 +96,7 @@ void GameIntro::new_game(Uint16 episode, Uint16 players){
 void GameIntro::load_game(Uint16 episode, Uint16 level,
 	const PlayerProperties & player1, const PlayerProperties & player2,
 	const PlayerProperties & player3, const PlayerProperties & player4){
-		// TODO
+
 }
 
 void GameIntro::load_levels_(Uint16 episode){

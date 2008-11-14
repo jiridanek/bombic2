@@ -251,32 +251,32 @@ void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign){
 /** @details
  * Zjistí podle zadané pozice jestli může na políčko vstoupit..
  * @param position zjištovaná pozice nestvůry
- * @param isBlocked predikát na určení blokujícího typu
+ * @param isBlocking predikát na určení blokujícího typu
  * @return TRUE pokud se na políčku nevyskytuje žádný z objektů zadaných typů.
  */
 bool AI::checkField(const position_t & position,
-					const isTypeOf & isBlocked){
+					const isTypeOf & isBlocking){
 	Game * game = Game::get_instance();
 	Uint16 x=position.x/CELL_SIZE, y=position.y/CELL_SIZE;
-	if(game->field_withObject(x, y, isBlocked)
-	&& !game->field_withObject(x, y, BOMB))
+	MapObject * blocking = game->field_getObject(x, y, isBlocking);
+	if(blocking && blocking->type()!=BOMB_STAYING)
 		return false;
 
 	switch(position.d){
-		case UP: if(game->field_withObject(x, y-1, isBlocked)
-				&& position.y%CELL_SIZE<CELL_SIZE/2)
+		case UP: if(position.y%CELL_SIZE<CELL_SIZE/2
+				&& game->field_withObject(x, y-1, isBlocking) )
 					return false;
 			break;
-		case RIGHT: if(game->field_withObject(x+1, y, isBlocked)
-				&& position.x%CELL_SIZE>CELL_SIZE/2)
+		case RIGHT: if(position.x%CELL_SIZE>CELL_SIZE/2
+				&& game->field_withObject(x+1, y, isBlocking) )
 					return false;
 			break;
-		case DOWN: if(game->field_withObject(x, y+1, isBlocked)
-				&& position.y%CELL_SIZE>CELL_SIZE/2)
+		case DOWN: if(position.y%CELL_SIZE>CELL_SIZE/2
+				&& game->field_withObject(x, y+1, isBlocking) )
 					return false;
 			break;
-		case LEFT: if(game->field_withObject(x-1, y, isBlocked)
-				&& position.x%CELL_SIZE<CELL_SIZE/2)
+		case LEFT: if(position.x%CELL_SIZE<CELL_SIZE/2
+				&& game->field_withObject(x-1, y, isBlocking) )
 					return false;
 			break;
 		default: break;
@@ -286,73 +286,65 @@ bool AI::checkField(const position_t & position,
 
 /************************ AI_0 **************************/
 
-AI_0::AI_0(Creature *creature): AI(creature) {
-	isBlocked_.addType(WALL).addType(BOX).addType(BOMB);
-}
+AI_0::AI_0(Creature *creature):
+		AI(creature), isBlocking_(isTypeOf::isWallBoxBomb) {}
 
 void AI_0::move() {
 	updatePositions();
 	// vpred
-	if(checkField(positions_[1], isBlocked_)){
+	if(checkField(positions_[1], isBlocking_)){
 		setPosition(positions_[1]);
 		return;
 	}
 	// otoceni doprava
-	if(rand()%3==0 && checkField(positions_[2], isBlocked_)){
+	if(rand()%3==0 && checkField(positions_[2], isBlocking_)){
 		setPosition(positions_[2]);
 		return;
 	}
 	// otoceni doleva
-	if(rand()%2==0 && checkField(positions_[4], isBlocked_)){
+	if(rand()%2==0 && checkField(positions_[4], isBlocking_)){
 		setPosition(positions_[4]);
 		return;
 	}
 	// vzad
-	if(checkField(positions_[3], isBlocked_))
+	if(checkField(positions_[3], isBlocking_))
 		setPosition(positions_[3]);
 }
 
 /************************ AI_1 **************************/
 
-AI_1::AI_1(Creature *creature): AI(creature) {
-	isBlocked_.addType(WALL).addType(BOX).addType(BOMB);
-}
+AI_1::AI_1(Creature *creature):
+		AI(creature), isBlocking_(isTypeOf::isWallBoxBomb) {}
 
 void AI_1::move() {
 	updatePositions();
 
 	// vpred
-	if(rand()%100<=97 && checkField(positions_[1], isBlocked_)){
+	if(rand()%100<=97 && checkField(positions_[1], isBlocking_)){
 		setPosition(positions_[1]);
 		return;
 	}
 	// otoceni doprava
-	if(rand()%5<=2 && checkField(positions_[2], isBlocked_)){
+	if(rand()%5<=2 && checkField(positions_[2], isBlocking_)){
 		setPosition(positions_[2]);
 		return;
 	}
 	// otoceni doleva
-	if(rand()%3<=2 && checkField(positions_[4], isBlocked_)){
+	if(rand()%3<=2 && checkField(positions_[4], isBlocking_)){
 		setPosition(positions_[4]);
 		return;
 	}
 	// vzad
-	if(checkField(positions_[3], isBlocked_))
+	if(checkField(positions_[3], isBlocking_))
 		setPosition(positions_[3]);
 }
 
 /************************ AI_10 **************************/
 
 AI_10::AI_10(Creature *creature):
-			AI(creature), target_x_(1), target_y_(1),
-			last_trace_update_(0) {
-	// blokovaci typy, v zadnem pripade se tam nesmi stoupnout
-	isBlocked_.addType(WALL).addType(BOX).addType(BOMB).addType(FLAME);
-	// spatne typy (vcetne blokovacich)
-	// v krajni nouzi tam slapnu, ale rychle pryc
-	isBad_.addType(WALL).addType(BOX).addType(BOMB)
-		.addType(FLAME).addType(PRESUMPTION);
-}
+			AI(creature), isBlocking_(isTypeOf::isWallBoxBombFlame),
+			isBad_(isTypeOf::isWallBoxBombFlamePresumption),
+			target_x_(1), target_y_(1), last_trace_update_(0) {}
 
 void AI_10::move() {
 	// pripravim cilove pozice
@@ -367,7 +359,7 @@ void AI_10::move() {
 
 	// najdu vhodnou pozici
 	position_t & position = get_position_();
-	if(!checkField(position, isBlocked_))
+	if(!checkField(position, isBlocking_))
 		position = get_random_position_();
 	// prictu o kolik se posunu
 	last_trace_update_ += abs_minus(position.x, positions_[0].x)
@@ -435,7 +427,7 @@ void AI_10::eval_trace_array_(fields_queue_t & fields_queue, bool in_danger ){
 			// mohu na policko vstoupit
 			if(trace_array_[next_x][next_y]==-1
 			&& !game->field_withObject(next_x, next_y,
-						in_danger ? isBlocked_ : isBad_)){
+						in_danger ? isBlocking_ : isBad_)){
 				// nastavim hodnotu
 				trace_array_[next_x][next_y] = val;
 				// vlozim do fronty
@@ -498,16 +490,16 @@ AI::position_t & AI_10::get_random_position_(){
 	if(checkField(positions_[3], isBad_))
 		return positions_[3];
 	// vpred
-	if(checkField(positions_[1], isBlocked_))
+	if(checkField(positions_[1], isBlocking_))
 		return positions_[1];
 	// otoceni doprava
-	if(checkField(positions_[2], isBlocked_))
+	if(checkField(positions_[2], isBlocking_))
 		return positions_[2];
 	// otoceni doleva
-	if(checkField(positions_[4], isBlocked_))
+	if(checkField(positions_[4], isBlocking_))
 		return positions_[4];
 	// vzad
-	if(checkField(positions_[3], isBlocked_))
+	if(checkField(positions_[3], isBlocking_))
 		return positions_[3];
 
 	// zustat namiste
@@ -580,8 +572,6 @@ void AI_fromKeyboard::move() {
 	if(keystate_[config->player(num, KEY_PLANT)]){
 		x = player->x_/CELL_SIZE;
 		y = player->y_/CELL_SIZE;
-		isTypeOf isBlocked(WALL);
-		isBlocked.addType(BOX).addType(BOMB).addType(FLAME);
 
 		Bomb * bomb =0;
 		if(player->bonus_fireman_){
@@ -591,7 +581,7 @@ void AI_fromKeyboard::move() {
 				player->next_timer_ = TIMER_PERIOD;
 			}
 		}
-		else if(!game->field_withObject(x, y, isBlocked)){
+		else if(!game->field_withObject(x, y, isTypeOf::isWallBoxAnyBombFlame)){
 			if(player->megabombs_){
 				bomb = game->tools->bomb_mega(x, y,
 							player->flamesize_, player->bonus_timer_);
@@ -601,8 +591,13 @@ void AI_fromKeyboard::move() {
 				bomb = game->tools->bomb_normal(x, y,
 							player->flamesize_, player->bonus_timer_);
 		}
-		if(bomb)
+		if(bomb){
+			if(player->bonus_slider_
+			&& player->x_==positions_[0].x
+			&& player->y_==positions_[0].y)
+				bomb->kick(player->d_);
 			game->plant_bomb(num, x, y, bomb);
+		}
 	}
 
 	if(keystate_[config->player(num, KEY_TIMER)]

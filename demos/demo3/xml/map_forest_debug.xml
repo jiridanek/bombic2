@@ -20,7 +20,7 @@
 	<floorobject name="floor_deadbody" x="6" y="4" width="2" />
 	<floorobject name="floor_deadbody" x="9" y="9" width="2" />
 
-	<boxes 	name="box_barrel" count="10">
+	<boxes 	name="box_barrel" count="30">
 		<nobox x="1" y="10" />
 		<nobox x="2" y="10" />
 		<nobox x="3" y="10" />
@@ -41,16 +41,16 @@
 	</boxes>
 <!---->
 	<bonuses name="bonus_flame" count="1" />
-	<bonuses name="bonus_bomb" count="1" />
+	<bonuses name="bonus_bomb" count="10" />
 <!-- 	<bonuses name="bonus_illness" count="1" /> -->
 	<bonuses name="bonus_speed" count="1" />
 	<bonuses name="bonus_timer" count="1" />
-	<bonuses name="bonus_megabomb" count="1" />
+	<bonuses name="bonus_megabomb" count="0" />
 	<bonuses name="bonus_live" count="1" />
 	<bonuses name="bonus_shield" count="1" />
 	<bonuses name="bonus_kicker" count="1" />
 <!-- 	<bonuses name="bonus_othersillness" count="1" /> -->
-	<bonuses name="bonus_slider" count="1" />
+	<bonuses name="bonus_slider" count="10" />
 	<bonuses name="bonus_fireman" count="1" />
 <!---->
 	<creatures name="creature_rat" count="0">

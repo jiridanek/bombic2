@@ -55,32 +55,57 @@ bool MapObject::isUpwards(const MapObject & obj) const{
  * a vloží se na nové políčko.
  * @param old_x stará souřadnice
  * @param old_y stará souřadnice
+ * @return Vrací TRUE, pokud se nastavovalo nové políčko v mapě.
  */
-void DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y){
+bool DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y){
 	Uint16 x=x_/CELL_SIZE, y=y_/CELL_SIZE;
 	old_x/=CELL_SIZE; old_y/=CELL_SIZE;
-	if(old_x==x && old_y==y) return;
+	if(old_x==x && old_y==y) return false;
 	// zmena policka
 	Game::get_instance()->change_position(old_x, old_y, x, y, this);
+	return true;
 }
 
 /**************** isTypeOf *************************/
 
-/** @details
- * Inicializuje vnitřní strukturu.
- * @see clear()
- */
-isTypeOf::isTypeOf(){
-	clear();
-}
+isTypeOf isTypeOf::isFlame(FLAME);
+isTypeOf isTypeOf::isPresumption(PRESUMPTION);
+
+isTypeOf isTypeOf::isBgType(
+	BACKGROUND, FLOOROBJECT);
+isTypeOf isTypeOf::isAnyBomb(
+	BOMB_STAYING, BOMB_MOVING);
+isTypeOf isTypeOf::isWallBox(
+	WALL, BOX);
+isTypeOf isTypeOf::isWallBoxPlayer(
+	WALL, BOX, PLAYER);
+isTypeOf isTypeOf::isWallBoxBomb(
+	WALL, BOX, BOMB_STAYING);
+isTypeOf isTypeOf::isWallBoxAnyBomb(
+	WALL, BOX, BOMB_STAYING, BOMB_MOVING);
+isTypeOf isTypeOf::isWallBoxBombFlame(
+	WALL, BOX, BOMB_STAYING, FLAME);
+isTypeOf isTypeOf::isWallBoxAnyBombFlame(
+	WALL, BOX, BOMB_STAYING, BOMB_MOVING, FLAME);
+isTypeOf isTypeOf::isWallBoxBombFlamePresumption(
+	WALL, BOX, BOMB_STAYING, FLAME, PRESUMPTION);
+
+
 /** @details
  * Inicializuje vnitřní strukturu, přidá typ.
  * @param type Typ který chceme přidat.
  * @see clear(), addType()
  */
-isTypeOf::isTypeOf(OBJECT_TYPES type){
+isTypeOf::isTypeOf(OBJECT_TYPES type1, OBJECT_TYPES type2,
+	OBJECT_TYPES type3, OBJECT_TYPES type4,
+	OBJECT_TYPES type5, OBJECT_TYPES type6){
 	clear();
-	addType(type);
+	addType(type1);
+	addType(type2);
+	addType(type3);
+	addType(type4);
+	addType(type5);
+	addType(type6);
 }
 
 /** @details
@@ -101,8 +126,9 @@ isTypeOf & isTypeOf::addType(OBJECT_TYPES type){
  * to podporuje řetězení fcí za sebe.
  */
 isTypeOf & isTypeOf::clear(){
-	types_.clear();
-	types_.insert(types_.end(), OBJECT_TYPES_COUNT, false);
+	for(Uint16 i=0 ; i<OBJECT_TYPES_COUNT ; ++i){
+		types_[i] = false;
+	}
 	return *this;
 }
 
@@ -112,7 +138,9 @@ isTypeOf & isTypeOf::clear(){
  * @param object pointer na objekt, jehož typ nás zajímá
  * @return Vrací TRUE pokud je pointer nenulový
  * a hledáme typ objektu.
+ * @warning Pro object typu NONE (což by se vyskytnout nemělo)
+ * predikát uspěje vždy.
  */
-bool isTypeOf::operator()(MapObject * object){
+bool isTypeOf::operator()(MapObject * object) const{
 	return object && types_[object->type()];
 }

@@ -9,6 +9,7 @@
 #include "config.h"
 #include "game.h"
 #include "game_base.h"
+#include "game_tools.h"
 #include "game_mapobjects.h"
 #include "game_background.h"
 #include "game_wall.h"
@@ -111,6 +112,7 @@ void Game::load_generated_MOs_(const GameBase & base){
 		it_first= base.generatedMOs_.begin(),
 		it_second= it_first,
 		end_it= base.generatedMOs_.end();
+
 
 	// bedny
 	if(it_first==end_it) return;
@@ -234,7 +236,6 @@ void Game::generate_creatures_(const GameBase & base,
 	map_array_t::value_type::value_type::iterator map_it;
 
 	Uint16 x, y;
-	isTypeOf isBad(WALL); isBad.addType(BOX).addType(PLAYER);
 	// zjisteni policek pro vygenerovani prisery
 	for(x=0 ; x<map_array_.size() ; ++x){
 		for(y=0 ; y<map_array_[x].size() ; ++y){
@@ -243,7 +244,7 @@ void Game::generate_creatures_(const GameBase & base,
 
 			for(map_it=map_array_[x][y].begin();
 				map_it!=map_array_[x][y].end(); ++map_it){
-					if(isBad(*map_it)) break;
+					if(isTypeOf::isWallBoxPlayer(*map_it)) break;
 			}
 			// pouze pokud nevypadl na isBad
 			if(map_it==map_array_[x][y].end())
@@ -530,7 +531,6 @@ void Game::draw_map_(bool bg, SDL_Surface* window, const SDL_Rect & map_view,
 
 	Uint16 column, field;
 	map_array_t::value_type::value_type::iterator it, end_it;
-	isTypeOf isBgType(BACKGROUND); isBgType.addType(FLOOROBJECT);
 
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
@@ -540,7 +540,7 @@ void Game::draw_map_(bool bg, SDL_Surface* window, const SDL_Rect & map_view,
 				it = map_array_[column][field].begin();
 				end_it = map_array_[column][field].end();
 				// vykreslim pozadi a objekt na zemi
-				while( (it=find_if(it, end_it, isBgType)) !=end_it){
+				while( (it=find_if(it, end_it, isTypeOf::isBgType)) !=end_it){
 					(*it)->draw(window, map_view);
 					++it;
 				}
@@ -553,7 +553,7 @@ void Game::draw_map_(bool bg, SDL_Surface* window, const SDL_Rect & map_view,
 						it!= map_array_[column][field].end() ;
 						++it){
 
-					if(isBgType(*it)) continue;
+					if(isTypeOf::isBgType(*it)) continue;
 
 					// v praxi potrebuju prohodit dva hrace pokud jsou v zakrytu
 					// spodniho vykreslim vzdycky, horniho bud preskocim nebo vykreslim
@@ -645,12 +645,8 @@ bool Game::get_player(Uint16 player_num, PlayerProperties & prop) const{
  * @return Vrací TRUE pokud lze zadané políčko přejít (není na něm zed ani bedna).
  */
 bool Game::field_canGoOver(Uint16 x, Uint16 y, bool check_bomb){
-	isTypeOf isBlockedObject;
-	isBlockedObject.addType(WALL).addType(BOX);
-	if(check_bomb)
-		isBlockedObject.addType(BOMB);
-
-	return !field_withObject(x, y, isBlockedObject);
+	return !field_withObject(x, y,
+		check_bomb ? isTypeOf::isWallBoxBomb : isTypeOf::isWallBox);
 }
 
 /**
@@ -722,14 +718,15 @@ void Game::remove_object(DynamicMO * obj){
 			// zahodit hrace ze seznamu hrajicich
 			players_.erase( static_cast<Player *>(obj)->player_num() );
 			break;
-		case BOMB:
+		case BOMB_STAYING:
+		case BOMB_MOVING:
 			// vyhodit bombu ze seznamu hrace
 			for(players_it it = players_.begin() ;
 							it!=players_.end() ; ++it){
 				it->second.bombs.remove( static_cast<Bomb *>(obj) );
 			}
 			break;
-		default: ;
+		default: break;
 	}
 	// zahodim obj
 	delete obj;
@@ -768,7 +765,14 @@ void Game::plant_bomb(Uint16 player_num, Uint16 x, Uint16 y, Bomb* bomb){
  * @return Počet bomb.
  */
 Uint16 Game::count_bombs(Uint16 player_num){
-	return players_[player_num].bombs.size();
+	Uint16 count = 0;
+	bombs_t::const_iterator it;
+	for(it = players_[player_num].bombs.begin() ;
+				it!=players_[player_num].bombs.end() ; ++it){
+		if(!(*it)->is_mega())
+			++count;
+	}
+	return count;
 }
 
 /** @details

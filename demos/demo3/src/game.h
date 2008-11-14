@@ -12,6 +12,7 @@
 #include <string>
 #include "SDL_lib.h"
 #include "game_base.h"
+#include "game_tools.h"
 #include "game_mapobjects.h"
 #include "game_player.h"
 #include "game_bomb.h"

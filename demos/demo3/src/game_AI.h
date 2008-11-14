@@ -50,7 +50,7 @@ class AI {
 		void centerCoordinate(Uint16 & coordinate, Sint8 sign);
 		/// Zjistí, zda je možné vstoupit na políčko.
 		bool checkField(
-			const position_t & position, const isTypeOf & isBlocked);
+			const position_t & position, const isTypeOf & isBlocking);
 };
 
 /** Umělá inteligence nulté úrovně.
@@ -69,7 +69,7 @@ class AI_0 : public AI {
 		/// Destruktor.
 		virtual ~AI_0() {};
 	private:
-		isTypeOf isBlocked_;
+		isTypeOf & isBlocking_;
 };
 
 /** Umělá inteligence první úrovně.
@@ -87,7 +87,7 @@ class AI_1 : public AI {
 		/// Destruktor.
 		virtual ~AI_1() {};
 	private:
-		isTypeOf isBlocked_;
+		isTypeOf & isBlocking_;
 };
 
 #define AI_10_MAX_TRACE_DEPTH 10
@@ -114,13 +114,14 @@ class AI_10 : public AI {
 		trace_array_t empty_trace_array_;
 		trace_array_t trace_array_;
 
-		isTypeOf isBlocked_, isBad_;
 
 		void update_trace_array_();
 		void eval_trace_array_(fields_queue_t & fields_queue, bool in_danger);
 
 		position_t & get_position_();
 		position_t & get_random_position_();
+
+		isTypeOf & isBlocking_, & isBad_;
 
 		Uint16
 			old_x_, ///< Moje stará souřadnice.

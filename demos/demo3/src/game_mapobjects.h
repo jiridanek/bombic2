@@ -12,11 +12,11 @@
 
 /** Všechny typy obejktů.
  * @see MapObject::type() and derived
- * @see isTypeOf::clear()
+ * @see isTypeOf
  */
 enum OBJECT_TYPES { BACKGROUND, FLOOROBJECT, WALL,
-	BOX, BONUS, CREATURE, PLAYER, FLAME, PRESUMPTION, BOMB };
-#define OBJECT_TYPES_COUNT 10
+	BOX, BONUS, CREATURE, PLAYER, FLAME, PRESUMPTION, BOMB_STAYING, BOMB_MOVING, NONE };
+#define OBJECT_TYPES_COUNT 12
 
 /// Čtyři směry + hoření
 enum DIRECTION { UP, RIGHT, DOWN, LEFT, BURNED };
@@ -69,7 +69,7 @@ class DynamicMO: public MapObject{
 		virtual ~DynamicMO(){};
 	protected:
 		/// Nastavení správného políčka v mapě.
-		void setFieldInMap(Uint16 old_x, Uint16 old_y);
+		bool setFieldInMap(Uint16 old_x, Uint16 old_y);
 };
 
 /** Statický objekt hry.
@@ -92,19 +92,35 @@ class StaticMO: public MapObject{
  */
 class isTypeOf {
 	public:
-		/// Bez požadovaného typu.
-		isTypeOf();
-		/// Inicializuje predikát požadovaným typem.
-		isTypeOf(OBJECT_TYPES type);
+		/// Inicializuje predikát požadovanými typy.
+		isTypeOf(OBJECT_TYPES type1=NONE, OBJECT_TYPES type2=NONE,
+				OBJECT_TYPES type3=NONE, OBJECT_TYPES type4=NONE,
+				OBJECT_TYPES type5=NONE, OBJECT_TYPES type6=NONE);
 		/// Přidání typu.
 		isTypeOf & addType(OBJECT_TYPES type);
 		/// Vyprázdnění typů.
 		isTypeOf & clear();
 		/// Volání predikátu.
-		bool operator()(MapObject * object);
+		bool operator()(MapObject * object) const;
+
+		static isTypeOf
+			isFlame,
+			isPresumption,
+			isBgType,
+			isAnyBomb,
+			isWallBox,
+			isWallBoxPlayer,
+			isWallBoxBomb,
+			isWallBoxAnyBomb,
+			isWallBoxBombFlame,
+			isWallBoxAnyBombFlame,
+			isWallBoxBombFlamePresumption;
+
+
+		/// TODO ruzne uzitecne druhy predikatu
 	private:
 		/// Uložené typy pro srovnání.
-		std::vector<bool> types_;
+		bool types_[OBJECT_TYPES_COUNT];
 };
 
 #endif

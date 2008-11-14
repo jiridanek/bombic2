@@ -48,7 +48,7 @@
 		</cross>
 	</flame>
 	<!-- obrazek bomb -->
-	<bombs>
+	<bombs speed="15">
 		<normal x="1" y="158">
 			<animation rate="2">
 				<animation_item x="52" y="158" />
