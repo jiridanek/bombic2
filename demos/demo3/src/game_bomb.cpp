@@ -34,10 +34,7 @@ Bomb::~Bomb(){
 }
 
 /** @details
- * Posouvá animaci sám,
- * kontroluje jestli nejsme na konci,
- * jestli nejsme v plamenech,
- * vytváří plameny.
+ * Hýbe s bombou, stará se o presumpce (vyhazuje nepotřebné, vytváří nové).
  * @return Vrací TRUE pokud objekt explodoval.
  */
 bool Bomb::move(){
@@ -74,9 +71,9 @@ bool Bomb::move(){
 			if(old_x==x_ && old_y==y_)
 				kick(BURNED);
 			// nastavit novou pozici take v mape
-			if(setFieldInMap(old_x, old_y))
-				remove_presumptions_();
-
+			setFieldInMap(old_x, old_y);
+			// vyhodit stare presumpce
+			remove_presumptions_();
 		}
 		create_presumptions_();
 	}
@@ -166,25 +163,43 @@ void Bomb::explode(){
 void Bomb::kick(DIRECTION d){
 	d_ = d;
 	Uint16 x=x_/CELL_SIZE, y=y_/CELL_SIZE;
+	MapObject * obj;
 	switch(d){
 		case UP:
 		case DOWN:
+			obj = Game::get_instance()->field_getObject(
+					x, y+ (d==UP ? -1 : +1), isTypeOf::isWallBoxAnyBomb);
 			x_ = x*CELL_SIZE+CELL_SIZE/2;
-			if(Game::get_instance()->field_withObject(
-					x, y+ (d==UP ? -1 : +1), isTypeOf::isAnyBomb))
-				y_ = (y+ (d==UP ? 1 : 0) )*CELL_SIZE;
+			if(obj){ // neco jsem tam nasel
+				// hybajici se bomba => presunu se na konec policka
+				if(obj->type()==BOMB_MOVING)
+					y_ = (y+ (d==UP ? 1 : 0) )*CELL_SIZE;
+				// neco blokujiciho => nehybu se
+				else
+					d_ = BURNED;
+			}
 			break;
 		case RIGHT:
 		case LEFT:
+			obj = Game::get_instance()->field_getObject(
+					x+ (d==LEFT ? -1 : +1), y, isTypeOf::isWallBoxAnyBomb);
 			y_ = y*CELL_SIZE+CELL_SIZE/2;
-			if(Game::get_instance()->field_withObject(
-					x+ (d==LEFT ? -1 : +1), y, isTypeOf::isAnyBomb))
-				x_ = (x+ (d==LEFT ? 1 : 0) )*CELL_SIZE;
+			if(obj){ // neco jsem tam nasel
+				// hybajici se bomba => presunu se na konec policka
+				if(obj->type()==BOMB_MOVING)
+					x_ = (x+ (d==LEFT ? 1 : 0) )*CELL_SIZE;
+				// neco blokujiciho => nehybu se
+				else
+					d_ = BURNED;
+			}
 			break;
 		default:
 			x_ = x*CELL_SIZE+CELL_SIZE/2;
 			y_ = y*CELL_SIZE+CELL_SIZE/2;
 	}
+	setFieldInMap(x*CELL_SIZE, y*CELL_SIZE);
+	remove_presumptions_();
+	create_presumptions_();
 }
 
 /**
@@ -193,12 +208,70 @@ void Bomb::remove_timer(){
 	timer_=false;
 }
 
+void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
+	x = x_/CELL_SIZE;
+	y = y_/CELL_SIZE;
+	if(d_==BURNED) return;
+
+	Uint16 tar_x = x_, tar_y = y_, column = x, field = y, to_end, distance;
+
+	to_end = timer_ ? 0 : anim_.periods_to_end();
+	distance = to_end * speed_diff_ * (speed_rate_-2) /speed_rate_;
+
+	switch(d_){
+		case UP:
+			tar_y = tar_y<distance ? 0 : tar_y-distance;
+			break;
+		case RIGHT:
+			tar_x += distance;
+			break;
+		case DOWN:
+			tar_y += distance;
+			break;
+		case LEFT:
+			tar_x = tar_x<distance ? 0 : tar_x-distance;
+			break;
+		default: break;
+	}
+	tar_x/=CELL_SIZE;
+	tar_y/=CELL_SIZE;
+
+	while(column != tar_x || field != tar_y){
+		// posun o dalsi policko
+		if(column!=tar_x)
+			x<tar_x ? ++column : --column;
+		else
+			y<tar_y ? ++field : --field;
+
+		// nalezeni prekazky
+		MapObject * obj =
+			Game::get_instance()->field_getObject(column, field,
+				isTypeOf::isWallBoxBombFlamePresumption);
+		// zastavi se pred prekazkou
+		if(obj && obj->type()!=FLAME && obj->type()!=PRESUMPTION)
+			return;
+		// posun cile o dalsi policko
+		x = column;
+		y = field;
+
+		if(obj){
+			// zastavi se na plameni
+			if(obj->type()==FLAME
+			// zastavi se na presumpci ktera bouchne driv nez ja
+			|| static_cast<Presumption *>(obj)->periods_to_flame()<to_end )
+				return;
+		}
+	}
+
+}
 /**
  */
 void Bomb::create_presumptions_(){
-	Uint16 i, dir,
-		x = x_/CELL_SIZE,
-		y = y_/CELL_SIZE;
+	Uint16 i, dir, x, y;
+
+	find_target_(x, y);
+	// TODO debug
+// 	std::cout << x << "," << y << std::endl;
 
 	Sint16 factor_x, factor_y;
 
@@ -235,7 +308,8 @@ bool Bomb::add_presumption_(Uint16 x, Uint16 y){
 	// na policku jeste neni presumpce
 	if(!game->field_withObject(x, y, isTypeOf::isPresumption)){
 		// priprava nove presumpce
-		Presumption * presumption = game->tools->presumption(x, y);
+		Presumption * presumption = game->tools->presumption(x, y,
+						anim_.periods_to_end());
 		// vlozeni presumpce do hry
 		game->insert_object(x, y, presumption);
 		// vlozeni do seznamu presumpci

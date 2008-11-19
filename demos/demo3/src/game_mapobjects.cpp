@@ -57,13 +57,12 @@ bool MapObject::isUpwards(const MapObject & obj) const{
  * @param old_y stará souřadnice
  * @return Vrací TRUE, pokud se nastavovalo nové políčko v mapě.
  */
-bool DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y){
+void DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y){
 	Uint16 x=x_/CELL_SIZE, y=y_/CELL_SIZE;
 	old_x/=CELL_SIZE; old_y/=CELL_SIZE;
-	if(old_x==x && old_y==y) return false;
+	if(old_x==x && old_y==y) return;
 	// zmena policka
 	Game::get_instance()->change_position(old_x, old_y, x, y, this);
-	return true;
 }
 
 /**************** isTypeOf *************************/

@@ -524,48 +524,19 @@ void AI_fromKeyboard::move() {
 
 	if(keystate_[config->player(num, KEY_UP)]){
 		player->d_ = UP;
-		x=positions_[1].x/CELL_SIZE; y=positions_[1].y/CELL_SIZE;
-		if(game->field_canGoOver(x, y, false)){
-			if(!game->field_canGoOver(x, y-1, true)
-			&& positions_[1].y%CELL_SIZE<CELL_SIZE/2){
-				positions_[1].y =y*CELL_SIZE+CELL_SIZE/2;
-			}
-			if(positions_[1].y<positions_[0].y)
-				setPosition(positions_[1]);
-		}
+		makePosition(positions_[1], 0, -1);
 	}
 	else if(keystate_[config->player(num, KEY_RIGHT)]){
 		player->d_ = RIGHT;
-		x=positions_[2].x/CELL_SIZE; y=positions_[2].y/CELL_SIZE;
-		if(game->field_canGoOver(x, y, false)){
-			if(!game->field_canGoOver(x+1, y, true)
-			&& positions_[2].x%CELL_SIZE>CELL_SIZE/2)
-				positions_[2].x =x*CELL_SIZE+CELL_SIZE/2;
-			if(positions_[2].x>positions_[0].x)
-				setPosition(positions_[2]);
-		}
+		makePosition(positions_[2], 1, 0);
 	}
 	else if(keystate_[config->player(num, KEY_DOWN)]){
 		player->d_ = DOWN;
-		x=positions_[3].x/CELL_SIZE; y=positions_[3].y/CELL_SIZE;
-		if(game->field_canGoOver(x, y, false)){
-			if(!game->field_canGoOver(x, y+1, true)
-			&& positions_[3].y%CELL_SIZE>CELL_SIZE/2)
-				positions_[3].y =y*CELL_SIZE+CELL_SIZE/2;
-			if(positions_[3].y>positions_[0].y)
-				setPosition(positions_[3]);
-		}
+		makePosition(positions_[3], 0, 1);
 	}
 	else if(keystate_[config->player(num, KEY_LEFT)]){
 		player->d_ = LEFT;
-		x=positions_[4].x/CELL_SIZE; y=positions_[4].y/CELL_SIZE;
-		if(game->field_canGoOver(x, y, false)){
-			if(!game->field_canGoOver(x-1, y, true)
-			&& positions_[4].x%CELL_SIZE<CELL_SIZE/2)
-				positions_[4].x =x*CELL_SIZE+CELL_SIZE/2;
-			if(positions_[4].x<positions_[0].x)
-				setPosition(positions_[4]);
-		}
+		makePosition(positions_[4], -1, 0);
 	}
 	else player->d_ = cur_d;
 
@@ -606,4 +577,41 @@ void AI_fromKeyboard::move() {
 		player->next_timer_ = TIMER_PERIOD;
 	}
 
+}
+
+void AI_fromKeyboard::makePosition(position_t & position,
+				Sint16 factor_x, Sint16 factor_y) {
+	Game * game = Game::get_instance();
+	Player * player = static_cast<Player *>(creature_);
+
+	Uint16 x=position.x/CELL_SIZE,
+		y=position.y/CELL_SIZE;
+	if(game->field_canGoOver(x, y, false)){
+		if((factor_x<0 && position.x%CELL_SIZE<CELL_SIZE/2)
+		|| (factor_x>0 && position.x%CELL_SIZE>CELL_SIZE/2)
+		|| (factor_y<0 && position.y%CELL_SIZE<CELL_SIZE/2)
+		|| (factor_y>0 && position.y%CELL_SIZE>CELL_SIZE/2) ){
+
+			MapObject * obj = game->field_getObject(x+factor_x, y+factor_y,
+					isTypeOf::isWallBoxAnyBomb);
+			if(obj){
+				// jakakoli bomba, zkusim do ni kopnout (jestli muzu)
+				if(player->bonus_kicker_
+				&& (obj->type()==BOMB_STAYING || obj->type()==BOMB_MOVING))
+					static_cast< Bomb * >(obj)->kick(player->d_);
+				// WALL | BOX | BOMB_STAYING (po kopnuti se nehybe)
+				if(obj->type()!=BOMB_MOVING){
+					if(factor_x)
+						position.x = x*CELL_SIZE+CELL_SIZE/2;
+					if(factor_y)
+						position.y = y*CELL_SIZE+CELL_SIZE/2;
+				}
+			}
+		}
+		if((factor_x<0 && position.x<positions_[0].x)
+		|| (factor_x>0 && position.x>positions_[0].x)
+		|| (factor_y<0 && position.y<positions_[0].y)
+		|| (factor_y>0 && position.y>positions_[0].y) )
+			setPosition(position);
+	}
 }

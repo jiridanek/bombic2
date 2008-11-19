@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- specifikuje jak jdou levely za sebou v cooperative(single) modu -->
+<levels>
+	<episode>
+		<!-- levely prvni (nulte) epizody -->
+		<!-- tolik elementu level, kolik levelu v epizode bude -->
+		<level map="nazev mapy" img="cesta k souboru s obrazkem privitani do levelu" />
+	</episode>
+</levels>

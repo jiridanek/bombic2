@@ -11,14 +11,17 @@
  * @param x souřadnice levého rohu políčka v pixelech
  * @param y souřadnice horního rohu v pixelech
  */
-Presumption::Presumption(const Animation & anim, Uint16 x, Uint16 y):
-	DynamicMO(x, y), anim_(anim) {}
+Presumption::Presumption(Animation * anim, Uint16 x, Uint16 y,
+				Uint16 to_flame):
+	DynamicMO(x, y), anim_(anim), periods_to_flame_(to_flame) {}
 
 /** @details
- * Zvýší počet přístupů, kontroluje s dobou periody.
- * @return Vrací TRUE pokud se má objekt zahodit.
+ * Sníží počet period do výbuchu.
+ * @return Vrací FALSE.
  */
 bool Presumption::move(){
+	if(periods_to_flame_)
+		--periods_to_flame_;
 	return false;
 }
 
@@ -26,9 +29,12 @@ bool Presumption::move(){
  * @param window surface okna pro vykreslení
  */
 void Presumption::draw(SDL_Surface *window, const SDL_Rect & rect){
-	anim_.draw(window, x_ +rect.x, y_ +rect.y);
+	anim_->draw(window, x_ +rect.x, y_ +rect.y);
 }
 
+/** @details
+ * Náhodně zvolí frame animace.
+ */
 void Presumption::update(){
-	anim_.update();
+	anim_->random();
 }

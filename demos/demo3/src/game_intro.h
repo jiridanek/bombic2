@@ -61,9 +61,9 @@ class GameIntro {
 		/// Seznam levelů.
 		std::vector< level_t > levels_;
 
-		typedef std::map< std::string, Surface> images_t;
+		typedef std::pair< std::string, Surface> image_t;
 		/// Surface příslušící jménu souboru.
-		images_t images_;
+		image_t image_;
 
 		Uint16 cur_level_, ///< Aktuální level.
 			players_count_; ///< Počet hráčů.

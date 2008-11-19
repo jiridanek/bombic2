@@ -19,7 +19,8 @@
 class Presumption: public DynamicMO {
 	public:
 		/// Vytvoří plamen.
-		Presumption(const Animation & anim, Uint16 x, Uint16 y);
+		Presumption(Animation * anim, Uint16 x, Uint16 y,
+				Uint16 to_flame);
 		/// Pohyb.
 		virtual bool move();
 		/// Vykreslení.
@@ -28,11 +29,16 @@ class Presumption: public DynamicMO {
 		virtual void update();
 		/// Typ objektu je presumpce.
 		virtual OBJECT_TYPES type() const { return PRESUMPTION; }
-		/// Destructor
+		/// Destructor.
 		virtual ~Presumption() {};
+		/// Počet period do výbuchu.
+		Uint16 periods_to_flame() const
+			{ return periods_to_flame_; }
 	protected:
 		/// Animace.
-		Animation anim_;
+		Animation * anim_;
+		/// Počet period do výbuchu.
+		Uint16 periods_to_flame_;
 };
 
 #endif

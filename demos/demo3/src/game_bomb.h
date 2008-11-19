@@ -58,6 +58,8 @@ class Bomb: public DynamicMO {
 		std::vector< Presumption* > presumptions_;
 		/// Vytvořit presumpce.
 		virtual void create_presumptions_();
+		/// Najít cílové políčko bomby.
+		void find_target_(Uint16 & x, Uint16 & y) const;
 		/// Přidat presumpci.
 		bool add_presumption_(Uint16 x, Uint16 y);
 		/// Odstranit presumpce.

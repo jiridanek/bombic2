@@ -127,12 +127,15 @@ void GameIntro::load_levels_(Uint16 episode){
 
 Surface & GameIntro::get_cur_image_(){
 	string img_name = levels_[cur_level_].img;
-	images_t::iterator it = images_.find(img_name);
-	if(it!=images_.end())
-		return it->second;
-	SDL_Surface * sur = IMG_Load(img_name.c_str());
-	if(!sur)
+	if(image_.first==img_name)
+		return image_.second;
+	image_.first = img_name;
+	// odalokovat
+	image_.second = 0;
+	// naalokovat novy
+	image_.second = IMG_Load(img_name.c_str());
+	if(!image_.second.getSurface())
 		throw "GameIntro::get_cur_image_(): Unable to load "+img_name;
-	return ( images_[img_name] = sur );
+	return image_.second;
 }
 

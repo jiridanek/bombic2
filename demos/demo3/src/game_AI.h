@@ -149,6 +149,9 @@ class AI_fromKeyboard : public AI {
 	private:
 		/// Stav klávesnice.
 		Uint8 *keystate_;
+		/// Vytvoří a nastaví novou pozici.
+		void makePosition(position_t & position,
+			Sint16 factor_x, Sint16 factor_y);
 };
 
 

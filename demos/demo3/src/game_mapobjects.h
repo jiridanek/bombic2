@@ -69,7 +69,7 @@ class DynamicMO: public MapObject{
 		virtual ~DynamicMO(){};
 	protected:
 		/// Nastavení správného políčka v mapě.
-		bool setFieldInMap(Uint16 old_x, Uint16 old_y);
+		void setFieldInMap(Uint16 old_x, Uint16 old_y);
 };
 
 /** Statický objekt hry.

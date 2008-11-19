@@ -17,9 +17,9 @@
 #include "game_bonus.h"
 #include "game_creature.h"
 #include "game_player.h"
-#include "game_bomb.h"
-#include "game_flame.h"
-#include "game_presumption.h"
+// #include "game_bomb.h"
+// #include "game_flame.h"
+// #include "game_presumption.h"
 
 using namespace std;
 

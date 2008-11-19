@@ -186,7 +186,7 @@ Uint16 Surface::height() const {
 
 /*************** class Animation *********************/
 
-Animation::Animation(): next_frame_(0), draw_shadow_(0),
+Animation::Animation(): cur_frame_(0), draw_shadow_(0),
 			frame_period_(1000), last_access_(0), run_counter_(0) {
 	frames_.push_back(Surface());
 }
@@ -217,7 +217,7 @@ const Animation & Animation::initialize(TiXmlElement* el,
 			const Surface & sur_src, const Surface & sur_shadow_src){
 	// nastaveni defaultnich hodnot
 	frames_.clear(); shadow_frames_.clear();
-	frame_period_ = 1000; next_frame_ = last_access_ = run_counter_ = 0;
+	frame_period_ = 1000; cur_frame_ = last_access_ = run_counter_ = 0;
 	draw_shadow_ = sur_shadow_src.getSurface()!=0;
 
 	if(!el) throw std::string("missing element");
@@ -258,13 +258,13 @@ const Animation & Animation::initialize(TiXmlElement* el,
 
 Animation::Animation(const Animation & anim):
 	frames_(anim.frames_), shadow_frames_(anim.shadow_frames_),
-	next_frame_(0), draw_shadow_(anim.draw_shadow_),
+	cur_frame_(0), draw_shadow_(anim.draw_shadow_),
 	frame_period_(anim.frame_period_), last_access_(0), run_counter_(0) {}
 
 const Animation & Animation::operator=(const Animation & anim){
 	if(&anim!=this){
 		frames_ = anim.frames_; shadow_frames_ = anim.shadow_frames_;
-		next_frame_ = 0; draw_shadow_ = anim.draw_shadow_;
+		cur_frame_ = 0; draw_shadow_ = anim.draw_shadow_;
 		frame_period_ = anim.frame_period_; last_access_ = run_counter_ = 0;
 	}
 	return *this;
@@ -314,7 +314,16 @@ void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
  * vynuluje dobu od posledního posunu framu.
  */
 void Animation::reset(){
-	next_frame_=0;
+	cur_frame_=0;
+	last_access_=0;
+}
+
+/** @details
+ * Nastaví počítadlo na náhodný frame,
+ * vynuluje dobu od posledního posunu framu.
+ */
+void Animation::random(){
+	cur_frame_= rand()%frames_.size();
 	last_access_=0;
 }
 
@@ -326,9 +335,9 @@ bool Animation::update(){
 	bool at_end = false;
 	for(last_access_+=MOVE_PERIOD;
 		last_access_>=frame_period_; last_access_-=frame_period_){
-		++next_frame_;
-		if(next_frame_>=frames_.size()){
-			next_frame_%= frames_.size();
+		++cur_frame_;
+		if(cur_frame_>=frames_.size()){
+			cur_frame_%= frames_.size();
 			++run_counter_;
 			at_end=true;
 		}
@@ -342,9 +351,17 @@ bool Animation::update(){
  */
 Uint16 Animation::run_num() const {
 	if( (last_access_+MOVE_PERIOD) >= frame_period_
-	&&  (next_frame_+1) >= frames_.size())
+	&&  (cur_frame_+1) >= frames_.size())
 			return run_counter_+1;
 	return run_counter_;
+}
+
+/**
+ * @return Počet period do konce aktuálního běhu animace.
+ */
+Uint16 Animation::periods_to_end() const {
+	return ( frame_period_*(frames_.size()-cur_frame_) - last_access_ )
+					/ MOVE_PERIOD;
 }
 
 /**
@@ -354,9 +371,9 @@ Uint16 Animation::run_num() const {
  */
 void Animation::draw(SDL_Surface* window, Uint16 x, Uint16 y) const {
 	if(draw_shadow_){
-		draw_surface(x, y, shadow_frames_[next_frame_].getSurface(), window);
+		draw_surface(x, y, shadow_frames_[cur_frame_].getSurface(), window);
 	}
-	draw_surface(x, y, frames_[next_frame_].getSurface(), window);
+	draw_surface(x, y, frames_[cur_frame_].getSurface(), window);
 }
 
 Uint16 Animation::height() const {
