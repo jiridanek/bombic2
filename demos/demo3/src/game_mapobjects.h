@@ -120,7 +120,7 @@ class isTypeOf {
 		/// TODO ruzne uzitecne druhy predikatu
 	private:
 		/// Uložené typy pro srovnání.
-		bool types_[OBJECT_TYPES_COUNT];
+		std::vector<bool> types_;
 };
 
 #endif

@@ -105,7 +105,7 @@ void Creature::die(){
 		d_ = BURNED;
 }
 
-extern Fonts g_font;
+extern Fonts * g_font;
 
 /**
  * @param window surface okna pro vykreslení
@@ -119,7 +119,7 @@ void Creature::draw(SDL_Surface *window, const SDL_Rect & rect){
 
 	/*/ TODO debug
 	draw_pixel(window, x_, y_, Color::red);
-	Surface sur = get_text(g_font[10],
+	Surface sur = get_text( (*g_font)[10],
 		x2string(lives_).c_str(),
 // 		("["+x2string(x_/CELL_SIZE)+","+x2string(y_/CELL_SIZE)+","+x2string(this->getZ())+"] "
 // 			+x2string(speed_rate_)+":"+x2string(speed_diff_)).c_str(),

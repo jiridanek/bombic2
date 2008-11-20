@@ -125,9 +125,8 @@ isTypeOf & isTypeOf::addType(OBJECT_TYPES type){
  * to podporuje řetězení fcí za sebe.
  */
 isTypeOf & isTypeOf::clear(){
-	for(Uint16 i=0 ; i<OBJECT_TYPES_COUNT ; ++i){
-		types_[i] = false;
-	}
+	types_.clear();
+	types_.insert(types_.end(), OBJECT_TYPES_COUNT, false);
 	return *this;
 }
 

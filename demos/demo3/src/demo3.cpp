@@ -10,7 +10,7 @@ using namespace std;
 #include "config.h"
 #include "game_intro.h"
 
-Fonts g_font("fonts/verdana.ttf");
+Fonts * g_font;
 GameIntro g_gameIntro;
 SDL_Surface *g_window=0;
 
@@ -38,7 +38,8 @@ int main(int argc, char ** argv){
 				break;
 		}
 		window_init(&g_window, w, h, "Bombic2 - Demo 3");
-
+		Fonts font("fonts/verdana.ttf");
+		g_font = &font;
 		Config config;
 
 		g_gameIntro.new_game(0, players);

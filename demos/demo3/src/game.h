@@ -98,7 +98,7 @@ class Game {
 		/// Nastavení pohledů pro hráče.
 		void set_players_view_(SDL_Surface *window);
 		/// Spočítá posun mapy podle pozice hráče.
-		Uint16 Game::count_rect_shift_(Uint16 player_coor,
+		Uint16 count_rect_shift_(Uint16 player_coor,
 				Uint16 rect_half_size, Uint16 map_size) const;
 
 		/// Vykreslení scény hráče.

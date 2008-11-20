@@ -25,7 +25,6 @@ GameIntro::~GameIntro(){
 }
 
 extern SDL_Surface *g_window;
-extern Fonts g_font;
 
 /** @details
  * Ukáže úvodní obrazovku levelu, vygeneruje konkrétní hru,
