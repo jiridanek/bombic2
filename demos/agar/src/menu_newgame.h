@@ -21,12 +21,9 @@ class MenuNewGame: public MenuBase {
 		static void create(AG_Event * ev=0)
 			{ new MenuNewGame; }
 
-		static void handlerPlayersCount(AG_Event * event);
-		static void handlerEpisode(AG_Event * event);
 	private:
 		static int players_count;
 		static int episode;
-		static const char * episodes[];
 };
 
 #endif

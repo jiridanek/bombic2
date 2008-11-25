@@ -23,6 +23,15 @@ void agar_init(SDL_Surface * window, Uint16 fontsize, const char * colors){
 	}
 }
 
+AG_Label * createLabelJustify(AG_Widget * parent, const char * text){
+	AG_Label * label;
+	label = AG_LabelNewString(parent, AG_LABEL_HFILL, text);
+
+	AG_LabelJustify(label, AG_TEXT_CENTER);
+	AG_LabelValign(label, AG_TEXT_MIDDLE);
+	return label;
+}
+
 void setFocus(AG_Widget *w){
 	if ((w->flags & AG_WIDGET_FOCUSED) == 0) {
 		AG_WidgetFocus(w);

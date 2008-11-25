@@ -11,6 +11,8 @@
 
 void agar_init(SDL_Surface * window, Uint16 fontsize, const char * colors=0);
 
+AG_Label * createLabelJustify(AG_Widget * parent, const char * text);
+
 void setFocus(AG_Widget *w);
 
 void unsetFocus(AG_Widget *w);

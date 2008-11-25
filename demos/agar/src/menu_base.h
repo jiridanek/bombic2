@@ -28,9 +28,11 @@ class MenuBase {
 		static void handlerItems(AG_Event * event);
 		static Uint16 activeItem();
 		static void handlerIntItem(AG_Event * event);
+		static void handlerBoolItem(AG_Event * event);
 	protected:
 		void createHeading(const char * text);
 		AG_Box * createItem(const char * text);
+		AG_Box * createItemHoriz(const char * text);
 
 		AG_Window *win;
 

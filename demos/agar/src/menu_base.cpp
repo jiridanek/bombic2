@@ -33,13 +33,7 @@ void MenuBase::hide(){
 }
 
 void MenuBase::createHeading(const char * text){
-	AG_Label * label;
-
-	label = AG_LabelNew(win, AG_LABEL_HFILL, text);
-
-	AG_LabelJustify(label, AG_TEXT_CENTER);
-	AG_LabelValign(label, AG_TEXT_MIDDLE);
-
+	createLabelJustify(AGWIDGET(win), text);
 	AG_SeparatorNewHoriz(win);
 }
 
@@ -54,14 +48,19 @@ AG_Box * MenuBase::createItem(const char * text){
 	items_.push_back(box);
 	items.push_back(box);
 
-	if(text){
-		AG_Label * label;
-		label = AG_LabelNewString(box, AG_LABEL_HFILL, text);
+	if(text)
+		createLabelJustify(AGWIDGET(box), text);
 
-		AG_LabelJustify(label, AG_TEXT_CENTER);
-		AG_LabelValign(label, AG_TEXT_MIDDLE);
-	}
+	return box;
+}
 
+AG_Box * MenuBase::createItemHoriz(const char * text){
+	AG_Box * box;
+	box = createItem(0);
+
+	box = AG_BoxNewHoriz(box, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
+	AG_BoxSetPadding(box, 0);
+	AG_LabelNewString(box, 0, text);
 	return box;
 }
 
@@ -135,12 +134,25 @@ void MenuBase::handlerIntItem(AG_Event * event){
 			if(*val < min) *val = max;
 			break;
 		default:
-			if(key>SDLK_0 && key<SDLK_9
+			if(key>=SDLK_0 && key<=SDLK_9
 			&& key-SDLK_0>=min && key-SDLK_0<=max)
 				*val = key-SDLK_0;
-			else if(key>SDLK_KP0 && key<SDLK_KP9
+			else if(key>=SDLK_KP0 && key<=SDLK_KP9
 			&& key-SDLK_KP0>=min && key-SDLK_KP0<=max)
 				*val = key-SDLK_KP0;
+			break;
+	}
+}
+
+void MenuBase::handlerBoolItem(AG_Event * event){
+	int * val = static_cast<int *>(AG_PTR(1));
+	switch(AG_SDLKEY(2)){
+		case SDLK_RETURN:
+		case SDLK_KP_ENTER:
+		case SDLK_SPACE:
+			*val = ! *val;
+			break;
+		default:
 			break;
 	}
 }
