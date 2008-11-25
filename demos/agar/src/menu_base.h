@@ -27,6 +27,7 @@ class MenuBase {
 		static void handlerBack(AG_Event * ev=0);
 		static void handlerItems(AG_Event * event);
 		static Uint16 activeItem();
+		static void handlerIntItem(AG_Event * event);
 	protected:
 		void createHeading(const char * text);
 		AG_Box * createItem(const char * text);

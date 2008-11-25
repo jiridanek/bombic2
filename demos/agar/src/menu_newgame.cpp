@@ -17,11 +17,13 @@ MenuNewGame::MenuNewGame(){
 
 	// pocet hracu
 	item = createItem(0);
-	AG_AddEvent(item, "window-keydown", handlerPlayersCount, 0);
+	AG_AddEvent(item, "window-keydown", handlerIntItem,
+		"%p,%i,%i", &players_count,
+		MENU_NEWGAME_PLAYERS_MIN, MENU_NEWGAME_PLAYERS_MAX);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
 
-	label = AG_LabelNewString(item, 0, "Players");
+	label = AG_LabelNewString(item, 0, "Players count");
 	AG_LabelJustify(label, AG_TEXT_CENTER);
 
 	AG_NumericalNewIntR(item, 0, 0, 0, &players_count,
@@ -29,7 +31,9 @@ MenuNewGame::MenuNewGame(){
 
 	// epizoda
 	item = createItem(0);
-	AG_AddEvent(item, "window-keydown", handlerEpisode, 0);
+	AG_AddEvent(item, "window-keydown", handlerIntItem,
+		"%p,%i,%i", &episode,
+		MENU_NEWGAME_EPISODE_MIN, MENU_NEWGAME_EPISODE_MAX);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
 

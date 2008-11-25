@@ -109,6 +109,42 @@ Uint16 MenuBase::activeItem(){
 	return i;
 }
 
+void MenuBase::handlerIntItem(AG_Event * event){
+	int * val = static_cast<int *>(AG_PTR(1));
+	int min = AG_INT(2), max = AG_INT(3);
+	SDLKey key = AG_SDLKEY(4);
+	switch(key){
+		case SDLK_RIGHT:
+		case SDLK_PLUS:
+		case SDLK_KP_PLUS:
+			if(*val < max) ++(*val);
+			break;
+		case SDLK_LEFT:
+		case SDLK_MINUS:
+		case SDLK_KP_MINUS:
+			if(*val > min) --(*val);
+			break;
+		case SDLK_RETURN:
+		case SDLK_KP_ENTER:
+		case SDLK_SPACE:
+			++(*val);
+			if(*val > max) *val = min;
+			break;
+		case SDLK_BACKSPACE:
+			--(*val);
+			if(*val < min) *val = max;
+			break;
+		default:
+			if(key>SDLK_0 && key<SDLK_9
+			&& key-SDLK_0>=min && key-SDLK_0<=max)
+				*val = key-SDLK_0;
+			else if(key>SDLK_KP0 && key<SDLK_KP9
+			&& key-SDLK_KP0>=min && key-SDLK_KP0<=max)
+				*val = key-SDLK_KP0;
+			break;
+	}
+}
+
 void MenuBase::clearStack(){
 	menu_stack.clear();
 }
