@@ -12,7 +12,7 @@ LIBS_OBJECTFILES= $(shell find libs -name '*.cpp' | sed 's/.cpp/.o/')
 LIBS_CPPFILES= $(shell find libs -name '*.cpp')
 LIBS_HEADERFILES= $(shell find libs -name '*.h')
 
-all: $(OBJECTFILES) $(LIBS_OBJECTFILES) agar
+all: agar $(OBJECTFILES) $(LIBS_OBJECTFILES)
 	$(CC) -o $(TARGET) $(OBJECTFILES) $(LIBS_OBJECTFILES) $(LIBS)
 
 src/%.o: src/%.cpp $(HEADERFILES) $(LIBS_HEADERFILES)

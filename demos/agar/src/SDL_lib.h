@@ -4,14 +4,14 @@
  * vykresluje jednoduché geometrické útvary, písmo, načítá obrázky, animace...
  */
 
-#ifndef SDL_LIB_
-#define SDL_LIB_
+#ifndef SDL_LIB_H
+#define SDL_LIB_H
 
 #include "SDL.h"
 #include "SDL_ttf.h"
 #include "SDL_image.h"
 #include "tinyxml.h"
-#include <iostream>
+// #include <iostream>
 #include <map>
 #include <vector>
 #include <string>
