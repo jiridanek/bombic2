@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 	agar_init(window, 15, argc>1 ? argv[1] : 0);
 
 	/* Bind some useful accelerator keys. */
-	AG_BindGlobalKey(SDLK_ESCAPE, KMOD_NONE, MenuBase::handlerBack);
+// 	AG_BindGlobalKey(SDLK_ESCAPE, KMOD_NONE, AG_Quit);
 
 	MenuMain::create();
 

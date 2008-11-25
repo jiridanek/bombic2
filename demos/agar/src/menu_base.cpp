@@ -3,10 +3,13 @@
 #include "agar_helper.h"
 
 MenuStack MenuBase::menu_stack;
+MenuBase::items_t MenuBase::items;
 
 MenuBase::MenuBase(){
 	win = AG_WindowNew(AG_WINDOW_PLAIN);
 	AG_WindowMaximize(win);
+
+	AG_SetEvent(win, "window-keydown", handlerItems, 0);
 
 	AG_WindowSetPadding( win,
 		(AGWIDGET(win)->w - MENU_ITEM_WIDTH) /2,
@@ -22,9 +25,11 @@ MenuBase::~MenuBase(){
 
 void MenuBase::show(){
 	AG_WindowShow(win);
+	items = items_;
 }
 void MenuBase::hide(){
 	AG_WindowHide(win);
+	items.clear();
 }
 
 void MenuBase::createHeading(const char * text){
@@ -44,6 +49,10 @@ AG_Box * MenuBase::createItem(const char * text){
 
 	AGWIDGET(box)->flags |= AG_WIDGET_FOCUSABLE|AG_WIDGET_UNFOCUSED_MOTION;
 	AG_SetEvent(box, "window-mousemotion", handlerMousemotion, 0);
+	AG_SetEvent(box, "window-keydown", handlerItems, 0);
+
+	items_.push_back(box);
+	items.push_back(box);
 
 	if(text){
 		AG_Label * label;
@@ -59,8 +68,45 @@ AG_Box * MenuBase::createItem(const char * text){
 void MenuBase::handlerBack(AG_Event * ev){
 	menu_stack.remove();
 }
-void MenuBase::handlerBack(){
-	menu_stack.remove();
+
+void MenuBase::handlerItems(AG_Event * event){
+	Uint16 active = activeItem(), activate = 0;
+
+	switch(AG_SDLKEY(1)){
+		case SDLK_RETURN:
+		case SDLK_KP_ENTER:
+		case SDLK_SPACE:
+			AG_PostEvent(AG_SELF(), AG_SELF(), "window-mousebuttondown", 0);
+			return;
+		case SDLK_ESCAPE:
+			handlerBack();
+			return;
+		case SDLK_UP:
+			if(active>0) activate = active-1;
+			else activate = items.size()-1;
+			break;
+		case SDLK_DOWN:
+			activate = active+1;
+			break;
+		default:
+			return;
+	}
+
+	if(active < items.size())
+		unsetFocus(AGWIDGET(items[active]));
+	if(activate >= items.size())
+		activate = 0;
+	if(!items.empty())
+		setFocus(AGWIDGET(items[activate]));
+}
+
+Uint16 MenuBase::activeItem(){
+	Uint16 i;
+	for(i = 0 ; i<items.size() ; ++i){
+		if(AG_WidgetFocused(items[i]))
+			break;
+	}
+	return i;
 }
 
 void MenuBase::clearStack(){

@@ -2,6 +2,11 @@
 #include "menu_main.h"
 #include "menu_newgame.h"
 #include "menu_loadgame.h"
+#include "menu_deathmatch.h"
+#include "menu_creatures.h"
+#include "menu_bonuses.h"
+#include "menu_credits.h"
+#include "menu_options.h"
 
 MenuMain::MenuMain(){
 	AG_Box * item;
@@ -39,7 +44,7 @@ MenuMain::MenuMain(){
 	AG_SetEvent(item, "window-mousebuttondown", MenuOptions::create, 0);
 
 	// quit
-	AG_SpacerNewHoriz(win);
+// 	AG_SpacerNewHoriz(win);
 	item = createItem("Quit");
 	AG_SetEvent(item, "window-mousebuttondown", handlerBack, 0);
 

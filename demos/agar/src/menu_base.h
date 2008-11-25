@@ -6,6 +6,7 @@
 #ifndef MENU_BASE_H
 #define MENU_BASE_H
 
+#include <vector>
 #include <stack>
 #include "agar_helper.h"
 
@@ -21,15 +22,21 @@ class MenuBase {
 		void show();
 		void hide();
 
-		static void handlerBack(AG_Event * ev);
-		static void handlerBack();
-
 		static void clearStack();
+
+		static void handlerBack(AG_Event * ev=0);
+		static void handlerItems(AG_Event * event);
+		static Uint16 activeItem();
 	protected:
 		void createHeading(const char * text);
 		AG_Box * createItem(const char * text);
 
 		AG_Window *win;
+
+		typedef std::vector< AG_Box * > items_t;
+		items_t items_;
+		static items_t items;
+
 		static MenuStack menu_stack;
 };
 
