@@ -1,6 +1,6 @@
 
-LIBS=`sdl-config --libs` -g -lSDL_ttf -lSDL_image
-CFLAGS= `sdl-config --cflags ` -g -Wall -I./libs/tinyxml
+LIBS=`agar-config --libs` -g -lSDL_ttf -lSDL_image
+CFLAGS= `agar-config --cflags ` -g -Wall -I./libs/tinyxml
 CC= ccache g++
 
 TARGET        = demo3
