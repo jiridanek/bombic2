@@ -3,7 +3,7 @@
 #include "agar_helper.h"
 
 MenuStack MenuBase::menu_stack;
-MenuBase::items_t MenuBase::items;
+MenuBase::items_t * MenuBase::p_items = 0;
 
 MenuBase::MenuBase(){
 	win = AG_WindowNew(AG_WINDOW_PLAIN);
@@ -25,11 +25,11 @@ MenuBase::~MenuBase(){
 
 void MenuBase::show(){
 	AG_WindowShow(win);
-	items = items_;
+	p_items = &items_;
 }
 void MenuBase::hide(){
 	AG_WindowHide(win);
-	items.clear();
+	p_items = 0;
 }
 
 void MenuBase::createHeading(const char * text){
@@ -46,7 +46,6 @@ AG_Box * MenuBase::createItem(const char * text){
 	AG_SetEvent(box, "window-keydown", handlerItems, 0);
 
 	items_.push_back(box);
-	items.push_back(box);
 
 	if(text)
 		createLabelJustify(AGWIDGET(box), text);
@@ -82,7 +81,7 @@ void MenuBase::handlerItems(AG_Event * event){
 			return;
 		case SDLK_UP:
 			if(active>0) activate = active-1;
-			else activate = items.size()-1;
+			else activate = p_items->size()-1;
 			break;
 		case SDLK_DOWN:
 			activate = active+1;
@@ -91,18 +90,18 @@ void MenuBase::handlerItems(AG_Event * event){
 			return;
 	}
 
-	if(active < items.size())
-		unsetFocus(AGWIDGET(items[active]));
-	if(activate >= items.size())
+	if(active < p_items->size())
+		unsetFocus(AGWIDGET( p_items->at(active) ));
+	if(activate >= p_items->size())
 		activate = 0;
-	if(!items.empty())
-		setFocus(AGWIDGET(items[activate]));
+	if(!p_items->empty())
+		setFocus(AGWIDGET( p_items->at(activate) ));
 }
 
 Uint16 MenuBase::activeItem(){
 	Uint16 i;
-	for(i = 0 ; i<items.size() ; ++i){
-		if(AG_WidgetFocused(items[i]))
+	for(i = 0 ; i<p_items->size() ; ++i){
+		if(AG_WidgetFocused( p_items->at(i) ))
 			break;
 	}
 	return i;

@@ -1,6 +1,7 @@
 
 #include "menu_deathmatch.h"
 #include "menu_deathmatch_bonuses.h"
+#include "menu_deathmatch_maps.h"
 
 int MenuDeathmatch::players_count = MENU_DEATHMATCH_PLAYERS_MIN;
 int MenuDeathmatch::win_points = MENU_DEATHMATCH_WINS_MIN;
@@ -9,6 +10,7 @@ int MenuDeathmatch::bombs_at_end = 0;
 
 MenuDeathmatch::MenuDeathmatch(){
 	AG_Box * item;
+	AG_Label * label;
 
 	// nadpis
 	createHeading("Deathmatch");
@@ -16,6 +18,19 @@ MenuDeathmatch::MenuDeathmatch(){
 	// hrat hru
 	item = createItem("Play");
 // 	AG_SetEvent(item, "window-mousebuttondown", TODO, 0);
+
+	// map
+	item = createItem("Map");
+	AG_SetEvent(item, "window-mousebuttondown",
+			MenuDeathmatchMaps::create, 0);
+	label = AG_LabelNewPolled(item, AG_LABEL_HFILL, "%s",
+			MenuDeathmatchMaps::map_name);
+	AG_LabelJustify(label, AG_TEXT_CENTER);
+
+	// bonusy
+	item = createItem("Bonuses");
+	AG_SetEvent(item, "window-mousebuttondown",
+			MenuDeathmatchBonuses::create, 0);
 
 	// pocet hracu
 	item = createItemHoriz("Players count");
@@ -25,10 +40,6 @@ MenuDeathmatch::MenuDeathmatch(){
 
 	AG_NumericalNewIntR(item, 0, 0, 0, &players_count,
 		MENU_DEATHMATCH_PLAYERS_MIN, MENU_DEATHMATCH_PLAYERS_MAX);
-
-	// map
-	item = createItemHoriz("Map");
-// TODO ucombo
 
 	// pocet vitezstvi
 	item = createItemHoriz("Win points");
@@ -58,10 +69,6 @@ MenuDeathmatch::MenuDeathmatch(){
 	AG_BoxSetPadding(item, 0);
 	AG_SpacerNewVert(item);
 	AG_CheckboxNewInt(item, 0, "  ", &bombs_at_end);
-
-	// bonusy
-	item = createItem("Bonuses");
-	AG_SetEvent(item, "window-mousebuttondown", MenuDeathmatchBonuses::create, 0);
 
 	// back
 	item = createItem("Back");

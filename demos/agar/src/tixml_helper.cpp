@@ -3,6 +3,7 @@
 #include <string>
 
 #include "tixml_helper.h"
+#include "agar_helper.h"
 
 using namespace std;
 
@@ -20,11 +21,14 @@ using namespace std;
  */
 TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
 				const std::string& rootEl_name, bool checkAttr_name){
-	// obalit cestou a priponou
-	string name("xml/"+filename+".xml");
-	// prohodit
-	swap(name, filename);
-
+	// pridat priponu?
+	string ext(TIXML_FILE_EXTENSION);
+	Uint16 name_s = filename.size(), ext_s = ext.size();
+	if(name_s<=ext_s || filename.substr(name_s-ext_s)!=ext)
+		filename+= ext;
+	if(!locate_file(TIXML_FILE_PATH, filename, filename))
+		TiXmlError(filename, "no such file found.");
+	// nacist soubor
 	if(!doc.LoadFile(filename.c_str()))
 		TiXmlError(filename,"can't read XML file or syntactic error occured.");
 
@@ -39,11 +43,13 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
 	}
 	// zkontrolovat atribut name
 	if(checkAttr_name){
-		string str;
-		if(!readStringAttr(rootEl, "name", str))
+		name_s = filename.size()-filename.rfind('/')-1;
+		string file = filename.substr( filename.size()-name_s , name_s-ext_s);
+		string attr;
+		if(!readStringAttr(rootEl, "name", attr))
 			TiXmlError(filename, "missing attribute name.");
-		else if(str!=name)
-			TiXmlError(filename,"bad value of attribute name");
+		else if(attr!=file)
+			TiXmlError(filename,"bad value of attribute name.");
 	}
 	return rootEl;
 }

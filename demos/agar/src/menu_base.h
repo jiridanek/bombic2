@@ -38,7 +38,7 @@ class MenuBase {
 
 		typedef std::vector< AG_Box * > items_t;
 		items_t items_;
-		static items_t items;
+		static items_t * p_items;
 
 		static MenuStack menu_stack;
 };
