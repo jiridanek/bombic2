@@ -12,7 +12,7 @@
 
 class MenuStack;
 
-#define MENU_ITEM_WIDTH 300
+#define MENU_ITEM_WIDTH 400
 #define MENU_OFFSET 50
 
 class MenuBase {

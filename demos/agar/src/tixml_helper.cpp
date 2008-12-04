@@ -26,7 +26,7 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
 	Uint16 name_s = filename.size(), ext_s = ext.size();
 	if(name_s<=ext_s || filename.substr(name_s-ext_s)!=ext)
 		filename+= ext;
-	if(!locate_file(TIXML_FILE_PATH, filename, filename))
+	if(!locate_file("", filename, filename))
 		TiXmlError(filename, "no such file found.");
 	// nacist soubor
 	if(!doc.LoadFile(filename.c_str()))
@@ -54,6 +54,19 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
 	return rootEl;
 }
 
+
+void TiXmlSaveDocument(TiXmlDocument & doc, std::string & filename){
+	string path;
+	get_home_path(path);
+	if(path.empty())
+		throw string("can't find home directory");
+	if(!is_dir(path) && AG_MkDir(path.c_str())==-1)
+		throw path+": can't make home directory";
+	path+= "/"; path+= filename;
+	filename.swap(path);
+	if(!doc.SaveFile(filename.c_str()))
+		throw string("can't save configuration");
+}
 
 /** @details
  * Vyhledá atribut požadovaného jména,

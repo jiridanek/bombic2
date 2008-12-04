@@ -21,6 +21,9 @@
 TiXmlElement* TiXmlRootElement(TiXmlDocument & doc,
 		std::string & filename, const std::string& rootEl_name, bool checkAttr_name);
 
+/// Uloží dokument.
+void TiXmlSaveDocument(TiXmlDocument & doc, std::string & filename);
+
 /** Vytiskne chybu a ukončí program.
  * @details Na standardní chybový výstup vytiskne chybové hlášení.
  * @param error Chybová hláška, pro zadaný typ musí být definovaný operator<<

@@ -41,8 +41,7 @@ AG_Box * MenuBase::createItem(const char * text){
 	AG_Box * box;
 	box = AG_BoxNewVert(win, AG_BOX_FRAME | AG_BOX_HFILL);
 
-	AGWIDGET(box)->flags |= AG_WIDGET_FOCUSABLE|AG_WIDGET_UNFOCUSED_MOTION;
-	AG_SetEvent(box, "window-mousemotion", handlerMousemotion, 0);
+	setFocusOnMotion( AGWIDGET(box) );
 	AG_SetEvent(box, "window-keydown", handlerItems, 0);
 
 	items_.push_back(box);

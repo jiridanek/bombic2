@@ -11,10 +11,16 @@
 class MenuOptions: public MenuBase {
 	public:
 		MenuOptions();
-		virtual ~MenuOptions() {};
+		virtual ~MenuOptions();
 		static void create(AG_Event * ev=0)
 			{ new MenuOptions; }
 	private:
+// 		const char* language;
+		int speed_,
+			visible_presumption_,
+			fullscreen_,
+			sound_;
+
 };
 
 #endif

@@ -47,6 +47,11 @@ void unsetFocus(AG_Widget *w){
 		AG_WidgetUnfocus(w);
 }
 
+void setFocusOnMotion(AG_Widget *w){
+	w->flags |= AG_WIDGET_FOCUSABLE|AG_WIDGET_UNFOCUSED_MOTION;
+	AG_SetEvent(w, "window-mousemotion", handlerMousemotion, 0);
+}
+
 void handlerMousemotion(AG_Event *event) {
 	AG_Widget *w = AGWIDGET(AG_SELF());
 	int x = AG_INT(1);
@@ -61,7 +66,7 @@ void handlerMousemotion(AG_Event *event) {
 
 /****************** SEARCHING of file ****************/
 
-static bool is_dir(const std::string & path){
+bool is_dir(const std::string & path){
 	AG_FileInfo file_info;
 	if(AG_GetFileInfo(path.c_str(), &file_info)==-1)
 		return false;
@@ -69,7 +74,7 @@ static bool is_dir(const std::string & path){
 		&& file_info.perms & AG_FILE_READABLE;
 }
 
-static bool is_file(const std::string &path){
+bool is_file(const std::string &path){
 	return AG_FileExists( path.c_str() )!=0;
 }
 
@@ -103,18 +108,9 @@ static bool locate_in_dir(int depth, const std::string & path,
 }
 
 static bool locate_in_path(const std::string & path, const std::string & name,
-		std::string &res){
-	string new_path = path;
-	if(!new_path.empty() && new_path[0]=='~'){
-		// TODO make something for windows
-		const char * home = getenv("HOME");
-		if(home == 0)
-			return false;
-		new_path = home + new_path.substr(1);
-	}
-
-	if(is_dir(new_path))
-		return locate_in_dir(0, new_path, name, res);
+				std::string &res){
+	if(is_dir(path))
+		return locate_in_dir(0, path, name, res);
 
 	return false;
 }
@@ -122,19 +118,41 @@ static bool locate_in_path(const std::string & path, const std::string & name,
 bool locate_file(const std::string & hint_path, const std::string & name,
 		std::string & res){
 	if(name.empty()) return false;
-	if(is_file(name)){
-		res = name;
-		return true;
+	if(name[0]=='/') {
+		if(is_file(name)){
+			res = name;
+			return true;
+		} else
+			return false;
 	}
-
-	const char * paths[] = SEARCH_PATHS;
 
 	if(!hint_path.empty()
 	&& locate_in_path(hint_path, name, res))
 		return true;
+
+	string home_path;
+	get_home_path(home_path);
+	if(!home_path.empty()
+	&& locate_in_path(home_path, name, res))
+		return true;
+
+	const char * paths[] = SEARCH_PATHS;
 	for( int i=0 ; paths[i] != 0 ; ++i ){
 		if(locate_in_path(paths[i], name, res))
 			return true;
 	}
 	return false;
+}
+
+#include <iostream>
+void get_home_path(std::string & path) {
+	// TODO make something for windows
+	const char * home = getenv("HOME");
+	if(home == 0)
+		path = "";
+	else {
+		path = home;
+		path+= "/";
+		path+= SEARCH_HOME;
+	}
 }
