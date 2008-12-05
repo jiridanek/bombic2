@@ -71,7 +71,7 @@ isTypeOf isTypeOf::isFlame(FLAME);
 isTypeOf isTypeOf::isPresumption(PRESUMPTION);
 
 isTypeOf isTypeOf::isBgType(
-	BACKGROUND, FLOOROBJECT);
+	BACKGROUND, FLOOROBJECT, PRESUMPTION);
 isTypeOf isTypeOf::isAnyBomb(
 	BOMB_STAYING, BOMB_MOVING);
 isTypeOf isTypeOf::isWallBox(

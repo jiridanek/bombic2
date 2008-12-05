@@ -103,7 +103,12 @@ class Config {
 		/// Načte klávesy hráčů z XML.
 		void load_players_(TiXmlElement * rootEl);
 		/// Nastaví klávesu akci.
-		void set_key_action_(Uint16 player_num, KEY_ACTIONS action, SDLKey key);
+		bool set_key_action_(Uint16 player_num, KEY_ACTIONS action,
+			SDLKey key);
+		/// Nastaví klávesu akci.
+		bool set_key_action_(Uint16 player_num, KEY_ACTIONS action,
+			SDLKey key, Uint16 & conflict_pl, KEY_ACTIONS & conflict_ac);
+
 		/// Převede název akce na akci.
 		KEY_ACTIONS name2action_(const std::string & name);
 		/// Převede akci na její název.

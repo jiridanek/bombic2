@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 #include "constants.h"
+#include "agar_helper.h"
 #include "tixml_helper.h"
 
 // deklarace barev
@@ -40,7 +41,7 @@ namespace Color{
 /**
  * @param filename název souboru s fontem
  */
-Fonts::Fonts(char* filename): fontFile(filename), fontMap() {
+Fonts::Fonts(const char* filename): fontFile(filename), fontMap() {
 }
 
 /**
@@ -409,7 +410,8 @@ void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *capti
 	atexit(SDL_Quit);
 
 	// Vytvori okno s definovanymi vlastnostmi
-	*pWindow = SDL_SetVideoMode(win_w, win_h, 0, SDL_HWSURFACE | SDL_DOUBLEBUF);
+	*pWindow = SDL_SetVideoMode(win_w, win_h, 0,
+			SDL_HWSURFACE | SDL_DOUBLEBUF | SDL_RESIZABLE);
 	if(*pWindow == NULL){
 		std::cerr << "Unable to set video: " << SDL_GetError() << std::endl;
 		exit(1);
@@ -622,93 +624,61 @@ Uint32 SDL_fps(Uint32 last, Uint32 fps){
 
 /**************** funkce obstaravajici udalosti *********************/
 
-/**
- * @return Pokud zjistí událost stisku klávesy (keydown),
- * nebo žádost o ukončení (quit), vrací hodnotu stisknuté klávesy,
- * respektive SDL_LAST. Pokud není žádná událost ve frontě, vrací SDL_FIRST.
- */
-SDLKey get_event(){
-	SDL_Event event;
-
-	while(SDL_PollEvent(&event)){
-		switch(event.type){
-			// Klavesnice
-			case SDL_KEYDOWN:
-				switch(event.key.keysym.sym){
-					// tyto klavesy se chovaji odlisne
-					case SDLK_NUMLOCK: ;
-					case SDLK_CAPSLOCK: break;
-					default: return event.key.keysym.sym;
-				}
-				break;
-			// Pozadavek na ukonceni
-			case SDL_QUIT:
-				return SDLK_LAST;
-		}
-	}
-	// zadna potrebna udalost
-	return SDLK_FIRST;
-}
-
-
-/**
- * @param key klávesa pro ukončení programu
- * @return TRUE, pokud byla nalezena žádost o ukončení,
- * nebo stisknuta zadaná klávesa, jinak FALSE.
- */
-bool get_event_isquit(SDLKey key){
-	SDLKey eventkey;
-	while(true){
-		eventkey=get_event();
-		if(eventkey==key || eventkey==SDLK_LAST)
+static bool interesting_event_(SDL_Event event, SDLKey & key){
+	switch(event.type){
+		// Klavesnice
+		case SDL_KEYDOWN:
+			switch(event.key.keysym.sym){
+				// tyto klavesy se chovaji odlisne
+				case SDLK_NUMLOCK:
+				case SDLK_CAPSLOCK:
+					return false;
+				default:
+					key = event.key.keysym.sym;
+					return true;
+			}
+			break;
+		// resize okna
+		case SDL_VIDEORESIZE:
+			AG_ResizeDisplay(event.resize.w, event.resize.h);
 			return true;
-		if(eventkey==SDLK_FIRST)
-			return false;
+		// Pozadavek na ukonceni
+		case SDL_QUIT:
+			return true;
 	}
+	return false;
 }
 
 /** @details
- * Čeká, dokud nebude stisknuta klávesa (keydown),
- * nebo zjistí žádost o ukončení (quit).
- * @return Vrací stisknutou klávesu nebo SDL_LAST při pokusu o ukončení.
+ * Pokud narazí na nějakou zajímavou událost, vrací její typ,
+ * když je to událost doplněná o klávesu, změní ji.
+ * @param key vrácená hodnota klávesy
+ * @return Vrací typ zajímavé události,
+ * nebo SDL_USEREVENT když žádná zajímavá událost nenastala.
  */
-SDLKey wait_event(){
+Uint8 get_event(SDLKey & key){
 	SDL_Event event;
-
-	while(SDL_WaitEvent(&event)){
-		switch(event.type){
-			// Klavesnice
-			case SDL_KEYDOWN:
-				switch(event.key.keysym.sym){
-					// tyto klavesy se chovaji odlisne
-					case SDLK_NUMLOCK: ;
-					case SDLK_CAPSLOCK: break;
-					default: return event.key.keysym.sym;
-				}
-				break;
-			// Pozadavek na ukonceni
-			case SDL_QUIT:
-				return SDLK_LAST;
-		}
+	while(SDL_PollEvent(&event)){
+		if(interesting_event_(event, key))
+			return event.type;
 	}
-	// problem pri cekani na udalost
-	return SDLK_LAST;
+	return SDL_USEREVENT;
 }
 
-/**
- * Čeká, dokud nebude stisknuta klávesa (keydown),
- * nebo zjistí žádost o ukončení (quit).
- * @param key klávesa pro ukončení programu
- * @return TRUE, pokud byla nalezena žádost o ukončení,
- * nebo stisknuta zadaná klávesa, jinak FALSE.
+/** @details
+ * Čeká, na zajímavou událost.
+ * @param key vrácená hodnota klávesy
+ * @return Vrací typ zajímavé události nebo SDL_USEREVENT při problemu.
  */
-bool wait_event_isquit(SDLKey key){
-	SDLKey eventkey;
-	eventkey=wait_event();
-	if(eventkey==key || eventkey==SDLK_LAST)
-		return true;
-	else
-		return false;
+Uint8 wait_event(SDLKey & key){
+	SDL_Event event;
+	while(SDL_WaitEvent(&event)){
+		if(interesting_event_(event, key))
+			return event.type;
+	}
+	std::cerr << "waitevent cant wait" << std::endl;
+	// problem pri cekani na udalost
+	return SDL_USEREVENT;
 }
 
 /**

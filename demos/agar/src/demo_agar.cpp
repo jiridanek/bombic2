@@ -12,18 +12,39 @@ using namespace std;
 
 
 SDL_Surface * g_window=0;
+Fonts * g_font=0;
 
 int main(int argc, char *argv[]) {
+	Surface window;
 
 	int return_val=0;
 	try {
 		window_init(&g_window, 1024, 768, "Bombic2 - Agar demo");
+		window = g_window;
+
 		agar_init(g_window, 15, argc>1 ? argv[1] : 0);
+
+		string fontfile = "fonts/verdana.ttf";
+		if(!locate_file("", fontfile, fontfile))
+			throw fontfile+ ": No such file or directory";
+		Fonts font(fontfile.c_str());
+		g_font = &font;
+
 		Config config;
 
-		MenuMain::create();
+		try {
+			MenuMain::create();
+			AG_EventLoop();
+		}
+		catch(int val){
+			return_val = val;
+		}
+		catch(const string & err){
+			return_val = 10;
+			cerr << err << endl;
+		}
 
-		AG_EventLoop();
+		MenuBase::clearStack();
 	}
 	catch(int val){
 		return_val = val;
@@ -33,9 +54,7 @@ int main(int argc, char *argv[]) {
 		cerr << err << endl;
 	}
 
-	MenuBase::clearStack();
 	AG_Destroy();
-	if(g_window) SDL_FreeSurface(g_window);
 	return return_val;
 }
 

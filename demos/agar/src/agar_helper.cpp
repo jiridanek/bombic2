@@ -24,6 +24,8 @@ void agar_init(SDL_Surface * window, Uint16 fontsize, const char * colors){
 		cerr << AG_GetError() << endl;
 		throw 1;
 	}
+
+	AG_ResizeDisplay(window->w, window->h);
 }
 
 AG_Label * createLabelJustify(AG_Widget * parent, const char * text){
@@ -59,8 +61,6 @@ void handlerMousemotion(AG_Event *event) {
 
 	if( AG_WidgetSensitive(w, w->rView.x1+x, w->rView.y1+y) )
 		setFocus(w);
-	else
-		unsetFocus(w);
 }
 
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <utility>
 #include <algorithm>
+#include "agar_helper.h"
 #include "SDL_lib.h"
 #include "constants.h"
 #include "config.h"
@@ -355,7 +356,23 @@ void Game::play(SDL_Surface* window){
 	players_it player_it;
 	set_players_view_(window);
 	// iterace dokud neni vyvolano zavreni okna
-	while(!get_event_isquit(SDLK_ESCAPE)) {
+	SDLKey key;
+	while(true){
+		switch(get_event(key)){
+			case SDL_VIDEORESIZE:
+				set_players_view_(window);
+				break;
+			case SDL_QUIT:
+				key = SDLK_ESCAPE;
+			case SDL_KEYDOWN:
+				if(key==SDLK_ESCAPE){
+					AG_Quit();
+					return;
+				}
+			default:
+				break;
+		}
+
 		SDL_PumpEvents();// obnoveni stavu klavesnice
 
 		// vykresleni scen pro jednotlive hrace

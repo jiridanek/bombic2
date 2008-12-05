@@ -8,13 +8,14 @@ MenuBase::items_t * MenuBase::p_items = 0;
 MenuBase::MenuBase(){
 	win = AG_WindowNew(AG_WINDOW_PLAIN);
 	AG_WindowMaximize(win);
+	AG_WindowSetGeometryAligned(win, AG_WINDOW_MC,
+		MENU_ITEM_WIDTH, AGWIDGET(win)->h);
+
+	win->flags = AG_WINDOW_PLAIN | AG_WINDOW_VMAXIMIZE | AG_WINDOW_NOMOVE;
+
+	AG_WindowSetPadding(win, 0, 0, MENU_OFFSET, 0);
 
 	AG_SetEvent(win, "window-keydown", handlerItems, 0);
-
-	AG_WindowSetPadding( win,
-		(AGWIDGET(win)->w - MENU_ITEM_WIDTH) /2,
-		(AGWIDGET(win)->w - MENU_ITEM_WIDTH) /2,
-		MENU_OFFSET, 0);
 
 	menu_stack.insert(this);
 }
@@ -158,6 +159,8 @@ void MenuBase::handlerBoolItem(AG_Event * event){
 void MenuBase::clearStack(){
 	menu_stack.clear();
 }
+
+/************* MenuStack ***************/
 
 void MenuStack::insert(MenuBase * menu){
 	if(!stack_.empty())

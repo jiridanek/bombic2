@@ -1,6 +1,7 @@
 
 #include <iostream>
 #include <string>
+#include "agar_helper.h"
 #include "SDL_lib.h"
 #include "constants.h"
 #include "tixml_helper.h"
@@ -58,15 +59,34 @@ void GameIntro::show_screen(){
 				}
 			}
 		}
+
 		// vygenerovani nove hry z pripraveneho zakladu
 		if(game_) delete game_;
 		game_ = new Game(*gameBase_, gameTools_);
 
 		// pockame na klavesu, pri pokusu o ukonceni ukoncime
-// 		SDL_Delay(500);
-// 		if(get_event_isquit(SDLK_ESCAPE))
-		if(wait_event_isquit(SDLK_ESCAPE))
-			return;
+		SDLKey key;
+		while(true){
+			switch(wait_event(key)){
+				case SDL_VIDEORESIZE:
+					// uvodni obrazovka levelu
+					clear_surface(Color::black, g_window);
+					draw_center_surface(get_cur_image_().getSurface(), g_window);
+					SDL_Flip(g_window);
+					continue;
+				case SDL_QUIT:
+					key=SDLK_ESCAPE;
+				case SDL_KEYDOWN:
+					if(key==SDLK_ESCAPE){
+						AG_Quit();
+						return;
+					}
+				default:
+					break;
+			}
+			break;
+		}
+
 		SDL_Delay(500);
 		// hrajeme
 		game_->play(g_window);

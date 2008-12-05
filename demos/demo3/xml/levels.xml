@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <levels>
 	<episode>
-		<level map="map_forest_cabin" img="img/intro_forest_4.jpg" />
 
 		<level map="map_forest_debug" img="img/intro_forest_debug.jpg" />
 		<level map="map_forest_1" img="img/intro_toilet.jpg" />
 		<level map="map_forest_2" img="img/intro_forest_1.jpg" />
 		<level map="map_forest_3" img="img/intro_forest_2.jpg" />
 		<level map="map_forest_winnersculpture" img="img/intro_forest_3.jpg" />
+		<level map="map_forest_cabin" img="img/intro_forest_4.jpg" />
 
-		<level map="map_forest" img="img/intro_forest_3.jpg" />
-		<level map="map_forest" img="img/intro_forest_4.jpg" />
+		<level map="map_forest" img="img/intro_forest_debug.jpg" />
 		<level map="map_forest_debug" img="img/intro_forest_5.jpg" />
 	</episode>
 </levels>

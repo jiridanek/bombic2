@@ -93,8 +93,10 @@ void Config::load_players_(TiXmlElement * rootEl){
 		while(playerEl){
 			readAttr(playerEl, "action", action_name);
 			readAttr(playerEl, "key", key_name);
-			set_key_action_(num, name2action_(action_name),
-					keyNames_.name2key(key_name));
+			if(!set_key_action_(num, name2action_(action_name),
+					keyNames_.name2key(key_name)))
+				cerr << "Warning: in config file conflicts key for action: "
+					<< el_name << ", " << action_name << endl;
 			playerEl = playerEl->NextSiblingElement("bind");
 		}
 	}
@@ -103,11 +105,30 @@ void Config::load_players_(TiXmlElement * rootEl){
 
 /**
  */
-void Config::set_key_action_(Uint16 player_num, KEY_ACTIONS action, SDLKey key){
-	if( static_cast<Uint16>(action) >= players_[player_num].size()
-	|| key >= SDLK_LAST )
-		return;
+bool Config::set_key_action_(Uint16 player_num, KEY_ACTIONS action,
+						SDLKey key){
+	Uint16 pl; KEY_ACTIONS ac;
+	return set_key_action_(player_num, action, key, pl, ac);
+}
+
+/**
+ */
+bool Config::set_key_action_(Uint16 player_num, KEY_ACTIONS action,
+			SDLKey key, Uint16 & conflict_pl, KEY_ACTIONS & conflict_ac){
+	players_changed_ = true;
+	for(Uint16 pl=0 ; pl<players_.size() ; ++pl){
+		for(Uint16 ac=0 ; ac<KEY_ACTIONS_COUNT ; ++ac){
+			if(players_[pl][ac] == key){
+				players_[pl][ac] = SDLK_FIRST;
+				conflict_pl = pl;
+				conflict_ac = static_cast<KEY_ACTIONS>(ac);
+				players_[player_num][action] = key;
+				return false;
+			}
+		}
+	}
 	players_[player_num][action] = key;
+	return true;
 }
 
 /**
@@ -140,8 +161,6 @@ const char * Config::action2name_(KEY_ACTIONS action){
 
 
 SDLKey Config::player(Uint16 player_num, KEY_ACTIONS action) const {
-	if(static_cast<Uint16>(action) >= players_[player_num].size() )
-		return SDLK_FIRST;
 	return players_[player_num][action];
 }
 

@@ -7,10 +7,9 @@ char MenuDeathmatchMaps::map_path[MENU_DEATHMATCH_MAPS_BUFFSIZE] = TIXML_FILE_PA
 
 MenuDeathmatchMaps::MenuDeathmatchMaps(){
 
-	AG_WindowSetPadding( win,
-		AGWIDGET(win)->w/2 - MENU_ITEM_WIDTH,
-		AGWIDGET(win)->w/2 - MENU_ITEM_WIDTH,
-		MENU_OFFSET, MENU_OFFSET);
+	AG_WindowMaximize(win);
+	AG_WindowSetPadding(win, MENU_OFFSET,
+		MENU_OFFSET, MENU_OFFSET, MENU_OFFSET);
 
 	// nadpis
 	createHeading("Deathmatch maps");

@@ -5,6 +5,7 @@
 
 using namespace std;
 
+#include "agar_helper.h"
 #include "SDL_lib.h"
 #include "stl_helper.h"
 #include "config.h"
@@ -38,6 +39,7 @@ int main(int argc, char ** argv){
 				break;
 		}
 		window_init(&g_window, w, h, "Bombic2 - Demo 3");
+		agar_init(g_window, 15);
 		Fonts font("fonts/verdana.ttf");
 		g_font = &font;
 		Config config;

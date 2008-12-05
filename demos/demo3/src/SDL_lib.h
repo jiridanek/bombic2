@@ -48,7 +48,7 @@ namespace Color{
 class Fonts {
 	public:
 		/// Pouze nastaví jméno souboru s fontem.
-		Fonts(char* filename);
+		Fonts(const char* filename);
 		/// Konkrétní velikost fontu.
 		TTF_Font* operator[](Uint16 size);
 		/// Zrušení všech vytvořených velikostí fontu
@@ -194,15 +194,10 @@ void draw_line(SDL_Surface* surface, int x1, int y1, int x2, int y2, SDL_Color c
 /// Frames per second zdrží program, aby nevykresloval zbytečně často.
 Uint32 SDL_fps(Uint32 last, Uint32 fps);
 
-/// Hodnota zmáčknuté klávesy, nebo SDL_FIRST (pokud není žádná ve frontě).
-SDLKey get_event();
-/// Hodnota zmáčknuté klávesy, čeká se, až bude nějaká ve frontě.
-SDLKey wait_event();
-
-/// Kontrola žádosti o ukončení.
-bool get_event_isquit(SDLKey key= SDLK_LAST);
-/// Kontrola žádosti o ukončení, čeká se na nějakou událost.
-bool wait_event_isquit(SDLKey key= SDLK_LAST);
+/// Vybere z fronty událost, když je prázdná, hned pokračuje.
+Uint8 get_event(SDLKey & key);
+/// Vybere z fronty událost, když je prázdná, počká.
+Uint8 wait_event(SDLKey & key);
 
 /// Pseudonáhodné číslo v intervalu [0,1].
 double SDL_Rand();
