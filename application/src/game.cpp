@@ -425,16 +425,21 @@ void Game::set_players_view_(SDL_Surface* window){
 
 	Uint16 half_w = window->w/2, half_h = window->h/2,
 		win_w = window->w, win_h = window->h,
-		map_w = map_width()*CELL_SIZE, map_h = map_height()*CELL_SIZE;
+		map_w = CELL_SIZE*
+			min( GAME_PLAYER_VIEW_MAX_WIDTH, map_width() ),
+		map_h = CELL_SIZE*
+			min( GAME_PLAYER_VIEW_MAX_HEIGHT, map_height() );
 	players_it it, it2;
 	switch(players_.size()){
 		case 0: break;
 		case 1:
 			it = players_.begin();
-			it->second.win_view.x =0;
-			it->second.win_view.y =0;
 			it->second.win_view.w = min(win_w, map_w);
 			it->second.win_view.h =	min(win_h, map_h);
+			it->second.win_view.x =
+				map_w < win_w ? (win_w-map_w)/2 : 0;
+			it->second.win_view.y =
+				map_h < win_h ? (win_h-map_h)/2 : 0;
 			break;
 		case 3:
 		case 4:
@@ -443,22 +448,22 @@ void Game::set_players_view_(SDL_Surface* window){
 						min( static_cast<Uint16>(half_w-1), map_w);
 				it->second.win_view.h =
 						min( static_cast<Uint16>(half_h-1), map_h);
+				it->second.win_view.x =
+					map_w < half_w ? (half_w-map_w)/2 : 0;
+				it->second.win_view.y =
+					map_h < half_h ? (half_h-map_h)/2 : 0;
 				switch(it->first){
 					case 0:
-						it->second.win_view.x =0;
-						it->second.win_view.y =0;
 						break;
 					case 1:
-						it->second.win_view.x =half_w+1;
-						it->second.win_view.y =half_h+1;
+						it->second.win_view.x += half_w+1;
+						it->second.win_view.y += half_h+1;
 						break;
 					case 2:
-						it->second.win_view.x =0;
-						it->second.win_view.y =half_h+1;
+						it->second.win_view.y += half_h+1;
 						break;
 					case 3:
-						it->second.win_view.x =half_w+1;
-						it->second.win_view.y =0;
+						it->second.win_view.x += half_w+1;
 						break;
 				}
 			}
@@ -466,16 +471,18 @@ void Game::set_players_view_(SDL_Surface* window){
 		case 2:
 			it = it2 = players_.begin();
 			// rozdelit svisle
-			if(map_w < window->w){
-
+			if(win_h < win_w){
 				// kdo bude vlevo
 				if(it->first==1)
 					++it;
 				else
 					++it2;
-				it->second.win_view.x = 0;
-				it2->second.win_view.x = half_w+1;
-				it->second.win_view.y = it2->second.win_view.y = 0;
+				it->second.win_view.x = it2->second.win_view.x =
+					map_w < half_w ? (half_w-map_w)/2 : 0;
+				it2->second.win_view.x += half_w+1;
+				it->second.win_view.y = it2->second.win_view.y =
+					map_h < win_h ? (win_h-map_h)/2 : 0;
+
 				it->second.win_view.w = it2->second.win_view.w =
 					min( static_cast<Uint16>(half_w-1), map_w);
 				it->second.win_view.h = it2->second.win_view.h =
@@ -488,9 +495,12 @@ void Game::set_players_view_(SDL_Surface* window){
 					++it;
 				else
 					++it2;
-				it->second.win_view.x = it2->second.win_view.x = 0;
-				it->second.win_view.y = 0;
-				it2->second.win_view.y = half_h+1;
+				it->second.win_view.x = it2->second.win_view.x =
+					map_w < win_w ? (win_w-map_w)/2 : 0;
+				it->second.win_view.y = it2->second.win_view.y =
+					map_h < half_h ? (half_h-map_h)/2 : 0;
+				it2->second.win_view.y += half_h+1;
+
 				it->second.win_view.w = it2->second.win_view.w =
 					min( win_w, map_w);
 				it->second.win_view.h = it2->second.win_view.h =

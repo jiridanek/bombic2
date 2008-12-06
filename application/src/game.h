@@ -17,6 +17,10 @@
 #include "game_player.h"
 #include "game_bomb.h"
 
+
+#define GAME_PLAYER_VIEW_MAX_WIDTH Uint16(16)
+#define GAME_PLAYER_VIEW_MAX_HEIGHT Uint16(12)
+
 /** Konkrétní hra.
  * Instance třídy Game obstarává jednu konkrétní hru.
  * Může to být deathmatch nebo běžný level.
