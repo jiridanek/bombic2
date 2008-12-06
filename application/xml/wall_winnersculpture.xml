@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<wall 	name="wall_winnersculpture" src="img/mapa0.bmp">
+	<img x="205" y="203" width="3" height="1" toplapping="1" />
+</wall>

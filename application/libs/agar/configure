@@ -1,0 +1,9 @@
+#!/bin/sh
+
+agar_version="1.3.3"
+
+tar -xvf "agar-"$agar_version".patched.tar.gz" && \
+cd "agar-"$agar_version && \
+./configure --with-manpages=no --enable-threads=no --enable-gui=yes --enable-math=no --enable-utf8=yes --enable-network=no --with-gl=no --with-jpeg=yes --with-freetype=yes && \
+echo "Now please cd to agar-$agar_version and type make and make install to install agar-GUI library to your system"
+

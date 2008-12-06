@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<map name="map_forest_debug" height="12" width="16" background="bg_forest">
+
+	<players x="1" y="2">
+		<player0 x="1" y="2" />
+		<player1 x="14" y="10" />
+		<player2 x="14" y="2" />
+		<player3 x="1" y="10" />
+	</players>
+
+	<walls 	name="wall_stone" width="1">
+<!-- 		<wall x="1" y="3" /> -->
+		<wall x="2" y="2" />
+		<wall x="1" y="9" />
+		<wall x="4" y="9" />
+		<wall x="7" y="9" />
+		<wall x="10" y="9" />
+	</walls>
+	<floorobject name="floor_deadbody" x="2" y="9" width="2" />
+	<floorobject name="floor_deadbody" x="6" y="4" width="2" />
+	<floorobject name="floor_deadbody" x="9" y="9" width="2" />
+
+	<boxes 	name="box_barrel" count="30">
+		<nobox x="1" y="10" />
+		<nobox x="2" y="10" />
+		<nobox x="3" y="10" />
+		<nobox x="4" y="10" />
+		<nobox x="5" y="10" />
+		<nobox x="6" y="10" />
+		<nobox x="7" y="10" />
+		<nobox x="8" y="10" />
+		<nobox x="9" y="10" />
+		<nobox x="10" y="10" />
+		<nobox x="11" y="10" />
+		<nobox x="12" y="10" />
+		<nobox x="13" y="10" />
+		<nobox x="14" y="10" />
+
+		<box x="4" y="2" />
+		<box x="4" y="5" />
+	</boxes>
+<!---->
+	<bonuses name="bonus_flame" count="1" />
+	<bonuses name="bonus_bomb" count="10" />
+<!-- 	<bonuses name="bonus_illness" count="1" /> -->
+	<bonuses name="bonus_speed" count="1" />
+	<bonuses name="bonus_timer" count="1" />
+	<bonuses name="bonus_megabomb" count="2" />
+	<bonuses name="bonus_live" count="1" />
+	<bonuses name="bonus_shield" count="1" />
+	<bonuses name="bonus_kicker" count="5" />
+<!-- 	<bonuses name="bonus_othersillness" count="1" /> -->
+	<bonuses name="bonus_slider" count="5" />
+	<bonuses name="bonus_fireman" count="1" />
+<!---->
+	<creatures name="creature_rat" count="0">
+	</creatures>
+	<creatures name="creature_cloud" count="5">
+	</creatures>
+	<creatures name="creature_moon" count="10">
+	</creatures>
+
+	<nocreatures>
+		<nocreature x="1" y="2" />
+		<nocreature x="1" y="3" />
+		<nocreature x="1" y="4" />
+		<nocreature x="1" y="5" />
+		<nocreature x="2" y="2" />
+		<nocreature x="2" y="3" />
+		<nocreature x="2" y="4" />
+		<nocreature x="3" y="2" />
+		<nocreature x="3" y="3" />
+	</nocreatures>
+</map>

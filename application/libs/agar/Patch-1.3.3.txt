@@ -1,0 +1,9 @@
+
+Patch Notes for Agar 1.3.3.patched (by Karel Fiser <karl.von.Bahnhof@centrum.cz>)
+---------------------------------------------------------------------------------
+
+Here are all of the changes since Agar 1.3.3. 
+
+- GUI: In AG_FileDlgSetDirectory() added RefreshListing();
+- GUI: In AG_WindowCycleFocus() fixed thebug with reverse cycling (Uint is
+  always >=0)

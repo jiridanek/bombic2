@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<creature name="creature_rat" src="img/creature_rat.bmp" shadow_src="img/creature_rat_s.bmp"
+		height="62" width="50" speed="7" lives="1" intelligence="0" >
+	<up x="0" y="144" shadow_x="0" shadow_y="144">
+		<animation rate="10" >
+			<animation_item x="52" y="144" shadow_x="52" shadow_y="144" />
+			<animation_item x="103" y="144" shadow_x="103" shadow_y="144" />
+			<animation_item x="154" y="144" shadow_x="154" shadow_y="144" />
+		</animation>
+	</up>
+	<left x="0" y="0" shadow_x="0" shadow_y="0">
+		<animation rate="10" >
+			<animation_item x="52" y="0" shadow_x="52" shadow_y="0" />
+			<animation_item x="103" y="0" shadow_x="103" shadow_y="0" />
+			<animation_item x="154" y="0" shadow_x="154" shadow_y="0" />
+		</animation>
+	</left>
+	<down x="0" y="216" shadow_x="0" shadow_y="216">
+		<animation rate="10" >
+			<animation_item x="52" y="216" shadow_x="52" shadow_y="216" />
+			<animation_item x="103" y="216" shadow_x="103" shadow_y="216" />
+			<animation_item x="154" y="216" shadow_x="154" shadow_y="216" />
+		</animation>
+	</down>
+	<right x="0" y="72" shadow_x="0" shadow_y="72">
+		<animation rate="10" >
+			<animation_item x="52" y="72" shadow_x="52" shadow_y="72" />
+			<animation_item x="103" y="72" shadow_x="103" shadow_y="72" />
+			<animation_item x="154" y="72" shadow_x="154" shadow_y="72" />
+		</animation>
+	</right>
+	<burned x="0" y="288">
+		<animation rate="10" >
+			<animation_item x="52" y="288" />
+			<animation_item x="103" y="288" />
+		</animation>
+	</burned>
+</creature>

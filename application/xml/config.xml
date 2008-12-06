@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config visible_presumption="1" speed="7" fullscreen="0" sound="1">
+    <languages default="lang_cs">
+        <language name="lang_cs" />
+        <language name="lang_en" />
+    </languages>
+    <!-- pro jmena klaves viz doc/keys.txt -->
+    <player0>
+        <bind key="left" action="left" />
+        <bind key="right" action="right" />
+        <bind key="up" action="up" />
+        <bind key="down" action="down" />
+        <bind key="return" action="plant" />
+        <bind key="right shift" action="timer" />
+    </player0>
+    <player1>
+        <bind key="a" action="left" />
+        <bind key="d" action="right" />
+        <bind key="w" action="up" />
+        <bind key="s" action="down" />
+        <bind key="tab" action="plant" />
+        <bind key="left shift" action="timer" />
+    </player1>
+    <player2>
+        <bind key="b" action="left" />
+        <bind key="m" action="right" />
+        <bind key="h" action="up" />
+        <bind key="n" action="down" />
+        <bind key="v" action="plant" />
+        <bind key="c" action="timer" />
+    </player2>
+    <player3>
+        <bind key="[1]" action="left" />
+        <bind key="[3]" action="right" />
+        <bind key="[5]" action="up" />
+        <bind key="[2]" action="down" />
+        <bind key="page up" action="plant" />
+        <bind key="page down" action="timer" />
+    </player3>
+</config>
