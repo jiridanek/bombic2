@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <map name="map_dream_ghost" height="12" width="16" background="bg_dream">
 
-	<players x="1" y="2">
+	<players x="1" y="1">
 		<player0 x="1" y="1" />
 		<player1 x="14" y="10" />
 		<player2 x="14" y="1" />
@@ -19,12 +19,12 @@
 		<wall x="13" y="3" />
 		<wall x="12" y="4" />
 		<wall x="11" y="5" />
-		<wall x="4" y="6" />
-		<wall x="3" y="7" />
-		<wall x="2" y="8" />
-		<wall x="11" y="6" />
-		<wall x="12" y="7" />
-		<wall x="13" y="8" />
+		<wall x="4" y="7" />
+		<wall x="3" y="8" />
+		<wall x="2" y="9" />
+		<wall x="11" y="7" />
+		<wall x="12" y="8" />
+		<wall x="13" y="9" />
 	</walls>
 	<boxes 	name="box_glass" count="50">
 		<box x="4" y="1" />

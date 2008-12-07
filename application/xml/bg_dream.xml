@@ -2,12 +2,12 @@
 
 <background name="bg_dream" src="img/map_dream.bmp">
 	<!-- specifikace obrazku v rohu obrazovky -->
-	<topleft x="103" y="1" height="2" />
-	<topright x="205" y="1" height="2" />
+	<topleft x="103" y="51" />
+	<topright x="205" y="51" />
 	<bottomleft x="307" y="51" />
 	<bottomright x="409" y="51" />
 	<!-- specifikace okraju -->
-	<top x="154" y="1" height="2" />
+	<top x="154" y="51" />
 	<bottom x="358" y="51" />
 	<left x="52" y="51" />
 	<right x="256" y="51" />

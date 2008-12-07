@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<map name="map_forest_chest" height="12" width="16" background="bg_forest">
+
+	<players x="1" y="2">
+		<player0 x="9" y="2" />
+		<player1 x="9" y="10" />
+		<player2 x="13" y="4" />
+		<player3 x="13" y="8" />
+	</players>
+
+	<walls 	name="wall_stone">
+		<wall name="wall_cave" x="11" y="0" width="3" height="2" />
+		<wall name="wall_chest" x="12" y="2" />
+		<wall x="10" y="2" />
+		<wall x="11" y="2" />
+		<wall x="9" y="5" />
+		<wall x="9" y="7" />
+		<wall x="13" y="5" />
+		<wall x="13" y="7" />
+		<wall x="10" y="10" />
+		<wall x="11" y="10" />
+		<wall x="12" y="10" />
+		<wall x="2" y="8" />
+		<wall x="5" y="8" />
+		<wall x="7" y="2" />
+		<wall x="7" y="3" />
+		<wall x="7" y="4" />
+		<wall x="7" y="5" />
+		<wall x="7" y="7" />
+		<wall x="7" y="8" />
+		<wall x="7" y="9" />
+		<wall x="7" y="10" />
+		<wall x="7" y="8" />
+
+	</walls>
+	<boxes 	name="box_barrel" count="29">
+		<box x="1" y="6" />
+		<box x="1" y="7" />
+		<box x="1" y="8" />
+		<box x="1" y="9" />
+		<box x="1" y="10" />
+		<box x="2" y="6" />
+		<box x="2" y="7" />
+		<box x="2" y="9" />
+		<box x="2" y="10" />
+		<box x="3" y="6" />
+		<box x="3" y="7" />
+		<box x="3" y="8" />
+		<box x="3" y="9" />
+		<box x="3" y="10" />
+		<box x="4" y="6" />
+		<box x="4" y="7" />
+		<box x="4" y="8" />
+		<box x="4" y="9" />
+		<box x="4" y="10" />
+		<box x="5" y="6" />
+		<box x="5" y="7" />
+		<box x="5" y="9" />
+		<box x="5" y="10" />
+		<box x="6" y="6" />
+		<box x="6" y="7" />
+		<box x="6" y="8" />
+		<box x="6" y="9" />
+		<box x="6" y="10" />
+		<box x="7" y="6" />
+	</boxes>
+
+	<bonuses name="bonus_flame" count="1" />
+	<bonuses name="bonus_bomb" count="1" />
+
+	<creatures name="creature_rat" count="8">
+		<creature x="8" y="2" />
+		<creature x="9" y="2" />
+		<creature x="13" y="2" />
+		<creature x="14" y="2" />
+		<creature x="8" y="10" />
+		<creature x="9" y="10" />
+		<creature x="13" y="10" />
+		<creature x="14" y="10" />
+	</creatures>
+	<creatures name="creature_slug" count="8">
+		<creature x="8" y="3" />
+		<creature x="9" y="3" />
+		<creature x="13" y="3" />
+		<creature x="14" y="3" />
+		<creature x="8" y="9" />
+		<creature x="9" y="9" />
+		<creature x="13" y="9" />
+		<creature x="14" y="9" />
+	</creatures>
+	<creatures name="creature_cloud" count="4">
+		<creature x="8" y="6" />
+		<creature x="14" y="6" />
+		<creature x="13" y="4" />
+		<creature x="13" y="8" />
+	</creatures>
+	<creatures name="creature_ghost" count="1">
+		<creature x="11" y="6" />
+	</creatures>
+</map>
