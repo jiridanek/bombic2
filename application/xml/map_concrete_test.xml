@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<map name="map_concrete_test" height="12" width="16" background="bg_concrete">
+
+	<players x="1" y="2">
+		<player0 x="1" y="2" />
+		<player1 x="17" y="10" />
+		<player2 x="3" y="14" />
+		<player3 x="17" y="3" />
+	</players>
+
+	<walls 	name="wall_block_single">
+		<wall name="wall_oblong" x="3" y="0" height="2" />
+		<wall name="wall_rift" x="5" y="0" height="2" />
+		<wall name="wall_redlight" x="7" y="0" height="2" width="3" />
+		<wall name="wall_oblong" x="10" y="0" height="2" />
+
+		<wall name="wall_chest_1" x="2" y="9" />
+		<wall name="wall_chest_2" x="8" y="9" />
+		<wall name="wall_chest_3" x="10" y="9" />
+
+		<wall name="wall_machine" x="13" y="5" width="3" height="3" />
+		<wall name="wall_hole" x="2" y="3" width="2" height="2" />
+
+		<wall x="4" y="3" />
+
+		<wall name="wall_block_l" x="2" y="6" />
+		<wall name="wall_block_lr" x="3" y="6" />
+		<wall name="wall_block_t" x="4" y="5" />
+		<wall name="wall_block_c" x="4" y="6" />
+		<wall name="wall_block_tb" x="4" y="7" />
+		<wall name="wall_block_tb" x="4" y="8" />
+		<wall name="wall_block_b" x="4" y="9" />
+		<wall name="wall_block_lr" x="5" y="6" />
+		<wall name="wall_block_lr" x="6" y="6" />
+		<wall name="wall_block_r" x="7" y="6" />
+	</walls>
+	<boxes 	name="box_container" count="2">
+	</boxes>
+
+	<bonuses name="bonus_flame" count="1" />
+	<bonuses name="bonus_bomb" count="1" />
+	
+	<creatures name="creature_rat" count="0" />
+	<creatures name="creature_slug" count="1" />
+	<creatures name="creature_cloud" count="0">
+		<creature x="15" y="13" />
+	</creatures>
+	<nocreatures>
+		<nocreature x="1" y="4" />
+		<nocreature x="1" y="14" />
+	</nocreatures>
+	
+</map>

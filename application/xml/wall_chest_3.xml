@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<wall 	name="wall_chest_3" src="img/map_concrete.bmp">
+	<img x="205" y="253" toplapping="0" />
+</wall>

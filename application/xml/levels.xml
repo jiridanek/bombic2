@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <levels>
 	<episode>
+		<level map="map_concrete_test" img="img/intro_forest_debug.jpg" />
+
 		<_level map="map_forest_tworocks" img="img/intro_dream.jpg" />
 		<_level map="map_forest_deadbody" img="img/intro_forest_6.jpg" />
 		<level map="map_forest_chest" img="img/intro_forest_chest.jpg" />

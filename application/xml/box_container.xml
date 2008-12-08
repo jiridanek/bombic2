@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<box 	name="box_container" src="img/map_concrete.bmp">
+	<img x="205" y="102" toplapping="1" />
+	<burning x="256" y="102" toplapping="1">
+		<animation rate="6" >
+			<animation_item x="307" y="102" />
+			<animation_item x="358" y="102" />
+			<animation_item x="409" y="102" />
+		</animation>
+	</burning>
+</box>
