@@ -1,5 +1,4 @@
 
-#include <iostream>
 #include <vector>
 #include "SDL_lib.h"
 #include "stl_helper.h"

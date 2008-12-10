@@ -105,7 +105,11 @@ void GameIntro::new_game(Uint16 episode, Uint16 players){
 
 	if(gameBase_){
 		delete gameBase_;
-		gameBase_=0;
+		gameBase_ = 0;
+	}
+	if(game_){
+		delete game_;
+		game_ = 0;
 	}
 }
 

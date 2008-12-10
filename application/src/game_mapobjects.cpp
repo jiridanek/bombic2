@@ -1,6 +1,5 @@
 
 
-#include <iostream>
 #include <algorithm>
 #include "SDL_lib.h"
 #include "constants.h"

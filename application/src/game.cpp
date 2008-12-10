@@ -96,7 +96,9 @@ void Game::load_placed_MOs_(const GameBase::base_array_t & base_array){
 			for(it= base_array[column][field].begin();
 					it!= base_array[column][field].end() ;
 					++it){
-				insert_MO_(it->o, it->w, it->h, column, field);
+				// vlozi ho od leveho horniho rohu
+				insert_MO_(it->o, it->w, it->h,
+					column - it->w + 1, field - it->h + 1);
 			}
 		}
 	}
@@ -552,16 +554,18 @@ void Game::draw_(SDL_Surface* window, Uint16 player_num){
  * následně ostatní, až poté panely.
  * @param window surface okna pro vykreslení
  */
-void Game::draw_map_(bool bg, SDL_Surface* window, const SDL_Rect & map_view,
+void Game::draw_map_(bool bg, SDL_Surface* window, SDL_Rect & map_view,
 			Uint16 from_x, Uint16 from_y, Uint16 to_x, Uint16 to_y){
 
 	Uint16 column, field;
 	map_array_t::value_type::value_type::iterator it, end_it;
-
+	Uint8 *keystate = SDL_GetKeyState(0);
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
 	for(field = from_y ; field<map_array_[0].size() ; ++field){
+		map_view.h = (field>to_y ? map_array_[0].size() : field+1) *CELL_SIZE;
 		for(column= from_x ; column< map_array_.size() ; ++column){
+			map_view.w = (column>to_x ? map_array_.size() : column+1) *CELL_SIZE;
 			if(bg){
 				it = map_array_[column][field].begin();
 				end_it = map_array_[column][field].end();
@@ -572,6 +576,11 @@ void Game::draw_map_(bool bg, SDL_Surface* window, const SDL_Rect & map_view,
 				}
 			}
 			else {
+if(keystate[SDLK_o]){
+	SDL_Delay(200);
+	SDL_PumpEvents();
+	SDL_Flip(window);
+}
 				// objekty na policku seradim
 				map_array_[column][field].sort(isUnder);
 				// vykreslim ty co nejsou pozadi
@@ -580,6 +589,11 @@ void Game::draw_map_(bool bg, SDL_Surface* window, const SDL_Rect & map_view,
 						++it){
 
 					if(isTypeOf::isBgType(*it)) continue;
+if(keystate[SDLK_p]){
+	SDL_Delay(700);
+	SDL_PumpEvents();
+	SDL_Flip(window);
+}
 
 					// v praxi potrebuju prohodit dva hrace pokud jsou v zakrytu
 					// spodniho vykreslim vzdycky, horniho bud preskocim nebo vykreslim

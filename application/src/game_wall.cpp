@@ -1,8 +1,6 @@
 
-#include <iostream>
 #include "SDL_lib.h"
 #include "constants.h"
-// #include "game.h"
 #include "game_mapobjects.h"
 #include "game_wall.h"
 
@@ -23,9 +21,15 @@ Wall::Wall(const Wall & wall, Uint16 x, Uint16 y, Uint16 height):
 
 /** @details
  * @param window Surface, do kterého chceme zeď vykreslit.
+ * @param rect Struktura, zde nepoužitá uplně jako čtverec,
+ * x, y jsou hodnoty posunu vykreslované mapy,
+ * w, h jsou souřadnice v pixelech právě vykreslovaného políčka,
+ * nebo w=hodně (h=hodně) pokud jde o poslední vykreslovaný sloupec (řádek).
  */
 void Wall::draw(SDL_Surface* window, const SDL_Rect & rect){
-	anim_.draw(window, x_ +rect.x, y_ +rect.y);
+	if(rect.w >= x_+anim_.width()
+	&& rect.h >= y_+anim_.height())
+		anim_.draw(window, x_ +rect.x, y_ +rect.y);
 }
 
 void Wall::update(){

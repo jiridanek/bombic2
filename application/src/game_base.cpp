@@ -841,14 +841,16 @@ void GameBase::insert_background_(const Animation & anim,
  */
 void GameBase::insert_wall_(const Animation & anim,
 				Uint16 toplapping, Uint16 x, Uint16 y, Uint16 w, Uint16 h){
-	// ulozit do mapy na spravna policka
-	if(x>=base_array_.size() && y>=base_array_[0].size())
+	// ulozit do mapy na spravna policka, musi se tam vejit cely
+	if(static_cast<Uint16>(x+w-1) >= base_array_.size()
+	&& static_cast<Uint16>(y+h-1) >= base_array_[0].size())
 		return;
 
 	proportionedMO_t new_obj= {
 		new Wall(anim, x*CELL_SIZE, (y-toplapping)*CELL_SIZE),
 		w, h };
-	base_array_[x][y].push_back( new_obj);
+	// ulozim na posledni vykreslovane policko
+	base_array_[x+w-1][y+h-1].push_back( new_obj);
 	new_obj.o= 0; new_obj.w= new_obj.h= 0;
 	allowed_field_t not_allowed_field = {false, false};
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
@@ -872,15 +874,17 @@ void GameBase::insert_wall_(const Animation & anim,
  */
 void GameBase::insert_floorobject_(const Animation & anim,
 			Uint16 x, Uint16 y, Uint16 w, Uint16 h){
-	// ulozit do mapy
-	if(x>=base_array_.size() || y>=base_array_[0].size())
+	// ulozit do mapy na spravna policka, musi se tam vejit cely
+	if(static_cast<Uint16>(x+w-1) >= base_array_.size()
+	&& static_cast<Uint16>(y+h-1) >= base_array_[0].size())
 		return;
 
 	// vytvorit
 	proportionedMO_t new_obj= {
 		new Floorobject(anim, x*CELL_SIZE, y*CELL_SIZE),
 		w, h };
-	base_array_[x][y].push_back( new_obj);
+	// ulozim na posledni vykreslovane policko
+	base_array_[x+w-1][y+h-1].push_back( new_obj);
 	new_obj.o= 0; new_obj.w= new_obj.h= 0;
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku
 	for(Uint16 column=0; column<w ; ++column){
@@ -920,15 +924,17 @@ void GameBase::insert_box_(const Animation & anim, const Animation & anim_burnin
  */
 void GameBase::insert_box_(const Animation & anim, const Animation & anim_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y, Uint16 w, Uint16 h){
-	// ulozit do mapy na spravna policka
-	if(x>=base_array_.size() || y>=base_array_[0].size())
+	// ulozit do mapy na spravna policka, musi se tam vejit cely
+	if(static_cast<Uint16>(x+w-1) >= base_array_.size()
+	&& static_cast<Uint16>(y+h-1) >= base_array_[0].size())
 		return;
 
 	// vytvorit
 	proportionedMO_t new_obj= {
 		new Box(anim, anim_burning, toplapping, x*CELL_SIZE, y*CELL_SIZE),
 		w, h };
-	base_array_[x][y].push_back( new_obj);
+	// ulozim na posledni vykreslovane policko
+	base_array_[x+w-1][y+h-1].push_back( new_obj);
 	new_obj.o= 0; new_obj.w= new_obj.h= 0;
 	allowed_field_t not_allowed_field = {false, false};
 	// ulozit prazdny pointer, kvuli naslednemu zjistovani typu posledniho objektu na policku

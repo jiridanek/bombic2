@@ -22,6 +22,8 @@ class Floorobject: public StaticMO{
 		virtual void draw(SDL_Surface *window, const SDL_Rect & rect);
 		/// Posun animace.
 		virtual void update();
+		/// Zetová souřadnice.
+		virtual Uint16 getZ() const;
 		/// Typ objekt na zemi.
 		virtual OBJECT_TYPES type() const { return FLOOROBJECT; }
 		/// Destructor

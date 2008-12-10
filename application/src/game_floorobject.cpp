@@ -14,11 +14,24 @@ Floorobject::Floorobject(const Animation & anim, Uint16 x, Uint16 y):
 Floorobject::Floorobject(const Floorobject & floorobject, Uint16 x, Uint16 y):
 	StaticMO(x, y), anim_(floorobject.anim_) {}
 
+/** @details
+ * Aby ležel nad presumpcí plamene.
+ * Nemusíme se bát, že by ležel nad ostatními,
+ * je totiž definován jako typ pozadí.
+ * @see DynamicMO::getZ()
+ * @see isTypeOf::isBgType
+ */
+Uint16 Floorobject::getZ() const {
+	return y_+1;
+}
+
 /**
  * @param window surface okna pro vykreslení
  */
 void Floorobject::draw(SDL_Surface* window, const SDL_Rect & rect){
-	anim_.draw(window, x_ +rect.x, y_ +rect.y);
+	if(rect.w >= x_+anim_.width()
+	&& rect.h >= y_+anim_.height())
+		anim_.draw(window, x_ +rect.x, y_ +rect.y);
 }
 
 void Floorobject::update(){

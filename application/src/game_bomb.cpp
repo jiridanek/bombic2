@@ -1,6 +1,6 @@
 
-#include <iostream>
 #include "SDL_lib.h"
+#include "stl_helper.h"
 #include "constants.h"
 #include "game.h"
 #include "game_mapobjects.h"
@@ -115,6 +115,9 @@ void Bomb::explode(){
 			// souradnice pro novy plamen
 			next_x = x+ i*factor_x;
 			next_y = y+ i*factor_y;
+			if(next_x>=game->map_width()
+			|| next_y>=game->map_height())
+				break;
 			// zajimavy objekt na policku
 			obj = game->field_getObject(next_x, next_y,
 						isTypeOf::isWallBoxAnyBomb);
@@ -216,7 +219,7 @@ void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
 	Uint16 tar_x = x_, tar_y = y_, column = x, field = y, to_end, distance;
 
 	to_end = timer_ ? 0 : anim_.periods_to_end();
-	distance = to_end * speed_diff_ * (speed_rate_-2) /speed_rate_;
+	distance = count_distance_(to_end);
 
 	switch(d_){
 		case UP:
@@ -256,14 +259,29 @@ void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
 
 		if(obj){
 			// zastavi se na plameni
-			if(obj->type()==FLAME
-			// zastavi se na presumpci ktera bouchne driv nez ja
-			|| static_cast<Presumption *>(obj)->periods_to_flame()<to_end )
+			if(obj->type()==FLAME)
 				return;
+			Uint16 another_to_end =
+				static_cast<Presumption *>(obj)->periods_to_flame();
+			// zastavi se na presumpci ktera bouchne driv nez ja
+			// ale stihne bouchnout nez z ni ujedu
+			if(another_to_end < to_end)
+				return;
+			/*
+			&& count_distance_(another_to_end)/CELL_SIZE -1 <
+				abs_minus(static_cast<Uint16>(x_/CELL_SIZE), x)+
+				abs_minus(static_cast<Uint16>(y_/CELL_SIZE), y) )
+						return;
+			*/
 		}
 	}
 
 }
+
+Uint16 Bomb::count_distance_(Uint16 to_end) const{
+	return to_end * speed_diff_ * (speed_rate_-2) /speed_rate_;
+}
+
 /**
  */
 void Bomb::create_presumptions_(){
@@ -283,7 +301,7 @@ void Bomb::create_presumptions_(){
 		if(dir%2)
 			factor_x = 2-dir;
 		else
-			factor_y = 1-dir;;
+			factor_y = 1-dir;
 		// pro velikost plamene
 		for(i=1 ; i<=flamesize_ ; ++i){
 			// pridam presumpci na nove souradnice
@@ -301,6 +319,8 @@ void Bomb::create_presumptions_(){
  */
 bool Bomb::add_presumption_(Uint16 x, Uint16 y){
 	Game * game = Game::get_instance();
+	if(x>=game->map_width() || y>=game->map_height())
+		return false;
 	MapObject * blocking = game->field_getObject(x, y, isTypeOf::isWallBoxBomb);
 	// zarazi se pred zdi nebo pred bednou
 	if(blocking && blocking->type()!=BOMB_STAYING)
@@ -374,13 +394,18 @@ void MegaBomb::explode(){
 	Uint16 old_x = x_, old_y = y_, x, y;
 	// vytvorit dlouhe plameny
 	for(x_= old_x-CELL_SIZE ; x_<= old_x+CELL_SIZE ; x_+=CELL_SIZE){
-		for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE)
-			if(!game->field_withObject(
-						x_/CELL_SIZE, y_/CELL_SIZE,
-						isTypeOf::isWallBoxAnyBomb)){
+		for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE){
+			if(x_/CELL_SIZE >= Game::get_instance()->map_width()
+			|| y_/CELL_SIZE >= Game::get_instance()->map_height())
+				continue;
+			MapObject* obj = game->field_getObject(
+				x_/CELL_SIZE, y_/CELL_SIZE,
+				isTypeOf::isWallBoxAnyBomb);
+			if(!obj || obj==this){
 				Bomb::explode();
 				explodes_ = false;
 			}
+		}
 	}
 	explodes_ = true;
 	x_ = old_x;
@@ -389,11 +414,15 @@ void MegaBomb::explode(){
 	old_y/=CELL_SIZE;
 	// vlozit do stredu krize at to vypada hezky
 	for(x = old_x-1 ; x<= old_x+1 ; ++x){
-		for(y = old_y-1 ; y<= old_y+1 ; ++y)
+		for(y = old_y-1 ; y<= old_y+1 ; ++y) {
+			if(x >= Game::get_instance()->map_width()
+			|| y >= Game::get_instance()->map_height())
+				continue;
 			if(!game->field_withObject(x, y, isTypeOf::isWallBoxAnyBomb)){
 				game->insert_object(x, y,
 					game->tools->flame_cross(x, y) );
 			}
+		}
 	}
 }
 
@@ -403,10 +432,14 @@ void MegaBomb::create_presumptions_(){
 	Uint16 old_x = x_, old_y = y_;
 
 	for(x_= old_x-CELL_SIZE ; x_<= old_x+CELL_SIZE ; x_+=CELL_SIZE){
-		for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE)
+		for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE) {
+			if(x_/CELL_SIZE >= Game::get_instance()->map_width()
+			|| y_/CELL_SIZE >= Game::get_instance()->map_height())
+				continue;
 			if(!Game::get_instance()->field_withObject(
 					x_/CELL_SIZE, y_/CELL_SIZE, isTypeOf::isWallBoxBomb))
 				Bomb::create_presumptions_();
+		}
 	}
 	x_ = old_x;
 	y_ = old_y;

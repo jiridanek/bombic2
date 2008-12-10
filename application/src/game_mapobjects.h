@@ -7,7 +7,7 @@
 #ifndef GAME_MAPOBJECTS_H
 #define GAME_MAPOBJECTS_H
 
-#include <iostream>
+#include <vector>
 #include "SDL_lib.h"
 
 /** Všechny typy obejktů.

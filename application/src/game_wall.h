@@ -5,9 +5,7 @@
 #ifndef GAME_WALL_H
 #define GAME_WALL_H
 
-#include <iostream>
 #include "SDL_lib.h"
-// #include "game.h"
 #include "game_mapobjects.h"
 
 /** Zeď.

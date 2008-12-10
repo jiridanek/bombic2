@@ -82,10 +82,14 @@ void Box::update(){
  * @param window surface okna pro vykreslení
  */
 void Box::draw(SDL_Surface *window, const SDL_Rect & rect){
-	if(burning_ && !burned_)
+	if(burning_ && !burned_
+	&& rect.w >= x_+anim_burning_.width()
+	&& rect.h >= y_+anim_burning_.height()-toplapping_*CELL_SIZE)
 		anim_burning_.draw(window,
 			x_ +rect.x, y_- toplapping_*CELL_SIZE +rect.y);
-	else if(!burning_)
+	else if(!burning_
+	&& rect.w >= x_+anim_.width()
+	&& rect.h >= y_+anim_.height()-toplapping_*CELL_SIZE)
 		anim_.draw(window,
 			x_ +rect.x, y_- toplapping_*CELL_SIZE +rect.y);
 }

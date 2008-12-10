@@ -5,9 +5,7 @@
 #ifndef GAME_BOX_H
 #define GAME_BOX_H
 
-#include <iostream>
 #include "SDL_lib.h"
-// #include "game.h"
 #include "game_mapobjects.h"
 
 /** Bedna.

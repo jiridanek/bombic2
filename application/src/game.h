@@ -108,7 +108,7 @@ class Game {
 		/// Vykreslení scény hráče.
 		void draw_(SDL_Surface *window, Uint16 player_num);
 		/// Vykreslení kousku scény.
-		void draw_map_(bool bg, SDL_Surface* window, const SDL_Rect & map_view,
+		void draw_map_(bool bg, SDL_Surface* window, SDL_Rect & map_view,
 			Uint16 from_x, Uint16 from_y, Uint16 to_x, Uint16 to_y );
 
 		/// Hýbnutí světem.

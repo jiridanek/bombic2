@@ -5,9 +5,7 @@
 #ifndef GAME_BOMB_H
 #define GAME_BOMB_H
 
-#include <iostream>
 #include "SDL_lib.h"
-// #include "game.h"
 #include "game_mapobjects.h"
 #include "game_presumption.h"
 
@@ -60,6 +58,8 @@ class Bomb: public DynamicMO {
 		virtual void create_presumptions_();
 		/// Najít cílové políčko bomby.
 		void find_target_(Uint16 & x, Uint16 & y) const;
+		/// Spočítat vzdálenost dojezdu.
+		Uint16 count_distance_(Uint16 to_end) const;
 		/// Přidat presumpci.
 		bool add_presumption_(Uint16 x, Uint16 y);
 		/// Odstranit presumpce.

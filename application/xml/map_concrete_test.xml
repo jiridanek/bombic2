@@ -34,14 +34,17 @@
 		<wall name="wall_block_lr" x="6" y="6" />
 		<wall name="wall_block_r" x="7" y="6" />
 	</walls>
-	<boxes 	name="box_container" count="2">
+	<boxes 	name="box_container" count="40">
 	</boxes>
 
-	<bonuses name="bonus_flame" count="1" />
-	<bonuses name="bonus_bomb" count="1" />
-	
+	<floorobject name="floor_deadbody" x="5" y="5" width="2" />
+	<bonuses name="bonus_flame" count="10" />
+	<bonuses name="bonus_bomb" count="10" />
+	<bonuses name="bonus_slider" count="10" />
+	<bonuses name="bonus_megabomb" count="10" />
+
 	<creatures name="creature_rat" count="0" />
-	<creatures name="creature_slug" count="1" />
+	<creatures name="creature_slug" count="10" />
 	<creatures name="creature_cloud" count="0">
 		<creature x="15" y="13" />
 	</creatures>
@@ -49,5 +52,5 @@
 		<nocreature x="1" y="4" />
 		<nocreature x="1" y="14" />
 	</nocreatures>
-	
+
 </map>
