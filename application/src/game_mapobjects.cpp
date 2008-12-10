@@ -87,6 +87,8 @@ isTypeOf isTypeOf::isWallBoxAnyBombFlame(
 	WALL, BOX, BOMB_STAYING, BOMB_MOVING, FLAME);
 isTypeOf isTypeOf::isWallBoxBombFlamePresumption(
 	WALL, BOX, BOMB_STAYING, FLAME, PRESUMPTION);
+isTypeOf isTypeOf::isWallBoxAnyBombFlamePresumption(
+	WALL, BOX, BOMB_STAYING, BOMB_MOVING, FLAME, PRESUMPTION);
 
 
 /** @details

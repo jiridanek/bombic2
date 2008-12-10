@@ -114,7 +114,8 @@ class isTypeOf {
 			isWallBoxAnyBomb,
 			isWallBoxBombFlame,
 			isWallBoxAnyBombFlame,
-			isWallBoxBombFlamePresumption;
+			isWallBoxBombFlamePresumption,
+			isWallBoxAnyBombFlamePresumption;
 
 
 		/// TODO ruzne uzitecne druhy predikatu

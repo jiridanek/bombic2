@@ -120,6 +120,10 @@ void GameIntro::load_game(Uint16 episode, Uint16 level,
 
 }
 
+bool GameIntro::is_game(){
+	return gameBase_!=0 && cur_level_ < levels_.size();
+}
+
 void GameIntro::load_levels_(Uint16 episode){
 	string filename("levels");
 

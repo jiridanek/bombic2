@@ -43,6 +43,8 @@ class GameIntro {
 		void load_game(Uint16 episode, Uint16 level,
 			const PlayerProperties & player1, const PlayerProperties & player2,
 			const PlayerProperties & player3, const PlayerProperties & player4);
+		/// Je vytvořená hra.
+		bool is_game();
 	private:
 		/// Základ pro konkrétní level.
 		GameBase * gameBase_;

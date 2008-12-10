@@ -216,7 +216,8 @@ void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
 	y = y_/CELL_SIZE;
 	if(d_==BURNED) return;
 
-	Uint16 tar_x = x_, tar_y = y_, column = x, field = y, to_end, distance;
+	Uint16 tar_x = x_, tar_y = y_, column = x, field = y,
+		to_end, distance, bombs_before = 0;
 
 	to_end = timer_ ? 0 : anim_.periods_to_end();
 	distance = count_distance_(to_end);
@@ -249,33 +250,67 @@ void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
 		// nalezeni prekazky
 		MapObject * obj =
 			Game::get_instance()->field_getObject(column, field,
-				isTypeOf::isWallBoxBombFlamePresumption);
-		// zastavi se pred prekazkou
-		if(obj && obj->type()!=FLAME && obj->type()!=PRESUMPTION)
-			return;
-		// posun cile o dalsi policko
-		x = column;
-		y = field;
-
-		if(obj){
-			// zastavi se na plameni
-			if(obj->type()==FLAME)
-				return;
-			Uint16 another_to_end =
-				static_cast<Presumption *>(obj)->periods_to_flame();
-			// zastavi se na presumpci ktera bouchne driv nez ja
-			// ale stihne bouchnout nez z ni ujedu
-			if(another_to_end < to_end)
-				return;
-			/*
-			&& count_distance_(another_to_end)/CELL_SIZE -1 <
-				abs_minus(static_cast<Uint16>(x_/CELL_SIZE), x)+
-				abs_minus(static_cast<Uint16>(y_/CELL_SIZE), y) )
-						return;
-			*/
+				isTypeOf::isWallBoxAnyBombFlamePresumption);
+		if(obj) switch(obj->type()){
+			case WALL:
+			case BOX:
+			case BOMB_STAYING:
+				// zastavi se pred prekazkou
+				column = tar_x; field = tar_y;
+				continue;
+			case BOMB_MOVING:
+				// zvysi pocet predchozich bomb,
+				// pokud jede stejnym smerem
+				if(static_cast<Bomb*>(obj)->d_==d_)
+					++bombs_before;
+				break;
+			case FLAME:
+				// posun cile o dalsi policko
+				x = column;
+				y = field;
+				// konec
+				column = tar_x; field = tar_y;
+				continue;
+			case PRESUMPTION:
+				// posun cile o dalsi policko
+				x = column;
+				y = field;
+				// doba do bouchnuti nalezene predpovedi
+				Uint16 another_to_end =
+					static_cast<Presumption *>(obj)->periods_to_flame();
+				// zastavi se na presumpci ktera bouchne driv nez ja
+				// ale stihne bouchnout nez z ni ujedu,
+				// a bez ohledu na predchozi bomby
+				if(another_to_end < to_end
+				&& count_distance_(another_to_end)/CELL_SIZE <
+					abs_minus(static_cast<Uint16>(x_/CELL_SIZE), x)+
+					abs_minus(static_cast<Uint16>(y_/CELL_SIZE), y) )
+							return;
+				break;
+			default: break;
+		}
+		else {
+			// posun cile o dalsi policko
+			x = column;
+			y = field;
 		}
 	}
-
+	if(bombs_before) {
+		tar_x = x/CELL_SIZE;
+		tar_y = y/CELL_SIZE;
+		if(abs_minus(x,tar_x)+abs_minus(y,tar_y)
+					< bombs_before){
+			x = tar_x;
+			y = tar_y;
+		}
+		else switch(d_){
+			case UP: y+=bombs_before; break;
+			case RIGHT: x-=bombs_before; break;
+			case DOWN: y-=bombs_before; break;
+			case LEFT: x+=bombs_before; break;
+			default: break;
+		}
+	}
 }
 
 Uint16 Bomb::count_distance_(Uint16 to_end) const{

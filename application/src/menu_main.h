@@ -5,16 +5,21 @@
 #ifndef MENU_MAIN_H
 #define MENU_MAIN_H
 
+#include <string>
 #include "agar_helper.h"
 #include "menu_base.h"
 
 class MenuMain: public MenuBase {
 	public:
 		MenuMain();
-		virtual ~MenuMain();
+		virtual ~MenuMain() {};
 		static void create(AG_Event * ev=0)
 			{ new MenuMain; }
 	private:
+		static void handlerMenuShown(AG_Event * ev=0);
+		static void handlerResumeGame(AG_Event * event);
+		static std::string lang;
+		static bool is_game;
 };
 
 #endif

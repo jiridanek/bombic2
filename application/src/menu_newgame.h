@@ -22,7 +22,7 @@ class MenuNewGame: public MenuBase {
 			{ new MenuNewGame; }
 
 	private:
-		static void newGame(AG_Event * ev=0);
+		static void handlerNewGame(AG_Event * event);
 		static int players_count;
 		static int episode;
 };

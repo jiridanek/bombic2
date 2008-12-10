@@ -13,7 +13,7 @@ MenuNewGame::MenuNewGame(){
 
 	// hrat hru
 	item = createItem("Play");
-	AG_SetEvent(item, "window-mousebuttondown", newGame, 0);
+	AG_SetEvent(item, "window-mousebuttondown", handlerNewGame, "%p", this);
 
 	// pocet hracu
 	item = createItemHoriz("Players count");
@@ -44,8 +44,11 @@ MenuNewGame::MenuNewGame(){
 extern SDL_Surface * g_window;
 extern GameIntro * g_gameIntro;
 
-void MenuNewGame::newGame(AG_Event * ev){
+void MenuNewGame::handlerNewGame(AG_Event * event){
+	MenuNewGame * menu = static_cast<MenuNewGame *>(AG_PTR(1));
+
 	g_gameIntro->new_game(episode, players_count);
 	g_gameIntro->show_screen();
 	AG_ResizeDisplay(g_window->w, g_window->h);
+	menu->show();
 }

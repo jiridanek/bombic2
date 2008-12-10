@@ -25,6 +25,8 @@ MenuBase::~MenuBase(){
 }
 
 void MenuBase::show(){
+	AG_WindowSetGeometryAligned(win, AG_WINDOW_MC,
+		AGWIDGET(win)->w, AGWIDGET(win)->h);
 	AG_WindowShow(win);
 	p_items = &items_;
 }
@@ -169,11 +171,13 @@ void MenuStack::insert(MenuBase * menu){
 	stack_.top()->show();
 }
 
-void MenuStack::remove(){
+void MenuStack::remove(bool quit_on_empty){
 	delete stack_.top();
 	stack_.pop();
 	if(!stack_.empty())
 		stack_.top()->show();
+	else if(quit_on_empty)
+		AG_Quit();
 }
 
 void MenuStack::clear(){

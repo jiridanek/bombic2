@@ -1,4 +1,7 @@
 
+#include <string>
+#include "config.h"
+#include "game_intro.h"
 #include "menu_main.h"
 #include "menu_newgame.h"
 #include "menu_loadgame.h"
@@ -8,12 +11,30 @@
 #include "menu_credits.h"
 #include "menu_options.h"
 
+extern SDL_Surface * g_window;
+extern GameIntro * g_gameIntro;
+
+std::string MenuMain::lang;
+bool MenuMain::is_game=false;
+
+#include <iostream>
+
 MenuMain::MenuMain(){
+	lang = CONFIG->language();
+	is_game = g_gameIntro && g_gameIntro->is_game();
+
 	AG_Box * item;
 
 	// nadpis
 	createHeading("Nabídka dne");
 	// TODO resume to game
+
+	// resume game
+	if(is_game){
+		item = createItem("Resume game");
+		AG_SetEvent(item, "window-mousebuttondown",
+			handlerResumeGame, "%p", this);
+	}
 
 	// new game
 	item = createItem("New game");
@@ -23,7 +44,11 @@ MenuMain::MenuMain(){
 	item = createItem("Load game");
 	AG_SetEvent(item, "window-mousebuttondown", MenuLoadGame::create, 0);
 
-	// TODO save game
+	// save game
+	if(is_game){
+		item = createItem("Save game");
+	// 	AG_SetEvent(item, "window-mousebuttondown", MenuSaveGame::create, 0);
+	}
 
 	// deathmatch
 	item = createItem("Deathmatch");
@@ -44,13 +69,28 @@ MenuMain::MenuMain(){
 	AG_SetEvent(item, "window-mousebuttondown", MenuOptions::create, 0);
 
 	// quit
-// 	AG_SpacerNewHoriz(win);
 	item = createItem("Quit");
 	AG_SetEvent(item, "window-mousebuttondown", handlerBack, 0);
 
 	AG_SpacerNewHoriz(win);
+
+	// po zobrazeni zkontrolovat jestli neni treba predelat
+	AG_SetEvent(win, "window-shown", handlerMenuShown, 0);
 }
 
-MenuMain::~MenuMain(){
-	AG_Quit();
+void MenuMain::handlerMenuShown(AG_Event * ev){
+	if(CONFIG->language()!=lang
+	|| (g_gameIntro && g_gameIntro->is_game())!=is_game){
+		menu_stack.remove(false);
+		create();
+		return;
+	}
+}
+
+void MenuMain::handlerResumeGame(AG_Event * event){
+	MenuMain * menu = static_cast<MenuMain *>(AG_PTR(1));
+
+	g_gameIntro->show_screen();
+	AG_ResizeDisplay(g_window->w, g_window->h);
+	menu->show();
 }

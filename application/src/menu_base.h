@@ -46,7 +46,7 @@ class MenuBase {
 class MenuStack {
 	public:
 		void insert(MenuBase * menu);
-		void remove();
+		void remove( bool quit_on_empty = true);
 		void clear();
 	private:
 		std::stack< MenuBase * > stack_;
