@@ -10,8 +10,9 @@
 
 #include <iostream>
 #include <string>
-#include <sstream>
+// #include <sstream>
 #include <map>
+#include <stdexcept>
 
 #include "tinyxml.h"
 #include "stl_helper.h"
@@ -24,14 +25,20 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc,
 /// Uloží dokument.
 void TiXmlSaveDocument(TiXmlDocument & doc, std::string & filename);
 
+
+class TiXmlException: public std::logic_error {
+	public:
+		TiXmlException(const std::string & what_arg):
+			std::logic_error(what_arg) {}
+};
+
 /** Vytiskne chybu a ukončí program.
  * @details Na standardní chybový výstup vytiskne chybové hlášení.
  * @param error Chybová hláška, pro zadaný typ musí být definovaný operator<<
  * @throw int Hodnota pro skončení programu.
  */
 template<typename T> void TiXmlError(T error){
-	std::cerr << "Error in XML occured: " << error << std::endl;
-	throw 1;
+	throw TiXmlException("Error in XML occured: "+x2string(error));
 }
 
 /** Vytiskne chybu se jménem souboru a ukončí program.
@@ -42,9 +49,9 @@ template<typename T> void TiXmlError(T error){
  * @throw int Hodnota pro skončení programu.
  */
 template<typename S, typename T> void TiXmlError(S filename, T error){
-	std::cerr << "Error in XML file " << filename
-		<< " occured: " << error << std::endl;
-	throw 1;
+	throw TiXmlException(
+		"Error in XML file " + x2string(filename)+
+		" occured: " + x2string(error));
 }
 
 /// Načtení hodnoty atributu do stringu.

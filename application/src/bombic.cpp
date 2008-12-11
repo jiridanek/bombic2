@@ -4,6 +4,7 @@
 #include <ctime>    // For time()
 #include <cstdlib>  // For srand() and rand()
 #include "agar_helper.h"
+#include "tixml_helper.h"
 #include "SDL_lib.h"
 #include "config.h"
 #include "menu_base.h"
@@ -50,6 +51,10 @@ int main(int argc, char *argv[]) {
 			return_val = 10;
 			cerr << err << endl;
 		}
+		catch(const TiXmlException & ex){
+			return_val = 1;
+			cerr << ex.what() << endl;
+		}
 
 		MenuBase::clearStack();
 	}
@@ -59,6 +64,10 @@ int main(int argc, char *argv[]) {
 	catch(const string & err){
 		return_val = 10;
 		cerr << err << endl;
+	}
+	catch(const TiXmlException & ex){
+		return_val = 1;
+		cerr << ex.what() << endl;
 	}
 
 	AG_Destroy();

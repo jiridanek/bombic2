@@ -7,7 +7,7 @@
 
 #include "agar_helper.h"
 #include "menu_base.h"
-
+#include "deathmatch_intro.h"
 
 #define MENU_DEATHMATCH_PLAYERS_MIN 2
 #define MENU_DEATHMATCH_PLAYERS_MAX 4
@@ -21,10 +21,13 @@ class MenuDeathmatch: public MenuBase {
 		static void create(AG_Event * ev=0)
 			{ new MenuDeathmatch; }
 	private:
+		static void handlerNewMatch(AG_Event * event);
+
 		static int players_count;
 		static int win_points;
 		static int creatures;
 		static int bombs_at_end;
+		static DeathmatchIntro::bonuses_t bonuses;
 };
 
 #endif

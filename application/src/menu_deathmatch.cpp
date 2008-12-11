@@ -2,11 +2,13 @@
 #include "menu_deathmatch.h"
 #include "menu_deathmatch_bonuses.h"
 #include "menu_deathmatch_maps.h"
+#include "deathmatch_intro.h"
 
 int MenuDeathmatch::players_count = MENU_DEATHMATCH_PLAYERS_MIN;
 int MenuDeathmatch::win_points = MENU_DEATHMATCH_WINS_MIN;
 int MenuDeathmatch::creatures = 0;
 int MenuDeathmatch::bombs_at_end = 0;
+DeathmatchIntro::bonuses_t MenuDeathmatch::bonuses;
 
 MenuDeathmatch::MenuDeathmatch(){
 	AG_Box * item;
@@ -17,7 +19,8 @@ MenuDeathmatch::MenuDeathmatch(){
 
 	// hrat hru
 	item = createItem("Play");
-// 	AG_SetEvent(item, "window-mousebuttondown", TODO, 0);
+	AG_SetEvent(item, "window-mousebuttondown",
+		handlerNewMatch, "%p", this );
 
 	// map
 	item = createItem("Map");
@@ -75,4 +78,26 @@ MenuDeathmatch::MenuDeathmatch(){
 	AG_SetEvent(item, "window-mousebuttondown", handlerBack, 0);
 
 	AG_SpacerNewHoriz(win);
+}
+
+extern SDL_Surface * g_window;
+
+void MenuDeathmatch::handlerNewMatch(AG_Event * event){
+	MenuDeathmatch * menu = static_cast<MenuDeathmatch *>(AG_PTR(1));
+
+	std::string mapname(MenuDeathmatchMaps::map_name);
+	if(mapname.empty()) return;
+	mapname = MenuDeathmatchMaps::map_path + mapname;
+
+	try {
+		DeathmatchIntro matchIntro(players_count, mapname, bonuses,
+				win_points, creatures!=0, bombs_at_end!=0);
+		matchIntro.show_screen();
+	}
+	catch(const TiXmlException & ex){
+		AG_TextError("%s", ex.what());
+	}
+
+	AG_ResizeDisplay(g_window->w, g_window->h);
+	menu->show();
 }

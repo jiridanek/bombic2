@@ -3,9 +3,9 @@
 
 	<players x="1" y="2">
 		<player0 x="1" y="2" />
-		<player1 x="17" y="10" />
-		<player2 x="3" y="14" />
-		<player3 x="17" y="3" />
+		<player1 x="7" y="10" />
+		<player2 x="7" y="3" />
+		<player3 x="3" y="10" />
 	</players>
 
 	<walls 	name="wall_block_single">

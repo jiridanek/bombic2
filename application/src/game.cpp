@@ -39,9 +39,11 @@ Game* Game::get_instance(){
  * @param players_count počet hráčů
  * @param mapname název mapy
  */
-Game::Game(const GameBase & base, GameTools * gameTools):
-			tools(gameTools), remaining_creatures_(0), remaining_periods_(500) {
-// 	bool deathmatch, bool creatures, bool bombsatend){
+Game::Game(const GameBase & base, GameTools * gameTools,
+				bool deathmatch, bool bombsatend):
+			tools(gameTools), remaining_creatures_(0),
+			remaining_periods_(500),
+			deathmatch_(deathmatch), bombsatend_(bombsatend) {
 	if(myself_ptr_)
 		throw string("in Game constructor: another Game instance created.");
 	myself_ptr_ = this;
@@ -125,20 +127,20 @@ void Game::load_generated_MOs_(const GameBase & base){
 	generate_boxes_(base, it_first, it_second);
 
 	it_first= it_second;
-	// bonusy
-	if(it_first==end_it) return;
-	isCurType.clear().addType(BONUS);
-
-	while(isCurType(*it_second) && ++it_second!=end_it);
-	generate_bonuses_(it_first, it_second);
-
-	it_first= it_second;
 	// nestvury
 	if(it_first==end_it) return;
 	isCurType.clear().addType(CREATURE);
 
 	while(isCurType(*it_second) && ++it_second!=end_it);
 	generate_creatures_(base, it_first, it_second);
+
+	it_first= it_second;
+	// bonusy
+	if(it_first==end_it) return;
+	isCurType.clear().addType(BONUS);
+
+	while(isCurType(*it_second) && ++it_second!=end_it);
+	generate_bonuses_(it_first, it_second);
 
 	if(it_second!=end_it)
 		throw string("in Game::load_generated_MOs_(): unexpected object type to generate or objects in wrong order.");
@@ -399,7 +401,6 @@ void Game::play(SDL_Surface* window){
 			time_to_use -= Config::get_instance()->move_period();
 			// hýbne světem
 			if(move_()){
-				// TODO deatchmatch
 				if(!players_.size())
 					return;
 
@@ -414,9 +415,10 @@ void Game::play(SDL_Surface* window){
 		last_time = this_time;
 
 		// zbyvaji nejake prisery?
-		// TODO deatchmatch
-		if(!remaining_creatures_)
+		if((!remaining_creatures_ && !deathmatch_)
+		|| (players_.size()<=1 && deathmatch_) )
 			at_end=true;
+
 	}
 }
 
@@ -639,6 +641,7 @@ bool Game::move_(){
 		if((*it)->type()==PLAYER) removed_player = true;
 		remove_object(*it);
 	}
+	// TODO bombsatend_
 	return removed_player;
 }
 
@@ -661,7 +664,8 @@ void Game::update_(){
 
 /// Info o ukončení hry.
 bool Game::success() const{
-	// TODO deatchmatch
+	if(deathmatch_)
+		return players_.size()==1;
 	return remaining_creatures_==0 && players_.size()>0;
 }
 

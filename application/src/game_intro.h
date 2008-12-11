@@ -45,6 +45,8 @@ class GameIntro {
 			const PlayerProperties & player3, const PlayerProperties & player4);
 		/// Je vytvořená hra.
 		bool is_game();
+		/// Zahodit hru.
+		void clear_game();
 	private:
 		/// Základ pro konkrétní level.
 		GameBase * gameBase_;

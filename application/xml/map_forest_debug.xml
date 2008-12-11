@@ -4,8 +4,8 @@
 	<players x="1" y="2">
 		<player0 x="1" y="2" />
 		<player1 x="14" y="10" />
-		<player2 x="14" y="2" />
-		<player3 x="1" y="10" />
+		<player2 x="1" y="10" />
+		<player3 x="14" y="2" />
 	</players>
 
 	<walls 	name="wall_stone" width="1">

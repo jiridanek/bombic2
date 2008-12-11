@@ -39,7 +39,8 @@ class Game {
 		static Game* get_instance();
 
 		/// Inicializace hry.
-		Game(const GameBase & base, GameTools * gameTools);
+		Game(const GameBase & base, GameTools * gameTools,
+				bool deathmatch=false, bool bombsatend=false);
 		/// Uvolnění naalokovaaných objektů.
 		~Game();
 		/// Spuštění hry.
@@ -140,6 +141,9 @@ class Game {
 		Uint16 remaining_creatures_;
 		/// Doba do ukončení hry po zabití.
 		Uint16 remaining_periods_;
+		/// Jedná se o deathmatch.
+		bool deathmatch_, bombsatend_; ///< Násilné ukončení hry.
+
 		/// Typ seznamu bomb.
 		typedef std::list<Bomb*> bombs_t;
 		typedef struct{ Player* player; SDL_Rect win_view, map_view; bombs_t bombs;

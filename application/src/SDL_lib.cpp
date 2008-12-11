@@ -130,6 +130,7 @@ Uint16 Surface::decrement_(){
 			SDL_FreeSurface(surface_);
 			surface_=0;
 		}
+		return 0;
 	}
 	return *references_;
 }

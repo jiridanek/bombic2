@@ -34,10 +34,10 @@ void MenuDeathmatchMaps::handlerCheckMap(AG_Event * event){
 		if(setMap(filename))
 			handlerBack();
 	}
-	catch(int val){
-		if(val==1)
-			AG_TextError("%s:\n%s", filename.c_str(),
-				"File does not represent Bombic map.");
+	catch(const TiXmlException & ex){
+		AG_TextError("%s:\n%s\n%s", filename.c_str(),
+			"File does not represent Bombic map.",
+			ex.what());
 	}
 }
 

@@ -136,9 +136,20 @@ SDL_Surface* GameBaseLoader::load_src_surface_(TiXmlElement *El,
  * @param mapname název mapy
  */
 GameBase::GameBase(Uint16 players_count, const std::string & mapname){
-// 	bool deathmatch, bool creatures, bool bombsatend){
 	players_.insert(players_.end(), players_count, 0);
-	load_map_(players_count, mapname);
+	load_map_(players_count, mapname, false, true);
+}
+
+/** @details
+ * Předpřipraví mapu, atd TODO
+ * @param players_count počet hráčů
+ * @param mapname název mapy
+ */
+GameBase::GameBase(Uint16 players_count, const std::string & mapname,
+			const bonuses_t & bonuses, bool creatures){
+	players_.insert(players_.end(), players_count, 0);
+	load_map_(players_count, mapname, true, creatures);
+	load_bonuses_(bonuses);
 }
 
 /** @details
@@ -147,7 +158,8 @@ GameBase::GameBase(Uint16 players_count, const std::string & mapname){
  * @param players_count počet hráčů
  * @param mapname název mapy
  */
-void GameBase::load_map_(Uint16 players_count, const std::string & mapname){
+void GameBase::load_map_(Uint16 players_count, const std::string & mapname,
+				bool deathmatch, bool creatures){
 	// nacteni hodnot z xml
 	TiXmlDocument doc;
 	TiXmlElement *map_el;
@@ -200,15 +212,22 @@ void GameBase::load_map_(Uint16 players_count, const std::string & mapname){
 	// nacteni objektu na zemi
 	load_floorobjects_(map_el->FirstChildElement("floorobject"));
 	// nacteni hracu
-	load_players_(map_el->FirstChildElement("players"), players_count);
+	if(deathmatch)
+		load_players_deathmatch_(
+			map_el->FirstChildElement("players"), players_count);
+	else
+		load_players_(
+			map_el->FirstChildElement("players"), players_count);
 	// nacteni zdi
 	load_walls_(map_el->FirstChildElement("walls"));
 	// nacteni boxu
 	load_boxes_(map_el->FirstChildElement("boxes"));
-	// nacteni bonusu
-	load_bonuses_(map_el->FirstChildElement("bonuses"));
 	// nacteni priser
-	load_creatures_(map_el->FirstChildElement("creatures"));
+	if(creatures)
+		load_creatures_(map_el->FirstChildElement("creatures"));
+	// nacteni bonusu
+	if(!deathmatch)
+		load_bonuses_(map_el->FirstChildElement("bonuses"));
 	// vytvoreni mapy prazdnych policek pro generovane boxy
 	load_noboxes_(map_el->FirstChildElement("boxes"));
 	// vytvoreni mapy prazdnych policek pro generovane prisery
@@ -332,6 +351,70 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 	try{
 		while( count-- ){
 			filename = "player"+x2string(count);
+			// nacteni hrace
+			rootEl = TiXmlRootElement(doc, filename, "creature", true);
+			// zdrojovy obrazek
+			sur_src = load_src_surface_(rootEl);
+			sur_src_s = load_src_surface_(rootEl, "shadow_src", false);
+
+			// vyska a sirska obrazku
+			readAttr(rootEl, "height", height);
+			readAttr(rootEl, "width", width);
+			readAttr(rootEl, "speed", speed);
+
+			if(speed>CELL_SIZE/2){
+				cerr << "Maximal allowed creature's speed is "
+					<< CELL_SIZE/2 << endl;
+				TiXmlError(filename,"too high value of speed");
+			}
+
+			Animation anim_up(subElement(rootEl,"up"),
+						width, height, sur_src, sur_src_s),
+					anim_right(subElement(rootEl,"right"),
+						width, height, sur_src, sur_src_s),
+					anim_down(subElement(rootEl,"down"),
+						width, height, sur_src, sur_src_s),
+					anim_left(subElement(rootEl,"left"),
+						width, height, sur_src, sur_src_s),
+					anim_burned(subElement(rootEl,"burned"),
+						width, height, sur_src);
+			insert_player_(anim_up, anim_right, anim_down, anim_left,
+				anim_burned, column, field, speed, count);
+		}
+	}
+	catch(const string & s){
+		TiXmlError(filename,s);
+	}
+}
+
+void GameBase::load_players_deathmatch_(TiXmlElement *playersEl, Uint16 count){
+	if(!playersEl)
+		throw string("missing element players");
+
+	string filename;
+	Uint16 column, field, width, height, speed;
+	Surface sur_src, sur_src_s;
+
+	TiXmlDocument doc;
+	TiXmlElement *rootEl;
+	try{
+		while( count-- ){
+			filename = "player"+x2string(count);
+
+			// souradnice hrace
+			try{
+				rootEl = subElement(playersEl, filename.c_str());
+				readAttr(rootEl, "x", column);
+				readAttr(rootEl, "y", field);
+				if(column >= base_array_.size()
+				|| field >= base_array_[column].size()
+				|| isTypeOf::isWallBox(base_array_[column][field].back().o) )
+					throw string("value of attribute is out of range.");
+			}
+			catch(const string & s){
+				TiXmlError("in element <players ...>: "+s);
+			}
+
 			// nacteni hrace
 			rootEl = TiXmlRootElement(doc, filename, "creature", true);
 			// zdrojovy obrazek
@@ -699,9 +782,6 @@ void GameBase::load_bonuses_(TiXmlElement *bonusEl){
 	Surface sur_src;
 	Animation anim;
 
-// 	vector< Animation > bonuses;
-// 	vector< Animation >::iterator it;
-
 	TiXmlDocument doc;
 	TiXmlElement *rootEl;
 	try{
@@ -724,6 +804,35 @@ void GameBase::load_bonuses_(TiXmlElement *bonusEl){
 				insert_bonus_(bonus_name, anim);
 			}
 			bonusEl= bonusEl->NextSiblingElement("bonuses");
+		}
+	}
+	catch(const string & s){
+		TiXmlError(filename,s);
+	}
+}
+
+void GameBase::load_bonuses_(const bonuses_t & bonuses){
+	string filename;
+	Uint16 count;
+
+	Surface sur_src;
+	Animation anim;
+
+	TiXmlDocument doc;
+	TiXmlElement *rootEl;
+	try{
+		for(Uint16 i=0 ; i<bonuses.size() ; ++i){
+			filename = bonuses[i].n;
+			count = bonuses[i].c;
+			// nacteni bonusu
+			rootEl = TiXmlRootElement(doc, filename, "bonus", true);
+			// obrazek do mapy
+			sur_src = load_src_surface_(rootEl);
+			load_subEl_animation_(rootEl, "img", anim, sur_src);
+			// do seznamu nezarazenych bonusu pridam bonus count krat
+			while(count--){
+				insert_bonus_(bonuses[i].n, anim);
+			}
 		}
 	}
 	catch(const string & s){

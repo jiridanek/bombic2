@@ -49,9 +49,15 @@ class GameBaseLoader {
 class GameBase: public GameBaseLoader {
 	friend class Game;
 	public:
-		/// Inicializace hry.
+		typedef struct { std::string n; Uint16 c;} bonus_t;
+		/// Typ seznamu jmen a počtů bonusů.
+		typedef std::vector< bonus_t > bonuses_t;
+
+		/// Inicializace normální hry.
 		GameBase(Uint16 players_count, const std::string & mapname);
-// 			bool deathmatch=false, bool creatures=true, bool bombsatend=false);
+		/// Inicializace hry pro deathmatch.
+		GameBase(Uint16 players_count, const std::string & mapname,
+			const bonuses_t & bonuses, bool creatures);
 		/// Uvolnění naalokovaaných objektů.
 		~GameBase();
 		/// Nastavení parametrů hráče.
@@ -65,6 +71,7 @@ class GameBase: public GameBaseLoader {
 		typedef std::vector< std::vector< allowed_field_t> > allowed_array_t;
 		/// Typ seznamu generovaných objektů.
 		typedef std::vector< MapObject* > generatedMOs_t;
+
 	private:
 		/// Pole mapy.
 		base_array_t base_array_;
@@ -78,11 +85,16 @@ class GameBase: public GameBaseLoader {
 		std::vector< Player* > players_;
 
 		/// Načtení mapy pro hru.
-		void load_map_(Uint16 players_count, const std::string & mapname);
+		void load_map_(Uint16 players_count, const std::string & mapname,
+			bool deathmatch, bool creatures);
 		/// Načtení pozadí mapy.
 		void load_background_(const std::string & bgname);
 		/// Načtení hráčů.
-		void load_players_(TiXmlElement *playersEl, Uint16 count);
+		void load_players_(
+				TiXmlElement *playersEl, Uint16 count);
+		/// Načtení hráčů do deathmatche.
+		void load_players_deathmatch_(
+				TiXmlElement *playersEl, Uint16 count);
 		/// Načtení zdí mapy.
 		void load_walls_(TiXmlElement *wallsEl);
 		/// Načtení objektů na zemi.
@@ -93,6 +105,8 @@ class GameBase: public GameBaseLoader {
 		void load_noboxes_(TiXmlElement *boxesEl);
 		/// Načtení bonusů.
 		void load_bonuses_(TiXmlElement *bonusEl);
+		/// Načtení bonusů z externího zdroje.
+		void load_bonuses_(const bonuses_t & bonuses);
 		/// Načtení příšer.
 		void load_creatures_(TiXmlElement *creaturesEl);
 		/// Připravení políček, na kterých nesmí být příšery.

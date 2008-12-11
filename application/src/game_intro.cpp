@@ -45,7 +45,7 @@ void GameIntro::show_screen(){
 		SDL_Flip(g_window);
 
 		// vygenerovani noveho levelu
-		if(old_level!=cur_level_ || !gameBase_){
+		if(!gameBase_ || game_){
 			old_level = cur_level_;
 			if(gameBase_) delete gameBase_;
 			gameBase_ = new GameBase(
@@ -57,12 +57,10 @@ void GameIntro::show_screen(){
 					if(game_->get_player(i, prop))
 						gameBase_->set_player(i, prop);
 				}
+				delete game_;
+				game_ = 0;
 			}
 		}
-
-		// vygenerovani nove hry z pripraveneho zakladu
-		if(game_) delete game_;
-		game_ = new Game(*gameBase_, gameTools_);
 
 		// pockame na klavesu, pri pokusu o ukonceni ukoncime
 		SDLKey key;
@@ -86,13 +84,25 @@ void GameIntro::show_screen(){
 			break;
 		}
 
-		SDL_Delay(500);
+		// vygenerovani nove hry z pripraveneho zakladu
+		if(game_) delete game_;
+		game_ = new Game(*gameBase_, gameTools_);
+
+		SDL_Delay(400);
+
 		// hrajeme
 		game_->play(g_window);
 		// hra skoncila uspesne => dalsi kolo
 		if(game_->success())
 			++cur_level_;
+		else {
+			delete game_;
+			game_ = 0;
+		}
 	}
+	delete game_;
+	game_ = 0;
+
 }
 
 
@@ -106,10 +116,6 @@ void GameIntro::new_game(Uint16 episode, Uint16 players){
 	if(gameBase_){
 		delete gameBase_;
 		gameBase_ = 0;
-	}
-	if(game_){
-		delete game_;
-		game_ = 0;
 	}
 }
 
