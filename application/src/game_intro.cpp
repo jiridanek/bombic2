@@ -75,7 +75,7 @@ void GameIntro::show_screen(){
 				case SDL_QUIT:
 					AG_Quit();
 					return;
-				case SDL_KEYDOWN:
+				case SDL_KEYUP:
 					if(key==SDLK_ESCAPE)
 						return;
 				default:
@@ -87,8 +87,6 @@ void GameIntro::show_screen(){
 		// vygenerovani nove hry z pripraveneho zakladu
 		if(game_) delete game_;
 		game_ = new Game(*gameBase_, gameTools_);
-
-		SDL_Delay(400);
 
 		// hrajeme
 		game_->play(g_window);
@@ -136,24 +134,29 @@ void GameIntro::load_levels_(Uint16 episode){
 	// nacteni hodnot z xml
 	TiXmlDocument doc;
 	TiXmlElement *el;
-	el = TiXmlRootElement(doc, filename, "levels", false);
-	el = el->FirstChildElement("episode");
-	while(episode-- && el)
-		el = el->NextSiblingElement("episode");
-	if(!el)
-		TiXmlError(filename, "too few episodes");
-	// ulozeni vsech levelu do seznamu
-	levels_.clear();
-	level_t level;
-	for(el = el->FirstChildElement("level") ; el ;
-				el = el->NextSiblingElement("level")){
-		readAttr(el, "map", level.map);
-		readAttr(el, "img", level.img);
-		levels_.push_back(level);
+	try {
+		el = TiXmlRootElement(doc, filename, "levels", false);
+		el = el->FirstChildElement("episode");
+		while(episode-- && el)
+			el = el->NextSiblingElement("episode");
+		if(!el)
+			throw string("too few episodes");
+		// ulozeni vsech levelu do seznamu
+		levels_.clear();
+		level_t level;
+		for(el = el->FirstChildElement("level") ; el ;
+					el = el->NextSiblingElement("level")){
+			readAttr(el, "map", level.map);
+			readAttr(el, "img", level.img);
+			levels_.push_back(level);
+		}
+		// kontrola na pocet levelu
+		if(cur_level_ >= levels_.size())
+			throw string("too few levels in episode");
 	}
-	// kontrola na pocet levelu
-	if(cur_level_ >= levels_.size())
-		TiXmlError(filename, "too few levels in episode");
+	catch(const string & err){
+		TiXmlError(filename, err);
+	}
 }
 
 Surface & GameIntro::get_cur_image_(){
@@ -166,7 +169,7 @@ Surface & GameIntro::get_cur_image_(){
 	// naalokovat novy
 	image_.second = IMG_Load(img_name.c_str());
 	if(!image_.second.getSurface())
-		throw "GameIntro::get_cur_image_(): Unable to load "+img_name;
+		TiXmlError("levels", "Unable to load "+img_name);
 	return image_.second;
 }
 

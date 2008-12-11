@@ -16,7 +16,7 @@ extern GameIntro * g_gameIntro;
 
 std::string MenuMain::lang;
 bool MenuMain::is_game=false;
-
+#include <string>
 MenuMain::MenuMain(){
 	lang = CONFIG->language();
 	is_game = g_gameIntro && g_gameIntro->is_game();

@@ -86,7 +86,10 @@ void MenuDeathmatch::handlerNewMatch(AG_Event * event){
 	MenuDeathmatch * menu = static_cast<MenuDeathmatch *>(AG_PTR(1));
 
 	std::string mapname(MenuDeathmatchMaps::map_name);
-	if(mapname.empty()) return;
+	if(mapname.empty()){
+		MenuDeathmatchMaps::create();
+		return;
+	}
 	mapname = MenuDeathmatchMaps::map_path + mapname;
 
 	try {

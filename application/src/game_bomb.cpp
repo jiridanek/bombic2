@@ -248,9 +248,8 @@ void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
 			y<tar_y ? ++field : --field;
 
 		// nalezeni prekazky
-		MapObject * obj =
-			Game::get_instance()->field_getObject(column, field,
-				isTypeOf::isWallBoxAnyBombFlamePresumption);
+		MapObject * obj = GAME->field_getObject(column, field,
+				isTypeOf::isWallBoxAnyBombFlame);
 		if(obj) switch(obj->type()){
 			case WALL:
 			case BOX:
@@ -271,10 +270,16 @@ void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
 				// konec
 				column = tar_x; field = tar_y;
 				continue;
-			case PRESUMPTION:
-				// posun cile o dalsi policko
-				x = column;
-				y = field;
+			default: break;
+		}
+		else {
+			// posun cile o dalsi policko
+			x = column;
+			y = field;
+
+			obj = GAME->field_getObject(column, field,
+					isTypeOf::isPresumption);
+			if(obj){
 				// doba do bouchnuti nalezene predpovedi
 				Uint16 another_to_end =
 					static_cast<Presumption *>(obj)->periods_to_flame();
@@ -286,20 +291,14 @@ void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
 					abs_minus(static_cast<Uint16>(x_/CELL_SIZE), x)+
 					abs_minus(static_cast<Uint16>(y_/CELL_SIZE), y) )
 							return;
-				break;
-			default: break;
-		}
-		else {
-			// posun cile o dalsi policko
-			x = column;
-			y = field;
+			}
 		}
 	}
 	if(bombs_before) {
 		tar_x = x/CELL_SIZE;
 		tar_y = y/CELL_SIZE;
 		if(abs_minus(x,tar_x)+abs_minus(y,tar_y)
-					< bombs_before){
+					<= bombs_before){
 			x = tar_x;
 			y = tar_y;
 		}

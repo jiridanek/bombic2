@@ -628,7 +628,7 @@ Uint32 SDL_fps(Uint32 last, Uint32 fps){
 static bool interesting_event_(SDL_Event event, SDLKey & key){
 	switch(event.type){
 		// Klavesnice
-		case SDL_KEYDOWN:
+		case SDL_KEYUP:
 			switch(event.key.keysym.sym){
 				// tyto klavesy se chovaji odlisne
 				case SDLK_NUMLOCK:

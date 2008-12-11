@@ -38,7 +38,7 @@ class TiXmlException: public std::logic_error {
  * @throw int Hodnota pro skončení programu.
  */
 template<typename T> void TiXmlError(T error){
-	throw TiXmlException("Error in XML occured: "+x2string(error));
+	throw TiXmlException("Error in XML occured:\n "+x2string(error));
 }
 
 /** Vytiskne chybu se jménem souboru a ukončí program.
@@ -50,8 +50,8 @@ template<typename T> void TiXmlError(T error){
  */
 template<typename S, typename T> void TiXmlError(S filename, T error){
 	throw TiXmlException(
-		"Error in XML file " + x2string(filename)+
-		" occured: " + x2string(error));
+		"Error in XML file\n" + x2string(filename)+
+		"\n occured: " + x2string(error));
 }
 
 /// Načtení hodnoty atributu do stringu.

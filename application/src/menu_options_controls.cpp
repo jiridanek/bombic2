@@ -111,7 +111,7 @@ void MenuOptionsControls::handlerControls(AG_Event * event){
 	SDL_Flip(g_window);
 
 	// pockat az se neco stane
-	SDLKey key;
+	SDLKey key = SDLK_FIRST;
 	while(true){
 		switch(wait_event(key)){
 			case SDL_VIDEORESIZE:

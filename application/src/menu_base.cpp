@@ -15,7 +15,7 @@ MenuBase::MenuBase(){
 
 	AG_WindowSetPadding(win, 0, 0, MENU_OFFSET, 0);
 
-	AG_SetEvent(win, "window-keydown", handlerItems, 0);
+	AG_SetEvent(win, "window-keyup", handlerItems, 0);
 
 	menu_stack.insert(this);
 }
@@ -45,9 +45,11 @@ AG_Box * MenuBase::createItem(const char * text){
 	box = AG_BoxNewVert(win, AG_BOX_FRAME | AG_BOX_HFILL);
 
 	setFocusOnMotion( AGWIDGET(box) );
-	AG_SetEvent(box, "window-keydown", handlerItems, 0);
+	AG_SetEvent(box, "window-keyup", handlerItems, 0);
 
 	items_.push_back(box);
+	if(items_.size()==1)
+		setFocus(AGWIDGET(box));
 
 	if(text)
 		createLabelJustify(AGWIDGET(box), text);

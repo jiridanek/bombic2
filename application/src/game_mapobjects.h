@@ -114,9 +114,7 @@ class isTypeOf {
 			isWallBoxAnyBomb,
 			isWallBoxBombFlame,
 			isWallBoxAnyBombFlame,
-			isWallBoxBombFlamePresumption,
-			isWallBoxAnyBombFlamePresumption;
-
+			isWallBoxBombFlamePresumption;
 
 		/// TODO ruzne uzitecne druhy predikatu
 	private:

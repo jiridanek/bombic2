@@ -329,7 +329,7 @@ void GameBase::load_background_(const std::string & bgname){
  */
 void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 	if(!playersEl)
-		throw string("missing element players");
+		TiXmlError("missing element <players ...>");
 
 	string filename;
 	Uint16 column, field, width, height, speed;
@@ -389,7 +389,7 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 
 void GameBase::load_players_deathmatch_(TiXmlElement *playersEl, Uint16 count){
 	if(!playersEl)
-		throw string("missing element players");
+		TiXmlError("missing element <players ...>");
 
 	string filename;
 	Uint16 column, field, width, height, speed;

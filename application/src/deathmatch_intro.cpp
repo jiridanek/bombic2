@@ -58,7 +58,7 @@ void DeathmatchIntro::show_screen(){
 				case SDL_QUIT:
 					AG_Quit();
 					return;
-				case SDL_KEYDOWN:
+				case SDL_KEYUP:
 					if(key==SDLK_ESCAPE)
 						return;
 				default:
@@ -70,8 +70,6 @@ void DeathmatchIntro::show_screen(){
 		// vygenerovani nove hry z pripraveneho zakladu
 		if(game_) delete game_;
 		game_ = new Game(*gameBase_, gameTools_, true);
-
-		SDL_Delay(400);
 
 		// hrajeme
 		game_->play(g_window);

@@ -40,22 +40,8 @@ int main(int argc, char *argv[]) {
 		GameIntro gameIntro;
 		g_gameIntro = &gameIntro;
 
-		try {
-			MenuMain::create();
-			AG_EventLoop();
-		}
-		catch(int val){
-			return_val = val;
-		}
-		catch(const string & err){
-			return_val = 10;
-			cerr << err << endl;
-		}
-		catch(const TiXmlException & ex){
-			return_val = 1;
-			cerr << ex.what() << endl;
-		}
-
+		MenuMain::create();
+		AG_EventLoop();
 		MenuBase::clearStack();
 	}
 	catch(int val){

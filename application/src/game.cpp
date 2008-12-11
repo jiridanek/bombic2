@@ -369,7 +369,7 @@ void Game::play(SDL_Surface* window){
 			case SDL_QUIT:
 				AG_Quit();
 				return;
-			case SDL_KEYDOWN:
+			case SDL_KEYUP:
 				if(key==SDLK_ESCAPE)
 					return;
 			default:

@@ -38,9 +38,9 @@ AG_Label * createLabelJustify(AG_Widget * parent, const char * text){
 }
 
 void setFocus(AG_Widget *w){
-	if ((w->flags & AG_WIDGET_FOCUSED) == 0) {
+	if( (w->flags & AG_WIDGET_FOCUSED) == 0
+	&& AG_WindowIsFocused(AG_WidgetParentWindow(w)) ) {
 		AG_WidgetFocus(w);
-		AG_WindowFocus(AG_WidgetParentWindow(w));
 	}
 }
 

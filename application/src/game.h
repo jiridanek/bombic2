@@ -17,9 +17,11 @@
 #include "game_player.h"
 #include "game_bomb.h"
 
-
 #define GAME_PLAYER_VIEW_MAX_WIDTH Uint16(16)
 #define GAME_PLAYER_VIEW_MAX_HEIGHT Uint16(12)
+
+
+#define GAME Game::get_instance()
 
 /** Konkrétní hra.
  * Instance třídy Game obstarává jednu konkrétní hru.
