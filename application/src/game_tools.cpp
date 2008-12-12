@@ -1,8 +1,5 @@
 
-// #include <iostream>
-// #include <vector>
 #include <string>
-#include <map>
 #include <utility>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
@@ -10,13 +7,6 @@
 #include "constants.h"
 #include "game_tools.h"
 #include "game_mapobjects.h"
-// #include "game_background.h"
-// #include "game_wall.h"
-// #include "game_floorobject.h"
-// #include "game_box.h"
-// #include "game_bonus.h"
-// #include "game_creature.h"
-// #include "game_player.h"
 #include "game_bomb.h"
 #include "game_flame.h"
 #include "game_presumption.h"
@@ -39,7 +29,7 @@ GameTools::GameTools(){
 	root_el = TiXmlRootElement(doc, filename, "gametools", false);
 	try{
 		// nacteni zdrojoveho surface
-		Surface sur_src= load_src_surface_(root_el);
+		Surface sur_src= load_src_surface(root_el);
 		// nacteni plamenu
 		load_flame_(subElement(root_el, "flame"), sur_src);
 		// nacteni bomb
@@ -57,21 +47,21 @@ GameTools::GameTools(){
 void GameTools::load_flame_(TiXmlElement *flameEl, const Surface & sur_src){
 	readAttr(flameEl, "timeperiod", flame_period_);
 
-	load_subEl_animation_(flameEl, "top", flame_top_, sur_src);
-	load_subEl_animation_(flameEl, "bottom", flame_bottom_, sur_src);
-	load_subEl_animation_(flameEl, "topbottom", flame_topbottom_, sur_src);
-	load_subEl_animation_(flameEl, "left", flame_left_, sur_src);
-	load_subEl_animation_(flameEl, "right", flame_right_, sur_src);
-	load_subEl_animation_(flameEl, "leftright", flame_leftright_, sur_src);
-	load_subEl_animation_(flameEl, "cross", flame_cross_, sur_src);
+	load_subEl_animation(flameEl, "top", flame_top_, sur_src);
+	load_subEl_animation(flameEl, "bottom", flame_bottom_, sur_src);
+	load_subEl_animation(flameEl, "topbottom", flame_topbottom_, sur_src);
+	load_subEl_animation(flameEl, "left", flame_left_, sur_src);
+	load_subEl_animation(flameEl, "right", flame_right_, sur_src);
+	load_subEl_animation(flameEl, "leftright", flame_leftright_, sur_src);
+	load_subEl_animation(flameEl, "cross", flame_cross_, sur_src);
 }
 
 void GameTools::load_bombs_(TiXmlElement *bombsEl, const Surface & sur_src){
 	readAttr(bombsEl, "speed", bomb_speed_);
 
-	load_subEl_animation_(bombsEl, "normal", bomb_normal_, sur_src);
-	load_subEl_animation_(bombsEl, "mega", bomb_mega_, sur_src);
-	load_subEl_animation_(bombsEl, "presumption", presumption_, sur_src);
+	load_subEl_animation(bombsEl, "normal", bomb_normal_, sur_src);
+	load_subEl_animation(bombsEl, "mega", bomb_mega_, sur_src);
+	load_subEl_animation(bombsEl, "presumption", presumption_, sur_src);
 }
 
 
@@ -85,7 +75,7 @@ void GameTools::load_panels_(TiXmlElement *panelsEl, const Surface & sur_src){
 	for(Uint16 count=0 ; count < panels_.size() ; ++count ){
 		el_name = "player"+x2string(count);
 
-		load_subEl_surface_(panelsEl, el_name.c_str(), panels_[count].sur,
+		load_subEl_surface(panelsEl, el_name.c_str(), panels_[count].sur,
 				width, height, sur_src);
 		set_transparency(panels_[count].sur.getSurface(), 128);
 		switch(count){
@@ -117,7 +107,7 @@ void GameTools::load_bonuses_(TiXmlElement *bonusesEl, const Surface & sur_src){
 	TiXmlElement * el;
 	char * bonuses_names[] = GAMETOOLS_BONUSES_NAMES;
 	for(Uint16 i =0 ; i< GAMETOOLS_BONUSES_COUNT ; ++i){
-		load_subEl_surface_(bonusesEl, bonuses_names[i],
+		load_subEl_surface(bonusesEl, bonuses_names[i],
 				bonuses_[i].sur, width, height, sur_src);
 		el = subElement(bonusesEl, bonuses_names[i]);
 		readAttr(el, "draw_x", bonuses_[i].x);

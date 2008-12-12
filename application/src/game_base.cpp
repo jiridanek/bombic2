@@ -39,7 +39,7 @@ using namespace std;
  * @see subElement(), readAttr()
  * @see create_transparent_surface()
  */
-void GameBaseLoader::load_subEl_surface_( TiXmlElement *El, const char* name_subEl,
+void GameBaseLoader::load_subEl_surface( TiXmlElement *El, const char* name_subEl,
 			Surface & sur_dst, Uint16 width, Uint16 height, const Surface & sur_src){
 
 	El = subElement(El, name_subEl);
@@ -68,7 +68,7 @@ void GameBaseLoader::load_subEl_surface_( TiXmlElement *El, const char* name_sub
  * @return Vrací toplapping - hodnotu atributu nebo nulu pokud nebyl nalezen.
  * @see subElement(), readAttr()
  */
-Uint16 GameBaseLoader::load_subEl_animation_( TiXmlElement *El, const char* name_subEl,
+Uint16 GameBaseLoader::load_subEl_animation( TiXmlElement *El, const char* name_subEl,
 			Animation & anim_dst, const Surface & sur_src){
 
 	Uint16 w, h, toplapping;
@@ -109,7 +109,7 @@ Uint16 GameBaseLoader::load_subEl_animation_( TiXmlElement *El, const char* name
  * @return Výsledný surface patřící nalezenému elementu.
  * @throw string pokud je nastaven atribut force a
  */
-SDL_Surface* GameBaseLoader::load_src_surface_(TiXmlElement *El,
+SDL_Surface* GameBaseLoader::load_src_surface(TiXmlElement *El,
 			const char* attr_name, bool force){
 	string str;
 	SDL_Surface *sur_SDL=0;
@@ -252,39 +252,39 @@ void GameBase::load_background_(const std::string & bgname){
 	Uint16 column, field, toplapping;
 	try{
 		// nacteni zdrojoveho obrazku
-		sur_src = load_src_surface_(bg_el);
+		sur_src = load_src_surface(bg_el);
 		// pozadi
-		load_subEl_animation_(bg_el, "clean_bg", anim, sur_src);
-		load_subEl_animation_(bg_el, "burned_bg", anim_burned, sur_src);
+		load_subEl_animation(bg_el, "clean_bg", anim, sur_src);
+		load_subEl_animation(bg_el, "burned_bg", anim_burned, sur_src);
 		for(column=0 ; column< base_array_.size() ; ++column){
 			for(field = 0 ; field<base_array_[column].size() ; ++field){
 				insert_background_(anim, anim_burned, column, field);
 			}
 		}
 		// rohy
-		load_subEl_animation_(bg_el, "topleft", anim, sur_src);
+		load_subEl_animation(bg_el, "topleft", anim, sur_src);
 		insert_wall_(anim, 0, 0, 0, anim.width()/CELL_SIZE, anim.height()/CELL_SIZE);
 
-		load_subEl_animation_(bg_el, "topright", anim, sur_src);
+		load_subEl_animation(bg_el, "topright", anim, sur_src);
 		insert_wall_(anim, 0,
 				base_array_.size()-anim.width()/CELL_SIZE, 0,
 				anim.width()/CELL_SIZE, anim.height()/CELL_SIZE);
 
 		toplapping =
-		load_subEl_animation_(bg_el, "bottomleft", anim, sur_src);
+		load_subEl_animation(bg_el, "bottomleft", anim, sur_src);
 		insert_wall_(anim, toplapping, 0,
 				base_array_[0].size()-anim.height()/CELL_SIZE+toplapping,
 				anim.width()/CELL_SIZE, anim.height()/CELL_SIZE-toplapping);
 
 		toplapping =
-		load_subEl_animation_(bg_el, "bottomright", anim, sur_src);
+		load_subEl_animation(bg_el, "bottomright", anim, sur_src);
 		insert_wall_(anim, toplapping,
 				base_array_.size()-anim.width()/CELL_SIZE,
 				base_array_[0].size()-anim.height()/CELL_SIZE+toplapping,
 				anim.width()/CELL_SIZE, anim.height()/CELL_SIZE-toplapping);
 
 		// strany
-		load_subEl_animation_(bg_el, "top", anim, sur_src);
+		load_subEl_animation(bg_el, "top", anim, sur_src);
 		isTypeOf & isBG(isTypeOf::isBgType);
 		for(column=0 ; column< base_array_.size() ; ++column){
 			if(isBG(base_array_[column][0].back().o))
@@ -293,14 +293,14 @@ void GameBase::load_background_(const std::string & bgname){
 		}
 
 		toplapping =
-		load_subEl_animation_(bg_el, "left", anim, sur_src);
+		load_subEl_animation(bg_el, "left", anim, sur_src);
 		for(field = 0 ; field<base_array_[0].size() ; ++field){
 			if(isBG(base_array_[0][field].back().o))
 				insert_wall_(anim, toplapping, 0, field,
 					anim.width()/CELL_SIZE, anim.height()/CELL_SIZE-toplapping);
 		}
 
-		toplapping = load_subEl_animation_(bg_el, "bottom", anim, sur_src);
+		toplapping = load_subEl_animation(bg_el, "bottom", anim, sur_src);
 		field= base_array_[0].size()-anim.height()/CELL_SIZE+toplapping;
 		for(column=0 ; column< base_array_.size() ; ++column){
 			if(isBG(base_array_[column][field].back().o))
@@ -308,7 +308,7 @@ void GameBase::load_background_(const std::string & bgname){
 					anim.width()/CELL_SIZE, anim.height()/CELL_SIZE-toplapping);
 		}
 
-		toplapping = load_subEl_animation_(bg_el, "right", anim, sur_src);
+		toplapping = load_subEl_animation(bg_el, "right", anim, sur_src);
 		column = base_array_.size()-anim.width()/CELL_SIZE;
 		for(field = 0 ; field<base_array_[column].size() ; ++field){
 			if(isBG(base_array_[column][field].back().o))
@@ -354,8 +354,8 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 			// nacteni hrace
 			rootEl = TiXmlRootElement(doc, filename, "creature", true);
 			// zdrojovy obrazek
-			sur_src = load_src_surface_(rootEl);
-			sur_src_s = load_src_surface_(rootEl, "shadow_src", false);
+			sur_src = load_src_surface(rootEl);
+			sur_src_s = load_src_surface(rootEl, "shadow_src", false);
 
 			// vyska a sirska obrazku
 			readAttr(rootEl, "height", height);
@@ -418,8 +418,8 @@ void GameBase::load_players_deathmatch_(TiXmlElement *playersEl, Uint16 count){
 			// nacteni hrace
 			rootEl = TiXmlRootElement(doc, filename, "creature", true);
 			// zdrojovy obrazek
-			sur_src = load_src_surface_(rootEl);
-			sur_src_s = load_src_surface_(rootEl, "shadow_src", false);
+			sur_src = load_src_surface(rootEl);
+			sur_src_s = load_src_surface(rootEl, "shadow_src", false);
 
 			// vyska a sirska obrazku
 			readAttr(rootEl, "height", height);
@@ -485,8 +485,8 @@ void GameBase::load_walls_(TiXmlElement *wallsEl){
 	filename= name_def;
 	rootEl = TiXmlRootElement(doc, filename, "wall", true);
 	try{
-		sur_src = load_src_surface_(rootEl);
-		toplapping_def = load_subEl_animation_(rootEl, "img",
+		sur_src = load_src_surface(rootEl);
+		toplapping_def = load_subEl_animation(rootEl, "img",
 				anim_def, sur_src);
 	}
 	catch(const string & s){
@@ -520,8 +520,8 @@ void GameBase::load_walls_(TiXmlElement *wallsEl){
 			// nacteni nove zdi
 			if(!filename.empty() && filename!=name_def){
 				rootEl = TiXmlRootElement(doc, filename, "wall", true);
-				sur_src = load_src_surface_(rootEl);
-				toplapping= load_subEl_animation_(rootEl, "img",
+				sur_src = load_src_surface(rootEl);
+				toplapping= load_subEl_animation(rootEl, "img",
 						anim, sur_src);
 
 				// kontrola jestli koresponduji rozmery obrazku
@@ -573,8 +573,8 @@ void GameBase::load_floorobjects_(TiXmlElement *floorEl){
 			}
 			// nacteni objektu
 			rootEl = TiXmlRootElement(doc, filename, "floorobject", true);
-			sur_src = load_src_surface_(rootEl);
-			load_subEl_animation_(rootEl, "img", anim, sur_src);
+			sur_src = load_src_surface(rootEl);
+			load_subEl_animation(rootEl, "img", anim, sur_src);
 
 			// kontrola jestli koresponduji rozmery obrazku
 			if(height!=anim.height()/CELL_SIZE)
@@ -628,11 +628,11 @@ void GameBase::load_boxes_(TiXmlElement *boxesEl){
 	filename= name_def;
 	rootEl = TiXmlRootElement(doc, filename, "box", true);
 	try{
-		sur_src = load_src_surface_(rootEl);
+		sur_src = load_src_surface(rootEl);
 
 		toplapping_def=
-		load_subEl_animation_(rootEl, "img", anim_def, sur_src);
-		load_subEl_animation_(rootEl, "burning", anim_burning_def, sur_src);
+		load_subEl_animation(rootEl, "img", anim_def, sur_src);
+		load_subEl_animation(rootEl, "burning", anim_burning_def, sur_src);
 	}
 	catch(const string & s){
 		TiXmlError(filename,s);
@@ -664,11 +664,11 @@ void GameBase::load_boxes_(TiXmlElement *boxesEl){
 			// nacteni noveho boxu
 			if(!filename.empty() && filename!=name_def){
 				rootEl = TiXmlRootElement(doc, filename, "box", true);
-				sur_src = load_src_surface_(rootEl);
+				sur_src = load_src_surface(rootEl);
 
 				toplapping =
-				load_subEl_animation_(rootEl, "img", anim_def, sur_src);
-				load_subEl_animation_(rootEl, "burning", anim_burning_def, sur_src);
+				load_subEl_animation(rootEl, "img", anim_def, sur_src);
+				load_subEl_animation(rootEl, "burning", anim_burning_def, sur_src);
 
 				// kontrola jestli koresponduji rozmery obrazku
 				if(height!=anim.height()/CELL_SIZE-toplapping)
@@ -797,8 +797,8 @@ void GameBase::load_bonuses_(TiXmlElement *bonusEl){
 			// nacteni bonusu
 			rootEl = TiXmlRootElement(doc, filename, "bonus", true);
 			// obrazek do mapy
-			sur_src = load_src_surface_(rootEl);
-			load_subEl_animation_(rootEl, "img", anim, sur_src);
+			sur_src = load_src_surface(rootEl);
+			load_subEl_animation(rootEl, "img", anim, sur_src);
 			// do seznamu nezarazenych bonusu pridam bonus count krat
 			while(count--){
 				insert_bonus_(bonus_name, anim);
@@ -813,7 +813,7 @@ void GameBase::load_bonuses_(TiXmlElement *bonusEl){
 
 void GameBase::load_bonuses_(const bonuses_t & bonuses){
 	string filename;
-	Uint16 count;
+	int count;
 
 	Surface sur_src;
 	Animation anim;
@@ -827,8 +827,8 @@ void GameBase::load_bonuses_(const bonuses_t & bonuses){
 			// nacteni bonusu
 			rootEl = TiXmlRootElement(doc, filename, "bonus", true);
 			// obrazek do mapy
-			sur_src = load_src_surface_(rootEl);
-			load_subEl_animation_(rootEl, "img", anim, sur_src);
+			sur_src = load_src_surface(rootEl);
+			load_subEl_animation(rootEl, "img", anim, sur_src);
 			// do seznamu nezarazenych bonusu pridam bonus count krat
 			while(count--){
 				insert_bonus_(bonuses[i].n, anim);
@@ -866,8 +866,8 @@ void GameBase::load_creatures_(TiXmlElement *creaturesEl){
 			// nacteni prisery
 			rootEl = TiXmlRootElement(doc, filename, "creature", true);
 			// zdrojovy obrazek
-			sur_src = load_src_surface_(rootEl);
-			sur_src_s = load_src_surface_(rootEl, "shadow_src", false);
+			sur_src = load_src_surface(rootEl);
+			sur_src_s = load_src_surface(rootEl, "shadow_src", false);
 
 			// vyska a sirska obrazku
 			readAttr(rootEl, "height", height);

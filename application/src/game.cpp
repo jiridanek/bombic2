@@ -683,6 +683,21 @@ bool Game::get_player(Uint16 player_num, PlayerProperties & prop) const{
 	return true;
 }
 
+/** @details
+ * Užitečné pro deathmatch.
+ * Nutno pro jistotu správnosti výsledku použít success().
+ * @return Vrací číslo hráče, který je ještě naživu
+ * nebo nulu pokud není na živu nikdo.
+ * @warning Vrací také nulu, pokud je naživu první hráč,
+ * nutno ověřit žijícího hráče pomocí success().
+ * @see success()
+ */
+Uint16 Game::winner(){
+	if(players_.empty())
+		return 0;
+	return players_.begin()->first;
+}
+
 /**
  * @param x x-ová souřadnice políčka
  * @param y y-ová souřadnice políčka

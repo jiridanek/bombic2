@@ -51,6 +51,8 @@ class Game {
 		bool success() const;
 		/// Info o hráči.
 		bool get_player(Uint16 player_num, PlayerProperties & prop) const;
+		/// Číslo hráče, který je živý.
+		Uint16 winner();
 		/// Políčko lze přejít.
 		bool field_canGoOver(Uint16 x, Uint16 y, bool check_bomb=true);
 		/// Políčko lze přeletet.

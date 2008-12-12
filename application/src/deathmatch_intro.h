@@ -25,7 +25,7 @@
  * skóre hráčů atd.
  * @see GameBase, GameTools, Game.
  */
-class DeathmatchIntro {
+class DeathmatchIntro: public GameBaseLoader {
 	public:
 		/// Typ seznamu jmen bonusů.
 		typedef GameBase::bonuses_t bonuses_t;
@@ -53,6 +53,22 @@ class DeathmatchIntro {
 		bool bombsatend_;
 		/// Skóre hráčů.
 		std::vector<Uint16> score_;
+
+		/// Načte z XML věci pro deathmatch.
+		void load_deathmatch_tools_(Uint16 players_count);
+		void load_tool_(TiXmlElement * rootEl,
+			const char* subEl_name, const Surface & sur_src);
+		/// Věci pro kreslení.
+		std::vector<Animation> tools_;
+		/// Získání obrázku.
+		Surface & get_image_(Uint8 index);
+		/// Jména souborů s pozadím.
+		std::vector<std::string> intro_;
+		/// Dvojice jméno grafického souboru a surface z něj loadovaný.
+		typedef std::pair< std::string, Surface> image_t;
+		/// Surface příslušící jménu souboru.
+		image_t image_;
+
 };
 
 #endif

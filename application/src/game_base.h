@@ -25,15 +25,18 @@
  * animace z elementu a zdrojového surface z atributu elementu.
  */
 class GameBaseLoader {
-	protected:
+	public:
 		/// Načtení surface podelementu.
-		void load_subEl_surface_(TiXmlElement *El, const char* name_subEl,
-				Surface & sur_dst, Uint16 width, Uint16 height, const Surface & sur_src);
+		static void load_subEl_surface(TiXmlElement *El,
+				const char* name_subEl, Surface & sur_dst,
+				Uint16 width, Uint16 height,
+				const Surface & sur_src);
 		/// Načtení animace podelementu.
-		Uint16 load_subEl_animation_(TiXmlElement *El, const char* name_subEl,
+		static Uint16 load_subEl_animation(TiXmlElement *El,
+				const char* name_subEl,
 				Animation & anim_dst, const Surface & sur_src);
 		/// Načtení surface bitmapy.
-		SDL_Surface* load_src_surface_(TiXmlElement *El,
+		static SDL_Surface* load_src_surface(TiXmlElement *El,
 				const char* attr_name="src", bool force=true);
 };
 
@@ -49,7 +52,7 @@ class GameBaseLoader {
 class GameBase: public GameBaseLoader {
 	friend class Game;
 	public:
-		typedef struct { std::string n; Uint16 c;} bonus_t;
+		typedef struct { std::string n; int c;} bonus_t;
 		/// Typ seznamu jmen a počtů bonusů.
 		typedef std::vector< bonus_t > bonuses_t;
 

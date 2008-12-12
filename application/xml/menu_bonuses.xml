@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<bonuses>
+	<bonus name="bonus_flame" />
+	<bonus name="bonus_bomb" />
+	<bonus name="bonus_megabomb" />
+	<bonus name="bonus_speed" />
+	<bonus name="bonus_timer" />
+	<bonus name="bonus_slider" />
+	<bonus name="bonus_kicker" />
+	<bonus name="bonus_shield" />
+	<bonus name="bonus_fireman" />
+	<bonus name="bonus_live" />
+	<bonus name="bonus_illness" />
+	<bonus name="bonus_othersillness" />
+</bonuses>

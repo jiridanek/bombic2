@@ -7,18 +7,24 @@
 
 #include "agar_helper.h"
 #include "menu_base.h"
+#include "deathmatch_intro.h"
 
 #define MENU_DEATHMATCH_BONUSES_MIN 0
 #define MENU_DEATHMATCH_BONUSES_MAX 9
 
 class MenuDeathmatchBonuses: public MenuBase {
+	friend class MenuDeathmatch;
 	public:
 		MenuDeathmatchBonuses();
 		virtual ~MenuDeathmatchBonuses() {};
 		static void create(AG_Event * ev=0)
 			{ new MenuDeathmatchBonuses; }
 	private:
-		static int bonus;
+		void load_bonuses_();
+		void createBonusItem(AG_Box * parent, int i);
+		void createBonusPixmap(AG_Box * parent, int i);
+
+		static DeathmatchIntro::bonuses_t bonuses;
 };
 
 #endif
