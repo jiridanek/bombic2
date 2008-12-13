@@ -85,7 +85,7 @@ extern SDL_Surface *g_window;
  */
 void DeathmatchIntro::show_screen(){
 	bool at_end = false;
-	Uint8 image;
+	Uint16 winner;
 	while(!at_end){
 		// vygenerovani nove hry z pripraveneho zakladu
 		if(game_) delete game_;
@@ -95,48 +95,106 @@ void DeathmatchIntro::show_screen(){
 		game_->play(g_window);
 		// upravime skore
 		if(game_->success()){
-			if(++score_[game_->winner()]==wins_){
+			winner = game_->winner();
+			if(++score_[winner]==wins_)
 				at_end = true;
-				image = 2;
-			}
-			else image = 0;
 		}
-		else image = 1;
+		else winner = score_.size();
 
 		delete game_;
 		game_ = 0;
-
-		// uvodni obrazovka matche
-		clear_surface(Color::black, g_window);
-		draw_center_surface(get_image_(image).getSurface(), g_window);
-		SDL_Flip(g_window);
-
-		// pockame na klavesu, pri pokusu o ukonceni ukoncime
-		SDLKey key;
-		while(true){
-			switch(wait_event(key)){
-				case SDL_VIDEORESIZE:
-					// uvodni obrazovka levelu
-					clear_surface(Color::black, g_window);
-					draw_center_surface(get_image_(image).getSurface(), g_window);
-					SDL_Flip(g_window);
-					continue;
-				case SDL_QUIT:
-					AG_Quit();
-					return;
-				case SDL_KEYUP:
-					if(key==SDLK_ESCAPE)
-						return;
-				default:
-					break;
-			}
-			break;
-		}
+		// zobrazit skore
+		if(!show_score_(winner))
+			return;
 	}
 
 	if(game_)
 		delete game_;
 	game_ = 0;
+}
+
+bool DeathmatchIntro::show_score_(Uint16 winner){
+	Surface bg;
+	if(winner>=score_.size()) // mezivysledek(remiza)
+		bg = get_image_(1);
+	else if(score_[winner]==wins_) // konec(vitez)
+		bg = get_image_(2);
+	else
+		bg = get_image_(0); // mezivysledek(vitez)
+	// postupne zobrazeni
+	Uint32 fps_last= 0;
+	Uint16 trans_diff = SDL_ALPHA_OPAQUE
+		/ DEATHMATCH_INTRO_SCORE_FPS / DEATHMATCH_INTRO_SCORE_LENGTH;
+	Uint8 trans = winner>=score_.size()
+		? SDL_ALPHA_OPAQUE : SDL_ALPHA_TRANSPARENT;
+	clear_surface(Color::black, g_window);
+	while(true){
+		draw_score_(winner, bg, trans);
+		fps_last= SDL_fps(fps_last, DEATHMATCH_INTRO_SCORE_FPS);
+		if(trans<=SDL_ALPHA_OPAQUE-trans_diff)
+			trans+=trans_diff;
+		else break;
+	}
+	// pockame na klavesu, pri pokusu o ukonceni ukoncime
+	SDLKey key;
+	while(true){
+		switch(wait_event(key)){
+			case SDL_VIDEORESIZE:
+				// uvodni obrazovka levelu
+				clear_surface(Color::black, g_window);
+				draw_score_(winner, bg, SDL_ALPHA_OPAQUE);
+				continue;
+			case SDL_QUIT:
+				AG_Quit();
+				return false;
+			case SDL_KEYUP:
+				if(key==SDLK_ESCAPE)
+					return false;
+			default:
+				break;
+		}
+		return true;
+	}
+}
+
+void DeathmatchIntro::draw_score_(
+			Uint16 winner, Surface & bg, Uint8 trans){
+	Sint16
+		base_x = ( g_window->w - bg.width() )/2
+			+DEATHMATCH_INTRO_SCORE_PADDING,
+		base_y = ( g_window->h - bg.height() )/2
+			+DEATHMATCH_INTRO_SCORE_PADDING,
+		player_h = ( bg.height()-2*DEATHMATCH_INTRO_SCORE_PADDING )
+			/score_.size();
+	draw_surface(base_x-DEATHMATCH_INTRO_SCORE_PADDING,
+		base_y-DEATHMATCH_INTRO_SCORE_PADDING,
+		bg.getSurface(), g_window );
+	for(Uint16 player = 0 ; player<score_.size() ; ++player){
+		draw_player_score_(base_x, base_y+player*player_h,
+			player, winner, trans);
+	}
+	SDL_Flip(g_window);
+}
+
+void DeathmatchIntro::draw_player_score_( Sint16 x, Sint16 y,
+			Uint16 player, Uint16 winner, Uint8 trans){
+	Uint16 i, x_diff = tools_[0].width()+DEATHMATCH_INTRO_SCORE_PADDING;
+	// obrazek hrace
+	// spaleny kdyz neni remiza & vitez ukoncuje match & nezobrazujeme viteze
+	if(winner<score_.size() && score_[winner]==wins_ && winner!=player)
+		i = player*2+2;
+	else // jinak normalni
+		i = player*2+1;
+	tools_[i].draw(g_window, x, y);
+	// pohary
+	for(i = 1; i <= score_[player] ; ++i){
+		x += x_diff;
+		if(player==winner && i==score_[player])
+			tools_[0].set_transparency(trans);
+		tools_[0].draw(g_window, x, y);
+		if(player==winner && i==score_[player])
+			tools_[0].set_transparency(SDL_ALPHA_OPAQUE);
+	}
 }
 
 Surface & DeathmatchIntro::get_image_(Uint8 index){

@@ -295,7 +295,7 @@ void Animation::loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,
 	SDL_Rect rect={x,y,width,height};
 	SDL_BlitSurface(sur_src.getSurface(), &rect, sur.getSurface(), 0);
 	if(transparency_<SDL_ALPHA_OPAQUE)
-		set_transparency(sur.getSurface(), transparency_);
+		::set_transparency(sur.getSurface(), transparency_);
 	frames_.push_back(sur);
 
 	if(!draw_shadow_) return;
@@ -371,7 +371,7 @@ Uint16 Animation::periods_to_end() const {
  * @param x cílová souřadnice pro vykreslení
  * @param y cílová souřadnice pro vykreslení
  */
-void Animation::draw(SDL_Surface* window, Uint16 x, Uint16 y) const {
+void Animation::draw(SDL_Surface* window, int x, int y) const {
 	if(draw_shadow_){
 		draw_surface(x, y, shadow_frames_[cur_frame_].getSurface(), window);
 	}
@@ -384,6 +384,19 @@ Uint16 Animation::height() const {
 
 Uint16 Animation::width() const {
 	return frames_[0].width();
+}
+
+/** @details
+ * Nastaví každému framu animace průhlednost,
+ * pokud se má vykreslovat stín, nastaví mu poloviční průhlednost.
+ * @param alpha míra průhlednosti
+ */
+void Animation::set_transparency(Uint8 alpha) {
+	for(Uint16 i=0 ; i<frames_.size() ; ++i){
+		if(draw_shadow_)
+			::set_transparency(shadow_frames_[i].getSurface(), alpha/2+1);
+		::set_transparency(frames_[i].getSurface(), alpha);
+	}
 }
 
 /******** END of class Animation *********************/

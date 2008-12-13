@@ -133,11 +133,13 @@ class Animation {
 		/// Počet period do konce běhu animace.
 		Uint16 periods_to_end() const;
 		/// Vykreslení aktuálního framu.
-		void draw(SDL_Surface* window, Uint16 x, Uint16 y) const;
+		void draw(SDL_Surface* window, int x, int y) const;
 		/// Výška animace.
 		Uint16 height() const;
 		/// Šířka animace.
 		Uint16 width() const;
+		/// Nastaví průhlednost celé animace.
+		void set_transparency(Uint8 alpha);
 	private:
 		/// Uloží konkrétní surface zadané v elementu.
 		void loadItem_(TiXmlElement* el, Uint16 width, Uint16 height,

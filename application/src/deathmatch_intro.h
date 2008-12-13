@@ -18,6 +18,10 @@
 #include "game_tools.h"
 #include "game.h"
 
+#define DEATHMATCH_INTRO_SCORE_PADDING 10
+#define DEATHMATCH_INTRO_SCORE_LENGTH 2
+#define DEATHMATCH_INTRO_SCORE_FPS Uint8(20)
+
 /** Obal pro samotnou hru.
  * Třída DeathmatchIntro řeší, udělování bodů, kdo vyhrál či prohrál
  * a zastřešuje tvorbu mapy z XML souborů až po vygenerování konkrétního levelu.
@@ -58,17 +62,24 @@ class DeathmatchIntro: public GameBaseLoader {
 		void load_deathmatch_tools_(Uint16 players_count);
 		void load_tool_(TiXmlElement * rootEl,
 			const char* subEl_name, const Surface & sur_src);
-		/// Věci pro kreslení.
-		std::vector<Animation> tools_;
+		/// Zobrazí obrazovku se skóre.
+		bool show_score_(Uint16 winner);
+		/// Vykreslení skóre.
+		void DeathmatchIntro::draw_score_(
+			Uint16 winner, Surface & bg, Uint8 trans);
+		/// Vykreslení skóre jednoho hráče.
+		void draw_player_score_( Sint16 x, Sint16 y,
+			Uint16 player, Uint16 winner, Uint8 trans);
 		/// Získání obrázku.
 		Surface & get_image_(Uint8 index);
+		/// Věci pro kreslení.
+		std::vector<Animation> tools_;
 		/// Jména souborů s pozadím.
 		std::vector<std::string> intro_;
 		/// Dvojice jméno grafického souboru a surface z něj loadovaný.
 		typedef std::pair< std::string, Surface> image_t;
 		/// Surface příslušící jménu souboru.
 		image_t image_;
-
 };
 
 #endif
