@@ -28,7 +28,7 @@ MenuOptions::MenuOptions():
 
 	// rychlost hry
 	item = createItemHoriz("Game speed");
-	AG_AddEvent(items_.back(), "window-keydown", handlerIntItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerIntItem,
 		"%p,%i,%i", &speed_,
 		CONFIG_SPEED_MIN, CONFIG_SPEED_MAX);
 
@@ -37,7 +37,7 @@ MenuOptions::MenuOptions():
 
 	// viditelna presumpce
 	item = createItemHoriz("Explosion presumptions");
-	AG_AddEvent(items_.back(), "window-keydown", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
 		"%p", &visible_presumption_);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
@@ -47,7 +47,7 @@ MenuOptions::MenuOptions():
 
 	// fullscreen
 	item = createItemHoriz("Play in fullscreen");
-	AG_AddEvent(items_.back(), "window-keydown", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
 		"%p", &fullscreen_);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
@@ -57,7 +57,7 @@ MenuOptions::MenuOptions():
 
 	// zvuk
 	item = createItemHoriz("Sound enabled");
-	AG_AddEvent(items_.back(), "window-keydown", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
 		"%p", &sound_);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);

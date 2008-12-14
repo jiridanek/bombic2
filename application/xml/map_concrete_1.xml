@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<map name="map_concrete_1" height="12" width="16" background="bg_concrete">
+
+	<players x="1" y="2">
+		<player0 x="1" y="2" />
+		<player1 x="13" y="10" />
+		<player2 x="1" y="10" />
+		<player3 x="13" y="2" />
+	</players>
+
+	<walls 	name="wall_block_single">
+		<wall name="wall_rift" x="3" y="0" height="2" />
+		<wall name="wall_oblong" x="8" y="0" height="2" />
+		<wall name="wall_oblong" x="13" y="0" height="2" />
+
+		<wall x="2" y="3" />
+		<wall x="2" y="5" />
+		<wall x="2" y="7" />
+		<wall x="2" y="9" />
+		<wall x="4" y="3" />
+		<wall x="4" y="5" />
+		<wall x="4" y="7" />
+		<wall x="4" y="9" />
+		<wall x="6" y="3" />
+		<wall x="6" y="5" />
+		<wall x="6" y="7" />
+		<wall x="6" y="9" />
+		<wall x="8" y="3" />
+		<wall x="8" y="5" />
+		<wall x="8" y="7" />
+		<wall x="8" y="9" />
+		<wall x="10" y="3" />
+		<wall x="10" y="5" />
+		<wall x="10" y="7" />
+		<wall x="10" y="9" />
+		<wall x="12" y="3" />
+		<wall x="12" y="5" />
+		<wall x="12" y="7" />
+		<wall x="12" y="9" />
+		<wall x="14" y="3" />
+		<wall x="14" y="5" />
+		<wall x="14" y="7" />
+		<wall x="14" y="9" />
+	</walls>
+	<boxes 	name="box_container" count="40">
+					<box x="3" y="2" />
+					<box x="1" y="4" />
+					<box x="13" y="8" />
+					<box x="11" y="10" />
+					<box x="1" y="8" />
+					<box x="3" y="10" />
+					<box x="11" y="2" />
+					<box x="13" y="4" />
+	</boxes>
+
+	<bonuses name="bonus_flame" count="10" />
+	<bonuses name="bonus_bomb" count="10" />
+	<bonuses name="bonus_slider" count="10" />
+	<bonuses name="bonus_megabomb" count="10" />
+
+	<creatures name="creature_slug" count="8" />
+	<creatures name="creature_cloud" count="4" />
+	<creatures name="creature_rat" count="4" />
+</map>

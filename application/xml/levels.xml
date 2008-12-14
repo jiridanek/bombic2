@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <levels>
 	<episode>
+		<level map="map_concrete_1" img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_2" img="img/intro_forest_debug.jpg" />
 		<level map="map_concrete_test" img="img/intro_forest_debug.jpg" />
 
 		<level map="map_forest_debug" img="img/intro_forest_debug.jpg" />
@@ -14,7 +16,10 @@
 		<level map="map_forest_deadbody" img="img/intro_forest_6.jpg" />
 		<level map="map_forest_chest" img="img/intro_forest_chest.jpg" />
 
+		<level map="map_concrete_1" img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_2" img="img/intro_forest_debug.jpg" />
+
 		<level map="map_forest" img="img/intro_forest_debug.jpg" />
-		<level map="map_forest_debug" img="img/intro_forest_5.jpg" />
+		<level map="map_forest_debug" img="img/intro_forest_debug.jpg" />
 	</episode>
 </levels>

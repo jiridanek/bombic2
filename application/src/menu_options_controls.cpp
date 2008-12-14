@@ -65,7 +65,7 @@ MenuOptionsControls::MenuOptionsControls(){
 				handlerControls, MENU_OPTIONS_CONTROLS_EVENT_FMT,
 				player_num, action_num, &key_items_,
 				background_.getSurface(), background_text_.getSurface());
-			AG_SetEvent(item, "window-keydown",
+			AG_SetEvent(item, "window-keyup",
 				handlerKeyItem, MENU_OPTIONS_CONTROLS_EVENT_FMT,
 				player_num, action_num, &key_items_,
 				background_.getSurface(), background_text_.getSurface());
@@ -80,7 +80,7 @@ MenuOptionsControls::MenuOptionsControls(){
 		item = AG_BoxNewVert(tab, AG_BOX_FRAME | AG_BOX_HFILL);
 		setFocusOnMotion( AGWIDGET(item) );
 		AG_SetEvent(item, "window-mousebuttondown", handlerBack, 0);
-		AG_SetEvent(item, "window-keydown",
+		AG_SetEvent(item, "window-keyup",
 			handlerKeyItem, MENU_OPTIONS_CONTROLS_EVENT_FMT,
 			player_num, KEY_ACTIONS_COUNT, &key_items_,
 			background_.getSurface(), background_text_.getSurface());

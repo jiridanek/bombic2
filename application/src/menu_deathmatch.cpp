@@ -36,7 +36,7 @@ MenuDeathmatch::MenuDeathmatch(){
 
 	// pocet hracu
 	item = createItemHoriz("Players count");
-	AG_AddEvent(items_.back(), "window-keydown", handlerIntItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerIntItem,
 		"%p,%i,%i", &players_count,
 		MENU_DEATHMATCH_PLAYERS_MIN, MENU_DEATHMATCH_PLAYERS_MAX);
 
@@ -45,7 +45,7 @@ MenuDeathmatch::MenuDeathmatch(){
 
 	// pocet vitezstvi
 	item = createItemHoriz("Win points");
-	AG_AddEvent(items_.back(), "window-keydown", handlerIntItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerIntItem,
 		"%p,%i,%i", &win_points,
 		MENU_DEATHMATCH_WINS_MIN, MENU_DEATHMATCH_WINS_MAX);
 
@@ -54,7 +54,7 @@ MenuDeathmatch::MenuDeathmatch(){
 
 	// prisery
 	item = createItemHoriz("Creatures");
-	AG_AddEvent(items_.back(), "window-keydown", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
 		"%p", &creatures);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
@@ -64,7 +64,7 @@ MenuDeathmatch::MenuDeathmatch(){
 
 	// bomby na konci kola
 	item = createItemHoriz("Bombs at end");
-	AG_AddEvent(items_.back(), "window-keydown", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
 		"%p", &bombs_at_end);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);

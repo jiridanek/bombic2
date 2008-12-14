@@ -17,7 +17,7 @@ MenuNewGame::MenuNewGame(){
 
 	// pocet hracu
 	item = createItemHoriz("Players count");
-	AG_AddEvent(items_.back(), "window-keydown", handlerIntItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerIntItem,
 		"%p,%i,%i", &players_count,
 		MENU_NEWGAME_PLAYERS_MIN, MENU_NEWGAME_PLAYERS_MAX);
 
@@ -26,7 +26,7 @@ MenuNewGame::MenuNewGame(){
 
 	// epizoda
 	item = createItemHoriz("Episode");
-	AG_AddEvent(items_.back(), "window-keydown", handlerIntItem,
+	AG_AddEvent(items_.back(), "window-keyup", handlerIntItem,
 		"%p,%i,%i", &episode,
 		MENU_NEWGAME_EPISODE_MIN, MENU_NEWGAME_EPISODE_MAX);
 

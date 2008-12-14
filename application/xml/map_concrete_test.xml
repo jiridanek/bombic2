@@ -43,11 +43,9 @@
 	<bonuses name="bonus_slider" count="10" />
 	<bonuses name="bonus_megabomb" count="10" />
 
-	<creatures name="creature_rat" count="0" />
-	<creatures name="creature_slug" count="10" />
-	<creatures name="creature_cloud" count="0">
-		<creature x="15" y="13" />
-	</creatures>
+	<creatures name="creature_trap" count="10" />
+	<creatures name="creature_slug" count="0" />
+	<creatures name="creature_cloud" count="0" />
 	<nocreatures>
 		<nocreature x="1" y="4" />
 		<nocreature x="1" y="14" />

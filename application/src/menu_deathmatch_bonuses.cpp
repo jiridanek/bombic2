@@ -70,7 +70,7 @@ void MenuDeathmatchBonuses::createBonusItem(AG_Box * parent, int i){
 	setFocusOnMotion( AGWIDGET(item) );
 	AG_SetEvent(item, "window-keyup", handlerItems, 0);
 
-	AG_AddEvent(item, "window-keydown", handlerIntItem,
+	AG_AddEvent(item, "window-keyup", handlerIntItem,
 		"%p,%i,%i", &bonuses[i].c,
 		MENU_DEATHMATCH_BONUSES_MIN, MENU_DEATHMATCH_BONUSES_MAX);
 	// obrazek
