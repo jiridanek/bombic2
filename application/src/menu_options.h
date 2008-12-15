@@ -15,6 +15,7 @@ class MenuOptions: public MenuBase {
 		static void create(AG_Event * ev=0)
 			{ new MenuOptions; }
 	private:
+		static void handlerToggleFullscreen(AG_Event * ev);
 // 		const char* language;
 		int speed_,
 			visible_presumption_,

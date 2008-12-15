@@ -36,6 +36,8 @@ int main(int argc, char *argv[]) {
 		g_font = &font;
 
 		Config config;
+		if(config.fullscreen())
+			SDL_WM_ToggleFullScreen(g_window);
 
 		GameIntro gameIntro;
 		g_gameIntro = &gameIntro;

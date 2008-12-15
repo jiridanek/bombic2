@@ -55,7 +55,7 @@
 
 	<bonuses name="bonus_flame" count="10" />
 	<bonuses name="bonus_bomb" count="10" />
-	<bonuses name="bonus_slider" count="10" />
+	<bonuses name="bonus_speed" count="10" />
 	<bonuses name="bonus_megabomb" count="10" />
 
 	<creatures name="creature_slug" count="8" />

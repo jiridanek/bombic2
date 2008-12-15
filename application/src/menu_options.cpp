@@ -3,16 +3,13 @@
 #include "menu_options_controls.h"
 #include "config.h"
 
-#ifndef CONFIG
-#define CONFIG Config::get_instance()
-#endif
-
 MenuOptions::MenuOptions():
 			speed_(CONFIG->speed()),
 			visible_presumption_(CONFIG->visible_presumption()),
 			fullscreen_(CONFIG->fullscreen()),
 			sound_(CONFIG->sound()){
 	AG_Box * item;
+	AG_Checkbox * checkbox;
 
 	// nadpis
 	createHeading("Options");
@@ -37,7 +34,7 @@ MenuOptions::MenuOptions():
 
 	// viditelna presumpce
 	item = createItemHoriz("Explosion presumptions");
-	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
 		"%p", &visible_presumption_);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
@@ -47,17 +44,19 @@ MenuOptions::MenuOptions():
 
 	// fullscreen
 	item = createItemHoriz("Play in fullscreen");
-	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
 		"%p", &fullscreen_);
+	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerToggleFullscreen, 0);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
 	AG_BoxSetPadding(item, 0);
 	AG_SpacerNewVert(item);
-	AG_CheckboxNewInt(item, 0, "  ", &fullscreen_);
+	checkbox = AG_CheckboxNewInt(item, 0, "  ", &fullscreen_);
+	AG_AddEvent(checkbox, "window-mousebuttondown", handlerToggleFullscreen, 0);
 
 	// zvuk
 	item = createItemHoriz("Sound enabled");
-	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
 		"%p", &sound_);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
@@ -79,4 +78,10 @@ MenuOptions::~MenuOptions() {
 	CONFIG->fullscreen_ = fullscreen_!=0;
 	CONFIG->sound_ = sound_!=0;
 	CONFIG->save_configuration_();
+}
+
+extern SDL_Surface * g_window;
+
+void MenuOptions::handlerToggleFullscreen(AG_Event * ev){
+	SDL_WM_ToggleFullScreen(g_window);
 }

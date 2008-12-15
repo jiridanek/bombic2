@@ -149,15 +149,7 @@ void MenuBase::handlerIntItem(AG_Event * event){
 
 void MenuBase::handlerBoolItem(AG_Event * event){
 	int * val = static_cast<int *>(AG_PTR(1));
-	switch(AG_SDLKEY(2)){
-		case SDLK_RETURN:
-		case SDLK_KP_ENTER:
-		case SDLK_SPACE:
-			*val = ! *val;
-			break;
-		default:
-			break;
-	}
+	*val = ! *val;
 }
 
 void MenuBase::clearStack(){

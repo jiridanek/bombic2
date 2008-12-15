@@ -54,7 +54,7 @@ MenuDeathmatch::MenuDeathmatch(){
 
 	// prisery
 	item = createItemHoriz("Creatures");
-	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
 		"%p", &creatures);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
@@ -64,7 +64,7 @@ MenuDeathmatch::MenuDeathmatch(){
 
 	// bomby na konci kola
 	item = createItemHoriz("Bombs at end");
-	AG_AddEvent(items_.back(), "window-keyup", handlerBoolItem,
+	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
 		"%p", &bombs_at_end);
 
 	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
