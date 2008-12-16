@@ -9,6 +9,7 @@
 #include "agar_helper.h"
 #include "menu_base.h"
 
+#define MENU_DEATHMATCH_MAPS_DIR "maps"
 #define MENU_DEATHMATCH_MAPS_BUFFSIZE 256
 
 class MenuDeathmatchMaps: public MenuBase {
@@ -22,7 +23,7 @@ class MenuDeathmatchMaps: public MenuBase {
 		static void handlerCheckMap(AG_Event * event);
 		static bool setMap(const std::string & map);
 		static char map_name[];
-		static char map_path[];
+		static std::string map_path;
 
 		AG_FileDlg * file_dlg_;
 };

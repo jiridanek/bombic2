@@ -33,6 +33,9 @@ bool is_file(const std::string & path);
 bool locate_file(const std::string & hint_path,
 		const std::string & name, std::string & res);
 
+bool locate_dir(const std::string & hint_path,
+		const std::string & name, std::string & res);
+
 void get_home_path(std::string & path);
 
 #endif

@@ -106,34 +106,33 @@ void AI::updatePositions(){
  * @param position nová pozice
  */
 void AI::setPosition(position_t & position){
-	Game * game = Game::get_instance();
 	// prvne vycentrovat
 	switch(position.d){
 		case UP:
 			if(position.y%CELL_SIZE+1<CELL_SIZE/2){
 				// vlevo
 				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE-1)){
 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, +1);
 					}
 				// vpravo
 				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE-1)){
 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, +1);
 					}
 			} else {
 				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE)){
 						centerCoordinate(position.x, +1);
 // 						centerCoordinate(position.y, +1);
 					}
 				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE)){
 						centerCoordinate(position.x, -1);
 // 						centerCoordinate(position.y, +1);
@@ -143,27 +142,27 @@ void AI::setPosition(position_t & position){
 			if(position.x%CELL_SIZE-1>CELL_SIZE/2){
 				// nahore
 				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE-1)){
 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, +1);
 					}
 				// dole
 				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE+1)){
 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, -1);
 					}
 			} else {
 				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE,position.y/CELL_SIZE-1)){
 // 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, +1);
 					}
 				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE,position.y/CELL_SIZE+1)){
 // 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, -1);
@@ -173,26 +172,26 @@ void AI::setPosition(position_t & position){
 		case DOWN:
 			if(position.y%CELL_SIZE-1>CELL_SIZE/2){
 				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE+1)){
 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, -1);
 					}
 				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE+1)){
 						centerCoordinate(position.x, -1);
 						centerCoordinate(position.y, -1);
 					}
 			} else {
 				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE)){
 						centerCoordinate(position.x, +1);
 // 						centerCoordinate(position.y, -1);
 					}
 				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE+1,position.y/CELL_SIZE)){
 						centerCoordinate(position.x, -1);
 // 						centerCoordinate(position.y, -1);
@@ -201,26 +200,26 @@ void AI::setPosition(position_t & position){
 		case LEFT:
 			if(position.x%CELL_SIZE+1<CELL_SIZE/2){
 				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE-1)){
 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, +1);
 					}
 				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE-1,position.y/CELL_SIZE+1)){
 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, -1);
 					}
 			}else {
 				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE,position.y/CELL_SIZE-1)){
 // 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, +1);
 					}
 				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!game->field_canGoOver(
+					if(!GAME->field_canGoOver(
 					position.x/CELL_SIZE,position.y/CELL_SIZE+1)){
 // 						centerCoordinate(position.x, +1);
 						centerCoordinate(position.y, -1);
@@ -255,27 +254,26 @@ void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign){
  */
 bool AI::checkField(const position_t & position,
 					const isTypeOf & isBlocking){
-	Game * game = Game::get_instance();
 	Uint16 x=position.x/CELL_SIZE, y=position.y/CELL_SIZE;
-	MapObject * blocking = game->field_getObject(x, y, isBlocking);
+	MapObject * blocking = GAME->field_getObject(x, y, isBlocking);
 	if(blocking && blocking->type()!=BOMB_STAYING)
 		return false;
 
 	switch(position.d){
 		case UP: if(position.y%CELL_SIZE<CELL_SIZE/2
-				&& game->field_withObject(x, y-1, isBlocking) )
+				&& GAME->field_withObject(x, y-1, isBlocking) )
 					return false;
 			break;
 		case RIGHT: if(position.x%CELL_SIZE>CELL_SIZE/2
-				&& game->field_withObject(x+1, y, isBlocking) )
+				&& GAME->field_withObject(x+1, y, isBlocking) )
 					return false;
 			break;
 		case DOWN: if(position.y%CELL_SIZE>CELL_SIZE/2
-				&& game->field_withObject(x, y+1, isBlocking) )
+				&& GAME->field_withObject(x, y+1, isBlocking) )
 					return false;
 			break;
 		case LEFT: if(position.x%CELL_SIZE<CELL_SIZE/2
-				&& game->field_withObject(x-1, y, isBlocking) )
+				&& GAME->field_withObject(x-1, y, isBlocking) )
 					return false;
 			break;
 		default: break;
@@ -368,15 +366,12 @@ void AI_10::move() {
 }
 
 void AI_10::update_trace_array_(){
-// 	cout << SDL_GetTicks() << endl;
-
-	Game * game = Game::get_instance();
 	// vytvoreni trasovaciho pole s hodnotami -1
 	if(empty_trace_array_.empty()){
 		vector< Sint16 > empty_column;
-		empty_column.insert(empty_column.end(), game->map_height(), -1);
+		empty_column.insert(empty_column.end(), GAME->map_height(), -1);
 		empty_trace_array_.insert(
-			empty_trace_array_.end(), game->map_width(), empty_column);
+			empty_trace_array_.end(), GAME->map_width(), empty_column);
 	}
 
 	// nastavit pocatecni souradnice
@@ -390,23 +385,21 @@ void AI_10::update_trace_array_(){
 	fields_queue.push(make_pair(old_x_, old_y_));
 	// ohodnotit trasovaci pole
 	eval_trace_array_(fields_queue,
-		game->field_withObject(old_x_, old_y_, isBad_));
+		GAME->field_withObject(old_x_, old_y_, isBad_));
 }
 
 void AI_10::eval_trace_array_(fields_queue_t & fields_queue, bool in_danger ){
-	Game * game = Game::get_instance();
-
 	if(fields_queue.empty())
 		return;
 	// obnovit souradnice cile
 	target_x_ = fields_queue.front().first,
 	target_y_ = fields_queue.front().second;
 	// mame hrace, koncime a jdeme na nej
-	if(game->field_withObject(target_x_, target_y_, PLAYER))
+	if(GAME->field_withObject(target_x_, target_y_, PLAYER))
 		return;
 	// jsem v ohrozeni a nasel jsem dobre policko, koncim
 	if(in_danger
-	&& !game->field_withObject(target_x_, target_y_, isBad_))
+	&& !GAME->field_withObject(target_x_, target_y_, isBad_))
 		return;
 
 	// pripravim novou hodnotu policka
@@ -425,7 +418,7 @@ void AI_10::eval_trace_array_(fields_queue_t & fields_queue, bool in_danger ){
 				next_y += 1-dir%4;
 			// mohu na policko vstoupit
 			if(trace_array_[next_x][next_y]==-1
-			&& !game->field_withObject(next_x, next_y,
+			&& !GAME->field_withObject(next_x, next_y,
 						in_danger ? isBlocking_ : isBad_)){
 				// nastavim hodnotu
 				trace_array_[next_x][next_y] = val;
@@ -512,8 +505,6 @@ AI_fromKeyboard::AI_fromKeyboard(Creature *creature): AI(creature) {
 
 void AI_fromKeyboard::move() {
 	Player * player = static_cast<Player *>(creature_);
-	Game * game = Game::get_instance();
-	Config * config = Config::get_instance();
 	// update pozic pro pohyb jako bych byl otoceny nahoru
 	DIRECTION cur_d = player->d_;
 	player->d_ = UP;
@@ -521,44 +512,44 @@ void AI_fromKeyboard::move() {
 	// souradnice v polickach
 	Uint16 x, y, num = player->player_num();
 
-	if(keystate_[config->player(num, KEY_UP)]){
+	if(keystate_[CONFIG->player(num, KEY_UP)]){
 		player->d_ = UP;
 		makePosition(positions_[1], 0, -1);
 	}
-	else if(keystate_[config->player(num, KEY_RIGHT)]){
+	else if(keystate_[CONFIG->player(num, KEY_RIGHT)]){
 		player->d_ = RIGHT;
 		makePosition(positions_[2], 1, 0);
 	}
-	else if(keystate_[config->player(num, KEY_DOWN)]){
+	else if(keystate_[CONFIG->player(num, KEY_DOWN)]){
 		player->d_ = DOWN;
 		makePosition(positions_[3], 0, 1);
 	}
-	else if(keystate_[config->player(num, KEY_LEFT)]){
+	else if(keystate_[CONFIG->player(num, KEY_LEFT)]){
 		player->d_ = LEFT;
 		makePosition(positions_[4], -1, 0);
 	}
 	else player->d_ = cur_d;
 
-	if(keystate_[config->player(num, KEY_PLANT)]){
+	if(keystate_[CONFIG->player(num, KEY_PLANT)]){
 		x = player->x_/CELL_SIZE;
 		y = player->y_/CELL_SIZE;
 
 		Bomb * bomb =0;
 		if(player->bonus_fireman_){
 			if(player->next_timer_ < MOVE_PERIOD){
-				bomb = game->tools->bomb_normal(x, y, 1);
+				bomb = GAME->tools->bomb_normal(x, y, 1);
 				bomb->explode();
 				player->next_timer_ = TIMER_PERIOD;
 			}
 		}
-		else if(!game->field_withObject(x, y, isTypeOf::isWallBoxAnyBombFlame)){
+		else if(!GAME->field_withObject(x, y, isTypeOf::isWallBoxAnyBombFlame)){
 			if(player->megabombs_){
-				bomb = game->tools->bomb_mega(x, y,
+				bomb = GAME->tools->bomb_mega(x, y,
 							player->flamesize_, player->bonus_timer_);
 				--player->megabombs_;
 			}
-			else if(game->count_bombs(num)< player->bombs_)
-				bomb = game->tools->bomb_normal(x, y,
+			else if(GAME->count_bombs(num)< player->bombs_)
+				bomb = GAME->tools->bomb_normal(x, y,
 							player->flamesize_, player->bonus_timer_);
 		}
 		if(bomb){
@@ -566,13 +557,13 @@ void AI_fromKeyboard::move() {
 			&& player->x_==positions_[0].x
 			&& player->y_==positions_[0].y)
 				bomb->kick(player->d_);
-			game->plant_bomb(num, x, y, bomb);
+			GAME->plant_bomb(num, x, y, bomb);
 		}
 	}
 
-	if(keystate_[config->player(num, KEY_TIMER)]
+	if(keystate_[CONFIG->player(num, KEY_TIMER)]
 	&& player->bonus_timer_	&& player->next_timer_ < MOVE_PERIOD){
-		game->explode_bomb(num);
+		GAME->explode_bomb(num);
 		player->next_timer_ = TIMER_PERIOD;
 	}
 
@@ -580,18 +571,17 @@ void AI_fromKeyboard::move() {
 
 void AI_fromKeyboard::makePosition(position_t & position,
 				Sint16 factor_x, Sint16 factor_y) {
-	Game * game = Game::get_instance();
 	Player * player = static_cast<Player *>(creature_);
 
 	Uint16 x=position.x/CELL_SIZE,
 		y=position.y/CELL_SIZE;
-	if(game->field_canGoOver(x, y, false)){
+	if(GAME->field_canGoOver(x, y, false)){
 		if((factor_x<0 && position.x%CELL_SIZE<CELL_SIZE/2)
 		|| (factor_x>0 && position.x%CELL_SIZE>CELL_SIZE/2)
 		|| (factor_y<0 && position.y%CELL_SIZE<CELL_SIZE/2)
 		|| (factor_y>0 && position.y%CELL_SIZE>CELL_SIZE/2) ){
 
-			MapObject * obj = game->field_getObject(x+factor_x, y+factor_y,
+			MapObject * obj = GAME->field_getObject(x+factor_x, y+factor_y,
 					isTypeOf::isWallBoxAnyBomb);
 			if(obj){
 				// jakakoli bomba, zkusim do ni kopnout (jestli muzu)

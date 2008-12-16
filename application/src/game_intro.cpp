@@ -78,8 +78,11 @@ void GameIntro::show_screen(){
 				case SDL_KEYUP:
 					if(key==SDLK_ESCAPE)
 						return;
+					if(key==SDLK_RETURN || key==SDLK_KP_ENTER
+					|| key==SDLK_SPACE || key==SDLK_RCTRL)
+						break;
 				default:
-					break;
+					continue;
 			}
 			break;
 		}

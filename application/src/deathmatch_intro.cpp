@@ -150,8 +150,11 @@ bool DeathmatchIntro::show_score_(Uint16 winner){
 			case SDL_KEYUP:
 				if(key==SDLK_ESCAPE)
 					return false;
+				if(key==SDLK_RETURN || key==SDLK_KP_ENTER
+				|| key==SDLK_SPACE || key==SDLK_RCTRL)
+					break;
 			default:
-				break;
+				continue;
 		}
 		return true;
 	}
@@ -170,13 +173,13 @@ void DeathmatchIntro::draw_score_(
 		base_y-DEATHMATCH_INTRO_SCORE_PADDING,
 		bg.getSurface(), g_window );
 	for(Uint16 player = 0 ; player<score_.size() ; ++player){
-		draw_player_score_(base_x, base_y+player*player_h,
+		draw_player_score_(base_x, base_y+player*player_h, player_h,
 			player, winner, trans);
 	}
 	SDL_Flip(g_window);
 }
 
-void DeathmatchIntro::draw_player_score_( Sint16 x, Sint16 y,
+void DeathmatchIntro::draw_player_score_( Sint16 x, Sint16 y, Uint16 h,
 			Uint16 player, Uint16 winner, Uint8 trans){
 	Uint16 i, x_diff = tools_[0].width()+DEATHMATCH_INTRO_SCORE_PADDING;
 	// obrazek hrace
@@ -185,13 +188,16 @@ void DeathmatchIntro::draw_player_score_( Sint16 x, Sint16 y,
 		i = player*2+2;
 	else // jinak normalni
 		i = player*2+1;
-	tools_[i].draw(g_window, x, y);
+	tools_[i].draw(g_window, x, y+ abs_minus(h, tools_[i].height())/2 );
 	// pohary
 	for(i = 1; i <= score_[player] ; ++i){
 		x += x_diff;
 		if(player==winner && i==score_[player])
 			tools_[0].set_transparency(trans);
-		tools_[0].draw(g_window, x, y);
+
+		tools_[0].draw(g_window, x,
+			y +abs_minus(h, tools_[0].height())/2);
+
 		if(player==winner && i==score_[player])
 			tools_[0].set_transparency(SDL_ALPHA_OPAQUE);
 	}

@@ -561,7 +561,6 @@ void Game::draw_map_(bool bg, SDL_Surface* window, SDL_Rect & map_view,
 
 	Uint16 column, field;
 	map_array_t::value_type::value_type::iterator it, end_it;
-	Uint8 *keystate = SDL_GetKeyState(0);
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
 	for(field = from_y ; field<map_array_[0].size() ; ++field){
@@ -578,11 +577,6 @@ void Game::draw_map_(bool bg, SDL_Surface* window, SDL_Rect & map_view,
 				}
 			}
 			else {
-if(keystate[SDLK_o]){
-	SDL_Delay(200);
-	SDL_PumpEvents();
-	SDL_Flip(window);
-}
 				// objekty na policku seradim
 				map_array_[column][field].sort(isUnder);
 				// vykreslim ty co nejsou pozadi
@@ -591,12 +585,6 @@ if(keystate[SDLK_o]){
 						++it){
 
 					if(isTypeOf::isBgType(*it)) continue;
-if(keystate[SDLK_p]){
-	SDL_Delay(700);
-	SDL_PumpEvents();
-	SDL_Flip(window);
-}
-
 					// v praxi potrebuju prohodit dva hrace pokud jsou v zakrytu
 					// spodniho vykreslim vzdycky, horniho bud preskocim nebo vykreslim
 					if( (*it)->type() == PLAYER && rand()%2 ){

@@ -1,5 +1,4 @@
 
-#include <iostream>
 #include "SDL_lib.h"
 #include "constants.h"
 #include "stl_helper.h"
@@ -72,7 +71,9 @@ void Player::get_properties(PlayerProperties & prop) const {
  * Ve hře to znamená, že se překrývají, tudíž spodní není vůbec vidět.
  */
 bool Player::operator==(const Player & player) const {
-	return x_==player.x_ && y_==player.y_ && d_==player.d_;
+	return d_==player.d_
+		&& abs_minus(x_, player.x_)<3
+		&& abs_minus(y_, player.y_)<3;
 }
 
 /** @details
@@ -86,7 +87,7 @@ bool Player::move(){
 		next_timer_ -= MOVE_PERIOD;
 
 	// prisery zabijeji
-	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, CREATURE))
+	if(GAME->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, CREATURE))
 		die();
 	// pohyb jako prisera
 	return Creature::move();
@@ -116,11 +117,10 @@ void Player::update(){
  * @param window surface okna pro vykreslení
  */
 void Player::draw_panel(SDL_Surface *window, const SDL_Rect & rect){
-	Game * game = Game::get_instance();
 	// vykreslit svuj panel
-	game->tools->draw_panel_player(
+	GAME->tools->draw_panel_player(
 		window, rect, num_,
-		lives_, flamesize_, bombs_ - game->count_bombs(num_),
+		lives_, flamesize_, bombs_ - GAME->count_bombs(num_),
 		megabombs_, bonus_slider_, bonus_kicker_);
 	// do nej svoje bonusy
 	bonuses_t::iterator it;

@@ -5,11 +5,8 @@
 #ifndef GAME_PLAYER_H
 #define GAME_PLAYER_H
 
-#include <iostream>
 #include <list>
 #include "SDL_lib.h"
-// #include "game.h"
-// #include "game_mapobjects.h"
 #include "game_creature.h"
 
 /// Doba mezi odpaly.

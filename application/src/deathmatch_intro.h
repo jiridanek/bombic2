@@ -68,7 +68,7 @@ class DeathmatchIntro: public GameBaseLoader {
 		void DeathmatchIntro::draw_score_(
 			Uint16 winner, Surface & bg, Uint8 trans);
 		/// Vykreslení skóre jednoho hráče.
-		void draw_player_score_( Sint16 x, Sint16 y,
+		void draw_player_score_( Sint16 x, Sint16 y, Uint16 h,
 			Uint16 player, Uint16 winner, Uint8 trans);
 		/// Získání obrázku.
 		Surface & get_image_(Uint8 index);

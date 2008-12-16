@@ -6,7 +6,6 @@
 #define TIXML_HELPER_H
 
 #define TIXML_FILE_EXTENSION ".xml"
-#define TIXML_FILE_PATH "xml/"
 
 #include <iostream>
 #include <string>
