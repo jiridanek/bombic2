@@ -1,9 +1,6 @@
 
-// #include <iostream>
 #include <vector>
 #include <string>
-// #include <map>
-// #include <utility>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
 #include "stl_helper.h"
@@ -17,9 +14,6 @@
 #include "game_bonus.h"
 #include "game_creature.h"
 #include "game_player.h"
-// #include "game_bomb.h"
-// #include "game_flame.h"
-// #include "game_presumption.h"
 
 using namespace std;
 
@@ -952,7 +946,7 @@ void GameBase::insert_wall_(const Animation & anim,
 				Uint16 toplapping, Uint16 x, Uint16 y, Uint16 w, Uint16 h){
 	// ulozit do mapy na spravna policka, musi se tam vejit cely
 	if(static_cast<Uint16>(x+w-1) >= base_array_.size()
-	&& static_cast<Uint16>(y+h-1) >= base_array_[0].size())
+	|| static_cast<Uint16>(y+h-1) >= base_array_[0].size())
 		return;
 
 	proportionedMO_t new_obj= {
@@ -985,7 +979,7 @@ void GameBase::insert_floorobject_(const Animation & anim,
 			Uint16 x, Uint16 y, Uint16 w, Uint16 h){
 	// ulozit do mapy na spravna policka, musi se tam vejit cely
 	if(static_cast<Uint16>(x+w-1) >= base_array_.size()
-	&& static_cast<Uint16>(y+h-1) >= base_array_[0].size())
+	|| static_cast<Uint16>(y+h-1) >= base_array_[0].size())
 		return;
 
 	// vytvorit
@@ -1035,7 +1029,7 @@ void GameBase::insert_box_(const Animation & anim, const Animation & anim_burnin
 				Uint16 toplapping, Uint16 x, Uint16 y, Uint16 w, Uint16 h){
 	// ulozit do mapy na spravna policka, musi se tam vejit cely
 	if(static_cast<Uint16>(x+w-1) >= base_array_.size()
-	&& static_cast<Uint16>(y+h-1) >= base_array_[0].size())
+	|| static_cast<Uint16>(y+h-1) >= base_array_[0].size())
 		return;
 
 	// vytvorit
