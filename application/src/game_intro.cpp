@@ -109,6 +109,7 @@ void GameIntro::show_screen(){
 
 /// Inicializace nové hry.
 void GameIntro::new_game(Uint16 episode, Uint16 players){
+	cur_episode_ = episode;
 	cur_level_ = 0;
 	players_count_ = players;
 
@@ -121,10 +122,86 @@ void GameIntro::new_game(Uint16 episode, Uint16 players){
 }
 
 /// Inicializace.
-void GameIntro::load_game(Uint16 episode, Uint16 level,
-	const PlayerProperties & player1, const PlayerProperties & player2,
-	const PlayerProperties & player3, const PlayerProperties & player4){
+void GameIntro::load_game(std::string & filename){
+	delete game_;
+	game_ = 0;
 
+	TiXmlDocument doc;
+	TiXmlElement *rootEl, *el;
+	std::string el_name;
+	try {
+		// otevreni souboru
+		rootEl = TiXmlRootElement(doc, filename, "game", false);
+		// level
+		readAttr(rootEl, "episode", cur_episode_);
+		readAttr(rootEl, "level", cur_level_);
+		load_levels_(cur_episode_);
+		// pocet hracu
+		Uint16 count;
+		for(count = 4 ; count>0 ; --count ){
+			el_name = "player"+x2string(count-1);
+			if(rootEl->FirstChildElement(el_name.c_str()))
+				break;
+		}
+		if(count==0)
+			TiXmlError(filename, "missing element player0");
+		players_count_ = count;
+		// nová hra
+		if(gameBase_) delete gameBase_;
+		gameBase_ = new GameBase(
+			players_count_, levels_[cur_level_].map);
+		PlayerProperties prop;
+		for(Uint16 i = 0 ; i < players_count_ ; ++i){
+			el_name = "player"+x2string(i);
+			el = subElement(rootEl, el_name.c_str());
+			readAttr(el, "lives", prop.lives);
+			readAttr(el, "flames", prop.flames);
+			readAttr(el, "bombs", prop.bombs);
+			readAttr(el, "boots", prop.boots);
+			gameBase_->set_player(i, prop);
+		}
+	}
+	catch(const std::string & err){
+		TiXmlError(filename, err);
+	}
+}
+
+void GameIntro::save_game(std::string & filename){
+	// vytvorit dokument
+	TiXmlDocument doc;
+	doc.InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", "yes"));
+	// element game
+	TiXmlNode *node;
+	TiXmlElement *el, *rootEl;
+	node = doc.InsertEndChild(TiXmlElement("game"));
+	if(!node)
+		TiXmlError("can't create root element");
+	rootEl = node->ToElement();
+	rootEl->SetAttribute("episode", cur_episode_);
+	rootEl->SetAttribute("level", cur_level_);
+	// elementy hracu
+	std::string el_name;
+	PlayerProperties prop;
+	for(Uint16 i = 0 ; i < players_count_ ; ++i){
+		el_name = "player"+x2string(i);
+		node = rootEl->InsertEndChild(TiXmlElement(el_name.c_str()));
+		if(!node)
+			TiXmlError("can't create element "+el_name);
+		el = node->ToElement();
+		// atributy
+		gameBase_->get_player(i, prop);
+		el->SetAttribute("lives", prop.lives);
+		el->SetAttribute("flames", prop.flames);
+		el->SetAttribute("bombs", prop.bombs);
+		el->SetAttribute("boots", prop.boots);
+	}
+	// ulozit do souboru
+	try {
+		TiXmlSaveDocument(doc, filename);
+	}
+	catch(const std::string & err){
+		TiXmlError(filename, err);
+	}
 }
 
 bool GameIntro::is_game(){

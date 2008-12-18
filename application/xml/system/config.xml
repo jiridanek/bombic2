@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<config visible_presumption="1" speed="7" fullscreen="0" sound="1">
+<config visible_presumption="1" split_screen="0" speed="7" fullscreen="0" sound="1">
     <languages default="lang_cs">
         <language name="lang_cs" />
         <language name="lang_en" />

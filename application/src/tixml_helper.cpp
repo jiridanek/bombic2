@@ -56,16 +56,19 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
 
 
 void TiXmlSaveDocument(TiXmlDocument & doc, std::string & filename){
-	string path;
-	get_home_path(path);
-	if(path.empty())
-		throw string("can't find home directory");
-	if(!is_dir(path) && AG_MkDir(path.c_str())==-1)
-		throw path+": can't make home directory";
-	path+= "/"; path+= filename;
-	filename.swap(path);
+	if(filename.empty())
+		throw string("filename empty");
+	if(filename[0]!='/'){
+		string path;
+		if(!get_home_path(path))
+			throw string("can't find home directory");
+		if(!is_dir(path) && AG_MkDir(path.c_str())==-1)
+			throw path+": can't make home directory";
+		path+= "/"; path+= filename;
+		filename.swap(path);
+	}
 	if(!doc.SaveFile(filename.c_str()))
-		throw string("can't save configuration");
+		throw filename+": can't save XML file";
 }
 
 /** @details

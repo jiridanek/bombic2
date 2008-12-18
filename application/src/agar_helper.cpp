@@ -133,8 +133,7 @@ bool locate_file(const std::string & hint_path, const std::string & name,
 		return true;
 
 	string home_path;
-	get_home_path(home_path);
-	if(!home_path.empty()
+	if(get_home_path(home_path)
 	&& locate_in_path(home_path, name, res))
 		return true;
 
@@ -147,7 +146,7 @@ bool locate_file(const std::string & hint_path, const std::string & name,
 }
 
 bool locate_dir(const std::string & hint_path, const std::string & name,
-		std::string & res){
+		std::string & res, bool hint_path_only){
 	if(name.empty()) return false;
 	if(name[0]=='/') {
 		if(is_dir(name)){
@@ -162,6 +161,8 @@ bool locate_dir(const std::string & hint_path, const std::string & name,
 	if(!hint_path.empty()
 	&& locate_in_path(hint_path, dir_name, res))
 		return true;
+	else if(hint_path_only)
+		return false;
 
 	string home_path;
 	get_home_path(home_path);
@@ -177,14 +178,15 @@ bool locate_dir(const std::string & hint_path, const std::string & name,
 	return false;
 }
 
-void get_home_path(std::string & path) {
+bool get_home_path(std::string & path) {
 	// TODO make something for windows
 	const char * home = getenv("HOME");
 	if(home == 0)
-		path = "";
+		return false;
 	else {
 		path = home;
 		path+= "/";
 		path+= SEARCH_HOME;
+		return true;
 	}
 }

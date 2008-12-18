@@ -67,12 +67,13 @@ void Config::load_configuration_(){
 /**
  */
 void Config::load_properties_(TiXmlElement * rootEl){
-	readAttr(rootEl, "visible_presumption", visible_presumption_);
 	readAttr(rootEl, "speed", speed_);
 	if(speed_ < CONFIG_SPEED_MIN || speed_ > CONFIG_SPEED_MAX)
 		throw "attribute speed must be integer between "+
 			x2string(CONFIG_SPEED_MIN)+
 			" and "+ x2string(CONFIG_SPEED_MAX);
+	readAttr(rootEl, "visible_presumption", visible_presumption_);
+	readAttr(rootEl, "split_screen", split_screen_);
 	readAttr(rootEl, "fullscreen", fullscreen_);
 	readAttr(rootEl, "sound", sound_);
 	rootEl = subElement(rootEl, "languages");
@@ -191,6 +192,7 @@ void Config::save_configuration_(){
 void Config::set_properties_(TiXmlElement * rootEl){
 	rootEl->SetAttribute("speed", speed_);
 	rootEl->SetAttribute("visible_presumption", visible_presumption_ ? 1 : 0);
+	rootEl->SetAttribute("split_screen", split_screen_ ? 1 : 0);
 	rootEl->SetAttribute("fullscreen", fullscreen_ ? 1 : 0);
 	rootEl->SetAttribute("sound", sound_ ? 1 : 0);
 

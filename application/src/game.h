@@ -79,6 +79,9 @@ class Game {
 		void remove_bombs_timer(Uint16 player_num);
 		/// Pro hráče: nechat bouchnout první bombu.
 		void explode_bomb(Uint16 player_num);
+		/// Pro hráče (nebo spíše bonusy): nechat bouchnout první bombu.
+		void add_others_bonus(Uint16 player_num, const char * bonus_name);
+
 
 		/// Výška mapy.
 		Uint16 map_height() const;
@@ -106,12 +109,22 @@ class Game {
 
 		/// Nastavení pohledů pro hráče.
 		void set_players_view_(SDL_Surface *window);
+		/// Nastavení pohledů - jeden pohled na obrazovce.
+		void set_players_view_1_(SDL_Surface * window);
+		/// Nastavení pohledů - dva pohledy na obrazovce.
+		void set_players_view_2_(SDL_Surface * window);
+		/// Nastavení pohledů - 3 nebo 4 pohledy na obrazovce.
+		void set_players_view_4_(SDL_Surface * window);
+
 		/// Spočítá posun mapy podle pozice hráče.
 		Uint16 count_rect_shift_(Uint16 player_coor,
 				Uint16 rect_half_size, Uint16 map_size) const;
-
+		/// Vykreslení obrazovky.
+		void draw_(SDL_Surface * window);
 		/// Vykreslení scény hráče.
-		void draw_(SDL_Surface *window, Uint16 player_num);
+		void draw_players_view_(SDL_Surface *window, Uint16 player_num);
+		/// Vykreslení hráčů do jedné scény.
+		void draw_one_view_(SDL_Surface * window);
 		/// Vykreslení kousku scény.
 		void draw_map_(bool bg, SDL_Surface* window, SDL_Rect & map_view,
 			Uint16 from_x, Uint16 from_y, Uint16 to_x, Uint16 to_y );

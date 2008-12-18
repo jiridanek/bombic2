@@ -4,7 +4,7 @@
 #include "game_intro.h"
 #include "menu_main.h"
 #include "menu_newgame.h"
-#include "menu_loadgame.h"
+#include "menu_load_save.h"
 #include "menu_deathmatch.h"
 #include "menu_creatures.h"
 #include "menu_bonuses.h"
@@ -16,7 +16,7 @@ extern GameIntro * g_gameIntro;
 
 std::string MenuMain::lang;
 bool MenuMain::is_game=false;
-#include <string>
+
 MenuMain::MenuMain(){
 	lang = CONFIG->language();
 	is_game = g_gameIntro && g_gameIntro->is_game();
@@ -25,7 +25,6 @@ MenuMain::MenuMain(){
 
 	// nadpis
 	createHeading("Nabídka dne");
-	// TODO resume to game
 
 	// resume game
 	if(is_game){
@@ -45,7 +44,7 @@ MenuMain::MenuMain(){
 	// save game
 	if(is_game){
 		item = createItem("Save game");
-	// 	AG_SetEvent(item, "window-mousebuttondown", MenuSaveGame::create, 0);
+		AG_SetEvent(item, "window-mousebuttondown", MenuSaveGame::create, 0);
 	}
 
 	// deathmatch

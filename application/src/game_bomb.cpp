@@ -378,9 +378,8 @@ bool Bomb::add_presumption_(Uint16 x, Uint16 y){
  * @see Game::remove_object()
  */
 void Bomb::remove_presumptions_(){
-	Game * game = Game::get_instance();
 	for(Uint16 i=0 ; i<presumptions_.size() ; ++i){
-		game->remove_object(presumptions_[i]);
+		GAME->remove_object(presumptions_[i]);
 	}
 	presumptions_.clear();
 }
@@ -411,7 +410,7 @@ void Bomb::update(){
 
 MegaBomb::MegaBomb(const Animation & anim, Uint16 x, Uint16 y,
 					Uint16 flamesize, Uint16 speed, bool timer):
-	Bomb(anim, x, y, 2*flamesize, speed, timer){}
+	Bomb(anim, x, y, flamesize, speed, timer){}
 
 
 

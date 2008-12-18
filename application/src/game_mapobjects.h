@@ -105,6 +105,7 @@ class isTypeOf {
 
 		static isTypeOf
 			isFlame,
+			isFlamePlayer,
 			isPresumption,
 			isBgType,
 			isAnyBomb,

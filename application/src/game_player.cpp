@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #include "SDL_lib.h"
 #include "constants.h"
 #include "stl_helper.h"
@@ -31,7 +32,7 @@ Player::Player(const Animation & anim_up, const Animation & anim_right,
  */
 Player::Player(const Player & player, Uint16 x, Uint16 y):
 	Creature(player, x, y), num_(player.num_),
-	flamesize_(player.flamesize_), bombs_(player.bombs_),
+	flamesize_(std::min(player.flamesize_, FLAMESIZE_MAX)), bombs_(player.bombs_),
 	megabombs_(0), boots_(player.boots_), next_timer_(0),
 	bonus_kicker_(false), bonus_slider_(false),
 	bonus_timer_(false), bonus_fireman_(false) {}
@@ -47,7 +48,7 @@ Player::~Player(){
 void Player::set_properties(const PlayerProperties & prop){
 	lives_ = prop.lives;
 	bombs_ = prop.bombs;
-	flamesize_ = prop.flames;
+	flamesize_ = std::min(prop.flames, FLAMESIZE_MAX);
 	// odecist stare
 	speed_rate_ -= boots_;
 	// nastavit nove
@@ -58,7 +59,13 @@ void Player::set_properties(const PlayerProperties & prop){
 
 /**
  */
-void Player::get_properties(PlayerProperties & prop) const {
+void Player::get_properties(PlayerProperties & prop) {
+	// zrusit bonusy (muzou mit prsty v mych atributech)
+	bonuses_t::iterator it;
+	for(it = bonuses_.begin() ; it!=bonuses_.end() ; ++it){
+		delete *it; *it = 0; }
+	bonuses_.remove(0);
+
 	prop.lives = lives_;
 	prop.bombs = bombs_;
 	prop.flames = flamesize_;

@@ -12,11 +12,13 @@ LIBS_OBJECTFILES= $(shell find libs/tinyxml -name '*.cpp' | sed 's/.cpp/.o/')
 LIBS_CPPFILES= $(shell find libs/tinyxml -name '*.cpp')
 LIBS_HEADERFILES= $(shell find libs/tinyxml -name '*.h')
 
+PWD=\"$(shell pwd)\"
+
 all: $(OBJECTFILES) $(LIBS_OBJECTFILES)
 	$(CC) -o $(TARGET) $(OBJECTFILES) $(LIBS_OBJECTFILES) $(LIBS)
 
 src/%.o: src/%.cpp $(HEADERFILES) $(LIBS_HEADERFILES)
-	$(CC) -c $< $(CFLAGS) -o $@
+	$(CC) -c $< $(CFLAGS) -o $@ -DPWD=$(PWD)
 libs/%.o: libs/%.cpp $(LIBS_HEADERFILES)
 	$(CC) -c $< $(CFLAGS) -o $@
 

@@ -24,7 +24,10 @@ void handlerMousemotion(AG_Event *event);
 
 
 #define SEARCH_HOME ".bombic"
-#define SEARCH_PATHS { ".", 0 }
+#ifndef PWD
+#define PWD "."
+#endif
+#define SEARCH_PATHS { PWD, 0 }
 #define SEARCH_DEPTH 5
 
 bool is_dir(const std::string & path);
@@ -33,9 +36,9 @@ bool is_file(const std::string & path);
 bool locate_file(const std::string & hint_path,
 		const std::string & name, std::string & res);
 
-bool locate_dir(const std::string & hint_path,
-		const std::string & name, std::string & res);
+bool locate_dir(const std::string & hint_path, const std::string & name,
+		std::string & res, bool hint_path_only = false);
 
-void get_home_path(std::string & path);
+bool get_home_path(std::string & path);
 
 #endif

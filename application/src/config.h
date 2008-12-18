@@ -7,14 +7,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <iostream>
-// #include <list>
+#include <map>
 #include <vector>
 #include <string>
-// #include <map>
 #include "SDL_lib.h"
-// #include "game_base.h"
-// #include "game_mapobjects.h"
 #include "tixml_helper.h"
 
 /// Akce, které se dají vyvolat klávesami hráče.
@@ -59,6 +55,7 @@ class KeyNames {
 class Config {
 	friend class MenuOptions;
 	friend class MenuOptionsControls;
+	friend class BonusIllnessConfused;
 	public:
 		/// Získat pointer na jedinou instanci třídy.
 		static Config* get_instance();
@@ -71,6 +68,8 @@ class Config {
 		const std::string & language() const { return language_; }
 		/// Viditelná předpověď výbuchu.
 		bool visible_presumption() const { return visible_presumption_; }
+		/// Rozdělení obrazovky v multiplayeru.
+		bool split_screen() const { return split_screen_; }
 		/// Rychlost hry.
 		Uint16 speed() const { return speed_; }
 		/// Perioda pohybu.
@@ -94,7 +93,7 @@ class Config {
 
 		std::string language_;
 		Uint16 speed_;
-		bool sound_, fullscreen_, visible_presumption_;
+		bool visible_presumption_, split_screen_, fullscreen_, sound_;
 
 		/// Pro pojmenování kláves.
 		KeyNames keyNames_;

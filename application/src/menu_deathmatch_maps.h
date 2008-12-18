@@ -6,6 +6,7 @@
 #define MENU_DEATHMATCH_MAPS_H
 
 #include <string>
+#include <vector>
 #include "agar_helper.h"
 #include "menu_base.h"
 
@@ -20,12 +21,15 @@ class MenuDeathmatchMaps: public MenuBase {
 		static void create(AG_Event * ev=0)
 			{ new MenuDeathmatchMaps; }
 	private:
+		void createDirButton(const char * label);
+		std::vector<std::string> buttons_;
+
+		static void handlerDirButton(AG_Event * event);
 		static void handlerCheckMap(AG_Event * event);
 		static bool setMap(const std::string & map);
 		static char map_name[];
 		static std::string map_path;
-
-		AG_FileDlg * file_dlg_;
+		static AG_FileDlg * file_dlg;
 };
 
 #endif

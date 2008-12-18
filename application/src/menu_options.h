@@ -19,6 +19,7 @@ class MenuOptions: public MenuBase {
 // 		const char* language;
 		int speed_,
 			visible_presumption_,
+			split_screen_,
 			fullscreen_,
 			sound_;
 

@@ -12,7 +12,7 @@
 #define MENU_NEWGAME_PLAYERS_MIN 1
 #define MENU_NEWGAME_PLAYERS_MAX 4
 #define MENU_NEWGAME_EPISODE_MIN 0
-#define MENU_NEWGAME_EPISODE_MAX 1
+#define MENU_NEWGAME_EPISODE_MAX 0
 
 class MenuNewGame: public MenuBase {
 	public:

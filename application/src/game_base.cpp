@@ -1213,13 +1213,18 @@ GameBase::~GameBase(){
 
 /**
  * @param player_num číslo (pořadí) hráče
- * @param lives počet životů
- * @param bombs počet bomb, jimiž disponuje
- * @param flames velikost plamene
- * @param boots počet botiček
+ * @param prop vlastnosti hráče
  */
 void GameBase::set_player(Uint16 player_num, const PlayerProperties & prop){
 	players_[player_num]->set_properties(prop);
+}
+
+/**
+ * @param player_num číslo (pořadí) hráče
+ * @param prop vlastnosti hráče
+ */
+void GameBase::get_player(Uint16 player_num, PlayerProperties & prop){
+	players_[player_num]->get_properties(prop);
 }
 
 /*************** END OF class GameBase ******************************/

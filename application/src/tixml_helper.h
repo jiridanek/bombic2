@@ -24,7 +24,6 @@ TiXmlElement* TiXmlRootElement(TiXmlDocument & doc,
 /// Uloží dokument.
 void TiXmlSaveDocument(TiXmlDocument & doc, std::string & filename);
 
-
 class TiXmlException: public std::logic_error {
 	public:
 		TiXmlException(const std::string & what_arg):

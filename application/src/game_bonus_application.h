@@ -31,7 +31,7 @@ class BonusApplication {
 				const std::string & bonus_name, Player * player);
 		/// Typy aplikací bonusů.
 		enum TYPE { EMPTY, FLAME, BOMB, MEGABOMB, KICKER, SLIDER,
-			FIREMAN, TIMER, SHIELD, SPEED, LIVE };
+			FIREMAN, TIMER, SHIELD, SPEED, LIVE, ILLNESS, OTHERS_ILLNESS };
 		/// Constructor.
 		BonusApplication(Player * player);
 		/// Vykreslení do panelu.
@@ -204,5 +204,68 @@ class BonusTimer: public BonusApplication {
 	protected:
 		Uint16 remaining_periods_;
 };
+
+class BonusOthersIllness: public BonusApplication {
+	public:
+		/// Vytvoření.
+		BonusOthersIllness(Player * player);
+		/// Jméno bonusu z XML.
+		static const char * name()
+			{ return "bonus_othersillness"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return OTHERS_ILLNESS; }
+};
+
+class BonusIllness: public BonusApplication {
+	#define BONUS_ILLNESS_PERIODS (15000/MOVE_PERIOD)
+	public:
+		static BonusIllness * new_illness(Player * player);
+		enum ILLNESS_TYPE { CONFUSED, NOBOMB, STOP, SLOW, FAST,
+			BERSERK, LAST_};
+
+		/// Vytvoření.
+		BonusIllness(Player * player);
+		/// Vykreslení do panelu.
+		virtual void draw_panel(SDL_Surface *window,
+				const SDL_Rect & rect) const;
+		/// Aktualizace stavu.
+		virtual bool update();
+		/// Jméno bonusu z XML.
+		static const char * name()
+			{ return "bonus_illness"; }
+		/// Typ bonusu.
+		virtual TYPE type() const
+			{ return ILLNESS; }
+		/// Destructor.
+		virtual ~BonusIllness() {};
+	protected:
+		Uint16 remaining_periods_;
+};
+
+class BonusIllnessConfused: public BonusIllness {
+	public:
+		BonusIllnessConfused(Player * player);
+		virtual ~BonusIllnessConfused();
+};
+
+class BonusIllnessStop: public BonusIllness {
+	public:
+		BonusIllnessStop(Player * player);
+		virtual ~BonusIllnessStop();
+	protected:
+		Uint16 old_speed_;
+};
+
+class BonusIllnessSlow: public BonusIllnessStop {
+	public:
+		BonusIllnessSlow(Player * player);
+};
+
+class BonusIllnessFast: public BonusIllnessStop {
+	public:
+		BonusIllnessFast(Player * player);
+};
+
 
 #endif

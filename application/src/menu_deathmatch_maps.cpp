@@ -4,11 +4,9 @@
 
 char MenuDeathmatchMaps::map_name[MENU_DEATHMATCH_MAPS_BUFFSIZE] = "";
 std::string MenuDeathmatchMaps::map_path = "";
+AG_FileDlg * MenuDeathmatchMaps::file_dlg = 0;
 
 MenuDeathmatchMaps::MenuDeathmatchMaps(){
-	const char * paths[] = SEARCH_PATHS;
-	locate_dir(paths[0], MENU_DEATHMATCH_MAPS_DIR, map_path);
-
 	AG_WindowMaximize(win);
 	AG_WindowSetPadding(win, MENU_OFFSET,
 		MENU_OFFSET, MENU_OFFSET, MENU_OFFSET);
@@ -16,15 +14,48 @@ MenuDeathmatchMaps::MenuDeathmatchMaps(){
 	// nadpis
 	createHeading("Deathmatch maps");
 
-	file_dlg_ = AG_FileDlgNew(win, AG_FILEDLG_LOAD);
-	AG_Expand(file_dlg_);
+	// tlacitka pro rychlou volbu
+	std::string path;
+	const char * paths[] = SEARCH_PATHS;
+	for( Uint16 i=0 ; paths[i] != 0 ; ++i ){
+		if(locate_dir(paths[i], MENU_DEATHMATCH_MAPS_DIR,
+					path, true))
+			buttons_.push_back(path);
+		else if(is_dir(paths[i]))
+			buttons_.push_back(paths[i]);
+	}
+	if(get_home_path(path)) {
+		buttons_.push_back(path);
+		if(locate_dir(path, MENU_DEATHMATCH_MAPS_DIR,
+					path, true))
+			buttons_.push_back(path);
+	}
+	for( Uint16 i=0 ; i < buttons_.size() ; ++i ){
+		createDirButton(buttons_[i].c_str());
+		if(map_path.empty())
+			map_path = buttons_[i];
+	}
+	// filemanager
+	file_dlg = AG_FileDlgNew(win, AG_FILEDLG_LOAD);
+	AG_Expand(file_dlg);
 
-	AG_FileDlgSetDirectory(file_dlg_, map_path.c_str());
+	AG_FileDlgSetDirectory(file_dlg, map_path.c_str());
 
-	AG_FileDlgAddType(file_dlg_, "Bombic map XML", TIXML_FILE_EXTENSION, handlerCheckMap, 0);
-	AG_FileDlgCancelAction(file_dlg_, handlerBack, 0);
+	AG_FileDlgAddType(file_dlg, "Bombic map XML", TIXML_FILE_EXTENSION, handlerCheckMap, 0);
+	AG_FileDlgCancelAction(file_dlg, handlerBack, 0);
 
 	AG_SpacerNewHoriz(win);
+}
+
+void MenuDeathmatchMaps::createDirButton(const char * label){
+	AG_Button * button = AG_ButtonNew(win, 0, label);
+	AG_ExpandHoriz(button);
+	AG_ButtonJustify(button, AG_TEXT_LEFT);
+	AG_SetEvent(button, "button-pushed", handlerDirButton, "%s", label);
+}
+
+void MenuDeathmatchMaps::handlerDirButton(AG_Event * event){
+	AG_FileDlgSetDirectory(file_dlg, AG_STRING(1));
 }
 
 void MenuDeathmatchMaps::handlerCheckMap(AG_Event * event){

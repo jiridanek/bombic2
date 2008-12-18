@@ -39,14 +39,12 @@ class GameIntro {
 		void show_screen();
 		/// Inicializace nové hry.
 		void new_game(Uint16 episode, Uint16 players);
-		/// Inicializace staré hry.
-		void load_game(Uint16 episode, Uint16 level,
-			const PlayerProperties & player1, const PlayerProperties & player2,
-			const PlayerProperties & player3, const PlayerProperties & player4);
+		/// Inicializace uložené hry.
+		void load_game(std::string & filename);
+		/// Uložení rozehrané hry.
+		void save_game(std::string & filename);
 		/// Je vytvořená hra.
 		bool is_game();
-		/// Zahodit hru.
-		void clear_game();
 	private:
 		/// Základ pro konkrétní level.
 		GameBase * gameBase_;
@@ -69,7 +67,8 @@ class GameIntro {
 		/// Surface příslušící jménu souboru.
 		image_t image_;
 
-		Uint16 cur_level_, ///< Aktuální level.
+		Uint16 cur_episode_, ///< Aktuální epizoda.
+			cur_level_, ///< Aktuální level.
 			players_count_; ///< Počet hráčů.
 };
 

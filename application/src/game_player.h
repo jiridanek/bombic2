@@ -11,6 +11,8 @@
 
 /// Doba mezi odpaly.
 #define TIMER_PERIOD 300
+/// Maximaální velikost plamene.
+#define FLAMESIZE_MAX Uint16(10)
 
 class BonusApplication;
 
@@ -42,7 +44,11 @@ class Player: public Creature {
 	friend class BonusFireman;
 	friend class BonusSpeed;
 	friend class BonusLive;
-
+	friend class BonusIllness;
+	friend class BonusIllnessConfused;
+	friend class BonusIllnessStop;
+	friend class BonusIllnessSlow;
+	friend class BonusIllnessFast;
 
 	public:
 		/// Vytvoří bombiče.
@@ -64,7 +70,7 @@ class Player: public Creature {
 		/// Nastaví vlastnosti.
 		void set_properties(const PlayerProperties & prop);
 		/// Zjistí vlastnosti.
-		void get_properties(PlayerProperties & prop) const;
+		void get_properties(PlayerProperties & prop);
 
 		/// Typ objektu je bombic.
 		virtual OBJECT_TYPES type() const { return PLAYER; }

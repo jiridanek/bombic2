@@ -88,7 +88,7 @@
 
 		<wall name="wall_machine" x="27" y="10" width="3" height="3" />
 	</walls>
-	<boxes 	name="box_container" count="84">
+	<boxes 	name="box_container" count="83">
 		<box x="3" y="2" />
 		<box x="1" y="4" />
 		<box x="26" y="2" />

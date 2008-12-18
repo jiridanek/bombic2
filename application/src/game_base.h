@@ -65,6 +65,8 @@ class GameBase: public GameBaseLoader {
 		~GameBase();
 		/// Nastavení parametrů hráče.
 		void set_player(Uint16 player_num, const PlayerProperties & prop);
+		/// Získání parametrů hráče.
+		void get_player(Uint16 player_num, PlayerProperties & prop);
 
 		typedef struct { MapObject* o; Uint16 w, h; } proportionedMO_t;
 		/// Typ dvourozměrného pole mapy, na každém políčku seznam objektů s rozměry.

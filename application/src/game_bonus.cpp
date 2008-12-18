@@ -1,5 +1,4 @@
 
-#include <iostream>
 #include "SDL_lib.h"
 #include "constants.h"
 #include "game.h"
@@ -35,20 +34,21 @@ Bonus::Bonus(const Bonus & bonus, Uint16 x, Uint16 y):
  */
 bool Bonus::move(){
 	Uint16 x = x_/CELL_SIZE, y = y_/CELL_SIZE;
-	Game * game = Game::get_instance();
 	// pokud nejsem viditelny, zkusim jestli uz se nemam objevit
-	if(!visible_ && game->field_canGoOver(x, y))
+	if(!visible_ && GAME->field_canGoOver(x, y))
 		visible_ = true;
 	// jestli nejsem viditelny nic nedelam
 	if(!visible_) return false;
+
+	MapObject * obj =
+		GAME->field_getObject(x, y, isTypeOf::isFlamePlayer);
 	// necham se spalit
-	if(game->field_withObject(x, y, FLAME))
+	if(obj && obj->type()==FLAME)
 		return true;
 	// necham se vzit hracem
-	Player * player = static_cast< Player *>(
-		game->field_getObject(x, y, PLAYER) );
-	if(player){
-		BonusApplication::new_bonus(bonus_name_, player);
+	if(obj){
+		BonusApplication::new_bonus(bonus_name_,
+			static_cast< Player *>(obj));
 		return true;
 	}
 	return false;

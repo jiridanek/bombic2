@@ -1,7 +1,8 @@
 
-#include <iostream>
+#include <algorithm>
 #include "SDL_lib.h"
 #include "stl_helper.h"
+#include "config.h"
 #include "game.h"
 #include "game_player.h"
 #include "game_bonus_application.h"
@@ -29,6 +30,10 @@ BonusApplication * BonusApplication::new_bonus(
 		return new BonusFireman(player);
 	if(bonus_name==BonusTimer::name())
 		return new BonusTimer(player);
+	if(bonus_name==BonusIllness::name())
+		return BonusIllness::new_illness(player);
+	if(bonus_name==BonusOthersIllness::name())
+		return new BonusOthersIllness(player);
 
 	return new BonusApplication(player);
 }
@@ -44,7 +49,8 @@ BonusApplication::BonusApplication(Player * player):
 
 BonusFlame::BonusFlame(Player * player):
 				BonusApplication(player){
-	++player->flamesize_;
+	if(player->flamesize_ < FLAMESIZE_MAX)
+		++player->flamesize_;
 }
 
 /********* class BonusMegabomb ************************/
@@ -122,7 +128,7 @@ bool BonusShield::update() {
 
 void BonusShield::draw_panel(SDL_Surface *window,
 					const SDL_Rect & rect) const {
-	Game::get_instance()->tools->draw_panel_bonus(
+	GAME->tools->draw_panel_bonus(
 		window, rect, player_->player_num(), GameTools::SHIELD,
 		x2string( 100*remaining_periods_/BONUS_SHIELD_PERIODS)+"%" );
 }
@@ -162,7 +168,7 @@ bool BonusFireman::update() {
 
 void BonusFireman::draw_panel(SDL_Surface *window,
 					const SDL_Rect & rect) const {
-	Game::get_instance()->tools->draw_panel_bonus(
+	GAME->tools->draw_panel_bonus(
 		window, rect, player_->player_num(), GameTools::FIREMAN,
 		x2string( 100*remaining_periods_/BONUS_FIREMAN_PERIODS)+"%" );
 }
@@ -190,7 +196,7 @@ BonusTimer::~BonusTimer() {
 
 bool BonusTimer::update() {
 	if(!remaining_periods_){
-		Game::get_instance()->remove_bombs_timer(player_->player_num());
+		GAME->remove_bombs_timer(player_->player_num());
 		return true;
 	}
 
@@ -200,7 +206,89 @@ bool BonusTimer::update() {
 
 void BonusTimer::draw_panel(SDL_Surface *window,
 					const SDL_Rect & rect) const {
-	Game::get_instance()->tools->draw_panel_bonus(
+	GAME->tools->draw_panel_bonus(
 		window, rect, player_->player_num(), GameTools::TIMER,
 		x2string( 100*remaining_periods_/BONUS_TIMER_PERIODS)+"%" );
+}
+
+/********* class BonusOtherIllness ************************/
+
+BonusOthersIllness::BonusOthersIllness(Player * player):
+				BonusApplication(player){
+	GAME->add_others_bonus(player->player_num(), BonusIllness::name());
+}
+
+/********* class BonusIllness ************************/
+
+BonusIllness * BonusIllness::new_illness(Player * player){
+	switch(rand()%LAST_){
+		case CONFUSED: return new BonusIllnessConfused(player);
+		case STOP: return new BonusIllnessStop(player);
+		case SLOW: return new BonusIllnessSlow(player);
+		case FAST: return new BonusIllnessFast(player);
+		default: return new BonusIllness(player);
+	}
+}
+
+BonusIllness::BonusIllness(Player * player):
+				BonusApplication(player), remaining_periods_(BONUS_ILLNESS_PERIODS){
+	// vyhodit starou nemoc
+	Player::bonuses_t::iterator it;
+	for(it= player_->bonuses_.begin() ; it!=player_->bonuses_.end() ; ++it){
+		if( type()==(*it)->type() && this!=(*it)){
+			delete *it;
+			player_->bonuses_.erase(it);
+			break;
+		}
+	}
+}
+
+bool BonusIllness::update() {
+	if(!remaining_periods_)
+		return true;
+
+	--remaining_periods_;
+	return false;
+}
+
+void BonusIllness::draw_panel(SDL_Surface *window,
+					const SDL_Rect & rect) const {
+	GAME->tools->draw_panel_bonus(
+		window, rect, player_->player_num(), GameTools::ILLNESS,
+		x2string( 100*remaining_periods_/BONUS_ILLNESS_PERIODS)+"%" );
+}
+
+/******* bonus illness CONFUSED ********/
+BonusIllnessConfused::BonusIllnessConfused(Player * player):
+			BonusIllness(player) {
+	Config::players_t::value_type & keys =
+		CONFIG->players_[player_->player_num()];
+	std::swap(keys[KEY_UP], keys[KEY_DOWN]);
+	std::swap(keys[KEY_LEFT], keys[KEY_RIGHT]);
+}
+
+BonusIllnessConfused::~BonusIllnessConfused(){
+	Config::players_t::value_type & keys =
+		CONFIG->players_[player_->player_num()];
+	std::swap(keys[KEY_UP], keys[KEY_DOWN]);
+	std::swap(keys[KEY_LEFT], keys[KEY_RIGHT]);
+}
+
+/****** bonus illness STOP ************/
+BonusIllnessStop::BonusIllnessStop(Player * player):
+			BonusIllness(player), old_speed_(player->speed_diff_) {
+	player_->speed_diff_ = 0;
+}
+BonusIllnessStop::~BonusIllnessStop(){
+	player_->speed_diff_ = old_speed_;
+}
+/****** bonus illness SLOW ************/
+BonusIllnessSlow::BonusIllnessSlow(Player * player):
+			BonusIllnessStop(player){
+	player_->speed_diff_ = old_speed_/2;
+}
+/****** bonus illness FAST ************/
+BonusIllnessFast::BonusIllnessFast(Player * player):
+			BonusIllnessStop(player){
+	player_->speed_diff_ = old_speed_*3;
 }

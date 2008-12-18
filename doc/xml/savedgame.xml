@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<game 	name="pojmenovani ulozene hry"
-	episode="aktualni epizoda"
+<game 	episode="aktualni epizoda"
 	level="vyse dosazeneho levelu"
 	>
 	<!-- pro kazdeho hrace jeden tag playerN -->

@@ -6,6 +6,7 @@
 MenuOptions::MenuOptions():
 			speed_(CONFIG->speed()),
 			visible_presumption_(CONFIG->visible_presumption()),
+			split_screen_(CONFIG->split_screen()),
 			fullscreen_(CONFIG->fullscreen()),
 			sound_(CONFIG->sound()){
 	AG_Box * item;
@@ -42,6 +43,16 @@ MenuOptions::MenuOptions():
 	AG_SpacerNewVert(item);
 	AG_CheckboxNewInt(item, 0, "  ", &visible_presumption_);
 
+	// rozedelni obrazovek
+	item = createItemHoriz("Split screen");
+	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
+		"%p", &split_screen_);
+
+	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
+	AG_BoxSetPadding(item, 0);
+	AG_SpacerNewVert(item);
+	AG_CheckboxNewInt(item, 0, "  ", &split_screen_);
+
 	// fullscreen
 	item = createItemHoriz("Play in fullscreen");
 	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
@@ -75,6 +86,7 @@ MenuOptions::MenuOptions():
 MenuOptions::~MenuOptions() {
 	CONFIG->speed_ = static_cast<Uint16>(speed_);
 	CONFIG->visible_presumption_ = visible_presumption_!=0;
+	CONFIG->split_screen_ = split_screen_!=0;
 	CONFIG->fullscreen_ = fullscreen_!=0;
 	CONFIG->sound_ = sound_!=0;
 	CONFIG->save_configuration_();
