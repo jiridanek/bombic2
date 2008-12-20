@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language name="lang_en">
+	<menu>
+		<main>
+			Bombic 2
+			<new_game>New game</new_game>
+		</main>
+		<new_game>
+			New game
+		</new_game>
+		<options>
+			Options
+			<language>Language</language>
+			<controls>Controls</controls>
+			<speed>Game speed</speed>
+			<presumptions>explosion presumptions</presumptions>
+			<split_screen>Split screen</split_screen>
+			<fullscreen>Play in fullscreen</fullscreen>
+			<sound>Sound enabled</sound>
+			<save>Save</save>
+		</options>
+	</menu>
+	<game>
+		<dead_body>
+			&#160;Poor fellow hermit. The Cloud probably killed him.&#10;
+			Now I know why the message for him was:&#10;
+			&quot;Don't do it. It is too dangerous.&quot;
+		</dead_body>
+	</game>
+</language>

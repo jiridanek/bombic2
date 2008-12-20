@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <levels>
 	<episode>
-		<level map="map_concrete_machine" img="img/intro_forest_debug.jpg" />
+		<_level map="map_concrete_machine" img="img/intro_forest_debug.jpg" />
 		<level map="map_concrete_1" img="img/intro_forest_debug.jpg" />
 		<level map="map_concrete_2" img="img/intro_forest_debug.jpg" />
 		<level map="map_concrete_test" img="img/intro_forest_debug.jpg" />

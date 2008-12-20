@@ -2,6 +2,7 @@
 #include "menu_options.h"
 #include "menu_options_controls.h"
 #include "config.h"
+#include "language.h"
 
 MenuOptions::MenuOptions():
 			speed_(CONFIG->speed()),
@@ -10,22 +11,30 @@ MenuOptions::MenuOptions():
 			fullscreen_(CONFIG->fullscreen()),
 			sound_(CONFIG->sound()){
 	AG_Box * item;
+	AG_UCombo *combo;
+// 	AG_TlistItem * combo_item;
 	AG_Checkbox * checkbox;
 
 	// nadpis
-	createHeading("Options");
+	createHeading(LANG_MENU(LANG_OPTIONS, LANG_HEADING));
 
 	// jazyk
-	item = createItem("Language");
-// TODO u combo
+	item = createItem(LANG_MENU(LANG_OPTIONS, LANG_LANGUAGE));
+	combo = AG_UComboNew(item, AG_UCOMBO_HFILL);
+	AG_SetEvent(combo, "ucombo-selected", handlerLanguage, 0);
+	for(Uint16 i=0 ; i<CONFIG->languages_.size() ; ++i){
+		AG_TlistAddPtr(combo->list, 0,
+			CONFIG->languages_[i].show.c_str(), &CONFIG->languages_[i]);
+
+	}
 
 	// klavesy
-	item = createItem("Controls");
+	item = createItem(LANG_MENU(LANG_OPTIONS, LANG_CONTROLS));
 	AG_SetEvent(item, "window-mousebuttondown",
 			MenuOptionsControls::create, 0);
 
 	// rychlost hry
-	item = createItemHoriz("Game speed");
+	item = createItemHoriz(LANG_MENU(LANG_OPTIONS, LANG_SPEED));
 	AG_AddEvent(items_.back(), "window-keyup", handlerIntItem,
 		"%p,%i,%i", &speed_,
 		CONFIG_SPEED_MIN, CONFIG_SPEED_MAX);
@@ -34,7 +43,7 @@ MenuOptions::MenuOptions():
 		CONFIG_SPEED_MIN, CONFIG_SPEED_MAX);
 
 	// viditelna presumpce
-	item = createItemHoriz("Explosion presumptions");
+	item = createItemHoriz(LANG_MENU(LANG_OPTIONS, LANG_PRESUMPTIONS));
 	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
 		"%p", &visible_presumption_);
 
@@ -44,7 +53,7 @@ MenuOptions::MenuOptions():
 	AG_CheckboxNewInt(item, 0, "  ", &visible_presumption_);
 
 	// rozedelni obrazovek
-	item = createItemHoriz("Split screen");
+	item = createItemHoriz(LANG_MENU(LANG_OPTIONS, LANG_SPLIT_SCREEN));
 	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
 		"%p", &split_screen_);
 
@@ -54,7 +63,7 @@ MenuOptions::MenuOptions():
 	AG_CheckboxNewInt(item, 0, "  ", &split_screen_);
 
 	// fullscreen
-	item = createItemHoriz("Play in fullscreen");
+	item = createItemHoriz(LANG_MENU(LANG_OPTIONS, LANG_FULLSCREEN));
 	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
 		"%p", &fullscreen_);
 	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerToggleFullscreen, 0);
@@ -66,7 +75,7 @@ MenuOptions::MenuOptions():
 	AG_AddEvent(checkbox, "window-mousebuttondown", handlerToggleFullscreen, 0);
 
 	// zvuk
-	item = createItemHoriz("Sound enabled");
+	item = createItemHoriz(LANG_MENU(LANG_OPTIONS, LANG_SOUND));
 	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
 		"%p", &sound_);
 
@@ -77,7 +86,7 @@ MenuOptions::MenuOptions():
 
 
 	// back
-	item = createItem("Save");
+	item = createItem(LANG_MENU(LANG_OPTIONS, LANG_SAVE));
 	AG_SetEvent(item, "window-mousebuttondown", handlerBack, 0);
 
 	AG_SpacerNewHoriz(win);
@@ -92,8 +101,14 @@ MenuOptions::~MenuOptions() {
 	CONFIG->save_configuration_();
 }
 
-extern SDL_Surface * g_window;
+#include <iostream>
+void MenuOptions::handlerLanguage(AG_Event * event){
+	AG_TlistItem *li = static_cast<AG_TlistItem *>(AG_PTR(1));
+	Config::language_t * lang = static_cast<Config::language_t *>(li->p1);
+	std::cout << lang->name << std::endl;
+}
 
+extern SDL_Surface * g_window;
 void MenuOptions::handlerToggleFullscreen(AG_Event * ev){
 	SDL_WM_ToggleFullScreen(g_window);
 }

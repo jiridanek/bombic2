@@ -20,7 +20,6 @@ Config* Config::get_instance(){
 }
 
 /**
- * @param filename název souboru s konfigurací
  */
 Config::Config() {
 	if(myself_ptr_)
@@ -78,8 +77,14 @@ void Config::load_properties_(TiXmlElement * rootEl){
 	readAttr(rootEl, "sound", sound_);
 	rootEl = subElement(rootEl, "languages");
 	readAttr(rootEl, "default", language_);
-	// TODO check lang
-
+	LANG->set_language_(language_);
+	language_t lang;
+	for(rootEl = subElement(rootEl, "language"); rootEl!=0 ;
+			rootEl = rootEl->NextSiblingElement("language") ){
+		readAttr(rootEl, "name", lang.name);
+		readAttr(rootEl, "show", lang.show);
+		languages_.push_back(lang);
+	}
 }
 
 /**

@@ -12,6 +12,7 @@
 #include <string>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
+#include "language.h"
 
 /// Akce, které se dají vyvolat klávesami hráče.
 enum KEY_ACTIONS { KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_PLANT, KEY_TIMER };
@@ -64,7 +65,7 @@ class Config {
 		Config();
 		/// Destruktor.
 		~Config();
-		/// Kód zvoleného jazyka.
+		/// Zvolený jazyk.
 		const std::string & language() const { return language_; }
 		/// Viditelná předpověď výbuchu.
 		bool visible_presumption() const { return visible_presumption_; }
@@ -91,7 +92,11 @@ class Config {
 		/// True pokud se zmenily klávesy hráčů.
 		bool players_changed_;
 
+		typedef struct { std::string name, show; } language_t;
+		std::vector<language_t> languages_;
 		std::string language_;
+		Language language_class_;
+
 		Uint16 speed_;
 		bool visible_presumption_, split_screen_, fullscreen_, sound_;
 
