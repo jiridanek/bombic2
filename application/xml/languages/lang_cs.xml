@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language name="lang_cs">
+	<menu>
+		<main>
+			Bombič 2
+			<new_game>Nová hra</new_game>
+		</main>
+		<new_game>
+			Založit novou hru
+		</new_game>
+		<options>
+			Nastavení
+			<language>Jazyk</language>
+			<controls>Nastavení kláves</controls>
+			<speed>Rychlost hry</speed>
+			<presumptions>Odhad exploze</presumptions>
+			<split_screen>Rozdělit obrazovku</split_screen>
+			<fullscreen>Celoobrazovkový mód</fullscreen>
+			<sound>Povolit zvuk</sound>
+			<save>Uložit</save>
+			<cant_set_lang>Bohužel, nemohu nastavit tento jazyk.</cant_set_lang>
+		</options>
+	</menu>
+	<game>
+		<dead_body>
+		</dead_body>
+	</game>
+</language>

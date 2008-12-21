@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config visible_presumption="1" split_screen="0" speed="7" fullscreen="0" sound="1">
     <languages default="lang_en">
-        <language name="lang_en" show="English" />
         <language name="lang_cs" show="Česky" />
+        <language name="lang_en" show="English" />
     </languages>
     <!-- pro jmena klaves viz doc/keys.txt -->
     <player0>

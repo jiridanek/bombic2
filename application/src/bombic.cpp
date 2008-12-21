@@ -5,6 +5,7 @@
 #include <cstdlib>  // For srand() and rand()
 #include "agar_helper.h"
 #include "tixml_helper.h"
+#include "constants.h"
 #include "SDL_lib.h"
 #include "config.h"
 #include "menu_base.h"
@@ -27,12 +28,17 @@ int main(int argc, char *argv[]) {
 		window_init(&g_window, 800, 600, "Bombic2");
 		window = g_window;
 
-		agar_init(g_window, 15, argc>1 ? argv[1] : 0);
+		string font_path, font_name(FONT_NAME);
+		if(!locate_file("", font_name, font_name))
+			throw font_name+ ": No such file or directory";
+		string::size_type pos = font_name.rfind('/');
+		font_path= font_name.substr(0, pos);
+		font_name = font_name.substr(pos+1);
+		agar_init(g_window, font_path.c_str(), font_name.c_str(),
+			FONT_SIZE, argc>1 ? argv[1] : 0);
 
-		string fontfile = "fonts/verdana.ttf";
-		if(!locate_file("", fontfile, fontfile))
-			throw fontfile+ ": No such file or directory";
-		Fonts font(fontfile.c_str());
+		font_path+=font_name;
+		Fonts font(font_path.c_str());
 		g_font = &font;
 
 		Config config;

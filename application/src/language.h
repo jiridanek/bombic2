@@ -35,6 +35,7 @@
 #define LANG_FULLSCREEN "fullscreen"
 #define LANG_SOUND "sound"
 #define LANG_SAVE "save"
+#define LANG_ERR_SET_LANG "cant_set_lang"
 
 /** Jazyk hry.
  * Instance třídy Language obstarává jazyk menu a hry.

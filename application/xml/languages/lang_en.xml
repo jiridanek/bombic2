@@ -13,11 +13,12 @@
 			<language>Language</language>
 			<controls>Controls</controls>
 			<speed>Game speed</speed>
-			<presumptions>explosion presumptions</presumptions>
+			<presumptions>Explosion presumptions</presumptions>
 			<split_screen>Split screen</split_screen>
 			<fullscreen>Play in fullscreen</fullscreen>
 			<sound>Sound enabled</sound>
 			<save>Save</save>
+			<cant_set_lang>Sorry, I can&apos;t set this language.</cant_set_lang>
 		</options>
 	</menu>
 	<game>

@@ -10,7 +10,9 @@
 #include <agar/gui.h>
 #include "SDL.h"
 
-void agar_init(SDL_Surface * window, Uint16 fontsize, const char * colors=0);
+void agar_init(SDL_Surface * window,
+		const char * font_path, const char * font_face,
+		int font_size, const char * colors=0);
 
 AG_Label * createLabelJustify(AG_Widget * parent, const char * text);
 

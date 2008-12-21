@@ -5,13 +5,17 @@
 
 using namespace std;
 
-void agar_init(SDL_Surface * window, Uint16 fontsize, const char * colors){
+void agar_init(SDL_Surface * window,
+		const char * font_path, const char * font_face,
+		int font_size, const char * colors){
 	/* Initialize Agar-core. */
-	if(AG_InitCore("agar-bombic2", 0) == -1) {
+	if(AG_InitCore("bombic", 0) == -1) {
 		cerr << AG_GetError() << endl;
 		throw 1;
 	}
-	AG_SetInt(agConfig, "font.size", fontsize);
+	AG_SetString(agConfig, "font.path", font_path);
+	AG_SetString(agConfig, "font.face", font_face);
+	AG_SetInt(agConfig, "font.size", font_size);
 
 	/* Initialize Agar-GUI. */
 	if(AG_InitVideoSDL(window, 0) == -1) {

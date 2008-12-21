@@ -12,7 +12,7 @@ MenuOptions::MenuOptions():
 			sound_(CONFIG->sound()){
 	AG_Box * item;
 	AG_UCombo *combo;
-// 	AG_TlistItem * combo_item;
+	AG_TlistItem * combo_item;
 	AG_Checkbox * checkbox;
 
 	// nadpis
@@ -21,11 +21,13 @@ MenuOptions::MenuOptions():
 	// jazyk
 	item = createItem(LANG_MENU(LANG_OPTIONS, LANG_LANGUAGE));
 	combo = AG_UComboNew(item, AG_UCOMBO_HFILL);
-	AG_SetEvent(combo, "ucombo-selected", handlerLanguage, 0);
+	AG_SetEvent(combo, "ucombo-selected", handlerLanguage,
+			"%p", combo->button);
 	for(Uint16 i=0 ; i<CONFIG->languages_.size() ; ++i){
-		AG_TlistAddPtr(combo->list, 0,
+		combo_item = AG_TlistAddPtr(combo->list, 0,
 			CONFIG->languages_[i].show.c_str(), &CONFIG->languages_[i]);
-
+		if(CONFIG->language_==CONFIG->languages_[i].name)
+			AG_ButtonText(combo->button, "%s", combo_item->text);
 	}
 
 	// klavesy
@@ -101,11 +103,27 @@ MenuOptions::~MenuOptions() {
 	CONFIG->save_configuration_();
 }
 
-#include <iostream>
 void MenuOptions::handlerLanguage(AG_Event * event){
-	AG_TlistItem *li = static_cast<AG_TlistItem *>(AG_PTR(1));
+	AG_Button *button = static_cast<AG_Button *>(AG_PTR(1));
+	AG_TlistItem *li = static_cast<AG_TlistItem *>(AG_PTR(2));
 	Config::language_t * lang = static_cast<Config::language_t *>(li->p1);
-	std::cout << lang->name << std::endl;
+	try{
+		LANG->set_language_(lang->name);
+		CONFIG->language_ = lang->name;
+		handlerBack();
+		create();
+	}
+	catch(const TiXmlException & ex){
+		for(Uint16 i=0 ; i<CONFIG->languages_.size() ; ++i){
+			if(CONFIG->language_==CONFIG->languages_[i].name){
+				AG_ButtonText(button, "%s",
+					CONFIG->languages_[i].show.c_str());
+				break;
+			}
+		}
+		AG_TextError("%s\n%s", LANG_MENU(LANG_OPTIONS, LANG_ERR_SET_LANG),
+			ex.what());
+	}
 }
 
 extern SDL_Surface * g_window;
