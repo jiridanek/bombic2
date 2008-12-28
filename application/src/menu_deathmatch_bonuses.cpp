@@ -4,6 +4,7 @@
 #include "tixml_helper.h"
 #include "game_base.h"
 #include "constants.h"
+#include "language.h"
 
 DeathmatchIntro::bonuses_t MenuDeathmatchBonuses::bonuses;
 

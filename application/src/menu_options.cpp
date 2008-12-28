@@ -14,7 +14,6 @@ MenuOptions::MenuOptions():
 	AG_UCombo *combo;
 	AG_TlistItem * combo_item;
 	AG_Checkbox * checkbox;
-
 	// nadpis
 	createHeading(LANG_MENU(LANG_OPTIONS, LANG_HEADING));
 
@@ -45,47 +44,21 @@ MenuOptions::MenuOptions():
 		CONFIG_SPEED_MIN, CONFIG_SPEED_MAX);
 
 	// viditelna presumpce
-	item = createItemHoriz(LANG_MENU(LANG_OPTIONS, LANG_PRESUMPTIONS));
-	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
-		"%p", &visible_presumption_);
-
-	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
-	AG_BoxSetPadding(item, 0);
-	AG_SpacerNewVert(item);
-	AG_CheckboxNewInt(item, 0, "  ", &visible_presumption_);
-
+	createCheckboxItem(LANG_MENU(LANG_OPTIONS, LANG_PRESUMPTIONS),
+		&visible_presumption_);
 	// rozedelni obrazovek
-	item = createItemHoriz(LANG_MENU(LANG_OPTIONS, LANG_SPLIT_SCREEN));
-	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
-		"%p", &split_screen_);
-
-	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
-	AG_BoxSetPadding(item, 0);
-	AG_SpacerNewVert(item);
-	AG_CheckboxNewInt(item, 0, "  ", &split_screen_);
+	createCheckboxItem(LANG_MENU(LANG_OPTIONS, LANG_SPLIT_SCREEN),
+		&split_screen_);
 
 	// fullscreen
-	item = createItemHoriz(LANG_MENU(LANG_OPTIONS, LANG_FULLSCREEN));
-	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
-		"%p", &fullscreen_);
+	checkbox = createCheckboxItem(LANG_MENU(LANG_OPTIONS, LANG_FULLSCREEN),
+		&fullscreen_);
 	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerToggleFullscreen, 0);
-
-	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
-	AG_BoxSetPadding(item, 0);
-	AG_SpacerNewVert(item);
-	checkbox = AG_CheckboxNewInt(item, 0, "  ", &fullscreen_);
 	AG_AddEvent(checkbox, "window-mousebuttondown", handlerToggleFullscreen, 0);
 
 	// zvuk
-	item = createItemHoriz(LANG_MENU(LANG_OPTIONS, LANG_SOUND));
-	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
-		"%p", &sound_);
-
-	item = AG_BoxNewHoriz(item, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
-	AG_BoxSetPadding(item, 0);
-	AG_SpacerNewVert(item);
-	AG_CheckboxNewInt(item, 0, "  ", &sound_);
-
+	createCheckboxItem(LANG_MENU(LANG_OPTIONS, LANG_SOUND),
+		&sound_);
 
 	// back
 	item = createItem(LANG_MENU(LANG_OPTIONS, LANG_SAVE));

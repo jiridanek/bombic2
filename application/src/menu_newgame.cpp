@@ -1,6 +1,7 @@
 
 #include "menu_newgame.h"
 #include "game_intro.h"
+#include "language.h"
 
 int MenuNewGame::players_count = MENU_NEWGAME_PLAYERS_MIN;
 int MenuNewGame::episode= MENU_NEWGAME_EPISODE_MIN;
@@ -9,14 +10,14 @@ MenuNewGame::MenuNewGame(){
 	AG_Box * item;
 
 	// nadpis
-	createHeading("New Game");
+	createHeading(LANG_MENU(LANG_NEW_GAME, LANG_HEADING));
 
 	// hrat hru
-	item = createItem("Play");
+	item = createItem(LANG_MENU(LANG_NEW_GAME, LANG_PLAY));
 	AG_SetEvent(item, "window-mousebuttondown", handlerNewGame, "%p", this);
 
 	// pocet hracu
-	item = createItemHoriz("Players count");
+	item = createItemHoriz(LANG_MENU(LANG_NEW_GAME, LANG_PLAYERS_COUNT));
 	AG_AddEvent(items_.back(), "window-keyup", handlerIntItem,
 		"%p,%i,%i", &players_count,
 		MENU_NEWGAME_PLAYERS_MIN, MENU_NEWGAME_PLAYERS_MAX);
@@ -25,7 +26,7 @@ MenuNewGame::MenuNewGame(){
 		MENU_NEWGAME_PLAYERS_MIN, MENU_NEWGAME_PLAYERS_MAX);
 
 	// epizoda
-	item = createItemHoriz("Episode");
+	item = createItemHoriz(LANG_MENU(LANG_NEW_GAME, LANG_EPISODE));
 	AG_AddEvent(items_.back(), "window-keyup", handlerIntItem,
 		"%p,%i,%i", &episode,
 		MENU_NEWGAME_EPISODE_MIN, MENU_NEWGAME_EPISODE_MAX);
@@ -35,7 +36,7 @@ MenuNewGame::MenuNewGame(){
 
 
 	// back
-	item = createItem("Back");
+	item = createItem(LANG_MENU(LANG_NEW_GAME, LANG_BACK));
 	AG_SetEvent(item, "window-mousebuttondown", handlerBack, 0);
 
 	AG_SpacerNewHoriz(win);

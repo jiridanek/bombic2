@@ -2,6 +2,7 @@
 #include "menu_load_save.h"
 #include "SDL_lib.h"
 #include "game_intro.h"
+#include "language.h"
 
 std::string MenuLoadSaveGame::path = "";
 std::string MenuLoadSaveGame::filename = "";
@@ -26,19 +27,17 @@ MenuLoadGame::MenuLoadGame(){
 		MENU_OFFSET, MENU_OFFSET, MENU_OFFSET);
 
 	// nadpis
-	createHeading("Load Game");
+	createHeading(LANG_MENU(LANG_LOAD_GAME, LANG_HEADING));
 
+	if(!path.empty())
+		get_home_path(path);
 	// filemanager
-	file_dlg = AG_FileDlgNew(win, AG_FILEDLG_LOAD);
-	AG_Expand(file_dlg);
-	if(!path.empty() || get_home_path(path))
-		AG_FileDlgSetDirectory(file_dlg, path.c_str());
+	file_dlg = createFileDlg(true, LANG_LOAD_GAME, path.c_str());
 	if(!filename.empty())
 		AG_FileDlgSetFilename(file_dlg, "%s", filename.c_str());
 
-	AG_FileDlgAddType(file_dlg, "Bombic saved game XML",
+	AG_FileDlgAddType(file_dlg, LANG_MENU(LANG_LOAD_GAME, LANG_FILE_TYPE),
 			TIXML_FILE_EXTENSION, handlerLoadGame, 0);
-	AG_FileDlgCancelAction(file_dlg, handlerBack, 0);
 
 	AG_SpacerNewHoriz(win);
 }
@@ -68,20 +67,18 @@ MenuSaveGame::MenuSaveGame(){
 		MENU_OFFSET, MENU_OFFSET, MENU_OFFSET);
 
 	// nadpis
-	createHeading("Save Game");
+	createHeading(LANG_MENU(LANG_SAVE_GAME, LANG_HEADING));
 
 	// filemanager
-	file_dlg = AG_FileDlgNew(win, AG_FILEDLG_SAVE);
-	AG_Expand(file_dlg);
-	if(!path.empty() || get_home_path(path))
-		AG_FileDlgSetDirectory(file_dlg, path.c_str());
+	if(!path.empty())
+		get_home_path(path);
+	file_dlg = createFileDlg(false, LANG_SAVE_GAME, path.c_str());
 	if(filename.empty())
 		filename = MENU_SAVE_GAME_DEFAULT_FILENAME;
 	AG_FileDlgSetFilename(file_dlg, "%s", filename.c_str());
 
-	AG_FileDlgAddType(file_dlg, "Bombic saved game XML",
+	AG_FileDlgAddType(file_dlg, LANG_MENU(LANG_SAVE_GAME, LANG_FILE_TYPE),
 			TIXML_FILE_EXTENSION, handlerSaveGame, 0);
-	AG_FileDlgCancelAction(file_dlg, handlerBack, 0);
 
 	AG_SpacerNewHoriz(win);
 }

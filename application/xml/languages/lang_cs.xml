@@ -3,7 +3,12 @@
 	<menu>
 		<main>
 			Bombič 2
+			<resume_game>Vrátit se do hry</resume_game>
 			<new_game>Nová hra</new_game>
+			<load_game>Nahrát hru</load_game>
+			<save_game>Uložit hru</save_game>
+			<deathmatch>Souboj</deathmatch>
+			<options>Nastavení</options>
 		</main>
 		<new_game>
 			Založit novou hru

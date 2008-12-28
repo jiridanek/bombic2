@@ -9,42 +9,14 @@
 	</players>
 
 	<walls 	name="wall_block_single">
-		<wall name="wall_oblong" x="3" y="0" height="2" />
-		<wall name="wall_rift" x="5" y="0" height="2" />
-		<wall name="wall_redlight" x="7" y="0" height="2" width="3" />
-		<wall name="wall_oblong" x="10" y="0" height="2" />
-
-		<wall name="wall_chest_1" x="2" y="9" />
-		<wall name="wall_chest_2" x="8" y="9" />
-		<wall name="wall_chest_3" x="10" y="9" />
-
-		<wall name="wall_machine" x="13" y="5" width="3" height="3" />
-		<wall name="wall_hole" x="2" y="3" width="2" height="2" />
-
-		<wall x="4" y="3" />
-
-		<wall name="wall_block_l" x="2" y="6" />
-		<wall name="wall_block_lr" x="3" y="6" />
-		<wall name="wall_block_t" x="4" y="5" />
-		<wall name="wall_block_c" x="4" y="6" />
-		<wall name="wall_block_tb" x="4" y="7" />
-		<wall name="wall_block_tb" x="4" y="8" />
-		<wall name="wall_block_b" x="4" y="9" />
-		<wall name="wall_block_lr" x="5" y="6" />
-		<wall name="wall_block_lr" x="6" y="6" />
-		<wall name="wall_block_r" x="7" y="6" />
 	</walls>
-	<boxes 	name="box_container" count="40">
+	<boxes 	name="box_container" count="3">
 	</boxes>
 
-	<floorobject name="floor_deadbody" x="5" y="5" width="2" />
-	<bonuses name="bonus_flame" count="10" />
-	<bonuses name="bonus_bomb" count="10" />
-	<bonuses name="bonus_slider" count="10" />
-	<bonuses name="bonus_megabomb" count="10" />
+	<bonuses name="bonus_timer" count="3" />
 
-	<creatures name="creature_trap" count="10" />
-	<creatures name="creature_slug" count="0" />
+	<creatures name="creature_trap" count="0" />
+	<creatures name="creature_slug" count="1" />
 	<creatures name="creature_cloud" count="0" />
 	<nocreatures>
 		<nocreature x="1" y="4" />

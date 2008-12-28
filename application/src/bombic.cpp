@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
 		agar_init(g_window, font_path.c_str(), font_name.c_str(),
 			FONT_SIZE, argc>1 ? argv[1] : 0);
 
-		font_path+=font_name;
+		font_path+="/"+font_name;
 		Fonts font(font_path.c_str());
 		g_font = &font;
 

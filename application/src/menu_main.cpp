@@ -1,6 +1,7 @@
 
 #include <string>
 #include "config.h"
+#include "language.h"
 #include "game_intro.h"
 #include "menu_main.h"
 #include "menu_newgame.h"
@@ -24,49 +25,52 @@ MenuMain::MenuMain(){
 	AG_Box * item;
 
 	// nadpis
-	createHeading("Nabídka dne");
+	createHeading(LANG_MENU(LANG_MAIN, LANG_HEADING));
 
 	// resume game
 	if(is_game){
-		item = createItem("Resume game");
+		item = createItem(LANG_MENU(LANG_MAIN, LANG_RESUME_GAME));
 		AG_SetEvent(item, "window-mousebuttondown",
 			handlerResumeGame, "%p", this);
 	}
 
 	// new game
-	item = createItem("New game");
+	item = createItem(LANG_MENU(LANG_MAIN, LANG_NEW_GAME));
 	AG_SetEvent(item, "window-mousebuttondown", MenuNewGame::create, 0);
 
 	// load game
-	item = createItem("Load game");
+	item = createItem(LANG_MENU(LANG_MAIN, LANG_LOAD_GAME));
 	AG_SetEvent(item, "window-mousebuttondown", MenuLoadGame::create, 0);
 
 	// save game
 	if(is_game){
-		item = createItem("Save game");
+		item = createItem(LANG_MENU(LANG_MAIN, LANG_SAVE_GAME));
 		AG_SetEvent(item, "window-mousebuttondown", MenuSaveGame::create, 0);
 	}
 
 	// deathmatch
-	item = createItem("Deathmatch");
+	item = createItem(LANG_MENU(LANG_MAIN, LANG_DEATHMATCH));
 	AG_SetEvent(item, "window-mousebuttondown", MenuDeathmatch::create, 0);
 
-	// creatures
+	/*/ creatures
 	item = createItem("Creatures");
 	AG_SetEvent(item, "window-mousebuttondown", MenuCreatures::create, 0);
-	// bonuses
+	// */
+	/*/ bonuses
 	item = createItem("Bonuses");
 	AG_SetEvent(item, "window-mousebuttondown", MenuBonuses::create, 0);
-	// credits
+	// */
+	/*/ credits
 	item = createItem("Credits");
 	AG_SetEvent(item, "window-mousebuttondown", MenuCredits::create, 0);
+	// */
 
 	// options
-	item = createItem("Options");
+	item = createItem(LANG_MENU(LANG_MAIN, LANG_OPTIONS));
 	AG_SetEvent(item, "window-mousebuttondown", MenuOptions::create, 0);
 
 	// quit
-	item = createItem("Quit");
+	item = createItem(LANG_MENU(LANG_MAIN, LANG_QUIT));
 	AG_SetEvent(item, "window-mousebuttondown", handlerBack, 0);
 
 	AG_SpacerNewHoriz(win);

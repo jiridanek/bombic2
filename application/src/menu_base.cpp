@@ -1,6 +1,7 @@
 
 #include "menu_base.h"
 #include "agar_helper.h"
+#include "language.h"
 
 MenuStack MenuBase::menu_stack;
 MenuBase::items_t * MenuBase::p_items = 0;
@@ -65,6 +66,47 @@ AG_Box * MenuBase::createItemHoriz(const char * text){
 	AG_BoxSetPadding(box, 0);
 	AG_LabelNewString(box, 0, text);
 	return box;
+}
+
+AG_Checkbox * MenuBase::createCheckboxItem(const char * text, int * value){
+	AG_Box * box;
+	box = createItemHoriz(text);
+	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerBoolItem,
+		"%p", value);
+
+	box = AG_BoxNewHoriz(box, AG_BOX_HOMOGENOUS | AG_BOX_HFILL);
+	AG_BoxSetPadding(box, 0);
+	AG_SpacerNewVert(box);
+	return AG_CheckboxNewInt(box, 0, "  ", value);
+}
+
+AG_FileDlg * MenuBase::createFileDlg(bool load,
+			const char * menu_name, const char * path){
+	AG_FileDlg * file_dlg =
+		AG_FileDlgNew(win, load ? AG_FILEDLG_LOAD : AG_FILEDLG_SAVE);
+	// popisky
+	AG_ObjectDelete(file_dlg->lbCwd);
+	file_dlg->lbCwd = AG_LabelNewPolled(file_dlg, AG_LABEL_HFILL, "%s: %s",
+		LANG_MENU(menu_name, LANG_DIRECTORY), &file_dlg->cwd[0]);
+	AG_TextboxSetLabel(file_dlg->tbFile, "%s: ",
+		LANG_MENU(menu_name, LANG_FILE));
+	AG_TextboxSetLabel(file_dlg->comTypes->tbox, "%s: ",
+		LANG_MENU(menu_name, LANG_TYPE));
+	AG_ButtonText(file_dlg->btnOk, "%s",
+		LANG_MENU(menu_name, LANG_OK) );
+	AG_ButtonText(file_dlg->btnCancel, "%s",
+		LANG_MENU(menu_name, LANG_CANCEL) );
+	AG_Expand(file_dlg);
+	// akce
+	AG_FileDlgCancelAction(file_dlg, handlerBack, 0);
+	AG_AddEvent(file_dlg->tlDirs, "window-keyup", handlerItems, 0);
+	AG_AddEvent(file_dlg->tlFiles, "window-keyup", handlerItems, 0);
+	AG_AddEvent(file_dlg->btnOk, "window-keyup", handlerItems, 0);
+	AG_AddEvent(file_dlg->btnCancel, "window-keyup", handlerItems, 0);
+	// inicialni cesta
+	if(path && *path)
+		AG_FileDlgSetDirectory(file_dlg, path);
+	return file_dlg;
 }
 
 void MenuBase::handlerBack(AG_Event * ev){

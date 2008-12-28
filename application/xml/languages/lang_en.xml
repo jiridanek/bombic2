@@ -3,11 +3,50 @@
 	<menu>
 		<main>
 			Bombic 2
+			<resume_game>Resume game</resume_game>
 			<new_game>New game</new_game>
+			<load_game>Load game</load_game>
+			<save_game>Save game</save_game>
+			<deathmatch>Deathmatch</deathmatch>
+			<options>Options</options>
+			<quit>Quit</quit>
 		</main>
 		<new_game>
 			New game
+			<play>Play</play>
+			<players_count>Players count</players_count>
+			<episode>Episode</episode>
+			<back>Back</back>
 		</new_game>
+		<load_game>
+			Load game
+			<filetype>Bombic saved game XML</filetype>
+			<directory>Directory</directory>
+			<file>File</file>
+			<type>Type</type>
+			<ok>Load</ok>
+			<cancel>Cancel</cancel>
+		</load_game>
+		<save_game>
+			Save game
+			<filetype>Bombic saved game XML</filetype>
+			<directory>Directory</directory>
+			<file>File</file>
+			<type>Type</type>
+			<ok>Save</ok>
+			<cancel>Cancel</cancel>
+		</save_game>
+		<deathmatch>
+			Deathmatch
+			<play>Play</play>
+			<map>Choose map</map>
+			<bonuses>Bonuses</bonuses>
+			<players_count>Players count</players_count>
+			<win_points>Win points</win_points>
+			<creatures>Creatures</creatures>
+			<bombs_at_end>Bombs at end</bombs_at_end>
+			<back>Back</back>
+		</deathmatch>
 		<options>
 			Options
 			<language>Language</language>

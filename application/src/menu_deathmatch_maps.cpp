@@ -1,6 +1,7 @@
 
 #include "menu_deathmatch_maps.h"
 #include "tixml_helper.h"
+#include "language.h"
 
 char MenuDeathmatchMaps::map_name[MENU_DEATHMATCH_MAPS_BUFFSIZE] = "";
 std::string MenuDeathmatchMaps::map_path = "";
