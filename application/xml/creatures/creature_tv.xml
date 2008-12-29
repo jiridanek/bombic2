@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<creature name="creature_tv" src="img/creature_tv.bmp" shadow_src="img/creature_tv_s.bmp"
+		height="80" width="55" speed="5" lives="1" intelligence="1" >
+	<up x="3" y="163" shadow_x="3" shadow_y="163">
+		<animation rate="10" >
+			<animation_item x="64" y="163" shadow_x="64" shadow_y="163" />
+			<animation_item x="125" y="163" shadow_x="125" shadow_y="163" />
+			<animation_item x="186" y="163" shadow_x="186" shadow_y="163" />
+		</animation>
+	</up>
+	<left x="3" y="0" shadow_x="3" shadow_y="0">
+		<animation rate="10" >
+			<animation_item x="64" y="0" shadow_x="64" shadow_y="0" />
+			<animation_item x="125" y="0" shadow_x="125" shadow_y="0" />
+			<animation_item x="186" y="0" shadow_x="186" shadow_y="0" />
+		</animation>
+	</left>
+	<down x="3" y="242" shadow_x="3" shadow_y="242">
+		<animation rate="10" >
+			<animation_item x="64" y="242" shadow_x="64" shadow_y="242" />
+			<animation_item x="125" y="242" shadow_x="125" shadow_y="242" />
+			<animation_item x="186" y="242" shadow_x="186" shadow_y="242" />
+		</animation>
+	</down>
+	<right x="3" y="81" shadow_x="3" shadow_y="81">
+		<animation rate="10" >
+			<animation_item x="64" y="81" shadow_x="64" shadow_y="81" />
+			<animation_item x="125" y="81" shadow_x="125" shadow_y="81" />
+			<animation_item x="186" y="81" shadow_x="186" shadow_y="81" />
+		</animation>
+	</right>
+	<burned x="3" y="320">
+		<animation rate="10" >
+			<animation_item x="64" y="320" />
+			<animation_item x="125" y="320" />
+			<animation_item x="186" y="320" />
+		</animation>
+	</burned>
+</creature>

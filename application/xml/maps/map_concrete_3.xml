@@ -126,12 +126,6 @@
 		<box x="2" y="4" />
 		<box x="3" y="4" />
 
-		<box x="18" y="11" />
-		<box x="16" y="13" />
-		<box x="1" y="11" />
-		<box x="3" y="13" />
-		<box x="16" y="2" />
-		<box x="18" y="4" />
 	</boxes>
 
 	<bonuses name="bonus_flame" count="10" />
@@ -140,19 +134,17 @@
 	<bonuses name="bonus_megabomb" count="10" />
 
 	<creatures name="creature_cloud" count="4" />
-	<creatures name="creature_rat" count="8" />
-	<creatures name="creature_trap" count="12" >
-		<creature x="1" y="7" />
-		<creature x="4" y="7" />
-		<creature x="7" y="7" />
-		<creature x="10" y="7" />
-		<creature x="13" y="7" />
-		<creature x="16" y="7" />
-		<creature x="1" y="9" />
-		<creature x="4" y="9" />
-		<creature x="7" y="9" />
+	<creatures name="creature_trap" count="77" />
+	<creatures name="creature_rat_red" count="13" >
+		<creature x="16" y="5" />
+		<creature x="5" y="9" />
+		<creature x="5" y="9" />
+		<creature x="5" y="9" />
+		<creature x="5" y="9" />
 		<creature x="10" y="9" />
-		<creature x="13" y="9" />
-		<creature x="16" y="9" />
+		<creature x="10" y="9" />
+		<creature x="10" y="9" />
+		<creature x="10" y="9" />
+		<creature x="18" y="9" />
 	</creatures>
 </map>
