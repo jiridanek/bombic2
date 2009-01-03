@@ -23,7 +23,7 @@ MenuDeathmatch::MenuDeathmatch(){
 		handlerNewMatch, "%p", this );
 
 	// map
-	item = createItem(LANG_MENU(LANG_DEATHMATCH, LANG_MAP));
+	item = createItem(LANG_MENU(LANG_DEATHMATCH, LANG_MAPS));
 	AG_SetEvent(item, "window-mousebuttondown",
 			MenuDeathmatchMaps::create, 0);
 	label = AG_LabelNewPolled(item, AG_LABEL_HFILL, "%s",

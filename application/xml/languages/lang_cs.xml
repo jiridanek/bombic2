@@ -9,14 +9,84 @@
 			<save_game>Uložit hru</save_game>
 			<deathmatch>Souboj</deathmatch>
 			<options>Nastavení</options>
+			<quit>Konec</quit>
 		</main>
 		<new_game>
-			Založit novou hru
+			Nová hra
+			<play>Hrát</play>
+			<players_count>Počet hráčů</players_count>
+			<episode>Epizoda</episode>
+			<back>Zpět</back>
 		</new_game>
+		<load_game>
+			Nahrát hru
+			<filetype>Uložená hra bombiče v XML</filetype>
+			<directory>Adresář</directory>
+			<file>Soubor</file>
+			<type>Typ</type>
+			<ok>Nahrát</ok>
+			<cancel>Zrušit</cancel>
+		</load_game>
+		<save_game>
+			Uložit hru
+			<filetype>Uložená hra bombiče v XML</filetype>
+			<directory>Adresář</directory>
+			<file>Soubor</file>
+			<type>Typ</type>
+			<ok>Uložit</ok>
+			<cancel>Zrušit</cancel>
+		</save_game>
+		<deathmatch>
+			Souboj - všichni proti všem.
+			<play>Hrát</play>
+			<maps>
+				Výběr mapy
+				<submenu>
+					Výber mapy pro souboj
+					<filetype>Bombič mapa v XML</filetype>
+					<directory>Adresář</directory>
+					<file>Soubor</file>
+					<type>Typ</type>
+					<ok>Vybrat</ok>
+					<cancel>Zrušit</cancel>
+					<map_error>Soubor nereprezentuje mapu bombiče.</map_error>
+					<file_name_error>Jméno souboru je příliš dlouhé, přejmenujte ho prosím.</file_name_error>
+				</submenu>
+			</maps>
+			<bonuses>
+				Bonusy
+				<submenu>
+					Bonusy pro souboj
+					<ok>Budiž</ok>
+				</submenu>
+			</bonuses>
+			<players_count>Počet hráčů</players_count>
+			<win_points>Počet vítězství</win_points>
+			<creatures>S příšerami</creatures>
+			<bombs_at_end>Časově omezený souboj</bombs_at_end>
+			<back>Zpět</back>
+		</deathmatch>
 		<options>
 			Nastavení
 			<language>Jazyk</language>
-			<controls>Nastavení kláves</controls>
+			<controls>
+				Nastavení kláves
+				<submenu>
+					Klávesy
+					<player>Hráč</player>
+					<left>Doleva</left>
+					<right>Doprava</right>
+					<up>Nahoru</up>
+					<down>Dolů</down>
+					<plant>Položit bombu</plant>
+					<timer>Ruční odpalování</timer>
+					<ok>Budiž</ok>
+					<press_key>
+						Stiskněte klávesu, kterou chcete použít,&#10;
+						nebo ESC pro zrušení.
+					</press_key>
+				</submenu>
+			</controls>
 			<speed>Rychlost hry</speed>
 			<presumptions>Odhad exploze</presumptions>
 			<split_screen>Rozdělit obrazovku</split_screen>

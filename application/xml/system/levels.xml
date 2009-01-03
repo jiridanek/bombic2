@@ -1,33 +1,46 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <levels>
-	<episode>
-		<level map="map_concrete_holes" img="img/intro_forest_debug.jpg" />
-		<level map="map_dream_tv" img="img/intro_forest_debug.jpg" />
-		<_level map="map_concrete_test" img="img/intro_forest_debug.jpg" />
-		<_level map="map_concrete_machine" img="img/intro_forest_debug.jpg" />
-		<level map="map_concrete_3" img="img/intro_forest_debug.jpg" />
-		<level map="map_concrete_chests" img="img/intro_forest_debug.jpg" />
+	<episode death_text="death">
 
-		<level map="map_forest_debug" img="img/intro_forest_debug.jpg" />
-		<level map="map_forest_1" img="img/intro_toilet.jpg" />
-		<level map="map_forest_2" img="img/intro_forest_1.jpg" />
-		<level map="map_forest_3" img="img/intro_forest_2.jpg" />
-		<level map="map_forest_winnersculpture" img="img/intro_forest_3.jpg" />
-		<level map="map_forest_cabin" img="img/intro_forest_4.jpg" />
-		<level map="map_dream_ghost" img="img/intro_forest_5.jpg" />
-		<level map="map_forest_tworocks" img="img/intro_dream.jpg" />
-		<level map="map_forest_deadbody" img="img/intro_forest_6.jpg" />
-		<level map="map_forest_chest" img="img/intro_forest_chest.jpg" />
+		<level map="map_forest_debug" text="debug"
+			img="intro_forest_debug.jpg" after="intro_forest_debug.jpg" />
+		<level map="map_forest_1" text="newspaper"
+			img="img/intro_toilet.jpg" />
+		<level map="map_forest_2" text="first_in_forest"
+			img="img/intro_forest_1.jpg" />
+		<level map="map_forest_3" text="deep_in_forest"
+			img="img/intro_forest_2.jpg" />
+		<level map="map_forest_winnersculpture" text="stupid_creatures"
+			img="img/intro_forest_3.jpg" />
+		<level map="map_forest_cabin" text="winnersculpture"
+			img="img/intro_forest_4.jpg" after="intro_forest_debug.jpg" />
+		<level map="map_dream_ghost" text="zzz"
+			img="img/intro_forest_5.jpg" />
+		<level map="map_forest_tworocks" text="ghost_in_dream"
+			img="img/intro_dream.jpg" />
+		<level map="map_forest_deadbody" text="lost_in_forest"
+			img="img/intro_forest_6.jpg" after="intro_forest_debug.jpg" />
+		<level map="map_forest_chest" text="chest"
+			img="img/intro_forest_chest.jpg" after="intro_forest_debug.jpg" />
 
-		<level map="map_concrete_1" img="img/intro_forest_debug.jpg" />
-		<level map="map_concrete_2" img="img/intro_forest_debug.jpg" />
-		<level map="map_concrete_machine" img="img/intro_forest_debug.jpg" />
-		<level map="map_concrete_3" img="img/intro_forest_debug.jpg" />
-		<level map="map_concrete_chests" img="img/intro_forest_debug.jpg" />
-		<level map="map_dream_tv" img="img/intro_forest_debug.jpg" />
-		<level map="map_concrete_holes" img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_1" text="where_is_treasure"
+			img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_2" text="complex_of_corridors"
+			img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_machine" text="trap"
+			img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_3" text="machine"
+			img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_chests" text="new_enemy"
+			img="img/intro_forest_debug.jpg" after="intro_forest_debug.jpg" />
+		<level map="map_dream_tv" text="tasty"
+			img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_holes" text="favourite_drink"
+			img="img/intro_forest_debug.jpg" />
 
-		<level map="map_forest" img="img/intro_forest_debug.jpg" />
-		<level map="map_forest_debug" img="img/intro_forest_debug.jpg" />
+		<level map="map_forest" text="debug"
+			img="img/intro_forest_debug.jpg" />
+		<level map="map_forest_debug" text="debug"
+			img="img/intro_forest_debug.jpg" />
 	</episode>
 </levels>

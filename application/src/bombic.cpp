@@ -28,14 +28,16 @@ int main(int argc, char *argv[]) {
 		window_init(&g_window, 800, 600, "Bombic2");
 		window = g_window;
 
-		string font_path, font_name(FONT_NAME);
+		string font_path, font_name(FONT_NAME), agar_theme(AGAR_THEME);
 		if(!locate_file("", font_name, font_name))
 			throw font_name+ ": No such file or directory";
 		string::size_type pos = font_name.rfind('/');
 		font_path= font_name.substr(0, pos);
 		font_name = font_name.substr(pos+1);
+		if(!locate_file("", agar_theme, agar_theme))
+			agar_theme = "";
 		agar_init(g_window, font_path.c_str(), font_name.c_str(),
-			FONT_SIZE, argc>1 ? argv[1] : 0);
+			FONT_SIZE, agar_theme.empty() ? 0 : agar_theme.c_str());
 
 		font_path+="/"+font_name;
 		Fonts font(font_path.c_str());

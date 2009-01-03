@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <map name="map_forest_winnersculpture" height="12" width="20" background="bg_forest">
 
-	<players x="1" y="2">
+	<players x="2" y="2">
 		<player0 x="2" y="2" />
 		<player1 x="18" y="9" />
 		<player2 x="1" y="10" />

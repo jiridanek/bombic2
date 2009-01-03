@@ -29,10 +29,10 @@ MenuLoadGame::MenuLoadGame(){
 	// nadpis
 	createHeading(LANG_MENU(LANG_LOAD_GAME, LANG_HEADING));
 
-	if(!path.empty())
+	if(path.empty())
 		get_home_path(path);
 	// filemanager
-	file_dlg = createFileDlg(true, LANG_LOAD_GAME, path.c_str());
+	file_dlg = createFileDlg(true, path.c_str(), LANG_LOAD_GAME);
 	if(!filename.empty())
 		AG_FileDlgSetFilename(file_dlg, "%s", filename.c_str());
 
@@ -70,9 +70,9 @@ MenuSaveGame::MenuSaveGame(){
 	createHeading(LANG_MENU(LANG_SAVE_GAME, LANG_HEADING));
 
 	// filemanager
-	if(!path.empty())
+	if(path.empty())
 		get_home_path(path);
-	file_dlg = createFileDlg(false, LANG_SAVE_GAME, path.c_str());
+	file_dlg = createFileDlg(false, path.c_str(), LANG_SAVE_GAME);
 	if(filename.empty())
 		filename = MENU_SAVE_GAME_DEFAULT_FILENAME;
 	AG_FileDlgSetFilename(file_dlg, "%s", filename.c_str());

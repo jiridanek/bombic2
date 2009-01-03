@@ -39,18 +39,51 @@
 		<deathmatch>
 			Deathmatch
 			<play>Play</play>
-			<map>Choose map</map>
-			<bonuses>Bonuses</bonuses>
+			<maps>
+				Choose map
+				<submenu>
+					Choose deathmatch map
+					<filetype>Bombic map XML</filetype>
+					<directory>Directory</directory>
+					<file>File</file>
+					<type>Type</type>
+					<ok>Choose</ok>
+					<cancel>Cancel</cancel>
+					<map_error>File does not represent Bombic map.</map_error>
+					<file_name_error>Filename is too long, rename them first.</file_name_error>
+				</submenu>
+			</maps>
+			<bonuses>
+				Bonuses
+				<submenu>
+					Bonuses in deathmatch
+					<ok>OK</ok>
+				</submenu>
+			</bonuses>
 			<players_count>Players count</players_count>
 			<win_points>Win points</win_points>
 			<creatures>Creatures</creatures>
-			<bombs_at_end>Bombs at end</bombs_at_end>
+			<bombs_at_end>Limited deathmatch</bombs_at_end>
 			<back>Back</back>
 		</deathmatch>
 		<options>
 			Options
 			<language>Language</language>
-			<controls>Controls</controls>
+			<controls>
+				Controls
+				<submenu>
+					Controls
+					<player>Player</player>
+					<left>Left</left>
+					<right>Right</right>
+					<up>Up</up>
+					<down>Down</down>
+					<plant>Plant bomb</plant>
+					<timer>Timer</timer>
+					<ok>OK</ok>
+					<press_key>Press any KEY to use&#10;or ESCAPE to cancel.</press_key>
+				</submenu>
+			</controls>
 			<speed>Game speed</speed>
 			<presumptions>Explosion presumptions</presumptions>
 			<split_screen>Split screen</split_screen>
@@ -61,10 +94,297 @@
 		</options>
 	</menu>
 	<game>
-		<dead_body>
-			&#160;Poor fellow hermit. The Cloud probably killed him.&#10;
-			Now I know why the message for him was:&#10;
-			&quot;Don't do it. It is too dangerous.&quot;
-		</dead_body>
+		<debug>
+			Debug
+			<after>
+				After debug
+			</after>
+		</debug>
+		<!-- 515 -->
+		<death>
+			Hek Uh Uh Chrchl Chrchl... Next time...&#10;
+			chrchl uh uh... I have to be... hek...&#10;
+			... more careful... aaahhrrr...&#10;
+			... I can see the light...
+		</death>
+
+		<!-- 500 -->
+		<newspaper>
+			Once I was reading my newspapers. My favourite&#10;
+			Daily Bomb. I found an advertisement:&#10;
+			&quot;We are searching for a courageous one&#10;
+			for trip to the forest. We want him to deliver&#10;
+			a message to the hermit. The reward shall be&#10;
+			a chest of Becherovka&quot;.&#10;
+			Well, I had nothing else to do so I decided to go...&#10;
+		</newspaper>
+
+		<!-- 501 -->
+		<first_in_forest>
+			As soon as I reached the forest, i was attacked by&#10;
+			some enemy creatures. Some disgusting flying heads.&#10;
+			They scared me. But I had my bombs ready to use.&#10;
+			They had no chance.
+		</first_in_forest>
+
+		<!-- 502 -->
+		<deep_in_forest>
+			I&apos;m going deeper and I&apos;m thinking&#10;
+			it is going to be a hard job.&#10;
+			They forgot to mention these creatures&#10;
+			in the advertisement.&#10;
+			Someone should come here and clean it up.&#10;
+			Fortunately I have found some bonuses on the way.&#10;
+			They have upgraded my bombs.&#10;
+			We will see how it will continue.....
+		</deep_in_forest>
+
+		<!-- 503 -->
+		<stupid_creatures>
+			There are more and more of those stupid creatures&#10;
+			along the way. But I met the Slimer today.&#10;
+			He isn&apos;t as stupid as I thought.&#10;
+			Becherovka is the only thing that makes me continue&#10;
+			in this quest where my life is at stake.&#10;
+			I hope I&apos;m going to live long enough to tell about it.
+		</stupid_creatures>
+
+		<!-- 504 -->
+		<winnersculpture>
+			Great statue of Bombers. This group of statues&#10;
+			was probably built to commemorate some great bomber&#10;
+			warrior. Unfortunately his name is unreadable. I wish&#10;
+			I had his skills. It would be very useful.&#10;
+			Wait. This memorial isn&apos;t on the map!&#10;
+			I hope they have given me the right map.
+			<!-- 505 -->
+			<after>
+				At last. I have found the hermit&apos;s cabin but&#10;
+				nobody was there. It was empty. Do you understand it?&#10;
+				The whole effort was for nothing. There are only&#10;
+				enemy creatures all around. There was one extremely&#10;
+				strong wondering infront of the cabin. Wow!&#10;
+				I have just found some supplies of Becherovka.&#10;
+				I took the liberty of keeping some of the bottles.&#10;
+				Just for taste...
+			</after>
+		</winnersculpture>
+
+		<!-- 507 -->
+		<zzz>
+			Zzzzzzzzz, zzzzzzzzz,zzzzzzzz...
+		</zzz>
+
+		<!-- 508 -->
+		<ghost_in_dream>
+			It was a dream. Almost a nightmare.&#10;
+			The surrounding was beautiful.&#10;
+			But what about the ghost that was there.&#10;
+			Fortunately it wasn&apos;t a hard job to deal with.&#10;
+			I should stop with this bombing stuff.&#10;
+			It starts getting into my dreams.&#10;
+			&#10;
+			The hermit disappeared so I&apos;m definitely not staying&#10;
+			any longer on this place. It is far too dangerous&#10;
+			to stay here and wait. Let&apos;s go home.&#10;
+			It should be an easy way back.
+		</ghost_in_dream>
+
+		<!-- 510 -->
+		<lost_in_forest>
+			It doesn&apos;t look familiar here. I have a bad feeling&#10;
+			about this. I sure haven&apos;t gone this way the first time.&#10;
+			Noooo - I&apos;m lost. Now what? I have got a good idea.&#10;
+			I&apos;ll keep heading in this direction and hopefully&#10;
+			I&apos;ll reach the end of this forest.
+			<!-- 511 -->
+			<after>
+				Poor fellow hermit. The Cloud probably killed him.&#10;
+				Now I know why the message for him was: &quot;Don&apos;t do it.&#10;
+				It is too dangerous.&quot;
+			</after>
+		</lost_in_forest>
+
+		<!-- 512 -->
+		<chest>
+			There in front of me I see a chest. It is probably&#10;
+			the one, for which the hermit was searching for. Since&#10;
+			I already found it I&apos;ll look what&apos;s inside.&#10;
+			But I have to get rid of that ghost who is guarding it first.&#10;
+			I have a feeling I had a dream about this creature.
+			<!-- 513 -->
+			<after>
+				It was a mortal kombat. When my pulse returned to normal,&#10;
+				I realized, that the chest is empty. But I have found&#10;
+				footprints leading to the cave. Let&apos;s go there...
+			</after>
+		</chest>
+
+		<!-- 520 -->
+		<where_is_treasure>
+			I wonder where does this cave lead to. I&apos;ll reveal&#10;
+			it soon. The guy who stole the treasure from the chest&#10;
+			will probably be there.
+		</where_is_treasure>
+
+		<!-- 521 -->
+		<complex_of_corridors>
+			It is unbelievable. It looks like this small cave&#10;
+			is in fact a large complex full of corridors. I have no&#10;
+			idea, why someone created this complex in the middle of&#10;
+			a forest. I&apos;ll try to find out.&#10;
+			Unfortunately it looks like I&apos;m not alone here.&#10;
+			I met my old &quot;friends&quot; - again.&#10;
+			But I also found some good stuff - good stuff&#10;
+			for finishing them off.
+		</complex_of_corridors>
+
+		<!-- 522 -->
+		<trap>
+			I was almost killed by some rolling stones with spikes.&#10;
+			They change direction when they reach a wall - maybe it&apos;s&#10;
+			some sort of a trap ??!! But what is it supposed to guard&#10;
+			My old enemies disappeared as well. Only some of them&#10;
+			probably entered the cave from the forest entrance.
+		</trap>
+
+		<!-- 523 -->
+		<machine>
+			I have found a mysterious machine. I have tried to&#10;
+			explore it further, but have been unable to recognize it.&#10;
+			I wish I paid more attention while studying at school.&#10;
+			My old enemies are history.
+		</machine>
+
+		<!-- 524 -->
+		<new_enemy>
+			I crossed paths with a new kind of enemy. It&apos;s size&#10;
+			and shape is similar to the one in the forest, but it&#10;
+			seems to be mutated somehow. It has a red color and it&apos;s&#10;
+			much harder to kill. If I don&apos;t find a way out of this&#10;
+			place - well, I&apos;ll go nuts that&apos;s for sure.
+			<!-- 525 -->
+			<after>
+				Oh. What have we here? Hmmm. What a pleasent smell !!!&#10;
+				How could someone possibly forget something&#10;
+				like this over here. It won&apos;t stay here&#10;
+				for long that&apos;s for sure...
+			</after>
+		</new_enemy>
+
+		<!-- 526 -->
+		<tasty>
+			Mmm. Tasty... yammy...
+		</tasty>
+
+		<!-- 527 -->
+		<favourite_drink>
+			It looks like my favourite drink has special effect on me.&#10;
+			If I&apos;m right then I won&apos;t like this.
+		</favourite_drink>
+
+		<!-- 528 -->
+		<special_trap>
+			It&apos;s starting to be somewhat damaged in here. I&apos;m surely&#10;
+			getting nearer to the end. Hope it won&apos;t be my end though.&#10;
+			I saw a special trap.&#10;
+			It has a better software and it&apos;s a lot faster.
+		</special_trap>
+
+		<!-- 529 -->
+		<nightmare_monster>
+			Oh my... my nightmare monster. Now you&apos;ll see what my&#10;
+			kamikadze attack looks like you old TV. Only one of us&#10;
+			can get through this alive and I&apos;m not planning on dying.
+			<!-- 530 -->
+			<after>
+				At last. I can see the sunshine again. And now let&apos;s&#10;
+				go home - to our local pub.&#10;
+				I&apos;m looking forward to seeing my old friends.
+			</after>
+		</nightmare_monster>
+
+
+		<!-- 540 -->
+		<sunshine>
+			I was expecting a different feeling, but at least&#10;
+			the Sun is shining and I can breath fresh air again.&#10;
+			I hope I&apos;ll get to the civilization soon. I&apos;m missing&#10;
+			TV and video. And I want hamburger and cola
+			...and my favourite Becherovka.
+		</sunshine>
+
+		<!-- 541 -->
+		<boring_creatures>
+			Oh no. These red creatures are boring. I wonder&#10;
+			why there isn&apos;t any more powerfull creature. These&#10;
+			are really stupid. My grandmother would kill them&#10;
+			easily.
+		</boring_creatures>
+
+		<!-- 542 -->
+		<preadator>
+			Ha the predator is here. He doesn&apos;t look like my&#10;
+			grandma but he is strong enough. I saw him eating&#10;
+			the red creature but it saw me and&#10;
+			it started to hunt me. Fortunately it is a bit slow.
+		</preadator>
+
+		<!-- 543 -->
+		<it_almost_got_me>
+			I have seen something like this before. Oh yes. This&#10;
+			creature was in front of hermit&apos;s cabin and it almost got me.&#10;
+			I hope they are rare. I don&apos;t want to face them any more.&#10;
+			I&apos;ll rather try to avoid contact with them.
+		</it_almost_got_me>
+
+		<!-- 544 TODO length-->
+		<broken_boat>
+			It looks like someone sure didn&apos;t know what how to ride on&#10;
+			a boat!. And when they got out the desert didn&apos;t give them&#10;
+			much of a chance either. There is something written on the hull.&#10;
+			&quot;Expedition sea of wishes. Happiness for everyone&quot;.&#10;
+			What does it mean? Who could be searching for sea in the middle&#10;
+			of a desert?
+			<!-- 545 -->
+			<after>
+				Wow. Could I have found the sea of wishes. Judging from it&apos;s color&#10;
+				it is obvious that it isn&apos;t water.&#10;
+				Do you smell it? Oh yes. This one smells much better...
+			</after>
+		</broken_boat>
+
+		<!-- 546 -->
+		<chrr>
+			Chrrrrr Chrrrrrr Chrrrrr...
+		</chrr>
+
+		<!-- 547 -->
+		<dont_give_up>
+			Dreams are such a good thing. At least I know what kind of trouble&#10;
+			am I getting into. I can&apos;t do much with it. But I won&apos;t give up.&#10;
+			I won&apos;t let anyone kill me easily.
+		</dont_give_up>
+
+		<!-- 548 -->
+		<something_found>
+			Look what I have found. A well. But it has run dry. Caravans&#10;
+			probably use to travel this way... I&apos;m getting nearer to&#10;
+			civilization. Suddenly I&apos;m in much better mood...
+		</something_found>
+
+		<!-- 549 -->
+		<theend>
+			As I&apos;m watching him he looks like a realy bad guy. He sure&#10;
+			doesn&apos;t look friendly. I&apos;ll try to negotiate - using my bombs&#10;
+			of course.
+			<!-- 550 -->
+			<after>
+				The Great evil hero was guarding the sea of wishes.&#10;
+				No I can wish for something. The only thing I can think of is this:&#10;
+				&#10;
+				BECHEROVKA FOR EVERYONE AND FOR FREE. DON&apos;T LET ANYONE LEAVE EMPTY HANDED
+			</after>
+		</theend>
 	</game>
 </language>

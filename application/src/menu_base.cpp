@@ -80,22 +80,22 @@ AG_Checkbox * MenuBase::createCheckboxItem(const char * text, int * value){
 	return AG_CheckboxNewInt(box, 0, "  ", value);
 }
 
-AG_FileDlg * MenuBase::createFileDlg(bool load,
-			const char * menu_name, const char * path){
+AG_FileDlg * MenuBase::createFileDlg(bool load, const char * path,
+			const char * menu, const char * submenu){
 	AG_FileDlg * file_dlg =
 		AG_FileDlgNew(win, load ? AG_FILEDLG_LOAD : AG_FILEDLG_SAVE);
 	// popisky
 	AG_ObjectDelete(file_dlg->lbCwd);
 	file_dlg->lbCwd = AG_LabelNewPolled(file_dlg, AG_LABEL_HFILL, "%s: %s",
-		LANG_MENU(menu_name, LANG_DIRECTORY), &file_dlg->cwd[0]);
+		LANG_MENU_TRY(menu, submenu, LANG_DIRECTORY), &file_dlg->cwd[0]);
 	AG_TextboxSetLabel(file_dlg->tbFile, "%s: ",
-		LANG_MENU(menu_name, LANG_FILE));
+		LANG_MENU_TRY(menu, submenu, LANG_FILE));
 	AG_TextboxSetLabel(file_dlg->comTypes->tbox, "%s: ",
-		LANG_MENU(menu_name, LANG_TYPE));
+		LANG_MENU_TRY(menu, submenu, LANG_TYPE));
 	AG_ButtonText(file_dlg->btnOk, "%s",
-		LANG_MENU(menu_name, LANG_OK) );
+		LANG_MENU_TRY(menu, submenu, LANG_OK) );
 	AG_ButtonText(file_dlg->btnCancel, "%s",
-		LANG_MENU(menu_name, LANG_CANCEL) );
+		LANG_MENU_TRY(menu, submenu, LANG_CANCEL) );
 	AG_Expand(file_dlg);
 	// akce
 	AG_FileDlgCancelAction(file_dlg, handlerBack, 0);

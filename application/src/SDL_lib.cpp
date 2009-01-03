@@ -449,7 +449,40 @@ void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *capti
  * @see TTF_RenderUTF8_Blended()
  */
 SDL_Surface* get_text(TTF_Font* font, const char* str, SDL_Color color){
-        return TTF_RenderUTF8_Blended(font, str, color);
+	return TTF_RenderUTF8_Blended(font, str, color);
+}
+
+/** @details
+ * Vytvoří surface s textem pomocí get_text(),
+ * pokud text obsahuje newline (10) vytvoří se nová řádka.
+ * @param font pointer na písmo, kterým se má psát
+ * @param str text, který se má vypsat (může obsahovat newline)
+ * @param color barva textu
+ * @return Vrací vytvořené SDL_Surface s textem.
+ * @see TTF_RenderUTF8_Solid()
+ */
+SDL_Surface* get_multiline_text(TTF_Font* font,
+			const char* str, SDL_Color color){
+	std::vector<std::string> parts;
+	explode(str, '\n', parts);
+	if(parts.size()==1)
+		return get_text(font, str, color);
+	int width=0, height = TTF_FontLineSkip(font);
+	Uint16 i, max=0;
+	// najit sirsku textu
+	for(i=0 ; i<parts.size() ; ++i){
+		if(parts[i].size()>parts[max].size())
+			max = i;
+	}
+	TTF_SizeUTF8(font, parts[max].c_str(), &width, 0);
+	SDL_Surface * sur =
+		create_transparent_surface(width, height*parts.size());
+	Surface line;
+	for(i=0 ; i<parts.size() ; ++i){
+		line = TTF_RenderUTF8_Solid(font, parts[i].c_str(), color);
+		draw_surface(0, i*height, line.getSurface(), sur);
+	}
+	return sur;
 }
 
 /**

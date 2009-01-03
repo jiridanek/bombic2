@@ -13,7 +13,7 @@ MenuDeathmatchBonuses::MenuDeathmatchBonuses(){
 	AG_Pane * pane;
 
 	// nadpis
-	createHeading("Deathmatch bonuses setings");
+	createHeading(LANG_SUBMENU(LANG_DEATHMATCH, LANG_BONUSES, LANG_HEADING));
 
 	// bonuses
 	if(bonuses.empty())
@@ -31,7 +31,7 @@ MenuDeathmatchBonuses::MenuDeathmatchBonuses(){
 	}
 
 	// ok
-	item = createItem("OK");
+	item = createItem(LANG_SUBMENU(LANG_DEATHMATCH, LANG_BONUSES, LANG_OK));
 	AG_SetEvent(item, "window-mousebuttondown", handlerBack, 0);
 	setFocus(AGWIDGET(item));
 
@@ -105,4 +105,3 @@ void MenuDeathmatchBonuses::createBonusPixmap(AG_Box * parent, int i){
 		AG_TextError("%s", ex.what());
 	}
 }
-

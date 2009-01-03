@@ -10,6 +10,7 @@
 #include "game_tools.h"
 #include "game.h"
 #include "game_player.h"
+#include "language.h"
 
 using namespace std;
 
@@ -26,6 +27,7 @@ GameIntro::~GameIntro(){
 }
 
 extern SDL_Surface *g_window;
+extern Fonts * g_font;
 
 /** @details
  * Ukáže úvodní obrazovku levelu, vygeneruje konkrétní hru,
@@ -40,13 +42,9 @@ void GameIntro::show_screen(){
 	Uint16 old_level = cur_level_;
 	while(cur_level_ < levels_.size()){
 		// uvodni obrazovka levelu
-		clear_surface(Color::black, g_window);
-		draw_center_surface(get_cur_image_().getSurface(), g_window);
-		SDL_Flip(g_window);
-
+		draw_(g_window, cur_level_);
 		// vygenerovani noveho levelu
 		if(!gameBase_ || game_){
-			old_level = cur_level_;
 			if(gameBase_) delete gameBase_;
 			gameBase_ = new GameBase(
 				players_count_, levels_[cur_level_].map);
@@ -62,30 +60,8 @@ void GameIntro::show_screen(){
 			}
 		}
 
-		// pockame na klavesu, pri pokusu o ukonceni ukoncime
-		SDLKey key;
-		while(true){
-			switch(wait_event(key)){
-				case SDL_VIDEORESIZE:
-					// uvodni obrazovka levelu
-					clear_surface(Color::black, g_window);
-					draw_center_surface(get_cur_image_().getSurface(), g_window);
-					SDL_Flip(g_window);
-					continue;
-				case SDL_QUIT:
-					AG_Quit();
-					return;
-				case SDL_KEYUP:
-					if(key==SDLK_ESCAPE)
-						return;
-					if(key==SDLK_RETURN || key==SDLK_KP_ENTER
-					|| key==SDLK_SPACE || key==SDLK_RCTRL)
-						break;
-				default:
-					continue;
-			}
-			break;
-		}
+		if(!wait_(g_window, cur_level_))
+			return;
 
 		// vygenerovani nove hry z pripraveneho zakladu
 		if(game_) delete game_;
@@ -94,11 +70,20 @@ void GameIntro::show_screen(){
 		// hrajeme
 		game_->play(g_window);
 		// hra skoncila uspesne => dalsi kolo
-		if(game_->success())
+		if(true || game_->success())
 			++cur_level_;
 		else {
 			delete game_;
 			game_ = 0;
+		}
+		// koncova obrazovka levelu
+		if(old_level!=cur_level_){
+			if(!levels_[old_level].img_after.empty()){
+				draw_(g_window, old_level, true);
+				if(!wait_(g_window, old_level, true))
+					return;
+			}
+			old_level = cur_level_;
 		}
 	}
 	delete game_;
@@ -106,6 +91,49 @@ void GameIntro::show_screen(){
 
 }
 
+void GameIntro::draw_(SDL_Surface * window, Uint16 level, bool after){
+	clear_surface(Color::black, window);
+	Surface sur = get_cur_image_(level, after);
+	int x = (window->w-sur.width())/2, y = (window->h-sur.height())/2;
+	draw_surface(x, y, sur.getSurface(), window);
+	sur = get_multiline_text((*g_font)[17],
+		LANG_GAME(levels_[level].text.c_str(),
+			after ? LANG_AFTER_LEVEL : LANG_BEFORE_LEVEL),
+		Color::black);
+	draw_surface(x +GAME_INTRO_PADDING+1, y +GAME_INTRO_PADDING+1,
+		sur.getSurface(), window);
+	sur = get_multiline_text((*g_font)[17],
+		LANG_GAME(levels_[level].text.c_str(),
+			after ? LANG_AFTER_LEVEL : LANG_BEFORE_LEVEL),
+		Color::white);
+	draw_surface(x +GAME_INTRO_PADDING, y +GAME_INTRO_PADDING,
+		sur.getSurface(), window);
+	SDL_Flip(window);
+}
+
+bool GameIntro::wait_(SDL_Surface * window, Uint16 level, bool after){
+	// pockame na klavesu, pri pokusu o ukonceni ukoncime
+	SDLKey key;
+	while(true){
+		switch(wait_event(key)){
+			case SDL_VIDEORESIZE:
+				// uvodni obrazovka levelu
+				draw_(g_window, level, after);
+				continue;
+			case SDL_QUIT:
+				AG_Quit();
+				return false;
+			case SDL_KEYUP:
+				if(key==SDLK_ESCAPE)
+					return false;
+				if(key==SDLK_RETURN || key==SDLK_KP_ENTER
+				|| key==SDLK_SPACE || key==SDLK_RCTRL)
+					return true;
+			default:
+				continue;
+		}
+	}
+}
 
 /// Inicializace nové hry.
 void GameIntro::new_game(Uint16 episode, Uint16 players){
@@ -228,6 +256,9 @@ void GameIntro::load_levels_(Uint16 episode){
 					el = el->NextSiblingElement("level")){
 			readAttr(el, "map", level.map);
 			readAttr(el, "img", level.img);
+			if(!readAttr(el, "after", level.img_after, false))
+				level.img_after = "";
+			readAttr(el, "text", level.text);
 			levels_.push_back(level);
 		}
 		// kontrola na pocet levelu
@@ -239,14 +270,17 @@ void GameIntro::load_levels_(Uint16 episode){
 	}
 }
 
-Surface & GameIntro::get_cur_image_(){
-	string img_name = levels_[cur_level_].img;
+Surface & GameIntro::get_cur_image_(Uint16 level, bool after){
+	string img_name = after ?
+		levels_[level].img_after : levels_[level].img;
 	if(image_.first==img_name)
 		return image_.second;
 	image_.first = img_name;
 	// odalokovat
 	image_.second = 0;
 	// naalokovat novy
+	if(!locate_file("", img_name, img_name))
+		TiXmlError("levels", "Can't locate image file "+img_name);
 	image_.second = IMG_Load(img_name.c_str());
 	if(!image_.second.getSurface())
 		TiXmlError("levels", "Unable to load "+img_name);

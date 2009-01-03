@@ -19,8 +19,9 @@ MenuOptionsControls::MenuOptionsControls(){
 	background_ = create_surface(
 		g_window->w, g_window->h, Color::black);
 	set_transparency(background_.getSurface(), 128);
-	background_text_ = get_text( (*g_font)[20],
-		"Press any KEY to use or ESCAPE to cancel.", Color::white);
+	background_text_ = get_multiline_text( (*g_font)[20],
+		LANG_SUBMENU(LANG_OPTIONS, LANG_CONTROLS, LANG_PRESS_KEY),
+		Color::white);
 	// prazdne taby
 	player_item_t empty_item = {0, 0};
 	player_tab_t empty_tab; empty_tab.tab = 0;
@@ -33,14 +34,15 @@ MenuOptionsControls::MenuOptionsControls(){
 	std::string tab_name;
 	const char *action_name, *key_name;
 	// nadpis
-	createHeading("Controls");
+	createHeading(LANG_SUBMENU(LANG_OPTIONS, LANG_CONTROLS, LANG_HEADING));
 
 	// notebook, pro kazdeho hrace jedna zalozka
 	notebook = AG_NotebookNew(win, AG_NOTEBOOK_EXPAND);
 	for(Uint16 player_num = 0 ; player_num<CONFIG->players_.size() ;
 							++player_num){
-		// TODO lang
-		tab_name = "player"+x2string(player_num);
+		tab_name =
+			LANG_SUBMENU(LANG_OPTIONS, LANG_CONTROLS, LANG_PLAYER)
+			+ std::string(" ") + x2string(player_num);
 		player_tabs_[player_num].tab =
 			AG_NotebookAddTab(notebook, tab_name.c_str(), AG_BOX_VERT);
 
@@ -48,8 +50,9 @@ MenuOptionsControls::MenuOptionsControls(){
 				action_num<CONFIG->players_[player_num].size() ;
 				++action_num){
 			// vytvorit nazvy pro vytisteni
-			action_name = CONFIG->action2name_(
-					static_cast<KEY_ACTIONS>(action_num) );
+			action_name = LANG_SUBMENU(LANG_OPTIONS, LANG_CONTROLS,
+				CONFIG->action2name_(
+					static_cast<KEY_ACTIONS>(action_num)) );
 			key_name = CONFIG->keyNames_.key2name(
 					CONFIG->players_[player_num][action_num]);
 			// box
@@ -88,7 +91,8 @@ MenuOptionsControls::MenuOptionsControls(){
 			player_num, KEY_ACTIONS_COUNT, &player_tabs_, notebook,
 			background_.getSurface(), background_text_.getSurface());
 
-		label = createLabelJustify(AGWIDGET(item), "OK");
+		label = createLabelJustify(AGWIDGET(item),
+			LANG_SUBMENU(LANG_OPTIONS, LANG_CONTROLS, LANG_OK));
 
 		// ulozit polozku do seznamu
 		player_tabs_[player_num].items.back().b = item;

@@ -1,4 +1,5 @@
 
+#include "stdarg.h"
 #include <string>
 #include "SDL_lib.h"
 #include "tixml_helper.h"
@@ -33,16 +34,18 @@ void Language::set_language_(const std::string & lang){
 	rootEl_ = TiXmlRootElement(doc_, filename, LANG_ROOT_ELEMENT, true);
 }
 
-const char * Language::get_translation(const char * level1,
-			const char * level2, const char * level3) {
+const char * Language::get_translation(int depth, ...) {
 	TiXmlElement * el = rootEl_;
+	const char * el_name;
 	try {
-		if(level1)
-			el = subElement(el, level1);
-		if(level2)
-			el = subElement(el, level2);
-		if(level3)
-			el = subElement(el, level3);
+		va_list ap;
+		va_start(ap, depth);
+		while(depth--){
+			el_name = va_arg(ap, const char *);
+			if(el_name && *el_name)
+				el = subElement(el, el_name);
+		}
+		va_end(ap);
 		return el->GetText();
 	}
 	catch(const std::string & err) {

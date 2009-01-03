@@ -34,8 +34,8 @@ class MenuBase {
 		AG_Box * createItem(const char * text);
 		AG_Box * createItemHoriz(const char * text);
 		AG_Checkbox * createCheckboxItem(const char * text, int * value);
-		AG_FileDlg * createFileDlg(bool load,
-				const char * menu_name, const char * path);
+		AG_FileDlg * createFileDlg(bool load, const char * path,
+				const char * menu, const char * submenu=0);
 
 		AG_Window *win;
 

@@ -13,5 +13,7 @@
 #define FONT_NAME "verdana.ttf"
 /// Velikost fontu.
 #define FONT_SIZE 15
+/// Vzhled menu.
+#define AGAR_THEME "bombic.acs"
 
 #endif

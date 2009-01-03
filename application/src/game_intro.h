@@ -22,6 +22,7 @@
 #include "game.h"
 #include "game_player.h"
 
+#define GAME_INTRO_PADDING 10
 /** Obal pro samotnou hru.
  * Třída GameIntro řeší, jaké kolo se bude hrát, kdo vyhrál či prohrál
  * a zastřešuje tvorbu mapy z XML souborů až po vygenerování konkrétního levelu.
@@ -53,13 +54,18 @@ class GameIntro {
 		/// Konkrétní hra.
 		Game * game_;
 
+		/// Vykreslení intro obrazovky.
+		void draw_(SDL_Surface * window, Uint16 level, bool after=false);
+		/// Vyčkání na odmáčknutí intro obrazovky.
+		bool wait_(SDL_Surface * window, Uint16 level, bool after=false);
+
 		/// Načtení levelů.
 		void load_levels_(Uint16 episode);
 		/// Získání obrázku.
-		Surface & get_cur_image_();
+		Surface & get_cur_image_(Uint16 level, bool after=false);
 
 		/// Mapa a obrázek levelu.
-		typedef struct{ std::string map, img; } level_t;
+		typedef struct{ std::string map, img, img_after, text; } level_t;
 		/// Seznam levelů.
 		std::vector< level_t > levels_;
 

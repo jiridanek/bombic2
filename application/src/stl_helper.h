@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <vector>
 
 /** Načte ze stringu hodnotu zadané proměnné.
  * @param s string, ze kterého se čte
@@ -33,6 +34,10 @@ template<typename T> std::string x2string(const T & val){
 	ss << val;
 	return ss.str();
 }
+
+/// Rozdělení stringu do částí.
+void explode(const std::string & str, char delim,
+		std::vector<std::string> & parts);
 
 /** Absolutní hodnota rozdílu.
  * požadavky na parametry:

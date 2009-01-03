@@ -266,6 +266,8 @@ class BonusIllnessFast: public BonusIllnessStop {
 	public:
 		BonusIllnessFast(Player * player);
 };
-
-
+// porad poklada - PlantAlways
+// nemuze pokladat - PlantCannot
+// zmatene posilani - PlantConfused
+//
 #endif

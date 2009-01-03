@@ -13,7 +13,7 @@ MenuDeathmatchMaps::MenuDeathmatchMaps(){
 		MENU_OFFSET, MENU_OFFSET, MENU_OFFSET);
 
 	// nadpis
-	createHeading("Deathmatch maps");
+	createHeading(LANG_SUBMENU(LANG_DEATHMATCH, LANG_MAPS, LANG_HEADING));
 
 	// tlacitka pro rychlou volbu
 	std::string path;
@@ -37,13 +37,10 @@ MenuDeathmatchMaps::MenuDeathmatchMaps(){
 			map_path = buttons_[i];
 	}
 	// filemanager
-	file_dlg = AG_FileDlgNew(win, AG_FILEDLG_LOAD);
-	AG_Expand(file_dlg);
-
-	AG_FileDlgSetDirectory(file_dlg, map_path.c_str());
-
-	AG_FileDlgAddType(file_dlg, "Bombic map XML", TIXML_FILE_EXTENSION, handlerCheckMap, 0);
-	AG_FileDlgCancelAction(file_dlg, handlerBack, 0);
+	file_dlg = createFileDlg(true, map_path.c_str(), LANG_DEATHMATCH, LANG_MAPS);
+	AG_FileDlgAddType(file_dlg,
+		LANG_SUBMENU(LANG_DEATHMATCH, LANG_MAPS, LANG_FILE_TYPE),
+		TIXML_FILE_EXTENSION, handlerCheckMap, 0);
 
 	AG_SpacerNewHoriz(win);
 }
@@ -53,6 +50,7 @@ void MenuDeathmatchMaps::createDirButton(const char * label){
 	AG_ExpandHoriz(button);
 	AG_ButtonJustify(button, AG_TEXT_LEFT);
 	AG_SetEvent(button, "button-pushed", handlerDirButton, "%s", label);
+	AG_AddEvent(button, "window-keyup", handlerItems, 0);
 }
 
 void MenuDeathmatchMaps::handlerDirButton(AG_Event * event){
@@ -70,7 +68,7 @@ void MenuDeathmatchMaps::handlerCheckMap(AG_Event * event){
 	}
 	catch(const TiXmlException & ex){
 		AG_TextError("%s:\n%s\n%s", filename.c_str(),
-			"File does not represent Bombic map.",
+			LANG_SUBMENU(LANG_DEATHMATCH, LANG_MAPS, LANG_ERR_MAP),
 			ex.what());
 	}
 }
@@ -84,7 +82,7 @@ bool MenuDeathmatchMaps::setMap(const std::string & file){
 
 	if(file.size()-pos>=MENU_DEATHMATCH_MAPS_BUFFSIZE-1){
 		AG_TextError("%s:\n%s", file.c_str(),
-			"Filename is too long, rename them first.");
+			LANG_SUBMENU(LANG_DEATHMATCH, LANG_MAPS, LANG_ERR_FILE));
 		return false;
 	}
 

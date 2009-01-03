@@ -169,6 +169,9 @@ void window_init(SDL_Surface ** pWindow, int win_w, int win_h, const char *capti
 /// Vytvoření surface s textem.
 SDL_Surface* get_text(TTF_Font* font, const char* str, SDL_Color color);
 
+/// Vytvoření víceřádkového surface s textem.
+SDL_Surface* get_multiline_text(TTF_Font* font, const char* str, SDL_Color color);
+
 /// Vytvoření surface.
 SDL_Surface* create_surface(Uint16 w, Uint16 h, SDL_Color color);
 /// Nastavení průhledné barvy pro surface.

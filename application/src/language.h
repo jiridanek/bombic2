@@ -13,10 +13,14 @@
 
 #define LANG Language::get_instance()
 
-#define LANG_MENU(level2, level3) \
-	LANG->get_translation("menu", level2, level3)
-#define LANG_GAME(level2, level3) \
-	LANG->get_translation("game", level2, level3)
+#define LANG_MENU(menu, item) \
+	LANG->get_translation(3, "menu", menu, item)
+#define LANG_SUBMENU(menu, submenu, item) \
+	LANG->get_translation(5, "menu", menu, submenu, "submenu", item)
+#define LANG_MENU_TRY(menu, submenu, item) \
+	submenu==0 ? LANG_MENU(menu, item) : LANG_SUBMENU(menu, submenu, item)
+#define LANG_GAME(name, part) \
+	LANG->get_translation(3, "game", name, part)
 
 #define LANG_ROOT_ELEMENT "language"
 #define LANG_HEADING 0
@@ -46,9 +50,11 @@
 #define LANG_OK "ok"
 #define LANG_CANCEL "cancel"
 
-#define LANG_MAP "map"
+#define LANG_MAPS "maps"
 #define LANG_WIN_POINTS "win_points"
 #define LANG_BOMBS "bombs_at_end"
+#define LANG_ERR_MAP "map_error"
+#define LANG_ERR_FILE "file_name_error"
 
 #define LANG_LANGUAGE "language"
 #define LANG_CONTROLS "controls"
@@ -59,6 +65,9 @@
 #define LANG_SOUND "sound"
 #define LANG_SAVE "save"
 #define LANG_ERR_SET_LANG "cant_set_lang"
+
+#define LANG_PRESS_KEY "press_key"
+#define LANG_PLAYER "player"
 
 /** Jazyk hry.
  * Instance třídy Language obstarává jazyk menu a hry.
@@ -81,8 +90,7 @@ class Language {
 		/// Destruktor.
 		~Language();
 		/// Překlad.
-		const char * get_translation(const char * level1,
-			const char * level2, const char * level3);
+		const char * get_translation(int depth, ...);
 	private:
 		/// Pointer na jedinou instanci třídy.
 		static Language* myself_ptr_;
