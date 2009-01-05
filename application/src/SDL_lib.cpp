@@ -452,6 +452,12 @@ SDL_Surface* get_text(TTF_Font* font, const char* str, SDL_Color color){
 	return TTF_RenderUTF8_Blended(font, str, color);
 }
 
+static int text_width(TTF_Font* font, const char* str){
+	int width;
+	TTF_SizeUTF8(font, str, &width, 0);
+	return width;
+}
+
 /** @details
  * Vytvoří surface s textem pomocí get_text(),
  * pokud text obsahuje newline (10) vytvoří se nová řádka.
@@ -465,16 +471,17 @@ SDL_Surface* get_multiline_text(TTF_Font* font,
 			const char* str, SDL_Color color){
 	std::vector<std::string> parts;
 	explode(str, '\n', parts);
-	if(parts.size()==1)
+	if(parts.size()<=1)
 		return get_text(font, str, color);
 	int width=0, height = TTF_FontLineSkip(font);
 	Uint16 i, max=0;
 	// najit sirsku textu
 	for(i=0 ; i<parts.size() ; ++i){
-		if(parts[i].size()>parts[max].size())
+		if(text_width(font, parts[i].c_str())>width){
+			width = text_width(font, parts[i].c_str());
 			max = i;
+		}
 	}
-	TTF_SizeUTF8(font, parts[max].c_str(), &width, 0);
 	SDL_Surface * sur =
 		create_transparent_surface(width, height*parts.size());
 	Surface line;

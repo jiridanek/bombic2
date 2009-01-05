@@ -50,7 +50,10 @@
 					<ok>Vybrat</ok>
 					<cancel>Zrušit</cancel>
 					<map_error>Soubor nereprezentuje mapu bombiče.</map_error>
-					<file_name_error>Jméno souboru je příliš dlouhé, přejmenujte ho prosím.</file_name_error>
+					<file_name_error>
+						Jméno souboru je příliš dlouhé,
+						přejmenujte ho prosím.
+					</file_name_error>
 				</submenu>
 			</maps>
 			<bonuses>
@@ -97,7 +100,293 @@
 		</options>
 	</menu>
 	<game>
-		<dead_body>
-		</dead_body>
+		<debug>
+			Debug
+			<after>
+				After debug
+			</after>
+		</debug>
+		<!-- 515 -->
+		<death>
+			Hek Uh Uh Chrchl Chrchl... Příště musím...&#10;
+			chrchl uh uh... být opatrnější...&#10;
+			... Už vidím bíle světlo...&#10;
+		</death>
+
+		<!-- 500 -->
+		<newspaper>
+			To si takhle čtu noviny (svoje oblíbené Daily Bomb),&#10;
+			když v tom jsem narazil na inzerát:&#10;
+			&quot;Hledáme odvážlivce, který by se vypravil&#10;
+			do lesa za poustevníkem a doručil mu vzkaz.&#10;
+			Odměnou budiž truhla plná Becherovky.&quot;&#10;
+			Stejně nemám co dělat, tak proč to nezkusit...&#10;
+		</newspaper>
+
+		<!-- 501 -->
+		<first_in_forest>
+			Jakmile jsem dorazil k pralesu, ihned na mě zaútočily&#10;
+			nějaký potvory. Odporný lítající hlavy. Docela mi nahnaly&#10;
+			strach. Naštěstí jsem u sebe našel pár bomb,&#10;
+			který s nima udělaly rychlej konec.&#10;
+		</first_in_forest>
+
+		<!-- 502 -->
+		<deep_in_forest>
+			Jak postupuji hlouběji do lesa, začíná přibývat potvor.&#10;
+			V tom inzerátu se zřejmě zapomněli zmínit o těchto&#10;
+			„nesnázích“. Naštěstí jsem cestou našel několik málo&#10;
+			zlepšováků, které mi pomohli vylepšit mé bomby.&#10;
+			Uvidíme, jak se to bude vyvíjet dál...&#10;
+		</deep_in_forest>
+
+		<!-- 503 -->
+		<stupid_creatures>
+			Potvor je stále více a více. Navíc jsem dnes potkal&#10;
+			zelenýho slizouna. Pomalu se již začínám loučit s tou&#10;
+			truhlou plnou Becherovky. Ach, Becherovka, to jediný mě&#10;
+			nutí pokračovat. Doufám, že to budu moci někdy někomu&#10;
+			vyprávět. Lesy v dnešní době už nejsou tak mírumilovné.&#10;
+		</stupid_creatures>
+
+		<!-- 504 -->
+		<winnersculpture>
+			Velký pomník Bombičů. Bude to zřejmě sousoší na&#10;
+			počest některého z velkých válečníků. Mít tak jeho&#10;
+			zkušenosti. To by se mit teď vážně hodilo.&#10;
+			Počkat, pomník není na mapě.&#10;
+			Doufám, že mám jen špatnou mapu.&#10;
+			<!-- 505 -->
+			<after>
+				Konečně jsem našel ten srub, ale nikdo tam nebyl!&#10;
+				Je prázdný. Chápete to!? Všechno bylo zbytečný.&#10;
+				Všude je jen spousta potvor.&#10;
+				Před srubem se potulovala jedna obzvláště odporná.&#10;
+				Ve srubu jsem objevil zásoby Becherovky.&#10;
+				Několik lahví jsem si přivlastnil a malinko si přihnul...&#10;
+			</after>
+		</winnersculpture>
+
+		<!-- 507 -->
+		<zzz>
+			Chrrrrr Chrrrrrr Chrrrrr...&#10;
+		</zzz>
+
+		<!-- 508 -->
+		<ghost_in_dream>
+			To byl ale sen. Skoro noční můra. Prostředí bych&#10;
+			si nechal líbit. Ale ten duch, co tam byl. Naštěstí&#10;
+			to šlo hladce. Už bych toho bombení měl nechat.&#10;
+			Začíná mi to lézt i do snů.&#10;
+			&#10;
+			Poustevník tu není a čekat na něj v nebezpečném&#10;
+			lese nehodlám. Tak asi půjdu domů. Když půjdu pěkně&#10;
+			zpátky, měla by to být vcelku bezpečná cesta.&#10;
+		</ghost_in_dream>
+
+		<!-- 510 -->
+		<lost_in_forest>
+			Tady mi to není povědomé. Mám pocit, že jsem&#10;
+			přišel jinudy. Nééé. Jsem ztracený v lese!&#10;
+			Mám plán. Půjdu pořád jedním směrem a pěkně&#10;
+			rychle odsud vypadnu.&#10;
+			<!-- 511 -->
+			<after>
+				Chudák poustevník. Asi ho zabyl mráček, co&#10;
+				tu kolem poletoval. Už vím, proč vzkaz pro něj&#10;
+				zněl &quot;Vykašli se na to, je to nebezpečné.&quot;&#10;
+			</after>
+		</lost_in_forest>
+
+		<!-- 512 -->
+		<chest>
+			Kousíček vpředu je nějaká truhla. To bude asi&#10;
+			to, co chtěl dostat ten poustevník. Když už jsem&#10;
+			tu, tak se podívám, co v ní je. Ale musím nějak&#10;
+			přelstít toho ducha, co ji hlídá... Mám pocit, že&#10;
+			o tom duchovi se mi zdálo.&#10;
+			<!-- 513 -->
+			<after>
+				Byl to souboj na život a na smrt. Když se mi&#10;
+				konečně tep srdce vrátil na normální hladinu,&#10;
+				zjistil jsem, že truhla je prázdná. Náhle jsem&#10;
+				si však všiml stop vedoucích od truhly směrem&#10;
+				k jeskyni. Tak se do ní tedy podíváme...&#10;
+			</after>
+		</chest>
+
+		<!-- 520 -->
+		<where_is_treasure>
+			Kam ta jeskynně asi vede? Hned to zjistím.&#10;
+			Zdá se být opuštěná. Ten kdo ukrad podklad tu&#10;
+			někde bude. A až ho najdu, tak s ním zatočím...&#10;
+		</where_is_treasure>
+
+		<!-- 521 -->
+		<complex_of_corridors>
+			To, co jsem našel v jeskyni bylo až neuvěři-&#10;
+			telné. Tato na první pohled malá jeskyňka se zdá&#10;
+			být obrovským komplexem betonových chodeb. Nevím,&#10;
+			za jakým účelem by mohly být vybudovány ve skále&#10;
+			uprostřed pralesa. Ale pokusím se to zjistit.&#10;
+			Bohužel tu nejsem sám. Poznávám své staré známé&#10;
+			z pralesa. Naštěstí v těch bednách jsou skovaný&#10;
+			nový prýma věcičky.&#10;
+		</complex_of_corridors>
+
+		<!-- 522 -->
+		<trap>
+			Dnes mě málem převálcovaly nějaké ostnaté koule.&#10;
+			Valí se chodbou a odráží se od stěn. Možná se jedná&#10;
+			o nějaký druh pasti. Ale co má chránit? Ubylo taky&#10;
+			starých nepřátel. Asi sem jen někteří náhodou&#10;
+			vlezli z lesa.&#10;
+		</trap>
+
+		<!-- 523 -->
+		<machine>
+			Objevil jsem záhadný stroj. Zkoušel jsem&#10;
+			ho prozkoumat, ale vůbec netuším, k čemu tu je.&#10;
+			Měl jsem se ve škole víc učit. Mí staří&#10;
+			nepřátelé už docela zmizeli.&#10;
+		</machine>
+
+		<!-- 524 -->
+		<new_enemy>
+			Narazil jsem na úplně nový druh potvory.&#10;
+			Velikostí i tvarem je stejná, jako ta v pralese,&#10;
+			ale zdá se být nějakým způsobem zmutovaná.&#10;
+			Má červenou barvu a vydrží víc. Jestli pěkně&#10;
+			rychle nenajdu cestu ven nebo alespoň nějakou&#10;
+			útěchu, tak brzo zcvoknu...&#10;
+			<!-- 525 -->
+			<after>
+				Copak jsem to objevil? Hmmmm. Ta vůně.&#10;
+				Jak to tady mohl někdo nechat. Ale mám pocit,&#10;
+				že to tu už moc dlouho ležet nebude.&#10;
+			</after>
+		</new_enemy>
+
+		<!-- 526 -->
+		<tasty>
+			Hmm, lahodné. To je pošušňáníčko.&#10;
+		</tasty>
+
+		<!-- 527 -->
+		<favourite_drink>
+			Mám pocit, že můj oblíbený nápoj na mě má&#10;
+			při spánku zvláštní předzvěstné účinky. Jestli&#10;
+			je to pravda, tak se mám na co těšit.&#10;
+		</favourite_drink>
+
+		<!-- 528 -->
+		<special_trap>
+			Začíná to tu být nějaké poškozené. Asi se&#10;
+			blížím konci. Jen doufám, že ne svému. Narazil&#10;
+			jsem na nějakou vylepšenou past. Zdá se, že&#10;
+			oplývá inteligencí. Začínám už pomalu cítit&#10;
+			lepší vzduch, než tu zatuchlinu všude okolo.&#10;
+		</special_trap>
+
+		<!-- 529 -->
+		<nightmare_monster>
+			A jejda. Moje obavy se naplnily. Teď poznáš,&#10;
+			co je to zběsilý kamikadze útok bombiče, ty jedna&#10;
+			stará popelnice! Z tohoto souboje vyjde jen&#10;
+			jeden z nás živ. Doufám, že už máš pro sebe&#10;
+			zajištěný odvoz na skládku.&#10;
+			<!-- 530 -->
+			<after>
+				Konečně. Opět na světle slunečním. Teď už&#10;
+				můžu jít domů. A do hospůdky za kamarádama.&#10;
+				Škoda, že jsem si nevzal foťák. Už se nemůžu&#10;
+				dočkat...&#10;
+			</after>
+		</nightmare_monster>
+
+
+		<!-- 540 -->
+		<sunshine>
+			Není to tu venku zrovna podle mých představ,&#10;
+			ale hlavně, že tu je čertsvý vzduch a světlo.&#10;
+			Nemeškejme a pojďme směrem k civilizaci. Už&#10;
+			začínám mít abstinenční přiznaky - chybí mi&#10;
+			neagresivní televize a video. A dal bych si&#10;
+			hranolky.&#10;
+		</sunshine>
+
+		<!-- 541 -->
+		<boring_creatures>
+			Ale ne. Jsou tady ti červení otrapové. Taková&#10;
+			snadná kořist. Skoro se divím, že se tu nevyvinuli&#10;
+			nějací predátoři, kteří by se těmi koulemi živili.&#10;
+			Vždyť by je zvládla bombou usmažit i moje babička.&#10;
+		</boring_creatures>
+
+		<!-- 542 -->
+		<preadator>
+			Ha - predátor je na světě. Sice nevypadá jako&#10;
+			moje babička, ale drsný je dost. Viděl jsem ho&#10;
+			žrát červené koule. Jak mě zahlédl, tak toho nechal&#10;
+			a běžel si pro mě. Štěstí, že je tak pomalý...&#10;
+		</preadator>
+
+		<!-- 543 -->
+		<it_almost_got_me>
+			Tyhle svině už jsem jednou viděl. Taková přece byla&#10;
+			v lese u chatky a málem mě tam dostala.  Ale tady jich&#10;
+			je maličko víc. Snad to bude jen nějáký vzácný druh.&#10;
+			Radši vezmu nohy na ramena.&#10;
+		</it_almost_got_me>
+
+		<!-- 544 -->
+		<broken_boat>
+			Zdá se, že někdo tady neuměl řídit. A když vylezli,&#10;
+			tak jim život pouště asi moc času života nedal.&#10;
+			Na trupu jedné z lodí je napsáno:&#10;
+			Expedice Moře Přání aneb štěstí pro každého.&#10;
+			Co to asi znamená? Kdo by hledal moře v poušti?&#10;
+			<!-- 545 -->
+			<after>
+				Že bych našel moře přání? Spíš oázka zaslíbení.&#10;
+				Už podle barvy hladiny je jasné, že tam asi není&#10;
+				obyčejná voda. Ale něco daleko lepšího...&#10;
+			</after>
+		</broken_boat>
+
+		<!-- 546 -->
+		<chrr>
+			Chrrrrr Chrrrrrr Chrrrrr...&#10;
+		</chrr>
+
+		<!-- 547 -->
+		<dont_give_up>
+			Sny jsou moc dobrá věc. Člověk aspoň tuší, do jakého&#10;
+			průšvihu se řítí. Sice s tím moc nenadělám, ale budu se&#10;
+			snažit. A mojí kůži nikdo lehko nedostane.&#10;
+		</dont_give_up>
+
+		<!-- 548 -->
+		<something_found>
+			Hele studna. Naneštěstí vyschlá. Dřív tudy asi&#10;
+			chodily karavany. To znamená, že jsem na cestě&#10;
+			k civilizaci. Hned se mi jde lépe a radostněji.&#10;
+		</something_found>
+
+		<!-- 549 -->
+		<theend>
+			Jak ho tak pozoruju, tak si říkám, že to asi&#10;
+			bude pěkně tvrdej týpek. A vůbec mi není sympatický.&#10;
+			Zkusím s ním vyjednávat. Pochopitelně pomocí megabomb.&#10;
+			<!-- 550 -->
+			<after>
+				Velký zlý dudlík hlídal moře přání.&#10;
+				Teď si asi můžu něco přát. Nemůžu nic vymyslet.&#10;
+				Pořád se mi vrací doloka jen:&#10;
+				&#10;
+				BECHEROVKU PRO VŠECHNY A ZADARMO,&#10;
+				&#160;&#160;&#160;&#160;A AŤ NIKDO NEODEJDE S PRÁZDNOU.&#10;
+			</after>
+		</theend>
 	</game>
 </language>

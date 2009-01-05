@@ -70,7 +70,7 @@ void GameIntro::show_screen(){
 		// hrajeme
 		game_->play(g_window);
 		// hra skoncila uspesne => dalsi kolo
-		if(true || game_->success())
+		if(game_->success())
 			++cur_level_;
 		else {
 			delete game_;
