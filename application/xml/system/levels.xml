@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <levels>
 	<episode death_text="death">
+		<level map="map_concrete_final" text="nightmare_monster"
+			img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_rings" text="special_trap"
+			img="img/intro_forest_debug.jpg" />
 
 		<level map="map_forest_debug" text="debug"
 			img="intro_forest_debug.jpg" after="intro_forest_debug.jpg" />
@@ -36,6 +40,10 @@
 		<level map="map_dream_tv" text="tasty"
 			img="img/intro_forest_debug.jpg" />
 		<level map="map_concrete_holes" text="favourite_drink"
+			img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_rings" text="special_trap"
+			img="img/intro_forest_debug.jpg" />
+		<level map="map_concrete_final" text="nightmare_monster"
 			img="img/intro_forest_debug.jpg" />
 
 		<level map="map_forest" text="debug"
