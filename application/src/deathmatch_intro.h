@@ -65,7 +65,7 @@ class DeathmatchIntro: public GameBaseLoader {
 		/// Zobrazí obrazovku se skóre.
 		bool show_score_(Uint16 winner);
 		/// Vykreslení skóre.
-		void DeathmatchIntro::draw_score_(
+		void draw_score_(
 			Uint16 winner, Surface & bg, Uint8 trans);
 		/// Vykreslení skóre jednoho hráče.
 		void draw_player_score_( Sint16 x, Sint16 y, Uint16 h,
