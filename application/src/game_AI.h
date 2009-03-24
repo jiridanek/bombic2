@@ -26,24 +26,29 @@ class AI {
 		/// Okopíruje umělou inteligenci.
 		static AI* new_ai(Creature *creature, const AI * ai);
 		/// Uloží rodičovskou nestvůru.
-		AI(Creature *creature);
+		explicit AI(Creature *creature);
 		/// Hýbne nestvůrou.
 		virtual void move()=0;
 		/// Typ inteligence.
 		virtual Sint16 type() const =0;
 		/// Pomocná struktura pro otočení a souřadnice při posunu.
-		typedef struct{ DIRECTION d; Uint16 x, y; } position_t;
+		typedef struct{ DIRECTION d; Uint16 x, y; bool isBlocked; } position_t;
 		/// Destruktor.
-		virtual ~AI() {};
+		virtual ~AI() {}
 	protected:
 		/// Nestvůra, které inteligence patří.
 		Creature *creature_;
 		/// Seznam pozic pro každý krok.
 		std::vector<position_t > positions_;
+		/// Inicializuje seznam pozic.
+		void initPositions(Uint16 positions_min_count);
 		/// Uloží cílové pozice pro každé otočení.
 		void updatePositions();
 		/// Nastaví nestvůře novou pozici.
 		void setPosition(position_t & position);
+		/// Komplexně centruje pozici na políčku.
+		void centerCoordinates(
+			position_t & position, bool isMainX, Sint8 sign);
 		/// Partikulárně centruje souřadnici dostředu políčka.
 		void centerCoordinate(Uint16 & coordinate, Sint8 sign);
 		/// Zjistí, zda je možné vstoupit na políčko.
@@ -51,39 +56,97 @@ class AI {
 			const position_t & position, const isTypeOf & isBlocking);
 };
 
-/** Umělá inteligence nulté úrovně.
- * AI_0 je naprosto tupá úroveň.
- * Jde pořád rovně, když narazí, náhodně se rozhodne kudy dál.
- * Vůbec neřeší blížící se výbuch nebo dostižení hráče.
+/** Umělá inteligence nulté úrovně (bez pohybu).
+ * AI_0 je inteligence pro příšery, které se nepohybují.
  */
 class AI_0 : public AI {
 	public:
 		/// Zavolá konstruktor AI
-		AI_0(Creature *creature);
+		explicit AI_0(Creature *creature);
 		/// Hýbne nestvůrou.
 		virtual void move();
 		/// Typ inteligence.
-		virtual Sint16 type() const { return 0; }
+		virtual Sint16 type() const
+			{ return 0; }
 		/// Destruktor.
-		virtual ~AI_0() {};
-	private:
+		virtual ~AI_0() {}
+};
+
+/**
+ * Chození rovně I.
+ * Jde pořád rovně, když narazí, náhodně se rozhodne kudy dál.
+ * Vůbec neřeší blížící se výbuch nebo dostižení hráče.
+ */
+class AI_1 : public AI {
+	public:
+		/// Nastaví příšeru a definuje co je blokující.
+		explicit AI_1(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const
+			{ return 1; }
+		/// Destruktor.
+		virtual ~AI_1() {}
+	protected:
+		/// Nastaví příšeru a blokující predikát.
+		AI_1(Creature *creature, isTypeOf & isBlocking);
+		/// Podle isBlocking_ chodí pořád rovně.
+		Uint16 findPosIndexToWalkStraight_(isTypeOf & isBlocking);
+
 		isTypeOf & isBlocking_;
+};
+
+/**
+ * Chození rovně II.
+ * Stejně jako AI_1, ale dává pozor na plameny.
+ * Neřeší blížící se výbuch ani hráče.
+ */
+class AI_2 : public AI_1 {
+	public:
+		/// Zavolá konstruktor AI
+		explicit AI_2(Creature *creature);
+		/// Typ inteligence.
+		virtual Sint16 type() const
+			{ return 2; }
+		/// Destruktor.
+		virtual ~AI_2() {}
+};
+
+/**
+ * Chození rovně III.
+ * Stejně jako AI_1, ale dává pozor na plameny a presumpce.
+ * Neřeší pouze hráče. Sám nevleze do plamene ani do presumpce plamene.
+ */
+class AI_3 : public AI_1 {
+	public:
+		/// Zavolá konstruktor AI
+		explicit AI_3(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const
+			{ return 3; }
+		/// Destruktor.
+		virtual ~AI_3() {}
+	protected:
+		isTypeOf & isBad_;
 };
 
 /** Umělá inteligence první úrovně.
  * AI_1 je velice tupá úroveň, sice nepředvídatelně mění směr,
  * nicméně vůbec neřeší blížící se výbuch nebo cílené dostižení hráče.
  */
-class AI_1 : public AI {
+class AI_100 : public AI {
 	public:
 		/// Zavolá konstruktor AI
-		AI_1(Creature *creature);
+		AI_100(Creature *creature);
 		/// Hýbne nestvůrou.
 		virtual void move();
 		/// Typ inteligence.
-		virtual Sint16 type() const { return 1; }
+		virtual Sint16 type() const { return 100; }
 		/// Destruktor.
-		virtual ~AI_1() {};
+		virtual ~AI_100() {};
 	private:
 		isTypeOf & isBlocking_;
 };

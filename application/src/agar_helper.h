@@ -24,7 +24,6 @@ void setFocusOnMotion(AG_Widget *w);
 
 void handlerMousemotion(AG_Event *event);
 
-
 #define SEARCH_HOME ".bombic"
 #ifndef PWD
 #define PWD "."

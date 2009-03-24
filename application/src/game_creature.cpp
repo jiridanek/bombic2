@@ -27,11 +27,16 @@ Creature::Creature(const Animation & anim_up, const Animation & anim_right,
 	DynamicMO(x, y),
 	anim_up_(anim_up), anim_right_(anim_right), anim_down_(anim_down),
 	anim_left_(anim_left), anim_burned_(anim_burned),
-	d_(static_cast<DIRECTION>(rand()%4)), ai_(AI::new_ai(this, ai)),
+	d_(static_cast<DIRECTION>(rand()%4)),
+	ai_(AI::new_ai(this, ai)),
 	moved_(false), access_counter_(0),
 	last_die_(CREATURE_PROTECTION_LENGTH), lives_(lives),
 	// pro zjednoduseni zachazeni s rychlosti
-	speed_diff_((speed-1)/7+1), speed_rate_((speed-1)%7+2+speed_diff_) {}
+	speed_diff_((speed-1)/7+1),
+	speed_rate_((speed-1)%7+2+speed_diff_) {
+
+
+}
 
 /** @details
  * Jakýsi copycontructor, který navíc k okopírování objektu nastaví souřadnice.
@@ -43,11 +48,16 @@ Creature::Creature(const Creature & creature, Uint16 x, Uint16 y):
 	DynamicMO(x, y),
 	anim_up_(creature.anim_up_), anim_right_(creature.anim_right_),
 	anim_down_(creature.anim_down_), anim_left_(creature.anim_left_),
-	anim_burned_(creature.anim_burned_), d_(creature.d_), ai_(AI::new_ai(this, creature.ai_)),
+	anim_burned_(creature.anim_burned_), d_(creature.d_),
+	ai_(AI::new_ai(this, creature.ai_)),
 	moved_(false), access_counter_(0),
 	last_die_(CREATURE_PROTECTION_LENGTH), lives_(creature.lives_),
 	// pro zjednoduseni zachazeni s rychlosti
-	speed_diff_(creature.speed_diff_), speed_rate_(creature.speed_rate_) {}
+	speed_diff_(creature.speed_diff_),
+	speed_rate_(creature.speed_rate_) {
+
+
+}
 
 /** @details
  * Destruuje umělou inteligenci.
@@ -63,27 +73,36 @@ Creature::~Creature(){
  * @return Vrací TRUE pokud se má objekt zahodit.
  */
 bool Creature::move(){
-	if(Game::get_instance()->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, FLAME))
+	bool is_in_flame =
+		GAME->field_withObject(
+			x_/CELL_SIZE, y_/CELL_SIZE,
+			isTypeOf::isFlame );
+	if(is_in_flame)
 		die();
 	// mrtvoly se nehybou
 	if(d_==BURNED)
-		return anim_burned_.run_num()>0;
+		// TRUE pokud dobehla animace horeni
+		return anim_burned_.run_num() > 0;
 
-	Uint16 accessed = ++access_counter_%speed_rate_;
-	if(accessed!=0 && accessed!=speed_rate_/2){
+	// prihodit na pocitadle pristupu
+	++access_counter_;
+	Uint16 accessed = access_counter_ % speed_rate_;
+	if(accessed != 0 && accessed != speed_rate_/2){
 		// puvodni pozice
-		Uint16 old_x=x_, old_y=y_;
-		DIRECTION old_d=d_;
+		Uint16 old_x = x_, old_y=y_;
+		DIRECTION old_d = d_;
 
 		if(ai_) ai_->move();
 
 		// nastavit novou pozici take v mape
 		setFieldInMap(old_x, old_y);
 		// zresetovat starou animaci
-		if(old_d!=d_)
+		if(old_d != d_)
 			anim_(old_d).reset();
 		// nastavit priznak, zda se pohyboval
-		moved_ = old_x!=x_ || old_y!=y_;
+		bool moved_x = old_x != x_;
+		bool moved_y = old_y != y_;
+		moved_ =  moved_x || moved_y;
 	}
 
 	return false;
@@ -97,25 +116,29 @@ bool Creature::move(){
 void Creature::die(){
 	if(last_die_ < CREATURE_PROTECTION_LENGTH)
 		return;
-	if(lives_>1){
+
+	if(lives_ > 1){
 		--lives_;
 		last_die_ = 0;
 	}
-	else
+	else {
 		d_ = BURNED;
+	}
 }
 
 extern Fonts * g_font;
 
 /**
  * @param window surface okna pro vykreslení
+ * @param rect obdélník aktuálního pohledu v okně
  */
 void Creature::draw(SDL_Surface *window, const SDL_Rect & rect){
+	// souradnice pro vykresleni v pixelech
+	int x = x_ - anim_up_.width()/2;
+	int y = y_ - anim_up_.height()/2;
 
-	int x=x_-anim_up_.width()/2;
-	int y=y_-anim_up_.height()/2;
-
-	anim_(d_).draw(window, x+rect.x, y+rect.y);
+	// vykresli animaci podle natoceni, posune souradnice podle pozice pohledu
+	anim_(d_).draw(window, x + rect.x, y + rect.y);
 
 	/*/ TODO debug
 	draw_pixel(window, x_, y_, Color::red);
@@ -128,6 +151,10 @@ void Creature::draw(SDL_Surface *window, const SDL_Rect & rect){
 	//*/
 }
 
+/** @details
+ * Posune nebo zresetuje animaci, podle toho jestli se příšera hýbe (nebo hoří).
+ * Pokud je příšera v době chránění, zvýší dobu od poslední smrti.
+ */
 void Creature::update(){
 	if(moved_ || d_==BURNED)
 		anim_(d_).update();
@@ -144,12 +171,16 @@ void Creature::update(){
  */
 Animation & Creature::anim_(DIRECTION d) {
 	switch(d){
-		case UP: return anim_up_;
-		case RIGHT: return anim_right_;
-		case DOWN: return anim_down_;
-		case LEFT: return anim_left_;
+		case UP:
+			return anim_up_;
+		case RIGHT:
+			return anim_right_;
+		case DOWN:
+			return anim_down_;
+		case LEFT:
+			return anim_left_;
 		case BURNED:
-		default: return anim_burned_;
+			return anim_burned_;
 	}
 }
 

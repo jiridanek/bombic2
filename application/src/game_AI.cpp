@@ -1,5 +1,6 @@
 
 #include <vector>
+#include <algorithm>
 #include "SDL_lib.h"
 #include "stl_helper.h"
 #include "constants.h"
@@ -14,7 +15,7 @@
 using namespace std;
 
 /** @details
- * Statická fce, pouze rozhodne, která třída AI se použije.
+ * Statická fce, pouze rozhodne, který potomek AI se použije.
  * @param creature rodičovská nestvůra
  * @param intelligence výše umělé inteligence
  * @return Pointer na vytvořenou umělou inteligenci,
@@ -25,13 +26,15 @@ AI* AI::new_ai(Creature * creature, Sint16 intelligence){
 		case -1: return new AI_fromKeyboard(creature);
 		case  0: return new AI_0(creature);
 		case  1: return new AI_1(creature);
+		case  2: return new AI_2(creature);
+		case  3: return new AI_3(creature);
 		case  10: return new AI_10(creature);
 		default: return 0;
 	}
 }
 
 /** @details
- * Statická fce, pouze rozhodne, která třída AI se použije.
+ * Statická fce, pouze vybere potomka AI stejného jako je v parametru.
  * @param creature rodičovská nestvůra
  * @param ai pointer na již vytvořenou inteligenci,
  * ten se použije pouze na zjištění typu inteligence
@@ -46,7 +49,22 @@ AI* AI::new_ai(Creature * creature, const AI * ai){
 /** @details
  * @param creature pointer na nestvůru, které umělá inteligence patří
  */
-AI::AI(Creature *creature): creature_(creature) {}
+AI::AI(Creature *creature): creature_(creature) {
+
+}
+
+/** @details
+ * Vloží tolik pozic, aby bylo dost pro další použití.
+ * @param position_min_count minimální počet pozic pro další použití
+ */
+void AI::initPositions(Uint16 positions_min_count){
+	if(positions_.size() < positions_min_count) {
+		position_t default_pos;
+		positions_.clear();
+		positions_.insert(
+			positions_.end(), positions_min_count, default_pos);
+	}
+}
 
 /** @details
  * Nastaví cílové pozice pro všech pět možností kroku.
@@ -55,16 +73,11 @@ AI::AI(Creature *creature): creature_(creature) {}
  */
 void AI::updatePositions(){
 	// prvni inicializace
-	if(positions_.size()<5) {
-		position_t pos;
-		positions_.clear();
-		positions_.push_back(pos);
-		positions_.push_back(pos);
-		positions_.push_back(pos);
-		positions_.push_back(pos);
-		positions_.push_back(pos);
-	}
-
+	initPositions(5);
+	// soucasna pozice
+	positions_[0].d = creature_->d_;
+	positions_[0].x = creature_->x_;
+	positions_[0].y = creature_->y_;
 	// nastavim smery pro otoceni
 	Uint16 i;
 	switch(creature_->d_){
@@ -74,30 +87,22 @@ void AI::updatePositions(){
 		case RIGHT: i=4; break;
 		default: break;
 	}
-	// soucasna pozice
-	positions_[0].d = creature_->d_;
-	positions_[0].x = creature_->x_;
-	positions_[0].y = creature_->y_;
-	//souradnice pro otoceni a jedno policko vpred
-	positions_[i].d=UP;
-	positions_[i].x=creature_->x_;
-	positions_[i].y=creature_->y_ - creature_->speed_diff_;
-// 	positions_[i].y=creature_->y_ - 1;
-	i=i%4+1;
-	positions_[i].d=RIGHT;
-	positions_[i].x=creature_->x_ + creature_->speed_diff_;
-// 	positions_[i].x=creature_->x_ + 1;
-	positions_[i].y=creature_->y_;
-	i=i%4+1;
-	positions_[i].d=DOWN;
-	positions_[i].x=creature_->x_;
-	positions_[i].y=creature_->y_ + creature_->speed_diff_;
-// 	positions_[i].y=creature_->y_ + 1;
-	i=i%4+1;
-	positions_[i].d=LEFT;
-	positions_[i].x=creature_->x_ - creature_->speed_diff_;
-// 	positions_[i].x=creature_->x_ - 1;
-	positions_[i].y=creature_->y_;
+	//souradnice pro otoceni a jeden krok vpred
+	positions_[i].d = UP;
+	positions_[i].x = creature_->x_;
+	positions_[i].y = creature_->y_ - creature_->speed_diff_;
+	i = i%4 + 1;
+	positions_[i].d = RIGHT;
+	positions_[i].x = creature_->x_ + creature_->speed_diff_;
+	positions_[i].y = creature_->y_;
+	i = i%4 + 1;
+	positions_[i].d = DOWN;
+	positions_[i].x = creature_->x_;
+	positions_[i].y = creature_->y_ + creature_->speed_diff_;
+	i = i%4 + 1;
+	positions_[i].d = LEFT;
+	positions_[i].x = creature_->x_ - creature_->speed_diff_;
+	positions_[i].y = creature_->y_;
 }
 
 /** @details
@@ -109,128 +114,71 @@ void AI::setPosition(position_t & position){
 	// prvne vycentrovat
 	switch(position.d){
 		case UP:
-			if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-				// vlevo
-				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE-1,position.y/CELL_SIZE-1)){
-						centerCoordinate(position.x, +1);
-						centerCoordinate(position.y, +1);
-					}
-				// vpravo
-				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE+1,position.y/CELL_SIZE-1)){
-						centerCoordinate(position.x, -1);
-						centerCoordinate(position.y, +1);
-					}
-			} else {
-				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE-1,position.y/CELL_SIZE)){
-						centerCoordinate(position.x, +1);
-// 						centerCoordinate(position.y, +1);
-					}
-				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE+1,position.y/CELL_SIZE)){
-						centerCoordinate(position.x, -1);
-// 						centerCoordinate(position.y, +1);
-					}
-			} break;
+			centerCoordinates(position, false, +1);
+			break;
 		case RIGHT:
-			if(position.x%CELL_SIZE-1>CELL_SIZE/2){
-				// nahore
-				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE+1,position.y/CELL_SIZE-1)){
-						centerCoordinate(position.x, -1);
-						centerCoordinate(position.y, +1);
-					}
-				// dole
-				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE+1,position.y/CELL_SIZE+1)){
-						centerCoordinate(position.x, -1);
-						centerCoordinate(position.y, -1);
-					}
-			} else {
-				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE,position.y/CELL_SIZE-1)){
-// 						centerCoordinate(position.x, -1);
-						centerCoordinate(position.y, +1);
-					}
-				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE,position.y/CELL_SIZE+1)){
-// 						centerCoordinate(position.x, -1);
-						centerCoordinate(position.y, -1);
-					}
-
-			} break;
+			centerCoordinates(position, true, -1);
+			break;
 		case DOWN:
-			if(position.y%CELL_SIZE-1>CELL_SIZE/2){
-				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE-1,position.y/CELL_SIZE+1)){
-						centerCoordinate(position.x, +1);
-						centerCoordinate(position.y, -1);
-					}
-				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE+1,position.y/CELL_SIZE+1)){
-						centerCoordinate(position.x, -1);
-						centerCoordinate(position.y, -1);
-					}
-			} else {
-				if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE-1,position.y/CELL_SIZE)){
-						centerCoordinate(position.x, +1);
-// 						centerCoordinate(position.y, -1);
-					}
-				} else if(position.x%CELL_SIZE-1>CELL_SIZE/2)
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE+1,position.y/CELL_SIZE)){
-						centerCoordinate(position.x, -1);
-// 						centerCoordinate(position.y, -1);
-					}
-			} break;
+			centerCoordinates(position, false, -1);
+			break;
 		case LEFT:
-			if(position.x%CELL_SIZE+1<CELL_SIZE/2){
-				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE-1,position.y/CELL_SIZE-1)){
-						centerCoordinate(position.x, +1);
-						centerCoordinate(position.y, +1);
-					}
-				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE-1,position.y/CELL_SIZE+1)){
-						centerCoordinate(position.x, +1);
-						centerCoordinate(position.y, -1);
-					}
-			}else {
-				if(position.y%CELL_SIZE+1<CELL_SIZE/2){
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE,position.y/CELL_SIZE-1)){
-// 						centerCoordinate(position.x, +1);
-						centerCoordinate(position.y, +1);
-					}
-				} else if(position.y%CELL_SIZE-1>CELL_SIZE/2)
-					if(!GAME->field_canGoOver(
-					position.x/CELL_SIZE,position.y/CELL_SIZE+1)){
-// 						centerCoordinate(position.x, +1);
-						centerCoordinate(position.y, -1);
-					}
-			} break;
-		default: break;
+			centerCoordinates(position, true, +1);
+			break;
+		default:
+			break;
 	}
 	// nastavit pozici prisery
 	creature_->x_=position.x;
 	creature_->y_=position.y;
 	creature_->d_=position.d;
+}
+
+/** @details
+ * Podle zadaných parametrů se rozhlédne po okolních políčkách
+ * a je-li třeba, přiblíží souřadnice pozice středu políčka.
+ * @param position pozice, jejíž souřadnice chci centrovat
+ * @param isMainX je-li hlavním směrem osa X
+ * @param sign +1 nebo -1 podle orientace pohybu po hlavní ose
+ * +1 pro vzhůru a vlevo, -1 pro dolů a vpravo
+ */
+void AI::centerCoordinates(position_t & position, bool isMainX, Sint8 sign){
+	bool isMainY = !isMainX;
+	// hlavni souradnice
+	Uint16 & main_coor = isMainX ? position.x : position.y;
+	// vedlejsi souradnice
+	Uint16 & extra_coor = isMainY ? position.x : position.y;
+	// souradnice v ramci policka v hlavnim smeru
+	Uint16 cell_coor = main_coor % CELL_SIZE + sign;
+	// je za pulkou ve svem smeru
+	bool isTooFar = sign > 0 ?
+		cell_coor < CELL_SIZE/2 : cell_coor > CELL_SIZE/2;
+	// zmena hlavni souradnice
+	Sint8 main_diff = isTooFar ? sign : 0;
+	// zmena vedlejsi souradnice
+	Sint8 extra_diff;
+	if(extra_coor % CELL_SIZE +1 < CELL_SIZE/2){
+		extra_diff = +1;
+	} else if(extra_coor % CELL_SIZE -1 > CELL_SIZE/2){
+		extra_diff = -1;
+	} else {
+		extra_diff = 0;
+	}
+	// vykonat centrovani
+	if(extra_diff != 0){
+		Uint16 x = position.x/CELL_SIZE -
+			( isMainX ? main_diff : extra_diff );
+		Uint16 y = position.y/CELL_SIZE -
+			( isMainY ? main_diff : extra_diff );
+		if(!GAME->field_canGoOver(x, y)){
+			// vycentrovat
+			centerCoordinate(extra_coor, extra_diff);
+			if(main_diff != 0){
+				// zpomalit
+				centerCoordinate(main_coor, main_diff);
+			}
+		}
+	}
 }
 
 /** @details
@@ -240,10 +188,11 @@ void AI::setPosition(position_t & position){
  * @param sign +1 nebo -1, přidá nebo ubere
  */
 void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign){
-	Uint8 diff_center = sign*(CELL_SIZE/2-coordinate%CELL_SIZE);
-	Uint8 diff_speed = (creature_->speed_diff_+1)/2;
-	coordinate = coordinate + sign*(
-		diff_center<diff_speed ? diff_center : diff_speed );
+	// vzdalenost od stredu policka
+	Uint8 diff_center = sign * (CELL_SIZE/2 - coordinate % CELL_SIZE);
+	// polovina rychlosti
+	Uint8 diff_speed = (creature_->speed_diff_ + 1) / 2;
+	coordinate += sign * min(diff_center, diff_speed);
 }
 
 /** @details
@@ -254,66 +203,159 @@ void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign){
  */
 bool AI::checkField(const position_t & position,
 					const isTypeOf & isBlocking){
-	Uint16 x=position.x/CELL_SIZE, y=position.y/CELL_SIZE;
-	MapObject * blocking = GAME->field_getObject(x, y, isBlocking);
+	Uint16 x = position.x / CELL_SIZE,
+		y = position.y / CELL_SIZE;
+	// primo kam chci jit je blokujici objekt (krome bomby)
+	MapObject * blocking =
+		GAME->field_getObject(x, y, isBlocking);
 	if(blocking && blocking->type()!=BOMB_STAYING)
 		return false;
 
+	// jsem-li za pulkou
+	bool isTooFar = false;
+	Sint16 diff_x = 0, diff_y = 0;
 	switch(position.d){
-		case UP: if(position.y%CELL_SIZE<CELL_SIZE/2
-				&& GAME->field_withObject(x, y-1, isBlocking) )
-					return false;
+		case UP:
+			if(position.y % CELL_SIZE < CELL_SIZE/2){
+				isTooFar = true;
+				diff_y = -1;
+			}
 			break;
-		case RIGHT: if(position.x%CELL_SIZE>CELL_SIZE/2
-				&& GAME->field_withObject(x+1, y, isBlocking) )
-					return false;
+		case RIGHT:
+			if(position.x % CELL_SIZE > CELL_SIZE/2){
+				isTooFar = true;
+				diff_x = +1;
+			}
 			break;
-		case DOWN: if(position.y%CELL_SIZE>CELL_SIZE/2
-				&& GAME->field_withObject(x, y+1, isBlocking) )
-					return false;
+		case DOWN:
+			if(position.y % CELL_SIZE > CELL_SIZE/2){
+				isTooFar = true;
+				diff_y = +1;
+			}
 			break;
-		case LEFT: if(position.x%CELL_SIZE<CELL_SIZE/2
-				&& GAME->field_withObject(x-1, y, isBlocking) )
-					return false;
+		case LEFT:
+			if(position.x % CELL_SIZE < CELL_SIZE/2){
+				isTooFar = true;
+				diff_x = -1;
+			}
 			break;
-		default: break;
+		default:
+			break;
 	}
-	return true;
+
+	bool isFree;
+	if(isTooFar){
+		// zkontroluji policko na ktere smeruji
+		isFree = !GAME->field_withObject(
+			x + diff_x, y + diff_y, isBlocking);
+	} else {
+		isFree = true;
+	}
+	return isFree;
 }
 
 /************************ AI_0 **************************/
 
-AI_0::AI_0(Creature *creature):
-		AI(creature), isBlocking_(isTypeOf::isWallBoxBomb) {}
+AI_0::AI_0(Creature *creature): AI(creature){
+
+}
 
 void AI_0::move() {
-	updatePositions();
-	// vpred
-	if(checkField(positions_[1], isBlocking_)){
-		setPosition(positions_[1]);
-		return;
-	}
-	// otoceni doprava
-	if(rand()%3==0 && checkField(positions_[2], isBlocking_)){
-		setPosition(positions_[2]);
-		return;
-	}
-	// otoceni doleva
-	if(rand()%2==0 && checkField(positions_[4], isBlocking_)){
-		setPosition(positions_[4]);
-		return;
-	}
-	// vzad
-	if(checkField(positions_[3], isBlocking_))
-		setPosition(positions_[3]);
+
 }
 
 /************************ AI_1 **************************/
 
 AI_1::AI_1(Creature *creature):
-		AI(creature), isBlocking_(isTypeOf::isWallBoxBomb) {}
+	AI(creature), isBlocking_(isTypeOf::isWallBoxBomb) {
+
+}
+
+AI_1::AI_1(Creature *creature, isTypeOf & isBlocking):
+	AI(creature), isBlocking_(isBlocking) {
+
+}
 
 void AI_1::move() {
+	updatePositions();
+	Uint16 posIndex = findPosIndexToWalkStraight_(isBlocking_);
+	setPosition(positions_[posIndex]);
+}
+
+Uint16 AI_1::findPosIndexToWalkStraight_(isTypeOf & isBlocking){
+	// vpred
+	if(checkField(positions_[1], isBlocking)){
+		return 1;
+	}
+	// zjistim pocet neblokovanych moznosti
+	Uint16 nonBlockedPositions = 0;
+	// pres zbyvajici pozice
+	for(Uint16 i = 2 ; i <= 4 ; ++i){
+		// ulozim si info o blokovani
+		if(checkField(positions_[i], isBlocking)){
+			positions_[i].isBlocked = false;
+			// zapocitam jako neblokovanou
+			++nonBlockedPositions;
+		} else {
+			positions_[i].isBlocked = true;
+		}
+	}
+
+	for(Uint16 i = 2 ; i <= 4 ; ++i){
+		// neni neblokovana, nezajima me
+		if(positions_[i].isBlocked){
+			continue;
+		}
+		// vyberu nahodne spravedlive mezi neblokovanymi
+		if(rand() % nonBlockedPositions == 0){
+			return i;
+		}
+		// snizim pocet neblokovanych pozic
+		--nonBlockedPositions;
+	}
+
+	// zustat na miste
+	return 0;
+}
+
+/************************ AI_2 **************************/
+
+AI_2::AI_2(Creature *creature):
+	AI_1(creature, isTypeOf::isWallBoxBombFlame) {
+
+}
+
+/************************ AI_3 **************************/
+
+AI_3::AI_3(Creature *creature):
+	AI_1(creature, isTypeOf::isWallBoxBombFlame),
+	isBad_(isTypeOf::isWallBoxBombFlamePresumption) {
+
+}
+
+void AI_3::move() {
+	updatePositions();
+	Uint16 posIndex = findPosIndexToWalkStraight_(isBad_);
+	// kdyby mel zustat stat
+	if(posIndex == 0){
+		bool isInPresumption =
+			GAME->field_withObject(
+				positions_[posIndex].x / CELL_SIZE,
+				positions_[posIndex].y / CELL_SIZE,
+				isTypeOf::isPresumption );
+		if(isInPresumption){
+			posIndex = findPosIndexToWalkStraight_(isBlocking_);
+		}
+	}
+	setPosition(positions_[posIndex]);
+}
+
+/************************ AI_100 **************************/
+
+AI_100::AI_100(Creature *creature):
+		AI(creature), isBlocking_(isTypeOf::isWallBoxBomb) {}
+
+void AI_100::move() {
 	updatePositions();
 
 	// vpred

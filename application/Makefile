@@ -18,7 +18,7 @@ all: $(OBJECTFILES) $(LIBS_OBJECTFILES)
 	$(CC) -o $(TARGET) $(OBJECTFILES) $(LIBS_OBJECTFILES) $(LIBS)
 
 src/%.o: src/%.cpp $(HEADERFILES) $(LIBS_HEADERFILES)
-	$(CC) -c $< $(CFLAGS) -o $@ -DPWD=$(PWD)
+	$(CC) -c $< $(CFLAGS) -o $@ 
 libs/%.o: libs/%.cpp $(LIBS_HEADERFILES)
 	$(CC) -c $< $(CFLAGS) -o $@
 

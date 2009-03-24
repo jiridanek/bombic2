@@ -41,7 +41,7 @@
 		<wall x="20" y="10" />
 		<wall x="21" y="3" />
 		<wall x="21" y="9" />
-		<wall x="22" y="6" />
+		<wall x="23" y="6" />
 
 		<wall name="wall_hole" x="10" y="5" width="2" height="2" />
 		<wall name="wall_block_l" x="13" y="6" />
