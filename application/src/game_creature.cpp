@@ -77,12 +77,14 @@ bool Creature::move(){
 		GAME->field_withObject(
 			x_/CELL_SIZE, y_/CELL_SIZE,
 			isTypeOf::isFlame );
-	if(is_in_flame)
+	if(is_in_flame) {
 		die();
+	}
 	// mrtvoly se nehybou
-	if(d_==BURNED)
+	if(d_==BURNED) {
 		// TRUE pokud dobehla animace horeni
 		return anim_burned_.run_num() > 0;
+	}
 
 	// prihodit na pocitadle pristupu
 	++access_counter_;

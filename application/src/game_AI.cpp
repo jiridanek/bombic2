@@ -1,6 +1,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <string>
 #include "SDL_lib.h"
 #include "stl_helper.h"
 #include "constants.h"
@@ -28,6 +29,7 @@ AI* AI::new_ai(Creature * creature, Sint16 intelligence){
 		case  1: return new AI_1(creature);
 		case  2: return new AI_2(creature);
 		case  3: return new AI_3(creature);
+		case  4: return new AI_4(creature);
 		case  10: return new AI_10(creature);
 		default: return 0;
 	}
@@ -57,12 +59,12 @@ AI::AI(Creature *creature): creature_(creature) {
  * Vloží tolik pozic, aby bylo dost pro další použití.
  * @param position_min_count minimální počet pozic pro další použití
  */
-void AI::initPositions(Uint16 positions_min_count){
-	if(positions_.size() < positions_min_count) {
+void AI::initPositions(){
+	if(positions_.size() < POS_COUNT) {
 		position_t default_pos;
 		positions_.clear();
 		positions_.insert(
-			positions_.end(), positions_min_count, default_pos);
+			positions_.end(), POS_COUNT, default_pos);
 	}
 }
 
@@ -73,19 +75,21 @@ void AI::initPositions(Uint16 positions_min_count){
  */
 void AI::updatePositions(){
 	// prvni inicializace
-	initPositions(5);
+	initPositions();
 	// soucasna pozice
-	positions_[0].d = creature_->d_;
-	positions_[0].x = creature_->x_;
-	positions_[0].y = creature_->y_;
+	positions_[POS_STAY].d = creature_->d_;
+	positions_[POS_STAY].x = creature_->x_;
+	positions_[POS_STAY].y = creature_->y_;
 	// nastavim smery pro otoceni
 	Uint16 i;
 	switch(creature_->d_){
-		case UP: i=1; break;
-		case LEFT: i=2; break;
-		case DOWN: i=3; break;
-		case RIGHT: i=4; break;
-		default: break;
+		// do i nastavim kam se musim otocit abych koukal nahoru
+		case UP: i = POS_STRAIGHT; break;
+		case LEFT: i = POS_RIGHT; break;
+		case DOWN: i = POS_BACK; break;
+		case RIGHT: i = POS_LEFT; break;
+		default:
+			throw(string("Invalid direction in AI::updatePositions()"));
 	}
 	//souradnice pro otoceni a jeden krok vpred
 	positions_[i].d = UP;
@@ -129,9 +133,9 @@ void AI::setPosition(position_t & position){
 			break;
 	}
 	// nastavit pozici prisery
-	creature_->x_=position.x;
-	creature_->y_=position.y;
-	creature_->d_=position.d;
+	creature_->x_ = position.x;
+	creature_->y_ = position.y;
+	creature_->d_ = position.d;
 }
 
 /** @details
@@ -282,15 +286,15 @@ void AI_1::move() {
 	setPosition(positions_[posIndex]);
 }
 
-Uint16 AI_1::findPosIndexToWalkStraight_(isTypeOf & isBlocking){
+AI::PositionIndex AI_1::findPosIndexToWalkStraight_(isTypeOf & isBlocking){
 	// vpred
-	if(checkField(positions_[1], isBlocking)){
-		return 1;
+	if(checkField(positions_[POS_STRAIGHT], isBlocking)){
+		return POS_STRAIGHT;
 	}
 	// zjistim pocet neblokovanych moznosti
 	Uint16 nonBlockedPositions = 0;
 	// pres zbyvajici pozice
-	for(Uint16 i = 2 ; i <= 4 ; ++i){
+	for(Uint16 i = POS_STRAIGHT +1 ; i < POS_COUNT ; ++i){
 		// ulozim si info o blokovani
 		if(checkField(positions_[i], isBlocking)){
 			positions_[i].isBlocked = false;
@@ -301,21 +305,21 @@ Uint16 AI_1::findPosIndexToWalkStraight_(isTypeOf & isBlocking){
 		}
 	}
 
-	for(Uint16 i = 2 ; i <= 4 ; ++i){
+	for(Uint16 i = POS_STRAIGHT +1 ; i < POS_COUNT ; ++i){
 		// neni neblokovana, nezajima me
 		if(positions_[i].isBlocked){
 			continue;
 		}
 		// vyberu nahodne spravedlive mezi neblokovanymi
 		if(rand() % nonBlockedPositions == 0){
-			return i;
+			return static_cast<PositionIndex>(i);
 		}
 		// snizim pocet neblokovanych pozic
 		--nonBlockedPositions;
 	}
 
 	// zustat na miste
-	return 0;
+	return POS_STAY;
 }
 
 /************************ AI_2 **************************/
@@ -335,9 +339,9 @@ AI_3::AI_3(Creature *creature):
 
 void AI_3::move() {
 	updatePositions();
-	Uint16 posIndex = findPosIndexToWalkStraight_(isBad_);
+	PositionIndex posIndex = findPosIndexToWalkStraight_(isBad_);
 	// kdyby mel zustat stat
-	if(posIndex == 0){
+	if(posIndex == POS_STAY){
 		bool isInPresumption =
 			GAME->field_withObject(
 				positions_[posIndex].x / CELL_SIZE,
@@ -350,32 +354,88 @@ void AI_3::move() {
 	setPosition(positions_[posIndex]);
 }
 
-/************************ AI_100 **************************/
+/************************ AI_4 **************************/
 
-AI_100::AI_100(Creature *creature):
-		AI(creature), isBlocking_(isTypeOf::isWallBoxBomb) {}
+AI_4::AI_4(Creature *creature):
+		AI_1(creature, isTypeOf::isWallBoxBomb),
+		distanceWalkedStraight_(0) {
 
-void AI_100::move() {
+	minDistanceWalkedStraight_ =
+		AI_4_MIN_DISTANCE_WALKED_STRAIGHT;
+}
+
+AI_4::AI_4(Creature *creature, isTypeOf & isBlocking,
+				Uint16 minDistance):
+		AI_1(creature, isBlocking),
+		distanceWalkedStraight_(0) {
+
+	minDistanceWalkedStraight_ = minDistance;
+}
+
+void AI_4::move() {
 	updatePositions();
+	PositionIndex posIndex;
+	if(distanceWalkedStraight_ < minDistanceWalkedStraight_) {
+		posIndex = findPosIndexToWalkStraight_(isBlocking_);
+	} else {
+		posIndex = findPosIndexToWalkRandomly_(isBlocking_);
+	}
+	updateDistance_(positions_[posIndex]);
+	setPosition(positions_[posIndex]);
+}
 
-	// vpred
-	if(rand()%100<=97 && checkField(positions_[1], isBlocking_)){
-		setPosition(positions_[1]);
-		return;
+AI::PositionIndex AI_4::findPosIndexToWalkRandomly_(isTypeOf & isBlocking){
+	// zjistim pocet neblokovanych moznosti
+	Uint16 nonBlockedPositions = 0;
+	// pres vsechny pozice
+	for(Uint16 i = POS_STRAIGHT ; i < POS_COUNT ; ++i){
+		// ulozim si info o blokovani
+		if(checkField(positions_[i], isBlocking)){
+			positions_[i].isBlocked = false;
+			// zapocitam jako neblokovanou
+			++nonBlockedPositions;
+		} else {
+			positions_[i].isBlocked = true;
+		}
 	}
-	// otoceni doprava
-	if(rand()%5<=2 && checkField(positions_[2], isBlocking_)){
-		setPosition(positions_[2]);
-		return;
+
+	for(Uint16 i = POS_STRAIGHT ; i < POS_COUNT ; ++i){
+		// neni neblokovana, nezajima me
+		if(positions_[i].isBlocked){
+			continue;
+		}
+		// vyberu nahodne spravedlive mezi neblokovanymi
+		if(rand() % nonBlockedPositions == 0){
+			return static_cast<PositionIndex>(i);
+		}
+		// snizim pocet neblokovanych pozic
+		--nonBlockedPositions;
 	}
-	// otoceni doleva
-	if(rand()%3<=2 && checkField(positions_[4], isBlocking_)){
-		setPosition(positions_[4]);
-		return;
+
+	// zustat na miste
+	return POS_STAY;
+}
+
+void AI_4::updateDistance_(position_t & position){
+	// spocitam vzdalenost nove uslou po ose x a y
+	Uint16 distance_x =
+		abs_minus(position.x, positions_[POS_STAY].x);
+	Uint16 distance_y =
+		abs_minus(position.y, positions_[POS_STAY].y);
+	// vetsinou chodim jen jednim smerem (x nebo y)
+	// pokud jdu po x i y, pocitam to jako kdybych sel kazdou zvlast
+	// cili je to trochu dal nez kdybych sel sikmo, ale to nevadi
+	Uint16 distance = distance_x + distance_y;
+
+	if(distanceWalkedStraight_ < minDistanceWalkedStraight_) {
+		// jdu porad rovne, zvetsim vzdalenost uslou rovne
+		distanceWalkedStraight_ += distance;
 	}
-	// vzad
-	if(checkField(positions_[3], isBlocking_))
-		setPosition(positions_[3]);
+	else {
+		// nejdu rovne, vzdalenost uslou rovne zahodim
+		// a zacnu ji pocitat znova
+		distanceWalkedStraight_ = distance;
+	}
 }
 
 /************************ AI_10 **************************/

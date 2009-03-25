@@ -38,10 +38,14 @@ class AI {
 	protected:
 		/// Nestvůra, které inteligence patří.
 		Creature *creature_;
+		/// Výčtový typ pro indexování positions_.
+		enum PositionIndex {
+			POS_STAY, POS_STRAIGHT, POS_RIGHT,
+			POS_BACK, POS_LEFT, POS_COUNT };
 		/// Seznam pozic pro každý krok.
 		std::vector<position_t > positions_;
 		/// Inicializuje seznam pozic.
-		void initPositions(Uint16 positions_min_count);
+		void initPositions();
 		/// Uloží cílové pozice pro každé otočení.
 		void updatePositions();
 		/// Nastaví nestvůře novou pozici.
@@ -92,7 +96,8 @@ class AI_1 : public AI {
 		/// Nastaví příšeru a blokující predikát.
 		AI_1(Creature *creature, isTypeOf & isBlocking);
 		/// Podle isBlocking_ chodí pořád rovně.
-		Uint16 findPosIndexToWalkStraight_(isTypeOf & isBlocking);
+		PositionIndex findPosIndexToWalkStraight_(
+			isTypeOf & isBlocking);
 
 		isTypeOf & isBlocking_;
 };
@@ -133,22 +138,37 @@ class AI_3 : public AI_1 {
 		isTypeOf & isBad_;
 };
 
+#define AI_4_MIN_DISTANCE_WALKED_STRAIGHT (CELL_SIZE*4)
+
 /** Umělá inteligence první úrovně.
  * AI_1 je velice tupá úroveň, sice nepředvídatelně mění směr,
  * nicméně vůbec neřeší blížící se výbuch nebo cílené dostižení hráče.
  */
-class AI_100 : public AI {
+class AI_4 : public AI_1 {
 	public:
 		/// Zavolá konstruktor AI
-		AI_100(Creature *creature);
+		explicit AI_4(Creature *creature);
 		/// Hýbne nestvůrou.
 		virtual void move();
 		/// Typ inteligence.
-		virtual Sint16 type() const { return 100; }
+		virtual Sint16 type() const
+			{ return 4; }
 		/// Destruktor.
-		virtual ~AI_100() {};
-	private:
-		isTypeOf & isBlocking_;
+		virtual ~AI_4() {}
+	protected:
+		/// Zavolá konstruktor AI, nastaví ostatní parametry.
+		AI_4(Creature *creature, isTypeOf & isBlocking,
+			Uint16 minDistance);
+		/// Najde náhodně pozici kam může jít.
+		PositionIndex findPosIndexToWalkRandomly_(
+			isTypeOf & isBlocking);
+
+		void updateDistance_(position_t & position);
+
+		/// Vzdálenost, jakou musí najednou ujít.
+		Uint16 minDistanceWalkedStraight_;
+		/// Vzdálenost ušlá od minulé změny směru.
+		Uint16 distanceWalkedStraight_;
 };
 
 #define AI_10_MAX_TRACE_DEPTH 10
