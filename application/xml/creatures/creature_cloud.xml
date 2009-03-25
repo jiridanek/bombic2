@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <creature name="creature_cloud" src="img/creature_cloud.bmp" shadow_src="img/creature_cloud_s.bmp"
-		height="60" width="60" speed="2" lives="1" intelligence="4" >
+		height="60" width="60" speed="2" lives="1" intelligence="5" >
 
 	<up x="0" y="120" shadow_x="0" shadow_y="120" transparency="200"/>
 

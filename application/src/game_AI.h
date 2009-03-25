@@ -13,6 +13,7 @@
 #include "game_creature.h"
 #include "game_player.h"
 
+
 /** Umělá inteligence.
  * AI je abstraktní třída, která implementuje vlastnosti a metody
  * společné pro většinu úrovní umělých inteligencí.
@@ -32,7 +33,13 @@ class AI {
 		/// Typ inteligence.
 		virtual Sint16 type() const =0;
 		/// Pomocná struktura pro otočení a souřadnice při posunu.
-		typedef struct{ DIRECTION d; Uint16 x, y; bool isBlocked; } position_t;
+		typedef struct{
+			DIRECTION d; Uint16 x, y; bool isBlocked;
+			bool field_withObject(isTypeOf & isType){
+				return GAME->field_withObject(
+					x / CELL_SIZE, y / CELL_SIZE, isType);
+			}
+		} position_t;
 		/// Destruktor.
 		virtual ~AI() {}
 	protected:
@@ -41,7 +48,7 @@ class AI {
 		/// Výčtový typ pro indexování positions_.
 		enum PositionIndex {
 			POS_STAY, POS_STRAIGHT, POS_RIGHT,
-			POS_BACK, POS_LEFT, POS_COUNT };
+			POS_BACK, POS_LEFT, POS_LAST };
 		/// Seznam pozic pro každý krok.
 		std::vector<position_t > positions_;
 		/// Inicializuje seznam pozic.
@@ -74,6 +81,7 @@ class AI_0 : public AI {
 			{ return 0; }
 		/// Destruktor.
 		virtual ~AI_0() {}
+
 };
 
 /**
@@ -95,6 +103,8 @@ class AI_1 : public AI {
 	protected:
 		/// Nastaví příšeru a blokující predikát.
 		AI_1(Creature *creature, isTypeOf & isBlocking);
+		/// Najde index pozice, na kterou bychom měli jít.
+		virtual PositionIndex findPosIndex(isTypeOf & isBlocking);
 		/// Podle isBlocking_ chodí pořád rovně.
 		PositionIndex findPosIndexToWalkStraight_(
 			isTypeOf & isBlocking);
@@ -140,9 +150,10 @@ class AI_3 : public AI_1 {
 
 #define AI_4_MIN_DISTANCE_WALKED_STRAIGHT (CELL_SIZE*4)
 
-/** Umělá inteligence první úrovně.
- * AI_1 je velice tupá úroveň, sice nepředvídatelně mění směr,
- * nicméně vůbec neřeší blížící se výbuch nebo cílené dostižení hráče.
+/** Náhodné chození I.
+ * Náhodně mění směr, je však definováno, jakou vzdálenost musí ujít rovně.
+ * (Aby se nestalo, že se bude motat na místě.
+ * Vůbec neřeší blížící se výbuch nebo dostižení hráče.
  */
 class AI_4 : public AI_1 {
 	public:
@@ -159,6 +170,8 @@ class AI_4 : public AI_1 {
 		/// Zavolá konstruktor AI, nastaví ostatní parametry.
 		AI_4(Creature *creature, isTypeOf & isBlocking,
 			Uint16 minDistance);
+		/// Najde index pozice, na kterou bychom měli jít.
+		virtual PositionIndex findPosIndex(isTypeOf & isBlocking);
 		/// Najde náhodně pozici kam může jít.
 		PositionIndex findPosIndexToWalkRandomly_(
 			isTypeOf & isBlocking);
@@ -170,6 +183,47 @@ class AI_4 : public AI_1 {
 		/// Vzdálenost ušlá od minulé změny směru.
 		Uint16 distanceWalkedStraight_;
 };
+
+#define AI_5_MIN_DISTANCE_WALKED_STRAIGHT (CELL_SIZE*3)
+
+/**
+ * Náhodné chození II.
+ * Stejně jako AI_4, ale dává pozor na plameny.
+ * Neřeší blížící se výbuch ani hráče.
+ */
+class AI_5 : public AI_4 {
+	public:
+		/// Zavolá konstruktor AI_4
+		explicit AI_5(Creature *creature);
+		/// Typ inteligence.
+		virtual Sint16 type() const
+			{ return 5; }
+		/// Destruktor.
+		virtual ~AI_5() {}
+};
+
+#define AI_6_MIN_DISTANCE_WALKED_STRAIGHT (CELL_SIZE*2)
+
+/**
+ * Náhodné chození III.
+ * Stejně jako AI_4, ale dává pozor na plameny a presumpce.
+ * Neřeší pouze hráče. Sám nevleze do plamene ani do presumpce plamene.
+ */
+class AI_6 : public AI_4 {
+	public:
+		/// Zavolá konstruktor AI_4
+		explicit AI_6(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const
+			{ return 6; }
+		/// Destruktor.
+		virtual ~AI_6() {}
+	protected:
+		isTypeOf & isBad_;
+};
+
 
 #define AI_10_MAX_TRACE_DEPTH 10
 #define AI_10_MAX_UPDATE_PERIOD CELL_SIZE

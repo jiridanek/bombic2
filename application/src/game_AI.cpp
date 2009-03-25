@@ -30,6 +30,9 @@ AI* AI::new_ai(Creature * creature, Sint16 intelligence){
 		case  2: return new AI_2(creature);
 		case  3: return new AI_3(creature);
 		case  4: return new AI_4(creature);
+		case  5: return new AI_5(creature);
+		case  6: return new AI_6(creature);
+// 		case  4: return new AI_4(creature);
 		case  10: return new AI_10(creature);
 		default: return 0;
 	}
@@ -60,11 +63,11 @@ AI::AI(Creature *creature): creature_(creature) {
  * @param position_min_count minimální počet pozic pro další použití
  */
 void AI::initPositions(){
-	if(positions_.size() < POS_COUNT) {
+	if(positions_.size() < POS_LAST) {
 		position_t default_pos;
 		positions_.clear();
 		positions_.insert(
-			positions_.end(), POS_COUNT, default_pos);
+			positions_.end(), POS_LAST, default_pos);
 	}
 }
 
@@ -89,7 +92,7 @@ void AI::updatePositions(){
 		case DOWN: i = POS_BACK; break;
 		case RIGHT: i = POS_LEFT; break;
 		default:
-			throw(string("Invalid direction in AI::updatePositions()"));
+			throw string("Invalid direction in AI::updatePositions()");
 	}
 	//souradnice pro otoceni a jeden krok vpred
 	positions_[i].d = UP;
@@ -282,8 +285,12 @@ AI_1::AI_1(Creature *creature, isTypeOf & isBlocking):
 
 void AI_1::move() {
 	updatePositions();
-	Uint16 posIndex = findPosIndexToWalkStraight_(isBlocking_);
+	Uint16 posIndex = findPosIndex(isBlocking_);
 	setPosition(positions_[posIndex]);
+}
+
+AI::PositionIndex AI_1::findPosIndex(isTypeOf & isBlocking){
+	return findPosIndexToWalkStraight_(isBlocking);
 }
 
 AI::PositionIndex AI_1::findPosIndexToWalkStraight_(isTypeOf & isBlocking){
@@ -294,7 +301,7 @@ AI::PositionIndex AI_1::findPosIndexToWalkStraight_(isTypeOf & isBlocking){
 	// zjistim pocet neblokovanych moznosti
 	Uint16 nonBlockedPositions = 0;
 	// pres zbyvajici pozice
-	for(Uint16 i = POS_STRAIGHT +1 ; i < POS_COUNT ; ++i){
+	for(Uint16 i = POS_STRAIGHT +1 ; i < POS_LAST ; ++i){
 		// ulozim si info o blokovani
 		if(checkField(positions_[i], isBlocking)){
 			positions_[i].isBlocked = false;
@@ -305,7 +312,7 @@ AI::PositionIndex AI_1::findPosIndexToWalkStraight_(isTypeOf & isBlocking){
 		}
 	}
 
-	for(Uint16 i = POS_STRAIGHT +1 ; i < POS_COUNT ; ++i){
+	for(Uint16 i = POS_STRAIGHT +1 ; i < POS_LAST ; ++i){
 		// neni neblokovana, nezajima me
 		if(positions_[i].isBlocked){
 			continue;
@@ -339,16 +346,14 @@ AI_3::AI_3(Creature *creature):
 
 void AI_3::move() {
 	updatePositions();
-	PositionIndex posIndex = findPosIndexToWalkStraight_(isBad_);
+	PositionIndex posIndex = findPosIndex(isBad_);
 	// kdyby mel zustat stat
 	if(posIndex == POS_STAY){
 		bool isInPresumption =
-			GAME->field_withObject(
-				positions_[posIndex].x / CELL_SIZE,
-				positions_[posIndex].y / CELL_SIZE,
-				isTypeOf::isPresumption );
+			positions_[posIndex].field_withObject(
+				isTypeOf::isPresumption);
 		if(isInPresumption){
-			posIndex = findPosIndexToWalkStraight_(isBlocking_);
+			posIndex = findPosIndex(isBlocking_);
 		}
 	}
 	setPosition(positions_[posIndex]);
@@ -374,21 +379,25 @@ AI_4::AI_4(Creature *creature, isTypeOf & isBlocking,
 
 void AI_4::move() {
 	updatePositions();
-	PositionIndex posIndex;
-	if(distanceWalkedStraight_ < minDistanceWalkedStraight_) {
-		posIndex = findPosIndexToWalkStraight_(isBlocking_);
-	} else {
-		posIndex = findPosIndexToWalkRandomly_(isBlocking_);
-	}
+	PositionIndex posIndex = findPosIndex(isBlocking_);
 	updateDistance_(positions_[posIndex]);
 	setPosition(positions_[posIndex]);
 }
+
+AI::PositionIndex AI_4::findPosIndex(isTypeOf & isBlocking){
+	if(distanceWalkedStraight_ < minDistanceWalkedStraight_) {
+		return findPosIndexToWalkStraight_(isBlocking);
+	} else {
+		return findPosIndexToWalkRandomly_(isBlocking);
+	}
+}
+
 
 AI::PositionIndex AI_4::findPosIndexToWalkRandomly_(isTypeOf & isBlocking){
 	// zjistim pocet neblokovanych moznosti
 	Uint16 nonBlockedPositions = 0;
 	// pres vsechny pozice
-	for(Uint16 i = POS_STRAIGHT ; i < POS_COUNT ; ++i){
+	for(Uint16 i = POS_STRAIGHT ; i < POS_LAST ; ++i){
 		// ulozim si info o blokovani
 		if(checkField(positions_[i], isBlocking)){
 			positions_[i].isBlocked = false;
@@ -399,7 +408,7 @@ AI::PositionIndex AI_4::findPosIndexToWalkRandomly_(isTypeOf & isBlocking){
 		}
 	}
 
-	for(Uint16 i = POS_STRAIGHT ; i < POS_COUNT ; ++i){
+	for(Uint16 i = POS_STRAIGHT ; i < POS_LAST ; ++i){
 		// neni neblokovana, nezajima me
 		if(positions_[i].isBlocked){
 			continue;
@@ -436,6 +445,39 @@ void AI_4::updateDistance_(position_t & position){
 		// a zacnu ji pocitat znova
 		distanceWalkedStraight_ = distance;
 	}
+}
+
+/************************ AI_5 **************************/
+
+AI_5::AI_5(Creature *creature):
+	AI_4(creature, isTypeOf::isWallBoxBombFlame,
+		AI_5_MIN_DISTANCE_WALKED_STRAIGHT ) {
+
+}
+
+/************************ AI_6 **************************/
+
+AI_6::AI_6(Creature *creature):
+	AI_4(creature, isTypeOf::isWallBoxBombFlame,
+		AI_6_MIN_DISTANCE_WALKED_STRAIGHT ),
+	isBad_(isTypeOf::isWallBoxBombFlamePresumption) {
+
+}
+
+void AI_6::move() {
+	updatePositions();
+	PositionIndex posIndex = findPosIndex(isBad_);
+	// kdyby mel zustat stat
+	if(posIndex == POS_STAY){
+		bool isInPresumption =
+			positions_[posIndex].field_withObject(
+				isTypeOf::isPresumption);
+		if(isInPresumption){
+			posIndex = findPosIndex(isBlocking_);
+		}
+	}
+	updateDistance_(positions_[posIndex]);
+	setPosition(positions_[posIndex]);
 }
 
 /************************ AI_10 **************************/

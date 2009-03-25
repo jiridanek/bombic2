@@ -1,5 +1,5 @@
 
-#include <iostream>
+#include <string>
 #include "SDL_lib.h"
 #include "constants.h"
 #include "stl_helper.h"
@@ -183,6 +183,8 @@ Animation & Creature::anim_(DIRECTION d) {
 			return anim_left_;
 		case BURNED:
 			return anim_burned_;
+		default:
+			throw std::string("Invalid direction in Creature::anim_()");
 	}
 }
 
