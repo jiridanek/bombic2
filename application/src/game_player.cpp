@@ -90,12 +90,15 @@ bool Player::operator==(const Player & player) const {
  */
 bool Player::move(){
 	// zmensime dobu dalsiho odpalu
-	if(next_timer_ >= MOVE_PERIOD)
+	if(next_timer_ >= MOVE_PERIOD){
 		next_timer_ -= MOVE_PERIOD;
+	}
 
 	// prisery zabijeji
-	if(GAME->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE, CREATURE))
+	if(GAME->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE,
+					isTypeOf::isCreature) ){
 		die();
+	}
 	// pohyb jako prisera
 	return Creature::move();
 }

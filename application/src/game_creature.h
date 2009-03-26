@@ -20,6 +20,7 @@ class AI; // forward declaration
  */
 class Creature: public DynamicMO {
 	friend class AI;
+	friend class AI_ShortAttack;
 	friend class AI_fromKeyboard;
 	public:
 		/// Vytvoří nestvůru.
@@ -41,6 +42,8 @@ class Creature: public DynamicMO {
 		virtual OBJECT_TYPES type() const { return CREATURE; }
 		/// Destructor
 		virtual ~Creature();
+		/// Rychlost příšery.
+		Uint16 getSpeed() const { return speed_diff_; }
 	protected:
 		/// Animace pro daný směr.
 		Animation & anim_(DIRECTION d_);

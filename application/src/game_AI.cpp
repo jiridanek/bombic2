@@ -32,7 +32,8 @@ AI* AI::new_ai(Creature * creature, Sint16 intelligence){
 		case  4: return new AI_4(creature);
 		case  5: return new AI_5(creature);
 		case  6: return new AI_6(creature);
-// 		case  4: return new AI_4(creature);
+		case  7: return new AI_7(creature);
+		case  8: return new AI_8(creature);
 		case  10: return new AI_10(creature);
 		default: return 0;
 	}
@@ -97,18 +98,18 @@ void AI::updatePositions(){
 	//souradnice pro otoceni a jeden krok vpred
 	positions_[i].d = UP;
 	positions_[i].x = creature_->x_;
-	positions_[i].y = creature_->y_ - creature_->speed_diff_;
+	positions_[i].y = creature_->y_ - creature_->getSpeed();
 	i = i%4 + 1;
 	positions_[i].d = RIGHT;
-	positions_[i].x = creature_->x_ + creature_->speed_diff_;
+	positions_[i].x = creature_->x_ + creature_->getSpeed();
 	positions_[i].y = creature_->y_;
 	i = i%4 + 1;
 	positions_[i].d = DOWN;
 	positions_[i].x = creature_->x_;
-	positions_[i].y = creature_->y_ + creature_->speed_diff_;
+	positions_[i].y = creature_->y_ + creature_->getSpeed();
 	i = i%4 + 1;
 	positions_[i].d = LEFT;
-	positions_[i].x = creature_->x_ - creature_->speed_diff_;
+	positions_[i].x = creature_->x_ - creature_->getSpeed();
 	positions_[i].y = creature_->y_;
 }
 
@@ -198,7 +199,7 @@ void AI::centerCoordinate(Uint16 & coordinate, Sint8 sign){
 	// vzdalenost od stredu policka
 	Uint8 diff_center = sign * (CELL_SIZE/2 - coordinate % CELL_SIZE);
 	// polovina rychlosti
-	Uint8 diff_speed = (creature_->speed_diff_ + 1) / 2;
+	Uint8 diff_speed = (creature_->getSpeed() + 1) / 2;
 	coordinate += sign * min(diff_center, diff_speed);
 }
 
@@ -478,6 +479,135 @@ void AI_6::move() {
 	}
 	updateDistance_(positions_[posIndex]);
 	setPosition(positions_[posIndex]);
+}
+
+
+/************************ AI_ShortAttack **************************/
+AI_ShortAttack::AI_ShortAttack(Creature * creature):
+	creature_(creature){
+
+}
+
+/** @details
+ * Nastaví playerFound, pokud najde hráče nastaví i player_relative_*
+ */
+void AI_ShortAttack::updatePlayerPosition(){
+	currPosition.d = creature_->d_;
+	currPosition.x = creature_->x_;
+	currPosition.y = creature_->y_;
+
+	Uint16 field_x = currPosition.x / CELL_SIZE;
+	Uint16 field_y = currPosition.y / CELL_SIZE;
+	// projde políčka okolo mého
+	for(Sint16 relative_x = -1 ; relative_x <= 1 ; ++relative_x){
+		for(Sint16 relative_y = -1 ; relative_y <= 1 ; ++relative_y){
+			playerFound = GAME->field_withObject(
+				field_x + relative_x,
+				field_y + relative_y,
+				isTypeOf::isPlayer );
+			if(playerFound){
+				setPlayerPosition(field_x, field_y,
+					relative_x, relative_y);
+				if(player_relative_x_ == relative_x ||
+					player_relative_y_ == relative_y){
+						return;
+				} else {
+					playerFound = false;
+				}
+			}
+		}
+	}
+}
+
+void AI_ShortAttack::setPlayerPosition(Uint16 field_x, Uint16 field_y,
+				Sint16 relative_x, Sint16 relative_y){
+	// abychom se vyhli prekazkam
+	bool blocked_x = relative_x==0 ||
+		GAME->field_withObject(
+			field_x + relative_x, field_y,
+			isTypeOf::isWallBoxBomb);
+	player_relative_x_ = blocked_x ? 0 : relative_x;
+
+	// abychom se vyhli prekazkam
+	bool blocked_y = relative_y==0 ||
+		GAME->field_withObject(
+			field_x, field_y + relative_y,
+			isTypeOf::isWallBoxBomb);
+	player_relative_y_ = blocked_y ? 0 : relative_y;
+}
+
+AI::position_t AI_ShortAttack::createPositionToAttack_(){
+
+	AI::position_t newPos = currPosition;
+	bool isInCorner =
+		player_relative_x_!=0 && player_relative_y_!=0;
+
+	Uint16 speed = creature_->getSpeed();
+	if(!isInCorner){
+		// zvetsi rychlost pro pristup primo
+		// kdyz jde po uhlopricce, jde implicitne sqrt(2) krat rychleji
+		speed *= rand()%2 + 1;
+	}
+
+	// vyresim policka nahore, dole
+	if(player_relative_y_ < 0){
+		newPos.d = UP;
+		newPos.y -= speed;
+	} else if(player_relative_y_ > 0){
+		newPos.d = DOWN;
+		newPos.y += speed;
+	}
+
+	// vyresim policka vlevo, vpravo
+	if(player_relative_x_ < 0){
+		newPos.x -= speed;
+		if(!isInCorner){
+			newPos.d = LEFT;
+		}
+	} else if(player_relative_x_ > 0){
+		newPos.x += speed;
+		if(!isInCorner){
+			newPos.d = RIGHT;
+		}
+	}
+
+	return newPos;
+}
+
+/************************ AI_7 **************************/
+AI_7::AI_7(Creature * creature):
+	AI_2(creature), AI_ShortAttack(creature){
+
+}
+
+void AI_7::move(){
+	updatePlayerPosition();
+	if(playerFound){
+		position_t newPosition =
+			createPositionToAttack_();
+		setPosition(newPosition);
+	} else {
+		AI_2::move();
+	}
+
+}
+
+/************************ AI_8 **************************/
+AI_8::AI_8(Creature * creature):
+	AI_6(creature), AI_ShortAttack(creature){
+
+}
+
+void AI_8::move(){
+	updatePlayerPosition();
+	if(playerFound){
+		position_t newPosition =
+			createPositionToAttack_();
+		setPosition(newPosition);
+	} else {
+		AI_6::move();
+	}
+
 }
 
 /************************ AI_10 **************************/

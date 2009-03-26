@@ -68,6 +68,8 @@ void DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y){
 
 isTypeOf isTypeOf::isFlame(FLAME);
 isTypeOf isTypeOf::isFlamePlayer(FLAME, PLAYER);
+isTypeOf isTypeOf::isCreature(CREATURE);
+isTypeOf isTypeOf::isPlayer(PLAYER);
 isTypeOf isTypeOf::isPresumption(PRESUMPTION);
 
 isTypeOf isTypeOf::isBgType(

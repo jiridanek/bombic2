@@ -45,6 +45,8 @@ class AI {
 	protected:
 		/// Nestvůra, které inteligence patří.
 		Creature *creature_;
+		/// Rychlost příšery.
+		Uint16 getCreatureSpeed();
 		/// Výčtový typ pro indexování positions_.
 		enum PositionIndex {
 			POS_STAY, POS_STRAIGHT, POS_RIGHT,
@@ -222,6 +224,58 @@ class AI_6 : public AI_4 {
 		virtual ~AI_6() {}
 	protected:
 		isTypeOf & isBad_;
+};
+
+/**
+ * Útok na krátko.
+ * Utilita pro umělou inteligence, která neřeší pohyb, pouze kontroluje
+ * políčka kolem sebe a když na nich objeví hráče, může rychle zaútočí.
+ */
+class AI_ShortAttack {
+	public:
+		explicit AI_ShortAttack(Creature * creature);
+	protected:
+		/// Uloží pozici hráče pokud je nějaký poblíž.
+		void updatePlayerPosition();
+		/// Zda našel hráče.
+		bool playerFound;
+		/// Najde útočící pozici.
+		AI::position_t createPositionToAttack_();
+	private:
+		Creature * creature_;
+		AI::position_t currPosition;
+		void setPlayerPosition(Uint16 field_x, Uint16 field_y,
+			Sint16 relative_x, Sint16 relative_y);
+		/// Relativní pozice hráče v mapě.
+		Sint16 player_relative_x_;
+		/// Relativní pozice hráče v mapě.
+		Sint16 player_relative_y_;
+};
+
+class AI_7 : public AI_2, AI_ShortAttack {
+	public:
+		/// Zavolá konstruktor AI
+		explicit AI_7(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const
+			{ return 7; }
+		/// Destruktor.
+		virtual ~AI_7() {}
+};
+
+class AI_8 : public AI_6, AI_ShortAttack {
+	public:
+		/// Zavolá konstruktor AI
+		explicit AI_8(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const
+			{ return 8; }
+		/// Destruktor.
+		virtual ~AI_8() {}
 };
 
 
