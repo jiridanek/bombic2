@@ -235,21 +235,27 @@ class AI_ShortAttack {
 	public:
 		explicit AI_ShortAttack(Creature * creature);
 	protected:
-		/// Uloží pozici hráče pokud je nějaký poblíž.
-		void updatePlayerPosition();
-		/// Zda našel hráče.
-		bool playerFound;
-		/// Najde útočící pozici.
+		/// Obnoví pozici cíle.
+		void updateTargetPosition();
+		/// Zda našel cíl (má na co útočit).
+		bool targetFound() const
+			{ return targetFound_; }
+		/// Vytvoří útočící pozici.
 		AI::position_t createPositionToAttack_();
 	private:
+		/// Rodičovská příšera.
 		Creature * creature_;
+		/// Aktuální pozice rodičovské příšery.
 		AI::position_t currPosition;
-		void setPlayerPosition(Uint16 field_x, Uint16 field_y,
+		/// Pokusí se nastavit pozici cíle.
+		bool trySetTargetPosition_(Uint16 field_x, Uint16 field_y,
 			Sint16 relative_x, Sint16 relative_y);
-		/// Relativní pozice hráče v mapě.
-		Sint16 player_relative_x_;
-		/// Relativní pozice hráče v mapě.
-		Sint16 player_relative_y_;
+		/// Zda našel cíl.
+		bool targetFound_;
+		/// Relativní pozice cíle v mapě.
+		Sint16 target_relative_x_;
+		/// Relativní pozice cíle v mapě.
+		Sint16 target_relative_y_;
 };
 
 class AI_7 : public AI_2, AI_ShortAttack {

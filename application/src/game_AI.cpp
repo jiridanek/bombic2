@@ -484,14 +484,16 @@ void AI_6::move() {
 
 /************************ AI_ShortAttack **************************/
 AI_ShortAttack::AI_ShortAttack(Creature * creature):
-	creature_(creature){
+	creature_(creature), targetFound_(false){
 
 }
 
 /** @details
- * Nastaví playerFound, pokud najde hráče nastaví i player_relative_*
+ * Pokud najde hráče, na kterého může útočit,
+ * nastaví targetFound_ na TRUE a target_relative_* na pozici kam se má útočit.
+ * Pokud nenajde hráče, nastaví targetFound_ na FALSE.
  */
-void AI_ShortAttack::updatePlayerPosition(){
+void AI_ShortAttack::updateTargetPosition(){
 	currPosition.d = creature_->d_;
 	currPosition.x = creature_->x_;
 	currPosition.y = creature_->y_;
@@ -501,70 +503,92 @@ void AI_ShortAttack::updatePlayerPosition(){
 	// projde políčka okolo mého
 	for(Sint16 relative_x = -1 ; relative_x <= 1 ; ++relative_x){
 		for(Sint16 relative_y = -1 ; relative_y <= 1 ; ++relative_y){
-			playerFound = GAME->field_withObject(
+			// podiva se jestli je hrac na policku
+			targetFound_ = GAME->field_withObject(
 				field_x + relative_x,
 				field_y + relative_y,
 				isTypeOf::isPlayer );
-			if(playerFound){
-				setPlayerPosition(field_x, field_y,
-					relative_x, relative_y);
-				if(player_relative_x_ == relative_x ||
-					player_relative_y_ == relative_y){
-						return;
+			// hrace na policku nasel, este neni jasne jestli k nemu muze
+			if(targetFound_){
+				if(trySetTargetPosition_(field_x, field_y,
+						relative_x, relative_y)) {
+					return;
 				} else {
-					playerFound = false;
+					targetFound_ = false;
 				}
 			}
 		}
 	}
 }
 
-void AI_ShortAttack::setPlayerPosition(Uint16 field_x, Uint16 field_y,
+/** @details
+ * Nastaví útočící pozici pokud může.
+ * Útočit přímo může vždy.
+ * POZOR že může útočit přímo ikdyž vchází na blokované políčko,
+ * to se stává často když hráč položí bombu a zůstane na ní stát.
+ * Ůtočit šikmo (dvěma směry naráz) může pouze když je alespoň jeden směr volný.
+ * TODO
+ * @param
+ * @return
+ */
+bool AI_ShortAttack::trySetTargetPosition_(Uint16 field_x, Uint16 field_y,
 				Sint16 relative_x, Sint16 relative_y){
-	// abychom se vyhli prekazkam
-	bool blocked_x = relative_x==0 ||
+	// utok naprimo
+	if(relative_x==0 || relative_y==0){
+		target_relative_x_ = relative_x;
+		target_relative_y_ = relative_y;
+		return true;
+	}
+	// utok do rohu
+	// musime zajistit abychom neutocili pres policko na ktere nemuzem
+	bool blocked_x =
 		GAME->field_withObject(
 			field_x + relative_x, field_y,
 			isTypeOf::isWallBoxBomb);
-	player_relative_x_ = blocked_x ? 0 : relative_x;
-
-	// abychom se vyhli prekazkam
-	bool blocked_y = relative_y==0 ||
+	bool blocked_y =
 		GAME->field_withObject(
 			field_x, field_y + relative_y,
 			isTypeOf::isWallBoxBomb);
-	player_relative_y_ = blocked_y ? 0 : relative_y;
+	if(!blocked_x || !blocked_y){
+		// pokud je x-ova souradnice blokovana, nemuzu se po ni hnout)
+		target_relative_x_ = blocked_x ? 0 : relative_x;
+		// stejne jako u x
+		target_relative_y_ = blocked_y ? 0 : relative_y;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 AI::position_t AI_ShortAttack::createPositionToAttack_(){
 
 	AI::position_t newPos = currPosition;
 	bool isInCorner =
-		player_relative_x_!=0 && player_relative_y_!=0;
+		target_relative_x_!=0 && target_relative_y_!=0;
 
 	Uint16 speed = creature_->getSpeed();
 	if(!isInCorner){
-		// zvetsi rychlost pro pristup primo
 		// kdyz jde po uhlopricce, jde implicitne sqrt(2) krat rychleji
+		// pro utok primo zvetsime rychlost explicitne
 		speed *= rand()%2 + 1;
 	}
 
 	// vyresim policka nahore, dole
-	if(player_relative_y_ < 0){
-		newPos.d = UP;
+	if(target_relative_y_ < 0){
 		newPos.y -= speed;
-	} else if(player_relative_y_ > 0){
-		newPos.d = DOWN;
+		newPos.d = UP;
+	} else if(target_relative_y_ > 0){
 		newPos.y += speed;
+		newPos.d = DOWN;
 	}
 
 	// vyresim policka vlevo, vpravo
-	if(player_relative_x_ < 0){
+	if(target_relative_x_ < 0){
 		newPos.x -= speed;
 		if(!isInCorner){
 			newPos.d = LEFT;
 		}
-	} else if(player_relative_x_ > 0){
+	} else if(target_relative_x_ > 0){
 		newPos.x += speed;
 		if(!isInCorner){
 			newPos.d = RIGHT;
@@ -581,8 +605,8 @@ AI_7::AI_7(Creature * creature):
 }
 
 void AI_7::move(){
-	updatePlayerPosition();
-	if(playerFound){
+	updateTargetPosition();
+	if(targetFound()){
 		position_t newPosition =
 			createPositionToAttack_();
 		setPosition(newPosition);
@@ -599,8 +623,8 @@ AI_8::AI_8(Creature * creature):
 }
 
 void AI_8::move(){
-	updatePlayerPosition();
-	if(playerFound){
+	updateTargetPosition();
+	if(targetFound()){
 		position_t newPosition =
 			createPositionToAttack_();
 		setPosition(newPosition);
