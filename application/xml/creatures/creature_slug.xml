@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <creature name="creature_slug" src="img/creature_slug.bmp" shadow_src="img/creature_slug_s.bmp"
-		height="70" width="70" speed="2" lives="2" intelligence="0" >
+		height="70" width="70" speed="2" lives="2" intelligence="1" >
 	<up x="0" y="140" shadow_x="0" shadow_y="140">
 		<animation rate="5" >
 			<animation_item x="70" y="140" shadow_x="70" shadow_y="140" />

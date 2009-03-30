@@ -72,6 +72,8 @@ isTypeOf isTypeOf::isCreature(CREATURE);
 isTypeOf isTypeOf::isPlayer(PLAYER);
 isTypeOf isTypeOf::isPresumption(PRESUMPTION);
 
+// isTypeOf isTypeOf::isNotPresumption(isPresumption, DO_NEGATE);
+
 isTypeOf isTypeOf::isBgType(
 	BACKGROUND, FLOOROBJECT, PRESUMPTION);
 isTypeOf isTypeOf::isAnyBomb(
@@ -108,6 +110,17 @@ isTypeOf::isTypeOf(OBJECT_TYPES type1, OBJECT_TYPES type2,
 	addType(type5);
 	addType(type6);
 }
+
+/*
+isTypeOf::isTypeOf(const isTypeOf & from, negation_t negation):
+			types_(from.types_){
+	if(DO_NEGATION){
+		for(Uint16 i = 0 ; i < types_.size() ; ++i){
+			types_[i] = !types_[i];
+		}
+	}
+}
+*/
 
 /** @details
  * Přidá do vnitřní struktury typ.

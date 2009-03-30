@@ -223,6 +223,9 @@ class AI_6 : public AI_4 {
 		/// Destruktor.
 		virtual ~AI_6() {}
 	protected:
+		/// Zavolá konstruktor AI_4, nastaví ostatní parametry.
+		AI_6(Creature *creature, Uint16 minDistance);
+		/// Predikát odhalující špatné políčko.
 		isTypeOf & isBad_;
 };
 
@@ -284,6 +287,65 @@ class AI_8 : public AI_6, AI_ShortAttack {
 		virtual ~AI_8() {}
 };
 
+#define AI_9_MIN_DISTANCE_WALKED_STRAIGHT (CELL_SIZE/2)
+#define AI_9_MAX_TRACE_DEPTH 10
+#define AI_9_TRACE_ARRAY_NO_TRACE (-1)
+#define AI_9_TRACE_ARRAY_CANT_OVER (-2)
+
+class AI_9 : public AI_6 {
+	public:
+		/// Zavolá konstruktor AI_6
+		explicit AI_9(Creature *creature);
+		/// Hýbne nestvůrou.
+		virtual void move();
+		/// Typ inteligence.
+		virtual Sint16 type() const
+			{ return 9; }
+		/// Destruktor.
+		virtual ~AI_9() {}
+	protected:
+		/// Typ rozlišující chtěné a nechtěné.
+		enum wanted_t { WANTED, UNWANTED };
+		/// Typ trasovacího pole.
+		typedef std::vector< std::vector< Sint16 > > traceArray_t;
+		/// Typ fronty políček.
+		typedef std::queue< std::pair< Uint16, Uint16 > > fieldsQueue_t;
+		/// Najde index pozice,
+		/// na kterou máme jít abychom se dostali z nebezpečí.
+		PositionIndex findPosIndexToWalkFromRisk_(isTypeOf & isBlocking);
+		/// Inicializuje trasovací pole.
+		void initTraceArray_(traceArray_t & traceArray);
+		/// Ohodnotí trasovací pole (start rekurze).
+		void evalTraceArray_( traceArray_t & traceArray,
+			isTypeOf & isBlocking, isTypeOf & isInteresting,
+			wanted_t interestArea);
+		/// Cíl nalezen.
+		bool targetFound() const
+			{ return targetFound_; }
+	private:
+		/// Ohodnotí trasovací pole (krok rekurze).
+		void recursiveEvalTraceArray_(
+			traceArray_t & traceArray, fieldsQueue_t & fieldsQueue,
+			isTypeOf & isBlocking, isTypeOf & isInteresting,
+			wanted_t interestArea);
+		/// Bylo-li nalezeno ve správném smyslu zajímavé políčko.
+		bool interestingFound_(Uint16 x, Uint16 y,
+			isTypeOf & isInteresting, wanted_t interestingArea);
+		/// Vyhodí náhodný počet políček z fronty.
+		void popRandomFields_(fieldsQueue_t & fieldsQueue);
+		/// Ohodnotí a vloží do fronty sousední políčka.
+		void evalAndQueueNextFields_(traceArray_t & traceArray,
+			fieldsQueue_t & fieldsQueue, isTypeOf & isBlocking);
+		/// Najde pomocí backtrackingu index výsledné pozice.
+		PositionIndex findPosIndexUsingBacktracking_(traceArray_t & traceArray);
+		/// Cíl nalezen.
+		bool targetFound_;
+		/// Pozice cíle v mapě.
+		Uint16 target_x_;
+		/// Pozice cíle v mapě.
+		Uint16 target_y_;
+
+};
 
 #define AI_10_MAX_TRACE_DEPTH 10
 #define AI_10_MAX_UPDATE_PERIOD CELL_SIZE

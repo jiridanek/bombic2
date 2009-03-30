@@ -21,6 +21,7 @@
 	<floorobject name="floor_deadbody" x="9" y="9" width="2" />
 
 	<boxes 	name="box_barrel" count="30">
+		<nobox x="1" y="4" />
 		<nobox x="1" y="10" />
 		<nobox x="2" y="10" />
 		<nobox x="3" y="10" />
@@ -40,7 +41,7 @@
 		<box x="4" y="5" />
 	</boxes>
 <!---->
-	<bonuses name="bonus_flame" count="1" />
+	<bonuses name="bonus_flame" count="4" />
 	<bonuses name="bonus_bomb" count="10" />
 <!-- 	<bonuses name="bonus_illness" count="1" /> -->
 	<bonuses name="bonus_speed" count="1" />
@@ -55,9 +56,9 @@
 <!---->
 	<creatures name="creature_rat" count="0">
 	</creatures>
-	<creatures name="creature_cloud" count="5">
+	<creatures name="creature_cloud" count="1">
 	</creatures>
-	<creatures name="creature_moon" count="10">
+	<creatures name="creature_moon" count="1">
 	</creatures>
 
 	<nocreatures>

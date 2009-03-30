@@ -95,10 +95,13 @@ class StaticMO: public MapObject{
  */
 class isTypeOf {
 	public:
+// 		enum negation_t { DO_NEGATION, DO_NOT_NEGATION};
 		/// Inicializuje predikát požadovanými typy.
 		isTypeOf(OBJECT_TYPES type1=NONE, OBJECT_TYPES type2=NONE,
 				OBJECT_TYPES type3=NONE, OBJECT_TYPES type4=NONE,
 				OBJECT_TYPES type5=NONE, OBJECT_TYPES type6=NONE);
+		/// Zkopíruje a případně neguje predikát.
+// 		isTypeOf(const isTypeOf & from, negation_t negation);
 		/// Přidání typu.
 		isTypeOf & addType(OBJECT_TYPES type);
 		/// Vyprázdnění typů.
@@ -106,12 +109,14 @@ class isTypeOf {
 		/// Volání predikátu.
 		bool operator()(MapObject * object) const;
 
+
 		static isTypeOf
 			isFlame,
 			isFlamePlayer,
 			isCreature,
 			isPlayer,
 			isPresumption,
+// 			isNotPresumption,
 			isBgType,
 			isAnyBomb,
 			isWallBox,

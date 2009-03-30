@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <creature name="creature_trap_red" src="img/creature_trap_red.bmp" shadow_src="img/creature_trap_s.bmp"
-		height="55" width="51" speed="3" lives="2" intelligence="0" >
+		height="55" width="51" speed="3" lives="2" intelligence="7" >
 
 	<up x="0" y="150" shadow_x="0" shadow_y="150">
 		<animation rate="7" >

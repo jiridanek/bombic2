@@ -1,4 +1,5 @@
 
+#include <iostream> // debug
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -34,6 +35,7 @@ AI* AI::new_ai(Creature * creature, Sint16 intelligence){
 		case  6: return new AI_6(creature);
 		case  7: return new AI_7(creature);
 		case  8: return new AI_8(creature);
+		case  9: return new AI_9(creature);
 		case  10: return new AI_10(creature);
 		default: return 0;
 	}
@@ -465,6 +467,12 @@ AI_6::AI_6(Creature *creature):
 
 }
 
+AI_6::AI_6(Creature *creature, Uint16 minDistance):
+	AI_4(creature, isTypeOf::isWallBoxBombFlame, minDistance),
+	isBad_(isTypeOf::isWallBoxBombFlamePresumption) {
+
+}
+
 void AI_6::move() {
 	updatePositions();
 	PositionIndex posIndex = findPosIndex(isBad_);
@@ -632,6 +640,285 @@ void AI_8::move(){
 		AI_6::move();
 	}
 
+}
+
+/************************ AI_9 **************************/
+
+AI_9::AI_9(Creature *creature):
+	AI_6(creature, AI_9_MIN_DISTANCE_WALKED_STRAIGHT) {
+
+}
+
+/** @details
+ * Pokud je v nebezpečí, zachová se chytře a vyhledá
+ * bezpečné políčko.
+ * Jinak se zachová standardně.
+ */
+void AI_9::move() {
+	updatePositions();
+	bool isInPresumption =
+		positions_[POS_STAY].field_withObject(
+			isTypeOf::isPresumption);
+	// index nove pozice
+	PositionIndex posIndex;
+	// ma jit jeste rovne
+	if(isInPresumption){
+		if(distanceWalkedStraight_ < minDistanceWalkedStraight_) {
+			posIndex =
+				findPosIndexToWalkStraight_(isBlocking_);
+		} else {
+			posIndex =
+				findPosIndexToWalkFromRisk_(isBlocking_);
+		}
+	} else {
+		posIndex = findPosIndex(isBad_);
+	}
+	updateDistance_(positions_[posIndex]);
+	setPosition(positions_[posIndex]);
+}
+
+/** @details
+ * Předpokládá, že se nacházíme v nebezpečí a snaží se najít bezpečné políčko.
+ * Výsledkem je pozice, která nás přiblíží nejbližšímu bezpečnému políčku.
+ * @param isBlocking predikát odhalující blokující prvek na políčku
+ * @return Vrací index pozice, na kterou bychom měli jít.
+ */
+AI::PositionIndex AI_9::findPosIndexToWalkFromRisk_(isTypeOf & isBlocking){
+	traceArray_t traceArray;
+	// inicializace
+	initTraceArray_(traceArray); // must be called first
+	// ohodnocení a nalezení cíle
+	evalTraceArray_(traceArray, isBlocking, isTypeOf::isPresumption, UNWANTED);
+	if(targetFound()){
+		// backtracking, nalezeni vysledne pozice
+		return findPosIndexUsingBacktracking_(traceArray);
+	} else {
+		return findPosIndex(isBlocking);
+	}
+}
+
+/** @details
+ * Podle mapy nastaví rozměry trasovacího pole.
+ * Ohodnotí všechna políčka na počáteční hodnotu NO_TRACE.
+ * @param traceArray pole které chceme inicializovat
+ */
+void AI_9::initTraceArray_(traceArray_t & traceArray){
+	traceArray_t::value_type emptyColumn;
+	emptyColumn.insert(emptyColumn.end(), GAME->map_height(),
+		AI_9_TRACE_ARRAY_NO_TRACE);
+	traceArray.insert(
+		traceArray.end(), GAME->map_width(), emptyColumn);
+}
+
+/** @details
+ * Nastartuje rekurzivní ohodnocení trasy.
+ * Inicializuje frontu políček, začínáme u aktuální pozice.
+ * @param traceArray inicializované trasovací pole
+ * @param isBlocking predikát odhalující blokující objekty
+ * @param isInteresting predikát odhalující objekty,
+ * které jsou zajímavé (svou přítomností nebo naopak nepřítomností)
+ * @param interestArea upřesňuje, jak jsou zajímavé objekty zajímavé
+ */
+void AI_9::evalTraceArray_(traceArray_t & traceArray,
+			isTypeOf & isBlocking, isTypeOf & isInteresting, wanted_t interestArea){
+	// pocatecni souradnice
+	Sint16 field_x = positions_[POS_STAY].x / CELL_SIZE;
+	Sint16 field_y = positions_[POS_STAY].y / CELL_SIZE;
+	// nastavit pocatecni policko
+	traceArray[field_x][field_y] = 0;
+	// pripravit pocatecni policko do fronty
+	fieldsQueue_t fieldsQueue;
+	fieldsQueue.push(make_pair(field_x, field_y));
+	// rekurzivne ohodnotit trasovaci pole
+	recursiveEvalTraceArray_(traceArray, fieldsQueue, isBlocking, isInteresting, interestArea);
+
+	//*/ DEBUG
+	for(Uint16 j = 0 ; j < traceArray[0].size() ; ++j){
+		for(Uint16 i = 0 ; i < traceArray.size() ; ++i){
+			cout <<  " ";
+			if(traceArray[i][j] >= 0){
+				if(i==target_x_ && j==target_y_) {
+					cout << "*";
+				} else {
+					cout << " ";
+				}
+			}
+			cout << traceArray[i][j];
+		}
+		cout << endl;
+	}
+	cout << "========================================================================" << endl;
+	//*/
+}
+
+/** @details
+ * Rekurzivní ohodnocení trasy řeší aktuálně jedno políčko ve frontě.
+ * Prohledáváním do šířky se snaží najít políčko, které nás zajímá.
+ * V jednom kroku vyřeší políčko, které je první ve frontě, odebere ho
+ * a přidá do ní nejvýše čtyři sousední políčka (pokud bychom na ně mohli jít).
+ * @param traceArray inicializované trasovací pole
+ * @param fieldsQueue fronta políček k prohledávání
+ * @param isBlocking predikát odhalující blokující objekty
+ * @param isInteresting predikát odhalující objekty,
+ * které jsou zajímavé (svou přítomností nebo naopak nepřítomností)
+ * @param interestArea upřesňuje, jak jsou zajímavé objekty zajímavé
+ */
+void AI_9::recursiveEvalTraceArray_(
+			traceArray_t & traceArray, fieldsQueue_t & fieldsQueue,
+			isTypeOf & isBlocking, isTypeOf & isInteresting,
+			wanted_t interestArea){
+	// konec rekurze
+	if(fieldsQueue.empty()){
+		// nenasli jsme cil a prohledali jsme co se dalo
+		targetFound_ = false;
+		return;
+	}
+	// aktualni pozice
+	Uint16 curr_x = fieldsQueue.front().first;
+	Uint16 curr_y = fieldsQueue.front().second;
+	// nasli jsme neco zajimaveho?
+	if(interestingFound_(curr_x, curr_y, isInteresting, interestArea)){
+		// nastavime cil na souradnice tohoto kroku
+		targetFound_ = true;
+		target_x_ = curr_x;
+		target_y_ = curr_y;
+		return;
+	}
+	// ohodnotit a pripadne vlozit do fronty sousedici policka
+	evalAndQueueNextFields_(traceArray, fieldsQueue, isBlocking);
+	// vyhodim z fronty vyresene policko
+	fieldsQueue.pop();
+	// vyresim dalsi policko ve fronte
+	recursiveEvalTraceArray_(traceArray, fieldsQueue, isBlocking,
+		isInteresting, interestArea);
+}
+
+/** @details
+ * Zjistí, jestli je zadané políčko v mapě zajímavé či nikoli.
+ * @param x x-ová souřadnice políčka v mapě
+ * @param y y-ová souřadnice políčka v mapě
+ * @param isInteresting predikát odhalující objekty,
+ * které jsou zajímavé (svou přítomností nebo naopak nepřítomností)
+ * @param interestArea upřesňuje, jak jsou zajímavé objekty zajímavé
+ * @return TRUE pokud je zadané políčko zajímavé, jinak false.
+ * @throw string Chybová hláška,
+ 	pokud nejsou ošetřeny všechny oblasti zajímavosti.
+ */
+bool AI_9::interestingFound_(Uint16 x, Uint16 y,
+			isTypeOf & isInteresting, wanted_t interestArea){
+	bool field_withInteresting =
+		GAME->field_withObject(x, y, isInteresting);
+	switch(interestArea){
+		case WANTED:
+			return field_withInteresting;
+		case UNWANTED:
+			return !field_withInteresting;
+		default:
+			throw string("Invalid wanted type in AI_9::interestingFound_()");
+	}
+}
+
+/** @details
+ * Náhodně, pro všechny prvky spravedlivě
+ * vyhodí několik prvních políček z fronty.
+ * @param fieldsQueue fronta, ze které chceme vyhazovat
+ */
+void AI_9::popRandomFields_(fieldsQueue_t & fieldsQueue){
+	if(fieldsQueue.empty()){
+		return;
+	}
+	Uint16 randFieldsCount = rand() % fieldsQueue.size();
+	for(Uint16 i = 0 ; i < randFieldsCount ; ++i){
+		fieldsQueue.pop();
+	}
+}
+
+/** @details
+ * Sousední políčka jsou políčka vlevo, vpravo, nad a pod
+ * políčkem, které je první ve frontě (aktuální políčko).
+ * Tato políčka, pokud již nebyla hodnocena ohodnotí záporně
+ * pokud na ně nemůžeme vstoupit a kladně pokud na ně vstoupit můžeme.
+ * Zápornou hodnotu použije z AI_9_TRACE_ARRAY_CANT_OVER.
+ * Kladnou hodnotu použije o jedna větší než je hodnota aktuálního políčka.
+ * Navíc políčka ohodnocená kladně vloží do fronty pro pozdější zpracování.
+ * Do fronty nevkládá taková políčka, která by měla hodnotu větší
+ * než povolenou v AI_9_MAX_TRACE_DEPTH.
+ * @param traceArray trasovací pole pro ohodnocení
+ * @param fieldsQueue fronta políček
+ * @param isBlocking predikát určující políčka, na která nemůžeme vstoupit
+ */
+void AI_9::evalAndQueueNextFields_(traceArray_t & traceArray,
+			fieldsQueue_t & fieldsQueue, isTypeOf & isBlocking){
+	Uint16 curr_x = fieldsQueue.front().first;
+	Uint16 curr_y = fieldsQueue.front().second;
+	Sint16 curr_depth = traceArray[curr_x][curr_y];
+	// prilis velka hloubka prohledavani, dale nebudeme prohledavat
+	if(curr_depth >= AI_9_MAX_TRACE_DEPTH){
+		return;
+	}
+	for(Uint16 dir = 0 ; dir < 4 ; ++dir){
+		// souradnice
+		Uint16 next_x = curr_x, next_y = curr_y;
+		if(dir%2)
+			next_x += 2-dir%4;
+		else
+			next_y += 1-dir%4;
+
+		if(traceArray[next_x][next_y] == AI_9_TRACE_ARRAY_NO_TRACE){
+			// na policko nemuzu => oznacim ho
+			if(GAME->field_withObject(next_x, next_y, isBlocking)){
+				traceArray[next_x][next_y] =
+					AI_9_TRACE_ARRAY_CANT_OVER;
+			} else {
+				// nastavim hloubku
+				traceArray[next_x][next_y] = curr_depth +1;
+				// vlozim do fronty
+				fieldsQueue.push(make_pair(next_x, next_y));
+			}
+		}
+	}
+}
+
+AI::PositionIndex AI_9::findPosIndexUsingBacktracking_(
+				traceArray_t & traceArray){
+	// backtracking az do hodnoty 1
+	// souradnice policka ktere lezi bezprostredne vedle soucasne pozice
+	Uint16 next_x = target_x_, next_y = target_y_;
+	for(Sint16 depth = traceArray[target_x_][target_y_] ; depth > 1 ; --depth){
+		Uint16 x, y;
+		// pres vsechny smery najdu odkud jsem se sem dostal
+		// TODO trocha nahody
+		for(Uint16 dir=0 ; dir<4 ; ++dir){
+			// souradnice
+			x = next_x;
+			y = next_y;
+			if(dir%2)
+				x += 2-dir;
+			else
+				y += 1-dir;
+			if(traceArray[x][y] == depth -1)
+				break;
+		}
+		next_x = x;
+		next_y = y;
+	}
+	// moje souradnice
+	Uint16 curr_x = positions_[POS_STAY].x / CELL_SIZE;
+	Uint16 curr_y = positions_[POS_STAY].y / CELL_SIZE;
+	// zda-li je mensi souradnice policka velde nez ta soucasna
+	int next_vs_curr_x = sgn_minus(next_x, curr_x);
+	int next_vs_curr_y = sgn_minus(next_y, curr_y);
+	for(Uint16 i = POS_STRAIGHT ; i < POS_LAST ; ++i){
+		int i_vs_stay_x =
+			sgn_minus(positions_[i].x, positions_[POS_STAY].x);
+		int i_vs_stay_y =
+			sgn_minus(positions_[i].y, positions_[POS_STAY].y);
+		// pokud jsou v poradku pomery na obou souradnicich
+		if(next_vs_curr_x==i_vs_stay_x && next_vs_curr_y==i_vs_stay_y){
+			return static_cast<PositionIndex>(i);
+		}
+	}
+	return POS_STAY;
 }
 
 /************************ AI_10 **************************/
