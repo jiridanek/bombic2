@@ -58,7 +58,7 @@
 	</creatures>
 	<creatures name="creature_cloud" count="1">
 	</creatures>
-	<creatures name="creature_moon" count="10">
+	<creatures name="creature_moon" count="1">
 	</creatures>
 
 	<nocreatures>

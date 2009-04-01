@@ -160,7 +160,7 @@ void Bomb::explode(){
  * Nastaví nový směr.
  * Vycentruje bombu na políčku podle nového směru.
  * Pokud je na dalším políčku ve směru pohybu bomba,
- * posune sebe na vzdálenější okraj poíčka.
+ * posune sebe na vzdálenější okraj políčka.
  * @param d nový směr bomby
  */
 void Bomb::kick(DIRECTION d){
@@ -170,8 +170,9 @@ void Bomb::kick(DIRECTION d){
 	switch(d){
 		case UP:
 		case DOWN:
-			obj = Game::get_instance()->field_getObject(
-					x, y+ (d==UP ? -1 : +1), isTypeOf::isWallBoxAnyBomb);
+			obj = GAME->field_getObject(
+					x, y+ (d==UP ? -1 : +1),
+					isTypeOf::isWallBoxAnyBomb);
 			x_ = x*CELL_SIZE+CELL_SIZE/2;
 			if(obj){ // neco jsem tam nasel
 				// hybajici se bomba => presunu se na konec policka
@@ -184,8 +185,9 @@ void Bomb::kick(DIRECTION d){
 			break;
 		case RIGHT:
 		case LEFT:
-			obj = Game::get_instance()->field_getObject(
-					x+ (d==LEFT ? -1 : +1), y, isTypeOf::isWallBoxAnyBomb);
+			obj = GAME->field_getObject(
+					x+ (d==LEFT ? -1 : +1), y,
+					isTypeOf::isWallBoxAnyBomb);
 			y_ = y*CELL_SIZE+CELL_SIZE/2;
 			if(obj){ // neco jsem tam nasel
 				// hybajici se bomba => presunu se na konec policka
@@ -205,12 +207,43 @@ void Bomb::kick(DIRECTION d){
 	create_presumptions_();
 }
 
-/**
- */
 void Bomb::remove_timer(){
-	timer_=false;
+	timer_ = false;
 }
 
+/**
+ */
+void Bomb::create_presumptions_(){
+	Uint16 i, dir, x, y;
+
+	find_target_(x, y);
+	// TODO debug
+// 	std::cout << x << "," << y << std::endl;
+
+	Sint16 factor_x, factor_y;
+
+	// na svoje policko
+	add_presumption_(x, y);
+	// pres vsechny smery
+	for(dir=0 ; dir<4 ; ++dir){
+		factor_x = factor_y = 0;
+		if(dir%2)
+			factor_x = 2-dir;
+		else
+			factor_y = 1-dir;
+		// pro velikost plamene
+		for(i=1 ; i<=flamesize_ ; ++i){
+			// pridam presumpci na nove souradnice
+			if(!add_presumption_(x+ i*factor_x, y+ i*factor_y))
+				break;
+		}
+	}
+}
+
+/** @details
+ * @param x
+ * @param y
+ */
 void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
 	x = x_/CELL_SIZE;
 	y = y_/CELL_SIZE;
@@ -314,35 +347,6 @@ void Bomb::find_target_(Uint16 & x, Uint16 & y) const {
 
 Uint16 Bomb::count_distance_(Uint16 to_end) const{
 	return to_end * speed_diff_ * (speed_rate_-2) /speed_rate_;
-}
-
-/**
- */
-void Bomb::create_presumptions_(){
-	Uint16 i, dir, x, y;
-
-	find_target_(x, y);
-	// TODO debug
-// 	std::cout << x << "," << y << std::endl;
-
-	Sint16 factor_x, factor_y;
-
-	// na svoje policko
-	add_presumption_(x, y);
-	// pres vsechny smery
-	for(dir=0 ; dir<4 ; ++dir){
-		factor_x = factor_y = 0;
-		if(dir%2)
-			factor_x = 2-dir;
-		else
-			factor_y = 1-dir;
-		// pro velikost plamene
-		for(i=1 ; i<=flamesize_ ; ++i){
-			// pridam presumpci na nove souradnice
-			if(!add_presumption_(x+ i*factor_x, y+ i*factor_y))
-				break;
-		}
-	}
 }
 
 /** @details

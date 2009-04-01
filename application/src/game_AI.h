@@ -234,6 +234,7 @@ class AI_6 : public AI_4 {
  * Útok na krátko.
  * Utilita pro umělou inteligence, která neřeší pohyb, pouze kontroluje
  * políčka kolem sebe a když na nich objeví hráče, může rychle zaútočí.
+ * Užitečné v kombinaci s nějakým potomkem AI.
  */
 class AI_ShortAttack {
 	public:
@@ -250,7 +251,7 @@ class AI_ShortAttack {
 		/// Rodičovská příšera.
 		Creature * creature_;
 		/// Aktuální pozice rodičovské příšery.
-		AI::position_t currPosition;
+		AI::position_t currPosition_;
 		/// Pokusí se nastavit pozici cíle.
 		bool trySetTargetPosition_(Uint16 field_x, Uint16 field_y,
 			Sint16 relative_x, Sint16 relative_y);
@@ -262,6 +263,11 @@ class AI_ShortAttack {
 		Sint16 target_relative_y_;
 };
 
+/**
+ * Chození rovně II s útokem nablízko.
+ * Stejně jako AI_2, pokud ale objeví ve své blízkosti hráče,
+ * zaútočí na něj.
+ */
 class AI_7 : public AI_2, AI_ShortAttack {
 	public:
 		/// Zavolá konstruktor AI
@@ -275,6 +281,11 @@ class AI_7 : public AI_2, AI_ShortAttack {
 		virtual ~AI_7() {}
 };
 
+/**
+ * Náhodné chození III s útokem nablízko.
+ * Stejně jako AI_6, pokud ale objeví ve své blízkosti hráče,
+ * zaútočí na něj.
+ */
 class AI_8 : public AI_6, AI_ShortAttack {
 	public:
 		/// Zavolá konstruktor AI
@@ -290,10 +301,11 @@ class AI_8 : public AI_6, AI_ShortAttack {
 
 #define AI_9_MIN_DISTANCE_WALKED_STRAIGHT (CELL_SIZE/2)
 #define AI_9_MAX_TRACE_DEPTH 10
-#define AI_9_TRACE_ARRAY_NO_TRACE (-1)
-#define AI_9_TRACE_ARRAY_CANT_OVER (-2)
 
-/** .
+/**
+ * Náhodné chození III s defenzivním prohledáváním.
+ * Stejně jako AI_6, pokud je ale v nebezpečí, použije prohledávání
+ * mapy do šířky a najde nejbližší bezpečné políčko.
  */
 class AI_9 : public AI_6 {
 	public:
@@ -309,8 +321,9 @@ class AI_9 : public AI_6 {
 	protected:
 		/// Typ rozlišující chtěné a nechtěné.
 		enum wanted_t { WANTED, UNWANTED };
+		/// Typ pro souřadnice políčka.
 		typedef std::pair<Uint16, Uint16> traceField_t;
-		/// Jedno políčko trasovacího pole.
+		/// Typ pro hodnotu políčka trasovacího pole.
 		typedef struct traceValue_t {
 			enum traced_t { NO_TRACE, CANT_OVER, CAN_OVER };
 
@@ -383,6 +396,7 @@ class AI_9 : public AI_6 {
 		/// Ohodnotí a vloží do fronty sousední políčka.
 		void evalAndQueueNextFields_(traceArray_t & traceArray,
 			fieldsQueue_t & fieldsQueue, isTypeOf & isBlocking);
+		/// Posune souřadnice políčka.
 		void moveFieldCoordinate_(traceField_t & field, DIRECTION dir);
 		/// Cíl nalezen.
 		bool targetFound_;
@@ -391,12 +405,12 @@ class AI_9 : public AI_6 {
 
 };
 
-#define AI_10_MAX_TRACE_DEPTH 10
-#define AI_10_MAX_UPDATE_PERIOD CELL_SIZE
-
-/** Umělá inteligence TODO úrovně.
- * AI_10 je velice inteligentní útočná úroveň,
- * řeší plameny, jejich předpovědi (a pozici hráče).
+/**
+ * Ofenzivní i defenzivním prohledávání.
+ * Pokud je v nebezpečí, použije prohledávání
+ * mapy do šířky a najde nejbližší bezpečné políčko.
+ * Pokud v nebezpečí není, použije prohledávání mapy
+ * aby našel cíl, na který by zaútočil.
  */
 class AI_10 : public AI_9 {
 	public:
@@ -415,10 +429,12 @@ class AI_10 : public AI_9 {
 		PositionIndex findPosIndexToComeCloseToPlayer_(isTypeOf & isBlocking);
 };
 
-/** NEumělá inteligence.
- * AI_fromKeayboard je inteligence, která je řízena vstupem z klávesnice.
- * Pokud se nic neděje, nestvůrou (hráčem) nehýbá.
+/** NEumělá inteligence pro hráče.
+ * AI_fromKeyboard je inteligence, která je řízena vstupem z klávesnice.
+ * Pokud se nic neděje, hráčem nehýbá.
  * Řeší, aby uživatel svou interakcí chodil pouze tudy, kudy může.
+ * Chodí s hráčem čtyřmi směry, pokládá bomby, kope do nich,
+ * odpaluje je.
  */
 class AI_fromKeyboard : public AI {
 	public:
@@ -433,9 +449,14 @@ class AI_fromKeyboard : public AI {
 	private:
 		/// Stav klávesnice.
 		Uint8 *keystate_;
+		/// Obslouží klávesy pro pohyb.
+		bool handleMoveKeys_(Player * player);
+		/// Obslouží pokládání bomb.
+		void handlePlantKey_(Player * player, bool playerMoved);
+		/// Obslouží ruční odpalování bomb.
+		void handleTimerKey_(Player * player);
 		/// Vytvoří a nastaví novou pozici.
-		void makePosition(position_t & position,
-			Sint16 factor_x, Sint16 factor_y);
+		bool trySetPosition_(Player * player, position_t & position);
 };
 
 

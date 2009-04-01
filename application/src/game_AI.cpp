@@ -274,6 +274,9 @@ AI_0::AI_0(Creature *creature): AI(creature){
 
 }
 
+/** @details
+ * Nedělá vůbec nic.
+ */
 void AI_0::move() {
 
 }
@@ -290,16 +293,31 @@ AI_1::AI_1(Creature *creature, isTypeOf & isBlocking):
 
 }
 
+/** @details
+ * Obnoví možné pozice, vybere z nich pomocí findPosIndex(),
+ * nastaví ji.
+ */
 void AI_1::move() {
 	updatePositions();
 	Uint16 posIndex = findPosIndex(isBlocking_);
 	setPosition(positions_[posIndex]);
 }
 
+/** @details
+ * Najde index pomocí findPosIndexToWalkStraight_()
+ * @param isBlocking predikát určující blokující objekty
+ * @return Index pozice, na kterou máme jít.
+ */
 AI::PositionIndex AI_1::findPosIndex(isTypeOf & isBlocking){
 	return findPosIndexToWalkStraight_(isBlocking);
 }
 
+/** @details
+ * Pokud může, vybere pozici pro pohyb rovně,
+ * pokud nemůže, vybere náhodně spravedlivě z možních pozic.
+ * @param isBlocking predikát určující blokující objekty
+ * @return Index pozice, na kterou máme jít.
+ */
 AI::PositionIndex AI_1::findPosIndexToWalkStraight_(isTypeOf & isBlocking){
 	// vpred
 	if(checkField(positions_[POS_STRAIGHT], isBlocking)){
@@ -351,6 +369,14 @@ AI_3::AI_3(Creature *creature):
 
 }
 
+/** @details
+ * Obnoví možné pozice, vybere z nich pomocí findPosIndex(),
+ * přičemž se vyhýbá špatným objektům.
+ * Kdyby měl zůstat stát na špatném objektu,
+ * použije ještě jednou findPosIndex(),
+ * tentokrát s ohledem pouze na blokující objekty.
+
+ */
 void AI_3::move() {
 	updatePositions();
 	PositionIndex posIndex = findPosIndex(isBad_);
@@ -384,6 +410,11 @@ AI_4::AI_4(Creature *creature, isTypeOf & isBlocking,
 	minDistanceWalkedStraight_ = minDistance;
 }
 
+/** @details
+ * Obnoví možné pozice, vybere z nich pomocí findPosIndex(),
+ * obnoví vzdálenost ušlou přímo,
+ * nastaví vybranou pozici.
+ */
 void AI_4::move() {
 	updatePositions();
 	PositionIndex posIndex = findPosIndex(isBlocking_);
@@ -391,6 +422,13 @@ void AI_4::move() {
 	setPosition(positions_[posIndex]);
 }
 
+/** @details
+ * Najde index pomocí findPosIndexToWalkStraight_(),
+ * pokud ušel dostatečnou vzdálenost rovně,
+ * použije findPosIndexToWalkRandomly_().
+ * @param isBlocking predikát určující blokující objekty
+ * @return Index pozice, na kterou máme jít.
+ */
 AI::PositionIndex AI_4::findPosIndex(isTypeOf & isBlocking){
 	if(distanceWalkedStraight_ < minDistanceWalkedStraight_) {
 		return findPosIndexToWalkStraight_(isBlocking);
@@ -400,6 +438,11 @@ AI::PositionIndex AI_4::findPosIndex(isTypeOf & isBlocking){
 }
 
 
+/** @details
+ * Vybere náhodně spravedlivě z možních pozic.
+ * @param isBlocking predikát určující blokující objekty
+ * @return Index pozice, na kterou máme jít.
+ */
 AI::PositionIndex AI_4::findPosIndexToWalkRandomly_(isTypeOf & isBlocking){
 	// zjistim pocet neblokovanych moznosti
 	Uint16 nonBlockedPositions = 0;
@@ -432,6 +475,12 @@ AI::PositionIndex AI_4::findPosIndexToWalkRandomly_(isTypeOf & isBlocking){
 	return POS_STAY;
 }
 
+/** @details
+ * Přidá ušlou vzdálenost k vzdálenosti ušlé rovně,
+ * pokud už původní vzdálenost ušlá rovně byla dost velká,
+ * vynuluje ji.
+ * @param position pozice, podle které máme obnovit vzdálenost
+ */
 void AI_4::updateDistance_(position_t & position){
 	// spocitam vzdalenost nove uslou po ose x a y
 	Uint16 distance_x =
@@ -477,6 +526,15 @@ AI_6::AI_6(Creature *creature, Uint16 minDistance):
 
 }
 
+/** @details
+ * Obnoví možné pozice, vybere z nich pomocí findPosIndex(),
+ * přičemž se vyhýbá špatným objektům.
+ * Kdyby měl zůstat stát na špatném objektu,
+ * použije ještě jednou findPosIndex(),
+ * tentokrát s ohledem pouze na blokující objekty.
+ * Obnoví vzdálenost ušlou rovně, nastaví vybranou pozici.
+ */
+
 void AI_6::move() {
 	updatePositions();
 	PositionIndex posIndex = findPosIndex(isBad_);
@@ -501,28 +559,29 @@ AI_ShortAttack::AI_ShortAttack(Creature * creature):
 }
 
 /** @details
+ * Nastaví currPosition_ na aktuální pozici příšery.
  * Pokud najde hráče, na kterého může útočit,
  * nastaví targetFound_ na TRUE a target_relative_* na pozici kam se má útočit.
  * Pokud nenajde hráče, nastaví targetFound_ na FALSE.
  */
 void AI_ShortAttack::updateTargetPosition(){
-	currPosition.d = creature_->d_;
-	currPosition.x = creature_->x_;
-	currPosition.y = creature_->y_;
+	currPosition_.d = creature_->d_;
+	currPosition_.x = creature_->x_;
+	currPosition_.y = creature_->y_;
 
-	Uint16 field_x = currPosition.x / CELL_SIZE;
-	Uint16 field_y = currPosition.y / CELL_SIZE;
+	Uint16 curr_x = currPosition_.x / CELL_SIZE;
+	Uint16 curr_y = currPosition_.y / CELL_SIZE;
 	// projde políčka okolo mého
 	for(Sint16 relative_x = -1 ; relative_x <= 1 ; ++relative_x){
 		for(Sint16 relative_y = -1 ; relative_y <= 1 ; ++relative_y){
 			// podiva se jestli je hrac na policku
 			targetFound_ = GAME->field_withObject(
-				field_x + relative_x,
-				field_y + relative_y,
+				curr_x + relative_x,
+				curr_y + relative_y,
 				isTypeOf::isPlayer );
 			// hrace na policku nasel, este neni jasne jestli k nemu muze
 			if(targetFound_){
-				if(trySetTargetPosition_(field_x, field_y,
+				if(trySetTargetPosition_(curr_x, curr_y,
 						relative_x, relative_y)) {
 					return;
 				} else {
@@ -539,9 +598,12 @@ void AI_ShortAttack::updateTargetPosition(){
  * POZOR že může útočit přímo ikdyž vchází na blokované políčko,
  * to se stává často když hráč položí bombu a zůstane na ní stát.
  * Ůtočit šikmo (dvěma směry naráz) může pouze když je alespoň jeden směr volný.
- * TODO
- * @param
- * @return
+ * @param field_x x-ová souřadnice výchozího políčka
+ * @param field_y y-ová souřadnice výchozího políčka
+ * @param relative_x relativní x-ová souřadnice cíle
+ * @param relative_y relativní y-ová souřadnice cíle
+ * @return TRUE pokud je alespon jeden směr pro útok volný.
+ *	Pokud není volný, nenastaví souřadnice cíle a vrací FALSE.
  */
 bool AI_ShortAttack::trySetTargetPosition_(Uint16 field_x, Uint16 field_y,
 				Sint16 relative_x, Sint16 relative_y){
@@ -572,9 +634,20 @@ bool AI_ShortAttack::trySetTargetPosition_(Uint16 field_x, Uint16 field_y,
 	}
 }
 
+/** @details
+ * Podle target_relative_* vytvoří útočící pozici.
+ * Útočící pozice je vždy vzdálena od aktuální maximálně
+ * dvojnásobek rychlosti příšery, průměrně však 1.45 násobek.
+ * Jednak chceme nablízko útočit o něco rychleji, jednak když
+ * použijeme rychlost příšery v obou směrech, jdeme po úhlopříčce
+ * (a ta je sqrt(2) krát větší než kdybychom šli ortogonálně).
+ */
 AI::position_t AI_ShortAttack::createPositionToAttack_(){
+	if(!targetFound()){
+		return currPosition_;
+	}
 
-	AI::position_t newPos = currPosition;
+	AI::position_t newPos = currPosition_;
 	bool isInCorner =
 		target_relative_x_!=0 && target_relative_y_!=0;
 
@@ -616,6 +689,10 @@ AI_7::AI_7(Creature * creature):
 
 }
 
+/** @details
+ * Pokusí se najít cíl pro útok nablízko,
+ * pokud se podaří, zaútočí, jinak se hýbe podle AI_2::move().
+ */
 void AI_7::move(){
 	updateTargetPosition();
 	if(targetFound()){
@@ -634,6 +711,10 @@ AI_8::AI_8(Creature * creature):
 
 }
 
+/** @details
+ * Pokusí se najít cíl pro útok nablízko,
+ * pokud se podaří, zaútočí, jinak se hýbe podle AI_6::move().
+ */
 void AI_8::move(){
 	updateTargetPosition();
 	if(targetFound()){
@@ -656,7 +737,7 @@ AI_9::AI_9(Creature *creature):
 /** @details
  * Pokud je v nebezpečí, zachová se chytře a vyhledá
  * bezpečné políčko.
- * Jinak se zachová standardně.
+ * Jinak se zachová standardně podle findPosIndex().
  */
 void AI_9::move() {
 	updatePositions();
@@ -792,12 +873,11 @@ bool AI_9::interestingFound_(const traceField_t & field,
 /** @details
  * Sousední políčka jsou políčka vlevo, vpravo, nad a pod
  * políčkem, které je první ve frontě (aktuální políčko).
- * Tato políčka, pokud již nebyla hodnocena ohodnotí záporně
- * pokud na ně nemůžeme vstoupit a kladně pokud na ně vstoupit můžeme.
- * Zápornou hodnotu použije z AI_9_TRACE_ARRAY_CANT_OVER.
- * Kladnou hodnotu použije o jedna větší než je hodnota aktuálního políčka.
- * Navíc políčka ohodnocená kladně vloží do fronty pro pozdější zpracování.
- * Do fronty nevkládá taková políčka, která by měla hodnotu větší
+ * Tato políčka, pokud již nebyla hodnocena označí.
+ * Nastavuje, že na něj nemůžeme vstoupit nebo jim nastaví hloubku prohledávání,
+ * v jaké jsme schopni na ně dojít.
+ * Navíc políčka, na která můžeme vstoupit, vloží do fronty pro pozdější zpracování.
+ * Do fronty nevkládá taková políčka, která by měla hloubku větší
  * než povolenou v AI_9_MAX_TRACE_DEPTH.
  * @param traceArray trasovací pole pro ohodnocení
  * @param fieldsQueue fronta políček
@@ -842,6 +922,13 @@ void AI_9::evalAndQueueNextFields_(traceArray_t & traceArray,
 	}
 }
 
+/** @details
+ * Posune políčko na sousední podle zadaného směru.
+ * @param field políčko, které chceme posunout
+ * @param dir směr, podle kterého budeme posunovat
+ * @throw string Chybová hláška,
+ *	pokud nejsou ošetřeny všechny směry.
+ */
 void AI_9::moveFieldCoordinate_(traceField_t & field, DIRECTION dir){
 	switch(dir){
 		case UP:
@@ -864,6 +951,13 @@ void AI_9::moveFieldCoordinate_(traceField_t & field, DIRECTION dir){
 	}
 }
 
+/** @details
+ * Podle výsledku prohledávání do šířky provede backtracking,
+ * vybere výslednou pozici, která nejlépe využije směr.
+ * Využívá member položku targetField_,
+ * kontroluje její správnost pomocí targetFound().
+ * @param traceArray ohodnocené trasovací pole
+ */
 AI::PositionIndex AI_9::findPosIndexUsingBacktracking_(
 			traceArray_t & traceArray){
 	if(!targetFound()){
@@ -903,6 +997,13 @@ AI_10::AI_10(Creature *creature):
 
 }
 
+/** @details
+ * Najde index pomocí findPosIndexToWalkStraight_(),
+ * pokud ušel dostatečnou vzdálenost rovně,
+ * použije findPosIndexToComeCloseToPlayer_().
+ * @param isBlocking predikát určující blokující objekty
+ * @return Index pozice, na kterou máme jít.
+ */
 AI::PositionIndex AI_10::findPosIndex(isTypeOf & isBlocking){
 	if(distanceWalkedStraight_ < minDistanceWalkedStraight_) {
 		return findPosIndexToWalkStraight_(isBlocking);
@@ -913,8 +1014,9 @@ AI::PositionIndex AI_10::findPosIndex(isTypeOf & isBlocking){
 
 
 /** @details
- * Předpokládá, že se nacházíme v nebezpečí a snaží se najít bezpečné políčko.
- * Výsledkem je pozice, která nás přiblíží nejbližšímu bezpečnému políčku.
+ * Snaží se v mapě vyhledat hráče, na kterého by mohla zaútočit.
+ * Výsledkem je pozice, která nás přiblíží nejbližšímu hráči,
+ * nebo náhodná pozice, pokud jsme hráče neobjevili.
  * @param isBlocking predikát odhalující blokující prvek na políčku
  * @return Vrací index pozice, na kterou bychom měli jít.
  */
@@ -931,167 +1033,6 @@ AI::PositionIndex AI_10::findPosIndexToComeCloseToPlayer_(
 	}
 }
 
-/*
-AI_10::AI_10(Creature *creature):
-			AI(creature), isBlocking_(isTypeOf::isWallBoxBombFlame),
-			isBad_(isTypeOf::isWallBoxBombFlamePresumption),
-			target_x_(1), target_y_(1), last_trace_update_(0) {}
-
-void AI_10::move() {
-	// pripravim cilove pozice
-	updatePositions();
-	// pokud se nehybam nebo uz jsem se hybal hodne
-	if(!last_trace_update_
-	|| last_trace_update_ >= AI_10_MAX_UPDATE_PERIOD){
-			last_trace_update_ = rand()%AI_10_MAX_UPDATE_PERIOD /2;
-			// pripravim trasovaci pole
-			update_trace_array_();
-	}
-
-	// najdu vhodnou pozici
-	position_t & position = get_position_();
-	if(!checkField(position, isBlocking_))
-		position = get_random_position_();
-	// prictu o kolik se posunu
-	last_trace_update_ += abs_minus(position.x, positions_[0].x)
-		+ abs_minus(position.y, positions_[0].y);
-	// nastavim pozici
-	setPosition(position);
-}
-
-void AI_10::update_trace_array_(){
-	// vytvoreni trasovaciho pole s hodnotami -1
-	if(empty_trace_array_.empty()){
-		vector< Sint16 > empty_column;
-		empty_column.insert(empty_column.end(), GAME->map_height(), -1);
-		empty_trace_array_.insert(
-			empty_trace_array_.end(), GAME->map_width(), empty_column);
-	}
-
-	// nastavit pocatecni souradnice
-	old_x_ = positions_[0].x/CELL_SIZE;
-	old_y_ = positions_[0].y/CELL_SIZE;
-	// zkopirovat prazdne pole
-	trace_array_ = empty_trace_array_;
-	trace_array_[old_x_][old_y_] = 0;
-	// pripravit pocatecni policko do fronty
-	fields_queue_t fields_queue;
-	fields_queue.push(make_pair(old_x_, old_y_));
-	// ohodnotit trasovaci pole
-	eval_trace_array_(fields_queue,
-		GAME->field_withObject(old_x_, old_y_, isBad_));
-}
-
-void AI_10::eval_trace_array_(fields_queue_t & fields_queue, bool in_danger ){
-	if(fields_queue.empty())
-		return;
-	// obnovit souradnice cile
-	target_x_ = fields_queue.front().first,
-	target_y_ = fields_queue.front().second;
-	// mame hrace, koncime a jdeme na nej
-	if(GAME->field_withObject(target_x_, target_y_, PLAYER))
-		return;
-	// jsem v ohrozeni a nasel jsem dobre policko, koncim
-	if(in_danger
-	&& !GAME->field_withObject(target_x_, target_y_, isBad_))
-		return;
-
-	// pripravim novou hodnotu policka
-	Sint16 val = trace_array_[target_x_][target_y_]+1;
-
-	Uint16 i, dir, next_x, next_y;
-	// pres vsechny smery
-	if(val <= AI_10_MAX_TRACE_DEPTH){
-		// trocha nahody
-		for(i=0, dir=rand()%4 ; i<4 ; ++i, ++dir){
-			// souradnice
-			next_x = target_x_; next_y = target_y_;
-			if(dir%2)
-				next_x += 2-dir%4;
-			else
-				next_y += 1-dir%4;
-			// mohu na policko vstoupit
-			if(trace_array_[next_x][next_y]==-1
-			&& !GAME->field_withObject(next_x, next_y,
-						in_danger ? isBlocking_ : isBad_)){
-				// nastavim hodnotu
-				trace_array_[next_x][next_y] = val;
-				// vlozim do fronty
-				fields_queue.push(make_pair(next_x, next_y));
-			}
-		}
-	}
-
-	// vyhodim z fronty
-	fields_queue.pop();
-	// vyresim dalsi policko
-	eval_trace_array_(fields_queue, in_danger);
-}
-
-AI::position_t & AI_10::get_position_(){
-	Sint16 val = trace_array_[target_x_][target_y_]-1;
-	// konec rekurze
-	if(val<=0){
-		// nahoru
-		if(target_y_ < old_y_)
-			return positions_[ (4+UP-positions_[0].d)%4+1 ];
-		// dolu
-		if(target_y_ > old_y_)
-			return positions_[ (4+DOWN-positions_[0].d)%4+1 ];
-		// vlevo
-		if(target_x_ < old_x_)
-			return positions_[ (4+LEFT-positions_[0].d)%4+1 ];
-		// vpravo
-		if(target_x_ > old_x_)
-			return positions_[ (4+RIGHT-positions_[0].d)%4+1 ];
-	}
-	Uint16 dir, next_x, next_y;
-	// pres vsechny smery najdu odkud jsem se sem dostal
-	for(dir=0 ; dir<4 ; ++dir){
-		// souradnice
-		next_x = target_x_; next_y = target_y_;
-		if(dir%2)
-			next_x += 2-dir;
-		else
-			next_y += 1-dir;
-		if(trace_array_[next_x][next_y]==val)
-			break;
-	}
-	// vratim rekurzi naslou pozici
-	target_x_ = next_x; target_y_ = next_y;
-	return get_position_();
-}
-
-AI::position_t & AI_10::get_random_position_(){
-	// vpred
-	if(checkField(positions_[1], isBad_))
-		return positions_[1];
-	// otoceni doprava
-	if(checkField(positions_[2], isBad_))
-		return positions_[2];
-	// otoceni doleva
-	if(checkField(positions_[4], isBad_))
-		return positions_[4];
-	// vzad
-	if(checkField(positions_[3], isBad_))
-		return positions_[3];
-	// vpred
-	if(checkField(positions_[1], isBlocking_))
-		return positions_[1];
-	// otoceni doprava
-	if(checkField(positions_[2], isBlocking_))
-		return positions_[2];
-	// otoceni doleva
-	if(checkField(positions_[4], isBlocking_))
-		return positions_[4];
-	// vzad
-	if(checkField(positions_[3], isBlocking_))
-		return positions_[3];
-
-	// zustat namiste
-	return positions_[0];
-}
-*/
 
 /************************ AI_fromKeybord **************************/
 
@@ -1099,104 +1040,210 @@ AI_fromKeyboard::AI_fromKeyboard(Creature *creature): AI(creature) {
 	 keystate_= SDL_GetKeyState(0);
 }
 
+/** @details
+ * Provede update možných pozic jako bych byl otočený nahoru.
+ * Postupně zavolá všechny handlery kláves.
+ */
 void AI_fromKeyboard::move() {
+	// nemelo by se stat ze mame AI_fromKeyboard prirazenou prisere
 	Player * player = static_cast<Player *>(creature_);
 	// update pozic pro pohyb jako bych byl otoceny nahoru
 	DIRECTION cur_d = player->d_;
 	player->d_ = UP;
 	updatePositions();
-	// souradnice v polickach
-	Uint16 x, y, num = player->player_num();
+	player->d_ = cur_d;
+
+	bool moved = handleMoveKeys_(player);
+	handlePlantKey_(player, moved);
+	handleTimerKey_(player);
+}
+
+/** @details
+ * Pro stisknuté klávesy nastaví směr hráče
+ * a pokusí se hráčem hýbnout.
+ * @param player hráč, pro nějž handler voláme
+ * @return TRUE pokud se hráč pohnul.
+ */
+bool AI_fromKeyboard::handleMoveKeys_(Player * player){
+	Uint16 num = player->player_num();
 
 	if(keystate_[CONFIG->player(num, KEY_UP)]){
 		player->d_ = UP;
-		makePosition(positions_[1], 0, -1);
+		return trySetPosition_(player, positions_[POS_STRAIGHT]);
 	}
 	else if(keystate_[CONFIG->player(num, KEY_RIGHT)]){
 		player->d_ = RIGHT;
-		makePosition(positions_[2], 1, 0);
+		return trySetPosition_(player, positions_[POS_RIGHT]);
 	}
 	else if(keystate_[CONFIG->player(num, KEY_DOWN)]){
 		player->d_ = DOWN;
-		makePosition(positions_[3], 0, 1);
+		return trySetPosition_(player, positions_[POS_BACK]);
 	}
 	else if(keystate_[CONFIG->player(num, KEY_LEFT)]){
 		player->d_ = LEFT;
-		makePosition(positions_[4], -1, 0);
+		return trySetPosition_(player, positions_[POS_LEFT]);
 	}
-	else player->d_ = cur_d;
-
-	if(keystate_[CONFIG->player(num, KEY_PLANT)]){
-		x = player->x_/CELL_SIZE;
-		y = player->y_/CELL_SIZE;
-
-		Bomb * bomb =0;
-		if(player->bonus_fireman_){
-			if(player->next_timer_ < MOVE_PERIOD){
-				bomb = GAME->tools->bomb_normal(x, y, 1);
-				bomb->explode();
-				player->next_timer_ = TIMER_PERIOD;
-			}
-		}
-		else if(!GAME->field_withObject(x, y, isTypeOf::isWallBoxAnyBombFlame)){
-			if(player->megabombs_){
-				bomb = GAME->tools->bomb_mega(x, y,
-							player->flamesize_, player->bonus_timer_);
-				--player->megabombs_;
-			}
-			else if(GAME->count_bombs(num)< player->bombs_)
-				bomb = GAME->tools->bomb_normal(x, y,
-							player->flamesize_, player->bonus_timer_);
-		}
-		if(bomb){
-			if(player->bonus_slider_
-			&& player->x_==positions_[0].x
-			&& player->y_==positions_[0].y)
-				bomb->kick(player->d_);
-			GAME->plant_bomb(num, x, y, bomb);
-		}
+	else {
+		return false;
 	}
-
-	if(keystate_[CONFIG->player(num, KEY_TIMER)]
-	&& player->bonus_timer_	&& player->next_timer_ < MOVE_PERIOD){
-		GAME->explode_bomb(num);
-		player->next_timer_ = TIMER_PERIOD;
-	}
-
 }
 
-void AI_fromKeyboard::makePosition(position_t & position,
-				Sint16 factor_x, Sint16 factor_y) {
-	Player * player = static_cast<Player *>(creature_);
+/** @details
+ * Pokusí se hráči nastavit novou pozici.
+ * Při tom se zabývá tím, aby hráč nevlezl někam kam nesmí.
+ * Řeší kopání do bomb.
+ * Když je možné hráče posunout ve směru stanoveném pozicí
+ * alespon trochu, funkce tak učiní.
+ * @param player hráč, pro nějž handler voláme
+ * @param position nová pozice pro nastavení
+ * @return TRUE pokud se hráč pohnul.
+ */
+bool AI_fromKeyboard::trySetPosition_(Player * player, position_t & position) {
+	// souradnice v polickach
+	Uint16 field_x = position.x/CELL_SIZE;
+	Uint16 field_y = position.y/CELL_SIZE;
+	// nemuzu tam vubec vstoupit, koncim
+	if(!GAME->field_canGoOver(field_x, field_y, false)){
+		return false;
+	}
 
-	Uint16 x=position.x/CELL_SIZE,
-		y=position.y/CELL_SIZE;
-	if(GAME->field_canGoOver(x, y, false)){
-		if((factor_x<0 && position.x%CELL_SIZE<CELL_SIZE/2)
-		|| (factor_x>0 && position.x%CELL_SIZE>CELL_SIZE/2)
-		|| (factor_y<0 && position.y%CELL_SIZE<CELL_SIZE/2)
-		|| (factor_y>0 && position.y%CELL_SIZE>CELL_SIZE/2) ){
+	// faktor posunu souradnic (normalizovany rozdil)
+	int factor_x = sgn_minus(position.x, positions_[POS_STAY].x);
+	int factor_y = sgn_minus(position.y, positions_[POS_STAY].y);
 
-			MapObject * obj = GAME->field_getObject(x+factor_x, y+factor_y,
-					isTypeOf::isWallBoxAnyBomb);
-			if(obj){
-				// jakakoli bomba, zkusim do ni kopnout (jestli muzu)
-				if(player->bonus_kicker_
-				&& (obj->type()==BOMB_STAYING || obj->type()==BOMB_MOVING))
-					static_cast< Bomb * >(obj)->kick(player->d_);
-				// WALL | BOX | BOMB_STAYING (po kopnuti se nehybe)
-				if(obj->type()!=BOMB_MOVING){
-					if(factor_x)
-						position.x = x*CELL_SIZE+CELL_SIZE/2;
-					if(factor_y)
-						position.y = y*CELL_SIZE+CELL_SIZE/2;
+	// podle faktoru pohybu a pozice na policku
+	// zjistim jestli muzu na policku za pulku
+	if((factor_x < 0  &&  position.x%CELL_SIZE < CELL_SIZE/2)
+	|| (factor_x > 0  &&  position.x%CELL_SIZE > CELL_SIZE/2)
+	|| (factor_y < 0  &&  position.y%CELL_SIZE < CELL_SIZE/2)
+	|| (factor_y > 0  &&  position.y%CELL_SIZE > CELL_SIZE/2) ){
+
+		// zajimavy objekt na nasledujicim policku
+		MapObject * obj = GAME->field_getObject(
+			field_x + factor_x, field_y + factor_y,
+			isTypeOf::isWallBoxAnyBomb);
+		// nasli jsme zajimavy objekt, podivame se co s nim
+		if(obj){
+			// jakakoli bomba, zkusim do ni kopnout (jestli muzu)
+			bool isObjAnyBomb =
+				obj->type()==BOMB_STAYING || obj->type()==BOMB_MOVING;
+			if(isObjAnyBomb && player->bonus_kicker_ ){
+				Bomb * bomb = static_cast< Bomb * >(obj);
+				bomb->kick(player->d_);
+				// hybe se, podarilo se do ni kopnout
+				if(bomb->type()==BOMB_MOVING){
+					// po kopnuti se nikam neposunuju
+					position = positions_[POS_STAY];
+				}
+			}
+			// WALL | BOX | BOMB_STAYING (po kopnuti se nehybe)
+			if(obj->type()!=BOMB_MOVING){
+				// nastavim prostredek policka v tom smeru,
+				// ve kterem se hybu
+				if(factor_x) {
+					position.x = field_x * CELL_SIZE
+						+ CELL_SIZE/2;
+				}
+				if(factor_y) {
+					position.y = field_y * CELL_SIZE
+						+ CELL_SIZE/2;
 				}
 			}
 		}
-		if((factor_x<0 && position.x<positions_[0].x)
-		|| (factor_x>0 && position.x>positions_[0].x)
-		|| (factor_y<0 && position.y<positions_[0].y)
-		|| (factor_y>0 && position.y>positions_[0].y) )
-			setPosition(position);
+	}
+
+	// podle faktoru pohybu zjistim, jestli se vubec hybu v zadanem smeru
+	if((factor_x < 0  &&  position.x < positions_[POS_STAY].x)
+	|| (factor_x > 0  &&  position.x > positions_[POS_STAY].x)
+	|| (factor_y < 0  &&  position.y < positions_[POS_STAY].y)
+	|| (factor_y > 0  &&  position.y > positions_[POS_STAY].y) ) {
+		// pokud se hybu v zadanem smeru, nastavim novou pozici
+		setPosition(position);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
+/** @details
+ * Vytváří a vkládá do mapy bomby.
+ * Řeší firemana, megabomby a posílání bomb.
+ * @param player hráč, pro nějž handler voláme
+ */
+void AI_fromKeyboard::handlePlantKey_(Player * player, bool playerMoved){
+	Uint16 num = player->player_num();
+	// neni stisknuta klavesa pokladani bomby => koncime
+	if(!keystate_[CONFIG->player(num, KEY_PLANT)]){
+		return;
+	}
+	// souradnice v polickach
+	Uint16 field_x = player->x_ / CELL_SIZE;
+	Uint16 field_y = player->y_ / CELL_SIZE;
+
+	// bomba pro vlozeni do mapy
+	Bomb * bomb =0;
+
+	// pokusim se vytvorit bombu kterou potrebuju
+	if(player->bonus_fireman_){
+		// uz muzu pokladat dalsi bombu firemanem
+		if(player->next_timer_ < MOVE_PERIOD){
+			// fireman ma velikost plamene 1
+			bomb = GAME->tools->bomb_normal(field_x, field_y, 1);
+			// hned bouchne
+			bomb->explode();
+			// nemuzeme hned pokladat dalsi
+			player->next_timer_ = TIMER_PERIOD;
+		}
+	} else {
+		// jestli muze na policko pokladat bombu
+		bool canPlantBomb = !GAME->field_withObject(
+			field_x, field_y,
+			isTypeOf::isWallBoxAnyBombFlame);
+		if(canPlantBomb){
+			// kdyz ma megabomby pouzije ji
+			if(player->megabombs_ > 0){
+				--player->megabombs_;
+				bomb = GAME->tools->bomb_mega(field_x, field_y,
+					player->flamesize_, player->bonus_timer_);
+			}
+			// jinak kdyz jeste nepolozil vsechny bomby
+			else if(GAME->count_bombs(num) < player->bombs_){
+				bomb = GAME->tools->bomb_normal(field_x, field_y,
+					player->flamesize_, player->bonus_timer_);
+			}
+		}
+	}
+
+	// vytvorili jsme nejakou bombu, polozime ji
+	if(bomb){
+		// vlozime ji do hry (mapy)
+		GAME->plant_bomb(num, field_x, field_y, bomb);
+
+		// kdyz ma hrac posilani a nehybe se
+		if(player->bonus_slider_ && !playerMoved){
+			// tak do bomby jakoby kopne (posle ji)
+			bomb->kick(player->d_);
+		}
+	}
+}
+
+/** @details
+ * Řeší ruční odpalování.
+ * @param player hráč, pro nějž handler voláme
+ */
+void AI_fromKeyboard::handleTimerKey_(Player * player){
+	Uint16 num = player->player_num();
+	// neni stisknuta klavesa => koncime
+	if(!keystate_[CONFIG->player(num, KEY_TIMER)]){
+		return;
+	}
+	// mame bonus odpalovani, muzeme hned odpalovat
+	if(player->bonus_timer_ && player->next_timer_ < MOVE_PERIOD){
+		// odpalime jednu bombu
+		GAME->explode_bomb(num);
+		// dalsi odpalovani pozdrzime
+		player->next_timer_ = TIMER_PERIOD;
 	}
 }
