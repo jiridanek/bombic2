@@ -8,6 +8,7 @@
 #include <vector>
 #include <queue>
 #include <utility>
+#include <map>
 #include "SDL_lib.h"
 #include "game_mapobjects.h"
 #include "game_creature.h"
@@ -292,6 +293,8 @@ class AI_8 : public AI_6, AI_ShortAttack {
 #define AI_9_TRACE_ARRAY_NO_TRACE (-1)
 #define AI_9_TRACE_ARRAY_CANT_OVER (-2)
 
+/** .
+ */
 class AI_9 : public AI_6 {
 	public:
 		/// Zavolá konstruktor AI_6
@@ -306,15 +309,58 @@ class AI_9 : public AI_6 {
 	protected:
 		/// Typ rozlišující chtěné a nechtěné.
 		enum wanted_t { WANTED, UNWANTED };
-		/// Typ trasovacího pole.
-		typedef std::vector< std::vector< Sint16 > > traceArray_t;
+		typedef std::pair<Uint16, Uint16> traceField_t;
+		/// Jedno políčko trasovacího pole.
+		typedef struct traceValue_t {
+			enum traced_t { NO_TRACE, CANT_OVER, CAN_OVER };
+
+			traceValue_t(){
+				traced_ = NO_TRACE;
+			}
+			bool wasNotTraced(){
+				return traced_==NO_TRACE;
+			}
+			bool canGoOver(){
+				return traced_==CAN_OVER;
+			}
+			bool cannotGoOver(){
+				return traced_==CANT_OVER;
+			}
+			void setCannotGoOver(){
+				traced_ = CANT_OVER;
+			}
+			Uint16 getDepth(){
+				return depth_;
+			}
+			void setDepth(Uint16 depth){
+				traced_ = CAN_OVER;
+				depth_ = depth;
+			}
+			void setFromField(const traceField_t & fromField){
+				fromField_ = fromField;
+			}
+			const traceField_t & getFromField(){
+				return fromField_;
+			}
+
+			private:
+				Uint16 depth_;
+				traced_t traced_;
+				traceField_t fromField_;
+		} traceValue_t;
+
+		/** Typ trasovacího pole.
+		 * Je otázka jestli trasovací pole opravdu implementovat jako pole.
+		 * Vzhledem k tomu, že málokdy se využije vetší kus celé mapy
+		 * a vzhledem k tomu, že mapa může být i velká se uchyluji k dynamičtější
+		 * struktuře std::map, kde klíč budou souřadnice políčka.
+		 */
+		typedef std::map<traceField_t, traceValue_t > traceArray_t;
 		/// Typ fronty políček.
-		typedef std::queue< std::pair< Uint16, Uint16 > > fieldsQueue_t;
+		typedef std::queue< traceField_t > fieldsQueue_t;
 		/// Najde index pozice,
 		/// na kterou máme jít abychom se dostali z nebezpečí.
 		PositionIndex findPosIndexToWalkFromRisk_(isTypeOf & isBlocking);
-		/// Inicializuje trasovací pole.
-		void initTraceArray_(traceArray_t & traceArray);
 		/// Ohodnotí trasovací pole (start rekurze).
 		void evalTraceArray_( traceArray_t & traceArray,
 			isTypeOf & isBlocking, isTypeOf & isInteresting,
@@ -322,6 +368,9 @@ class AI_9 : public AI_6 {
 		/// Cíl nalezen.
 		bool targetFound() const
 			{ return targetFound_; }
+		/// Najde pomocí backtrackingu index výsledné pozice.
+		PositionIndex findPosIndexUsingBacktracking_(
+			traceArray_t & traceArray);
 	private:
 		/// Ohodnotí trasovací pole (krok rekurze).
 		void recursiveEvalTraceArray_(
@@ -329,63 +378,41 @@ class AI_9 : public AI_6 {
 			isTypeOf & isBlocking, isTypeOf & isInteresting,
 			wanted_t interestArea);
 		/// Bylo-li nalezeno ve správném smyslu zajímavé políčko.
-		bool interestingFound_(Uint16 x, Uint16 y,
+		bool interestingFound_(const traceField_t & field,
 			isTypeOf & isInteresting, wanted_t interestingArea);
-		/// Vyhodí náhodný počet políček z fronty.
-		void popRandomFields_(fieldsQueue_t & fieldsQueue);
 		/// Ohodnotí a vloží do fronty sousední políčka.
 		void evalAndQueueNextFields_(traceArray_t & traceArray,
 			fieldsQueue_t & fieldsQueue, isTypeOf & isBlocking);
-		/// Najde pomocí backtrackingu index výsledné pozice.
-		PositionIndex findPosIndexUsingBacktracking_(traceArray_t & traceArray);
+		void moveFieldCoordinate_(traceField_t & field, DIRECTION dir);
 		/// Cíl nalezen.
 		bool targetFound_;
-		/// Pozice cíle v mapě.
-		Uint16 target_x_;
-		/// Pozice cíle v mapě.
-		Uint16 target_y_;
+		/// Souřadnice cíle v mapě.
+		traceField_t targetField_;
 
 };
 
 #define AI_10_MAX_TRACE_DEPTH 10
 #define AI_10_MAX_UPDATE_PERIOD CELL_SIZE
 
-/** Umělá inteligence první úrovně.
+/** Umělá inteligence TODO úrovně.
  * AI_10 je velice inteligentní útočná úroveň,
  * řeší plameny, jejich předpovědi (a pozici hráče).
  */
-class AI_10 : public AI {
+class AI_10 : public AI_9 {
 	public:
-		/// Zavolá konstruktor AI
+		/// Zavolá konstruktor AI_9
 		AI_10(Creature *creature);
-		/// Hýbne nestvůrou.
-		virtual void move();
 		/// Typ inteligence.
-		virtual Sint16 type() const { return 10; }
+		virtual Sint16 type() const
+			{ return 10; }
 		/// Destruktor.
-		virtual ~AI_10() {};
-	private:
-		typedef std::vector< std::vector< Sint16 > > trace_array_t;
-		typedef std::queue< std::pair< Uint16, Uint16 > > fields_queue_t;
-
-		trace_array_t empty_trace_array_;
-		trace_array_t trace_array_;
-
-
-		void update_trace_array_();
-		void eval_trace_array_(fields_queue_t & fields_queue, bool in_danger);
-
-		position_t & get_position_();
-		position_t & get_random_position_();
-
-		isTypeOf & isBlocking_, & isBad_;
-
-		Uint16
-			old_x_, ///< Moje stará souřadnice.
-			old_y_, ///< Moje stará souřadnice.
-			target_x_, ///< Souřadnice cíle.
-			target_y_, ///< Souřadnice cíle.
-			last_trace_update_; ///< Čítač od poslední update trasy.
+		virtual ~AI_10() {}
+	protected:
+		/// Najde index pozice, na kterou bychom měli jít.
+		virtual PositionIndex findPosIndex(isTypeOf & isBlocking);
+		/// Najde index pozice,
+		/// na kterou máme jít abychom zaútočili na hráče.
+		PositionIndex findPosIndexToComeCloseToPlayer_(isTypeOf & isBlocking);
 };
 
 /** NEumělá inteligence.

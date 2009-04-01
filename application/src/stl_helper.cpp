@@ -24,3 +24,20 @@ void explode(const std::string & str, char delim,
 			ss.get();
 	}
 }
+
+/*
+/ ** @details
+ * Náhodně, pro všechny prvky spravedlivě
+ * vyhodí několik prvních políček z fronty.
+ * @param fieldsQueue fronta, ze které chceme vyhazovat
+ * /
+void popRandomTimes...(fieldsQueue_t & fieldsQueue){
+	if(fieldsQueue.empty()){
+		return;
+	}
+	Uint16 randFieldsCount = rand() % fieldsQueue.size();
+	for(Uint16 i = 0 ; i < randFieldsCount ; ++i){
+		fieldsQueue.pop();
+	}
+}
+*/

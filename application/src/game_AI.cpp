@@ -135,8 +135,10 @@ void AI::setPosition(position_t & position){
 		case LEFT:
 			centerCoordinates(position, true, +1);
 			break;
-		default:
+		case BURNED:
 			break;
+		default:
+			throw string("Invalid direction in AI::setPositions()");
 	}
 	// nastavit pozici prisery
 	creature_->x_ = position.x;
@@ -249,8 +251,10 @@ bool AI::checkField(const position_t & position,
 				diff_x = -1;
 			}
 			break;
-		default:
+		case BURNED:
 			break;
+		default:
+			throw string("Invalid direction in AI::checkField()");
 	}
 
 	bool isFree;
@@ -685,8 +689,6 @@ void AI_9::move() {
  */
 AI::PositionIndex AI_9::findPosIndexToWalkFromRisk_(isTypeOf & isBlocking){
 	traceArray_t traceArray;
-	// inicializace
-	initTraceArray_(traceArray); // must be called first
 	// ohodnocení a nalezení cíle
 	evalTraceArray_(traceArray, isBlocking, isTypeOf::isPresumption, UNWANTED);
 	if(targetFound()){
@@ -695,19 +697,6 @@ AI::PositionIndex AI_9::findPosIndexToWalkFromRisk_(isTypeOf & isBlocking){
 	} else {
 		return findPosIndex(isBlocking);
 	}
-}
-
-/** @details
- * Podle mapy nastaví rozměry trasovacího pole.
- * Ohodnotí všechna políčka na počáteční hodnotu NO_TRACE.
- * @param traceArray pole které chceme inicializovat
- */
-void AI_9::initTraceArray_(traceArray_t & traceArray){
-	traceArray_t::value_type emptyColumn;
-	emptyColumn.insert(emptyColumn.end(), GAME->map_height(),
-		AI_9_TRACE_ARRAY_NO_TRACE);
-	traceArray.insert(
-		traceArray.end(), GAME->map_width(), emptyColumn);
 }
 
 /** @details
@@ -722,33 +711,17 @@ void AI_9::initTraceArray_(traceArray_t & traceArray){
 void AI_9::evalTraceArray_(traceArray_t & traceArray,
 			isTypeOf & isBlocking, isTypeOf & isInteresting, wanted_t interestArea){
 	// pocatecni souradnice
-	Sint16 field_x = positions_[POS_STAY].x / CELL_SIZE;
-	Sint16 field_y = positions_[POS_STAY].y / CELL_SIZE;
+	traceField_t currField(
+		positions_[POS_STAY].x / CELL_SIZE,
+		positions_[POS_STAY].y / CELL_SIZE);
 	// nastavit pocatecni policko
-	traceArray[field_x][field_y] = 0;
+	traceArray[currField].setDepth(0);
 	// pripravit pocatecni policko do fronty
 	fieldsQueue_t fieldsQueue;
-	fieldsQueue.push(make_pair(field_x, field_y));
+	fieldsQueue.push(currField);
 	// rekurzivne ohodnotit trasovaci pole
-	recursiveEvalTraceArray_(traceArray, fieldsQueue, isBlocking, isInteresting, interestArea);
-
-	//*/ DEBUG
-	for(Uint16 j = 0 ; j < traceArray[0].size() ; ++j){
-		for(Uint16 i = 0 ; i < traceArray.size() ; ++i){
-			cout <<  " ";
-			if(traceArray[i][j] >= 0){
-				if(i==target_x_ && j==target_y_) {
-					cout << "*";
-				} else {
-					cout << " ";
-				}
-			}
-			cout << traceArray[i][j];
-		}
-		cout << endl;
-	}
-	cout << "========================================================================" << endl;
-	//*/
+	recursiveEvalTraceArray_(traceArray, fieldsQueue,
+		isBlocking, isInteresting, interestArea);
 }
 
 /** @details
@@ -774,14 +747,12 @@ void AI_9::recursiveEvalTraceArray_(
 		return;
 	}
 	// aktualni pozice
-	Uint16 curr_x = fieldsQueue.front().first;
-	Uint16 curr_y = fieldsQueue.front().second;
+	const traceField_t & currField = fieldsQueue.front();
 	// nasli jsme neco zajimaveho?
-	if(interestingFound_(curr_x, curr_y, isInteresting, interestArea)){
+	if(interestingFound_(currField, isInteresting, interestArea)){
 		// nastavime cil na souradnice tohoto kroku
 		targetFound_ = true;
-		target_x_ = curr_x;
-		target_y_ = curr_y;
+		targetField_ = currField;
 		return;
 	}
 	// ohodnotit a pripadne vlozit do fronty sousedici policka
@@ -795,8 +766,7 @@ void AI_9::recursiveEvalTraceArray_(
 
 /** @details
  * Zjistí, jestli je zadané políčko v mapě zajímavé či nikoli.
- * @param x x-ová souřadnice políčka v mapě
- * @param y y-ová souřadnice políčka v mapě
+ * @param field políčko v mapě
  * @param isInteresting predikát odhalující objekty,
  * které jsou zajímavé (svou přítomností nebo naopak nepřítomností)
  * @param interestArea upřesňuje, jak jsou zajímavé objekty zajímavé
@@ -804,10 +774,11 @@ void AI_9::recursiveEvalTraceArray_(
  * @throw string Chybová hláška,
  	pokud nejsou ošetřeny všechny oblasti zajímavosti.
  */
-bool AI_9::interestingFound_(Uint16 x, Uint16 y,
+bool AI_9::interestingFound_(const traceField_t & field,
 			isTypeOf & isInteresting, wanted_t interestArea){
 	bool field_withInteresting =
-		GAME->field_withObject(x, y, isInteresting);
+		GAME->field_withObject(
+			field.first, field.second, isInteresting);
 	switch(interestArea){
 		case WANTED:
 			return field_withInteresting;
@@ -815,21 +786,6 @@ bool AI_9::interestingFound_(Uint16 x, Uint16 y,
 			return !field_withInteresting;
 		default:
 			throw string("Invalid wanted type in AI_9::interestingFound_()");
-	}
-}
-
-/** @details
- * Náhodně, pro všechny prvky spravedlivě
- * vyhodí několik prvních políček z fronty.
- * @param fieldsQueue fronta, ze které chceme vyhazovat
- */
-void AI_9::popRandomFields_(fieldsQueue_t & fieldsQueue){
-	if(fieldsQueue.empty()){
-		return;
-	}
-	Uint16 randFieldsCount = rand() % fieldsQueue.size();
-	for(Uint16 i = 0 ; i < randFieldsCount ; ++i){
-		fieldsQueue.pop();
 	}
 }
 
@@ -849,65 +805,83 @@ void AI_9::popRandomFields_(fieldsQueue_t & fieldsQueue){
  */
 void AI_9::evalAndQueueNextFields_(traceArray_t & traceArray,
 			fieldsQueue_t & fieldsQueue, isTypeOf & isBlocking){
-	Uint16 curr_x = fieldsQueue.front().first;
-	Uint16 curr_y = fieldsQueue.front().second;
-	Sint16 curr_depth = traceArray[curr_x][curr_y];
+	const traceField_t & currField = fieldsQueue.front();
+	Uint16 curr_depth = traceArray[currField].getDepth();
 	// prilis velka hloubka prohledavani, dale nebudeme prohledavat
 	if(curr_depth >= AI_9_MAX_TRACE_DEPTH){
 		return;
 	}
-	for(Uint16 dir = 0 ; dir < 4 ; ++dir){
+	vector<DIRECTION> directions(BURNED);
+	directions.push_back(UP);
+	directions.push_back(RIGHT);
+	directions.push_back(DOWN);
+	directions.push_back(LEFT);
+	random_shuffle(directions.begin(), directions.end());
+	for(Uint16 i = 0 ; i < directions.size() ; ++i){
 		// souradnice
-		Uint16 next_x = curr_x, next_y = curr_y;
-		if(dir%2)
-			next_x += 2-dir%4;
-		else
-			next_y += 1-dir%4;
+		traceField_t nextField = currField;
+		moveFieldCoordinate_(nextField, directions[i]);
 
-		if(traceArray[next_x][next_y] == AI_9_TRACE_ARRAY_NO_TRACE){
+		if(traceArray[nextField].wasNotTraced()){
 			// na policko nemuzu => oznacim ho
-			if(GAME->field_withObject(next_x, next_y, isBlocking)){
-				traceArray[next_x][next_y] =
-					AI_9_TRACE_ARRAY_CANT_OVER;
+			bool isNextFieldBlocked =
+				GAME->field_withObject(
+					nextField.first, nextField.second,
+					isBlocking);
+			if(isNextFieldBlocked){
+				// oznacim ho abych ho uz priste netestoval
+				traceArray[nextField].setCannotGoOver();
 			} else {
-				// nastavim hloubku
-				traceArray[next_x][next_y] = curr_depth +1;
+				// nastavim hloubku a odkud jsem tam prisel
+				traceArray[nextField].setDepth(curr_depth +1);
+				traceArray[nextField].setFromField(currField);
 				// vlozim do fronty
-				fieldsQueue.push(make_pair(next_x, next_y));
+				fieldsQueue.push(nextField);
 			}
 		}
 	}
 }
 
-AI::PositionIndex AI_9::findPosIndexUsingBacktracking_(
-				traceArray_t & traceArray){
-	// backtracking az do hodnoty 1
-	// souradnice policka ktere lezi bezprostredne vedle soucasne pozice
-	Uint16 next_x = target_x_, next_y = target_y_;
-	for(Sint16 depth = traceArray[target_x_][target_y_] ; depth > 1 ; --depth){
-		Uint16 x, y;
-		// pres vsechny smery najdu odkud jsem se sem dostal
-		// TODO trocha nahody
-		for(Uint16 dir=0 ; dir<4 ; ++dir){
-			// souradnice
-			x = next_x;
-			y = next_y;
-			if(dir%2)
-				x += 2-dir;
-			else
-				y += 1-dir;
-			if(traceArray[x][y] == depth -1)
-				break;
-		}
-		next_x = x;
-		next_y = y;
+void AI_9::moveFieldCoordinate_(traceField_t & field, DIRECTION dir){
+	switch(dir){
+		case UP:
+			--field.second;
+			break;
+		case DOWN:
+			++field.second;
+			break;
+		case LEFT:
+			--field.first;
+			break;
+		case RIGHT:
+			++field.first;
+			break;
+		case BURNED:
+			// nikam neposouvam
+			break;
+		default:
+			throw string("Invalid direction in AI_9::moveFieldCoordinate_()");
 	}
+}
+
+AI::PositionIndex AI_9::findPosIndexUsingBacktracking_(
+			traceArray_t & traceArray){
+	if(!targetFound()){
+		return POS_STAY;
+	}
+	// backtracking na hloubku 1
+	traceField_t field = targetField_;
+	while(traceArray[field].getDepth() > 1){
+		field = traceArray[field].getFromField();
+	}
+
 	// moje souradnice
 	Uint16 curr_x = positions_[POS_STAY].x / CELL_SIZE;
 	Uint16 curr_y = positions_[POS_STAY].y / CELL_SIZE;
 	// zda-li je mensi souradnice policka velde nez ta soucasna
-	int next_vs_curr_x = sgn_minus(next_x, curr_x);
-	int next_vs_curr_y = sgn_minus(next_y, curr_y);
+	int next_vs_curr_x = sgn_minus(field.first, curr_x);
+	int next_vs_curr_y = sgn_minus(field.second, curr_y);
+	// pres pozice na ktere bych se mohl hnout
 	for(Uint16 i = POS_STRAIGHT ; i < POS_LAST ; ++i){
 		int i_vs_stay_x =
 			sgn_minus(positions_[i].x, positions_[POS_STAY].x);
@@ -918,11 +892,46 @@ AI::PositionIndex AI_9::findPosIndexUsingBacktracking_(
 			return static_cast<PositionIndex>(i);
 		}
 	}
+	// nenasel jsem vhodnou pozici, zustanu stat
 	return POS_STAY;
 }
 
 /************************ AI_10 **************************/
 
+AI_10::AI_10(Creature *creature):
+			AI_9(creature){
+
+}
+
+AI::PositionIndex AI_10::findPosIndex(isTypeOf & isBlocking){
+	if(distanceWalkedStraight_ < minDistanceWalkedStraight_) {
+		return findPosIndexToWalkStraight_(isBlocking);
+	} else {
+		return findPosIndexToComeCloseToPlayer_(isBlocking);
+	}
+}
+
+
+/** @details
+ * Předpokládá, že se nacházíme v nebezpečí a snaží se najít bezpečné políčko.
+ * Výsledkem je pozice, která nás přiblíží nejbližšímu bezpečnému políčku.
+ * @param isBlocking predikát odhalující blokující prvek na políčku
+ * @return Vrací index pozice, na kterou bychom měli jít.
+ */
+AI::PositionIndex AI_10::findPosIndexToComeCloseToPlayer_(
+					isTypeOf & isBlocking){
+	traceArray_t traceArray;
+	// ohodnocení a nalezení cíle
+	evalTraceArray_(traceArray, isBlocking, isTypeOf::isPlayer, WANTED);
+	if(targetFound()){
+		// backtracking, nalezeni vysledne pozice
+		return findPosIndexUsingBacktracking_(traceArray);
+	} else {
+		return findPosIndexToWalkRandomly_(isBlocking);
+	}
+}
+
+/*
 AI_10::AI_10(Creature *creature):
 			AI(creature), isBlocking_(isTypeOf::isWallBoxBombFlame),
 			isBad_(isTypeOf::isWallBoxBombFlamePresumption),
@@ -1082,6 +1091,8 @@ AI::position_t & AI_10::get_random_position_(){
 	// zustat namiste
 	return positions_[0];
 }
+*/
+
 /************************ AI_fromKeybord **************************/
 
 AI_fromKeyboard::AI_fromKeyboard(Creature *creature): AI(creature) {
