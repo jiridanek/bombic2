@@ -8,6 +8,7 @@
 #define GAME_MAPOBJECTS_H
 
 #include <vector>
+#include <utility>
 #include "SDL_lib.h"
 
 /** Všechny typy obejktů.
@@ -23,6 +24,12 @@ enum OBJECT_TYPES {
 
 /// Čtyři směry + hoření
 enum DIRECTION { UP, RIGHT, DOWN, LEFT, BURNED };
+
+/** Typ políčka v mapě.
+ * first je x-ová souřadnice,
+ * second je y-ová souřadnice.
+ */
+typedef std::pair<Uint16, Uint16> field_t;
 
 /** Obecný objekt hry.
  * Čistě virtuální třída zastřešující veškeré objekty v mapě.

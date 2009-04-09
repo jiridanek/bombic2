@@ -55,24 +55,54 @@ class Game {
 		Uint16 winner();
 		/// Políčko lze přejít.
 		bool field_canGoOver(Uint16 x, Uint16 y, bool check_bomb=true);
+		/// Políčko lze přejít.
+		bool field_canGoOver(const field_t & field, bool check_bomb=true){
+			return field_canGoOver(field.first, field.second, check_bomb);
+		}
 		/// Políčko lze přeletet.
 // 		bool field_canFlyOver(Uint16 x, Uint16 y);
 		/// Na políčku je typ objektu.
 		bool field_withObject(Uint16 x, Uint16 y, const isTypeOf & isType);
+		/// Na políčku je typ objektu.
+		bool field_withObject(const field_t & field, const isTypeOf & isType){
+			return field_withObject(field.first, field.second, isType);
+		}
 		/// První objekt zadaného typu.
 		MapObject * field_getObject(Uint16 x, Uint16 y, const isTypeOf & isType);
+		/// První objekt zadaného typu.
+		MapObject * field_getObject(const field_t & field, const isTypeOf & isType){
+			return field_getObject(field.first, field.second, isType);
+		}
 
 		/// Vyhození objektu z mapy.
 		void remove_object(DynamicMO * obj);
 		/// Vloží objekt na políčko.
 		void insert_object(Uint16 x, Uint16 y, DynamicMO * obj);
+		/// Vloží objekt na políčko.
+		void insert_object(const field_t & field, DynamicMO * obj){
+			insert_object(field.first, field.second, obj);
+		}
 
 		/// Pohyb z políčka na políčko.
 		void change_position(Uint16 old_x, Uint16 old_y,
 			Uint16 new_x, Uint16 new_y, MapObject * obj);
+		/// Pohyb z políčka na políčko.
+		void change_position(const field_t & old_field,
+				const field_t & new_field, MapObject * obj){
+			change_position(
+				old_field.first, old_field.second,
+				new_field.first, new_field.second, obj);
+		}
 
 		/// Pro hráče: položit bombu.
-		void plant_bomb(Uint16 player_num, Uint16 x, Uint16 y, Bomb* bomb);
+		void plant_bomb(Uint16 player_num,
+				Uint16 x, Uint16 y, Bomb* bomb);
+		/// Pro hráče: položit bombu.
+		void plant_bomb(Uint16 player_num,
+				const field_t & field, Bomb* bomb){
+			plant_bomb(player_num,
+				field.first, field.second, bomb);
+		}
 		/// Pro hráče: spočítat položené bomby.
 		Uint16 count_bombs(Uint16 player_num);
 		/// Pro hráče: odstranit ruční odpalování u bomb.

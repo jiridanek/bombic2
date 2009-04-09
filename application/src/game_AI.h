@@ -322,7 +322,7 @@ class AI_9 : public AI_6 {
 		/// Typ rozlišující chtěné a nechtěné.
 		enum wanted_t { WANTED, UNWANTED };
 		/// Typ pro souřadnice políčka.
-		typedef std::pair<Uint16, Uint16> traceField_t;
+		typedef field_t traceField_t;
 		/// Typ pro hodnotu políčka trasovacího pole.
 		typedef struct traceValue_t {
 			enum traced_t { NO_TRACE, CANT_OVER, CAN_OVER };

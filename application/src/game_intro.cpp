@@ -147,12 +147,18 @@ void GameIntro::new_game(Uint16 episode, Uint16 players){
 		delete gameBase_;
 		gameBase_ = 0;
 	}
+	if(game_){
+		delete game_;
+		game_ = 0;
+	}
 }
 
 /// Inicializace.
 void GameIntro::load_game(std::string & filename){
-	delete game_;
-	game_ = 0;
+	if(game_){
+		delete game_;
+		game_ = 0;
+	}
 
 	TiXmlDocument doc;
 	TiXmlElement *rootEl, *el;

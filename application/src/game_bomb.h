@@ -54,14 +54,23 @@ class Bomb: public DynamicMO {
 		DIRECTION d_;
 		/// Seznam presumpcí.
 		std::vector< Presumption* > presumptions_;
+		/// Cílové políčko.
+		field_t target_field_;
+
 		/// Vytvořit presumpce.
 		virtual void create_presumptions_();
 		/// Najít cílové políčko bomby.
-		void find_target_(Uint16 & x, Uint16 & y) const;
+		field_t find_target_field_() const;
 		/// Spočítat vzdálenost dojezdu.
-		Uint16 count_distance_(Uint16 to_end) const;
+		Uint16 count_distance_(Uint16 periods_to_end) const;
+		/// Je zde nebezpečná presumpce?.
+		bool is_danger_presumption(
+			const field_t & field, Uint16 periods_to_end) const;
+		/// TODO
+		field_t subtract_from_bomb_before(
+			Bomb * bomb_before) const;
 		/// Přidat presumpci.
-		bool add_presumption_(Uint16 x, Uint16 y);
+		bool add_presumption_(const field_t & field);
 		/// Odstranit presumpce.
 		void remove_presumptions_();
 };
