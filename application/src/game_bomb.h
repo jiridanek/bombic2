@@ -59,15 +59,23 @@ class Bomb: public DynamicMO {
 
 		/// Vytvořit presumpce.
 		virtual void create_presumptions_();
+		/// Vytvoří presumpce v jednom směru.
+		void create_presumptions_from_field_(
+			const field_t & start_field,
+			Sint16 factor_x, Sint16 factor_y);
+
 		/// Najít cílové políčko bomby.
 		field_t find_target_field_() const;
 		/// Spočítat vzdálenost dojezdu.
 		Uint16 count_distance_(Uint16 periods_to_end) const;
+		/// Posunout políčko.
+		void move_field_by_direction_(
+			field_t & field, Sint16 delta) const;
 		/// Je zde nebezpečná presumpce?.
-		bool is_danger_presumption(
+		bool is_danger_presumption_(
 			const field_t & field, Uint16 periods_to_end) const;
-		/// TODO
-		field_t subtract_from_bomb_before(
+		/// Převezme cíl od předcházející bomby.
+		field_t take_target_from_bomb_before_(
 			Bomb * bomb_before) const;
 		/// Přidat presumpci.
 		bool add_presumption_(const field_t & field);

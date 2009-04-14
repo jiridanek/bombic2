@@ -26,10 +26,14 @@ MenuBase::~MenuBase(){
 }
 
 void MenuBase::show(){
+	// musi byt provedeno jako prvni,
+	// lepe receno nesmi byt po AG_WindowShow,
+	// protoze pri akci show se muzou vytvaret jina menu,
+	// ktera maji prekryt toto prirazeni.
+	p_items = &items_;
 	AG_WindowSetGeometryAligned(win, AG_WINDOW_MC,
 		AGWIDGET(win)->w, AGWIDGET(win)->h);
 	AG_WindowShow(win);
-	p_items = &items_;
 }
 void MenuBase::hide(){
 	AG_WindowHide(win);

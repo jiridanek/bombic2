@@ -1,4 +1,5 @@
 
+#include <string>
 #include "SDL_lib.h"
 #include "stl_helper.h"
 #include "constants.h"
@@ -164,6 +165,11 @@ void Bomb::explode(){
  * @param d nový směr bomby
  */
 void Bomb::kick(DIRECTION d){
+	// nenecham do sebe kopat ve stejnem smeru,
+	// v jakem se pohybuji
+	if(d == d_){
+		return;
+	}
 	d_ = d;
 	Uint16 x=x_/CELL_SIZE, y=y_/CELL_SIZE;
 	MapObject * obj;
@@ -221,8 +227,6 @@ void Bomb::create_presumptions_(){
 	// TODO debug
 // 	std::cout << x << "," << y << std::endl;
 
-	// na svoje policko
-	add_presumption_(target_field_);
 	// pres vsechny smery
 	for(Uint16 dir=0 ; dir<4 ; ++dir){
 		Sint16 factor_x = 0, factor_y = 0;
@@ -230,16 +234,22 @@ void Bomb::create_presumptions_(){
 			factor_x = 2-dir;
 		else
 			factor_y = 1-dir;
-		// pro velikost plamene
-		for(Uint16 i=1 ; i<=flamesize_ ; ++i){
-			// pridam presumpci na nove souradnice
-			field_t new_field = target_field_;
-			new_field.first +=  i*factor_x;
-			new_field.second += i*factor_y;
-			if(!add_presumption_(new_field)){
-				break;
-			}
+		create_presumptions_from_field_(
+			target_field_, factor_x, factor_y);
+	}
+}
+
+void Bomb::create_presumptions_from_field_(const field_t & start_field,
+				Sint16 factor_x, Sint16 factor_y){
+	field_t field(start_field);
+	// pro velikost plamene
+	for(Uint16 i=0 ; i<=flamesize_ ; ++i){
+		// pridam presumpci na nove souradnice
+		if(!add_presumption_(field)){
+			break;
 		}
+		field.first += factor_x;
+		field.second += factor_y;
 	}
 }
 
@@ -249,68 +259,67 @@ void Bomb::create_presumptions_(){
  */
 field_t Bomb::find_target_field_() const {
 	// nastavi startovni pozici
-	field_t start_field(x_/CELL_SIZE, y_/CELL_SIZE);
+	field_t curr_field(x_/CELL_SIZE, y_/CELL_SIZE);
 	// kdyz se nehybe vraci startovni pozici
-	if(d_==BURNED) return start_field;
+	if(d_==BURNED) return curr_field;
 
+	// pocet period do vybuchu
 	Uint16 periods_to_end = timer_ ?
 		0 : anim_.periods_to_end();
+	// pocet policek ktere stihne do konce ujet
 	Uint16 distance_in_fields =
 		count_distance_(periods_to_end)/CELL_SIZE;
 
-	field_t curr_field = start_field;
 	for(Uint16 i = 0 ; i < distance_in_fields ; ++i){
 		field_t next_field = curr_field;
-		switch(d_){
-			case UP: --next_field.second;
-				break;
-			case RIGHT: ++next_field.first;
-				break;
-			case DOWN: ++next_field.second;
-				break;
-			case LEFT: --next_field.first;
-				break;
-			default: break;
-		}
-
+		move_field_by_direction_(next_field, +1);
 
 		// !! NELZE vyhledavat presumpce zaroven s bombami
 
 		// nalezeni prekazky
 		MapObject * obj = GAME->field_getObject(next_field,
 			isTypeOf::isWallBoxAnyBombFlame);
+		// nic nenalezeno
 		if(obj==0){
 			// podivam se jeste po presumpcich
-			if(is_danger_presumption(next_field, periods_to_end)){
-
+			if(is_danger_presumption_(next_field, periods_to_end)){
+				// az tam dojedu tak tam bude plamen
+				// bouchnu tam taky
 				return next_field;
 			} else {
-				// zadny zajimavy objekt, podivam se dal
+				// zadny zajimavy objekt, pokracuji dal
 				curr_field = next_field;
 				continue;
 			}
 		}
 
 		switch(obj->type()){
+			// na dalsi policko nesmim
 			case WALL:
 			case BOX:
 			case BOMB_STAYING:
+				// vracim aktualni
 				return curr_field;
+			// na dalsim policku bouchnu
 			case FLAME:
+				// vracim tedy dalsi
 				return next_field;
+			// na dalsim policku je pohybujici se bomba
 			case BOMB_MOVING:
 				// pokud jede stejnym smerem
-				// prevezme od ni cil a posune ho proti smeru
+				// prevezme od ni cil
 				Bomb * bomb_before =
 					static_cast<Bomb*>(obj);
 				if(bomb_before->d_==d_){
-					return subtract_from_bomb_before(bomb_before);
+					return take_target_from_bomb_before_(
+						bomb_before);
 				} else {
+					// nejede stejnym smerem, nezajima me
 					curr_field = next_field;
 					continue;
 				}
 			default:
-				continue;
+				throw std::string("Unhandled object type.");
 		}
 	}
 
@@ -326,6 +335,29 @@ Uint16 Bomb::count_distance_(Uint16 periods_to_end) const{
 }
 
 /** @details
+ * Pro delta rovno +1 hýbne políčkem o jedna ve směru bomby.
+ * @param field políčko, které chceme posunout
+ * @param delta o kolik se má políčko posunout (pro kladné ve směru pohybu)
+ */
+void Bomb::move_field_by_direction_(field_t & field, Sint16 delta) const{
+	switch(d_){
+		case UP:
+			field.second -= delta;
+			break;
+		case RIGHT:
+			field.first += delta;
+			break;
+		case DOWN:
+			field.second += delta;
+			break;
+		case LEFT:
+			field.first -= delta;
+			break;
+		default: break;
+	}
+}
+
+/** @details
  * Pokusí se najít presumpci,
  * porovnává počet period do výbuchu presumpce a mě,
  * pokud by mohla presumpce bouchnout dříve než já,
@@ -336,7 +368,7 @@ Uint16 Bomb::count_distance_(Uint16 periods_to_end) const{
  * ktera bouchne (vytvoří se místo ní plamen) dříve, než stačím odjet,
  * pokud tam presumpce není nebo nesplnuje podmínku výše, vrací FALSE.
  */
-bool Bomb::is_danger_presumption(const field_t & field,
+bool Bomb::is_danger_presumption_(const field_t & field,
 					Uint16 periods_to_end) const{
 	Presumption * presumption = static_cast<Presumption *>(
 		GAME->field_getObject(field, isTypeOf::isPresumption));
@@ -377,24 +409,9 @@ bool Bomb::is_danger_presumption(const field_t & field,
  * @param bomb_before předcházející bomba
  * @return Vrací svůj cíl.
  */
-field_t Bomb::subtract_from_bomb_before(Bomb * bomb_before) const{
+field_t Bomb::take_target_from_bomb_before_(Bomb * bomb_before) const{
 	field_t field = bomb_before->target_field_;
-	switch(d_){
-		case UP:
-			++field.second;
-			break;
-		case RIGHT:
-			--field.first;
-			break;
-		case DOWN:
-			--field.second;
-			break;
-		case LEFT:
-			++field.first;
-			break;
-		default:
-			break;
-	}
+	move_field_by_direction_(field, -1);
 	return field;
 }
 
@@ -477,7 +494,7 @@ MegaBomb::MegaBomb(const Animation & anim, Uint16 x, Uint16 y,
 
 
 
-/** @details
+/** @details TODO
  * Nastaví flag pro výbuch.
  * Vytvoří plameny s ohledem na okolí.
  * Ohlídá si, aby běžela pouze jednou,
@@ -524,18 +541,32 @@ void MegaBomb::explode(){
 /**
  */
 void MegaBomb::create_presumptions_(){
-	Uint16 old_x = x_, old_y = y_;
+	target_field_ = find_target_field_();
 
-	for(x_= old_x-CELL_SIZE ; x_<= old_x+CELL_SIZE ; x_+=CELL_SIZE){
-		for(y_= old_y-CELL_SIZE ; y_<= old_y+CELL_SIZE ; y_+=CELL_SIZE) {
-			if(x_/CELL_SIZE >= GAME->map_width()
-			|| y_/CELL_SIZE >= GAME->map_height())
-				continue;
-			if(!GAME->field_withObject(
-					x_/CELL_SIZE, y_/CELL_SIZE, isTypeOf::isWallBoxBomb))
-				Bomb::create_presumptions_();
+	// na svoje policko
+	add_presumption_(target_field_);
+	// pres vsechny smery
+	for(Uint16 dir=0 ; dir<4 ; ++dir){
+		Sint16 factor_x = 0, factor_y = 0;
+		if(dir%2)
+			factor_x = 2-dir;
+		else
+			factor_y = 1-dir;
+		// zacneme ze stredu
+		field_t next_field(target_field_);
+		// posuneme se podle smeru na vedlejsi policko
+		next_field.first += factor_x;
+		next_field.second += factor_y;
+		// opet pres vsechny smery
+		for(Uint16 inner_dir=0 ; inner_dir<4 ; ++inner_dir){
+			Sint16 inner_factor_x = 0, inner_factor_y = 0;
+			if(inner_dir%2)
+				inner_factor_x = 2-inner_dir;
+			else
+				inner_factor_y = 1-inner_dir;
+			// vytvorime v danem inner_smeru presumpce
+			create_presumptions_from_field_(
+				next_field, inner_factor_x, inner_factor_y);
 		}
 	}
-	x_ = old_x;
-	y_ = old_y;
 }
