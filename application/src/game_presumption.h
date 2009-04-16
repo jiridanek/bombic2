@@ -15,6 +15,7 @@
  * že se v blízké době objeví na políčku plamen.
  */
 class Presumption: public DynamicMO {
+	friend class Bomb;
 	public:
 		/// Vytvoří plamen.
 		Presumption(Animation * anim, Uint16 x, Uint16 y,
@@ -29,9 +30,6 @@ class Presumption: public DynamicMO {
 		virtual OBJECT_TYPES type() const { return PRESUMPTION; }
 		/// Destructor.
 		virtual ~Presumption() {};
-		/// Počet period do výbuchu.
-		Uint16 periods_to_flame() const
-			{ return periods_to_flame_; }
 	protected:
 		/// Animace.
 		Animation * anim_;

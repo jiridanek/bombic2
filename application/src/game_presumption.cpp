@@ -30,6 +30,13 @@ bool Presumption::move(){
 void Presumption::draw(SDL_Surface *window, const SDL_Rect & rect){
 	if(CONFIG->visible_presumption())
 		anim_->draw(window, x_ +rect.x, y_ +rect.y);
+	/*/ DEBUG
+	extern Fonts * g_font;
+	Surface text = get_text((*g_font)[10],
+		x2string(periods_to_flame_).c_str(), Color::white);
+	draw_surface(x_ +rect.x +CELL_SIZE/2, y_ +rect.y +CELL_SIZE/2,
+		text.getSurface(), window);
+	//*/
 }
 
 /** @details

@@ -46,6 +46,7 @@ class Bomb: public DynamicMO {
 		bool explodes_, ///< Exploduje-li bomba.
 			timer_; ///< Odpaluje se ručně.
 		Uint16
+			periods_to_flame_, ///< Počet period do výbuchu.
 			access_counter_, ///< Počítadlo přístupů.
 			flamesize_, ///< Velikost plamene.
 			speed_diff_, ///< Velikost parciálního pohybu.
@@ -57,10 +58,14 @@ class Bomb: public DynamicMO {
 		/// Cílové políčko.
 		field_t target_field_;
 
+		/// Obnovit počet period do výbuchu.
+		void update_periods_to_flame_();
+		/// Pohnout bombou ve směru pohybu.
+		bool move_by_direction_();
 		/// Vytvořit presumpce.
-		virtual void create_presumptions_();
+		virtual void update_presumptions_();
 		/// Vytvoří presumpce v jednom směru.
-		void create_presumptions_from_field_(
+		void update_presumptions_from_field_(
 			const field_t & start_field,
 			Sint16 factor_x, Sint16 factor_y);
 
@@ -77,8 +82,8 @@ class Bomb: public DynamicMO {
 		/// Převezme cíl od předcházející bomby.
 		field_t take_target_from_bomb_before_(
 			Bomb * bomb_before) const;
-		/// Přidat presumpci.
-		bool add_presumption_(const field_t & field);
+		/// Přidat či obnovit presumpci.
+		bool update_presumption_(const field_t & field);
 		/// Odstranit presumpce.
 		void remove_presumptions_();
 };
@@ -94,7 +99,9 @@ class MegaBomb: public Bomb {
 		virtual void explode();
 	protected:
 		/// Vytvořit presumpce.
-		virtual void create_presumptions_();
+		virtual void update_presumptions_();
+		/// Pokud může, vloží na políčko novou bombu.
+		void try_insert_bomb_(const field_t & field);
 };
 
 #endif

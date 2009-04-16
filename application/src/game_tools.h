@@ -13,7 +13,7 @@
 #include <map>
 #include "SDL_lib.h"
 #include "game_base.h"
-// #include "game_mapobjects.h"
+#include "game_mapobjects.h"
 #include "tixml_helper.h"
 // #include "game_player.h"
 
@@ -29,21 +29,61 @@ class GameTools: public GameBaseLoader{
 	public:
 		GameTools();
 		Flame* flame_top(Uint16 x, Uint16 y) const;
+		Flame* flame_top(const field_t & field) const {
+			return flame_top(field.first, field.second);
+		}
 		Flame* flame_bottom(Uint16 x, Uint16 y) const;
+		Flame* flame_bottom(const field_t & field) const {
+			return flame_bottom(field.first, field.second);
+		}
 		Flame* flame_topbottom(Uint16 x, Uint16 y) const;
+		Flame* flame_topbottom(const field_t & field) const {
+			return flame_topbottom(field.first, field.second);
+		}
 		Flame* flame_left(Uint16 x, Uint16 y) const;
+		Flame* flame_left(const field_t & field) const {
+			return flame_left(field.first, field.second);
+		}
 		Flame* flame_right(Uint16 x, Uint16 y) const;
+		Flame* flame_right(const field_t & field) const {
+			return flame_right(field.first, field.second);
+		}
 		Flame* flame_leftright(Uint16 x, Uint16 y) const;
+		Flame* flame_leftright(const field_t & field) const {
+			return flame_leftright(field.first, field.second);
+		}
 		Flame* flame_cross(Uint16 x, Uint16 y) const;
+		Flame* flame_cross(const field_t & field) const {
+			return flame_cross(field.first, field.second);
+		}
 		Bomb* bomb_normal(Uint16 x, Uint16 y,
 				Uint16 flamesize, bool timer=false) const;
+		Bomb* bomb_normal(const field_t & field,
+				Uint16 flamesize, bool timer=false) const {
+			return bomb_normal(field.first, field.second,
+				flamesize, timer);
+		}
 		Bomb* bomb_mega(Uint16 x, Uint16 y,
 				Uint16 flamesize, bool timer=false) const;
-		Presumption* presumption(Uint16 x, Uint16 y, Uint16 to_end);
+		Bomb* bomb_mega(const field_t & field,
+				Uint16 flamesize, bool timer=false) const {
+			return bomb_mega(field.first, field.second,
+				flamesize, timer);
+		}
+		Presumption* presumption(Uint16 x, Uint16 y,
+				Uint16 to_end);
+		Presumption* presumption(const field_t & field,
+				Uint16 to_end) {
+			return presumption(field.first, field.second,
+				to_end);
+		}
 
-		enum BONUSES { MEGABOMB, TIMER, SHIELD, ILLNESS, FIREMAN, SLIDER, KICKER };
+		enum BONUSES {
+				MEGABOMB, TIMER, SHIELD, ILLNESS,
+				FIREMAN, SLIDER, KICKER };
 		#define GAMETOOLS_BONUSES_NAMES \
-				{ "megabomb", "timer", "shield", "illness", "fireman", "slider", "kicker" }
+				{ "megabomb", "timer", "shield", "illness",\
+				  "fireman", "slider", "kicker" }
 		#define GAMETOOLS_BONUSES_COUNT 7
 		#define GAMETOOLS_BONUSES_FONT_SIZE 10
 
