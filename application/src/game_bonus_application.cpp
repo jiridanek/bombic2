@@ -72,6 +72,7 @@ BonusMegabomb::BonusMegabomb(Player * player):
 BonusSpeed::BonusSpeed(Player * player):
 				BonusApplication(player){
 	++player->speed_rate_;
+	++player->boots_;
 }
 
 /********* class BonusLive ************************/

@@ -63,7 +63,9 @@ void Player::get_properties(PlayerProperties & prop) {
 	// zrusit bonusy (muzou mit prsty v mych atributech)
 	bonuses_t::iterator it;
 	for(it = bonuses_.begin() ; it!=bonuses_.end() ; ++it){
-		delete *it; *it = 0; }
+		delete *it;
+		*it = 0;
+	}
 	bonuses_.remove(0);
 
 	prop.lives = lives_;
