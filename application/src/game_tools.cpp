@@ -105,7 +105,7 @@ void GameTools::load_bonuses_(TiXmlElement *bonusesEl, const Surface & sur_src){
 	readAttr(bonusesEl, "height", height);
 
 	TiXmlElement * el;
-	char * bonuses_names[] = GAMETOOLS_BONUSES_NAMES;
+	const char * bonuses_names[] = GAMETOOLS_BONUSES_NAMES;
 	for(Uint16 i =0 ; i< GAMETOOLS_BONUSES_COUNT ; ++i){
 		load_subEl_surface(bonusesEl, bonuses_names[i],
 				bonuses_[i].sur, width, height, sur_src);

@@ -364,17 +364,19 @@ field_t Bomb::find_target_field_() const {
 				return next_field;
 			// na dalsim policku je pohybujici se bomba
 			case BOMB_MOVING:
-				// pokud jede stejnym smerem
-				// prevezme od ni cil
-				Bomb * bomb_before =
-					static_cast<Bomb*>(obj);
-				if(bomb_before->d_==d_){
-					return take_target_from_bomb_before_(
-						bomb_before);
-				} else {
-					// nejede stejnym smerem, nezajima me
-					curr_field = next_field;
-					continue;
+				{
+					// pokud jede stejnym smerem
+					// prevezme od ni cil
+					Bomb * bomb_before =
+						static_cast<Bomb*>(obj);
+					if(bomb_before->d_==d_){
+						return take_target_from_bomb_before_(
+							bomb_before);
+					} else {
+						// nejede stejnym smerem, nezajima me
+						curr_field = next_field;
+						continue;
+					}
 				}
 			default:
 				throw std::string("Unhandled object type.");
