@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <levels>
 	<episode death_text="death">
-
+<!--
 		<level map="map_forest_debug" text="debug"
 			img="intro_forest_debug.jpg" after="intro_forest_debug.jpg"
 			dead="intro_dead_forest.jpg" />
+-->
 		<level map="map_forest_1" text="newspaper"
 			img="img/intro_toilet.jpg"
 			dead="intro_dead_forest.jpg" />
@@ -32,7 +33,7 @@
 		<level map="map_forest_chest" text="chest"
 			img="img/intro_forest_7.jpg" after="intro_forest_7_after.jpg"
 			dead="intro_dead_forest.jpg" />
-
+<!-- TODO bonuses and creatures intelligence -->
 		<level map="map_concrete_1" text="where_is_treasure"
 			img="img/intro_concrete_1.jpg"
 			dead="intro_dead_concrete.jpg" />

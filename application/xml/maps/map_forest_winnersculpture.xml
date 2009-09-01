@@ -63,8 +63,9 @@
 
 	</boxes>
 
-	<bonuses name="bonus_flame" count="1" />
 	<bonuses name="bonus_bomb" count="1" />
+	<bonuses name="bonus_speed" count="1" />
+	<bonuses name="bonus_kicker" count="3" />
 
 	<creatures name="creature_rat" count="13">
 	</creatures>

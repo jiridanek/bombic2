@@ -58,8 +58,8 @@
 		<nobox x="1" y="10" />
 	</boxes>
 
-	<bonuses name="bonus_flame" count="2" />
-	<bonuses name="bonus_bomb" count="2" />
+	<bonuses name="bonus_flame" count="1" />
+	<bonuses name="bonus_speed" count="1" />
 
 	<creatures name="creature_rat" count="10">
 		<creature x="3" y="3" />

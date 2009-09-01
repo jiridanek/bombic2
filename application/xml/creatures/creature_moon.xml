@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <creature name="creature_moon" src="img/creature_moon.bmp" shadow_src="img/creature_moon_s.bmp"
-		height="55" width="51" speed="2" lives="1" intelligence="10" >
+		height="55" width="51" speed="5" lives="1" intelligence="6" >
 
 	<up x="0" y="148" shadow_x="0" shadow_y="148">
 		<animation rate="10" >

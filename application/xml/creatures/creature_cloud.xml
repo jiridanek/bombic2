@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <creature name="creature_cloud" src="img/creature_cloud.bmp" shadow_src="img/creature_cloud_s.bmp"
-		height="60" width="60" speed="2" lives="1" intelligence="9" >
+		height="60" width="60" speed="3" lives="1" intelligence="5" >
 
-	<up x="0" y="120" shadow_x="0" shadow_y="120" transparency="200"/>
+	<up x="0" y="120" shadow_x="0" shadow_y="120" transparency="200" />
 
-	<down x="0" y="180" shadow_x="0" shadow_y="180" transparency="200"/>
+	<down x="0" y="180" shadow_x="0" shadow_y="180" transparency="200" />
 
 	<left x="0" y="0" shadow_x="0" shadow_y="0" transparency="200">
 		<animation rate="5" >
@@ -24,8 +24,8 @@
 
 	<burned x="0" y="240">
 		<animation rate="5" >
-			<animation_item x="60" y="240"/>
-			<animation_item x="120" y="240"/>
+			<animation_item x="60" y="240" />
+			<animation_item x="120" y="240" />
 		</animation>
 	</burned>
 </creature>
