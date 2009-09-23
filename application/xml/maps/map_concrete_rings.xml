@@ -248,10 +248,9 @@
 		<box x="28" y="19" />
 	</boxes>
 
-	<bonuses name="bonus_flame" count="10" />
-	<bonuses name="bonus_bomb" count="10" />
-	<bonuses name="bonus_slider" count="10" />
-	<bonuses name="bonus_megabomb" count="10" />
+	<bonuses name="bonus_kicker" count="10" />
+	<bonuses name="bonus_timer" count="5" />
+	<bonuses name="bonus_megabomb" count="4" />
 
 	<creatures name="creature_trap" count="44" />
 	<creatures name="creature_trap_red" count="66" />

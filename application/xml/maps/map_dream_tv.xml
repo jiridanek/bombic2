@@ -45,6 +45,8 @@
 		<box x="9" y="10" />
 	</boxes>
 
+	<bonuses name="bonus_timer" count="1" />
+
 	<creatures name="creature_tv" count="1">
 		<creature x="8" y="6" />
 	</creatures>

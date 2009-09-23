@@ -1,6 +1,6 @@
-
-LIBS=`agar-config --libs` -g -lSDL_ttf -lSDL_image
-CFLAGS= `agar-config --cflags ` -g -Wall -I./libs/tinyxml
+#DEBUG_FLAGS=-g
+LIBS=`agar-config --libs` $(DEBUG_FLAGS) -lSDL_ttf -lSDL_image
+CFLAGS= `agar-config --cflags ` $(DEBUG_FLAGS) -Wall -I./libs/tinyxml
 CC= ccache g++
 
 TARGET= bombic 

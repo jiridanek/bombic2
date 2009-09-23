@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <creature name="creature_tv" src="img/creature_tv.bmp" shadow_src="img/creature_tv_s.bmp"
-		height="80" width="55" speed="5" lives="1" intelligence="5" >
+		height="80" width="55" speed="5" lives="1" intelligence="10" >
 	<up x="3" y="163" shadow_x="3" shadow_y="163">
 		<animation rate="10" >
 			<animation_item x="64" y="163" shadow_x="64" shadow_y="163" />

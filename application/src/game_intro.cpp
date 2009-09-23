@@ -69,10 +69,11 @@ void GameIntro::show_screen(){
 
 		// hrajeme
 		game_->play(g_window);
-		// hra skoncila uspesne => dalsi kolo
-		if(game_->success())
+		// vysledek hry
+		if(game_->success()) {
+			// hra skoncila uspesne => dalsi kolo
 			++cur_level_;
-		else {
+		} else {
 			delete game_;
 			game_ = 0;
 		}
@@ -88,26 +89,30 @@ void GameIntro::show_screen(){
 	}
 	delete game_;
 	game_ = 0;
-
 }
 
 void GameIntro::draw_(SDL_Surface * window, Uint16 level, bool after){
+	// pozadi
 	clear_surface(Color::black, window);
+	// obrazek levelu
 	Surface sur = get_cur_image_(level, after);
 	int x = (window->w-sur.width())/2, y = (window->h-sur.height())/2;
 	draw_surface(x, y, sur.getSurface(), window);
+	// stin textu
 	sur = get_multiline_text((*g_font)[17],
 		LANG_GAME(levels_[level].text.c_str(),
 			after ? LANG_AFTER_LEVEL : LANG_BEFORE_LEVEL),
 		Color::black);
 	draw_surface(x +GAME_INTRO_PADDING+1, y +GAME_INTRO_PADDING+1,
 		sur.getSurface(), window);
+	// text levelu
 	sur = get_multiline_text((*g_font)[17],
 		LANG_GAME(levels_[level].text.c_str(),
 			after ? LANG_AFTER_LEVEL : LANG_BEFORE_LEVEL),
 		Color::white);
 	draw_surface(x +GAME_INTRO_PADDING, y +GAME_INTRO_PADDING,
 		sur.getSurface(), window);
+	// zobrazit v okne
 	SDL_Flip(window);
 }
 

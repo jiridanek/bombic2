@@ -89,15 +89,14 @@ void MenuMain::handlerMenuShown(AG_Event * ev){
 }
 
 void MenuMain::handlerResumeGame(AG_Event * event){
-	MenuMain * menu = static_cast<MenuMain *>(AG_PTR(1));
 
 	try{
 		g_gameIntro->show_screen();
+		handlerMenuShown();
 	}
 	catch(const TiXmlException & ex){
 		AG_TextError("%s", ex.what());
 	}
 
 	AG_ResizeDisplay(g_window->w, g_window->h);
-	menu->show();
 }

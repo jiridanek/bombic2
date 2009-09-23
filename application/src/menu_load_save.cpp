@@ -48,8 +48,8 @@ void MenuLoadGame::handlerLoadGame(AG_Event * event){
 	try{
 		g_gameIntro->load_game(filepath);
 		setFilePath(filepath);
-		handlerBack();
 		g_gameIntro->show_screen();
+		handlerBack();
 	}
 	catch(const TiXmlException & ex){
 		AG_TextError("%s", ex.what());

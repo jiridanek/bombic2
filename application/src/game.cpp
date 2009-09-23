@@ -388,14 +388,16 @@ void Game::play(SDL_Surface* window){
 // 		fps_last= SDL_fps(fps_last, fps);
 
 		this_time = SDL_GetTicks();
-		time_to_use += (this_time - last_time)%(100*Config::get_instance()->move_period());
+		time_to_use += (this_time - last_time)%(100*CONFIG->move_period());
 		while(time_to_use > MOVE_PERIOD){
-			time_to_use -= Config::get_instance()->move_period();
+			time_to_use -= CONFIG->move_period();
 			// hýbne světem
 			if(move_()){
-				if(!players_.size())
+				if(!players_.size()){
 					return;
-				set_players_view_(window);
+				} else {
+					set_players_view_(window);
+				}
 			}
 			// posune animace
 			update_();

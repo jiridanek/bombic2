@@ -46,16 +46,15 @@ extern SDL_Surface * g_window;
 extern GameIntro * g_gameIntro;
 
 void MenuNewGame::handlerNewGame(AG_Event * event){
-	MenuNewGame * menu = static_cast<MenuNewGame *>(AG_PTR(1));
 
 	try{
 		g_gameIntro->new_game(episode, players_count);
 		g_gameIntro->show_screen();
+		handlerBack();
 	}
 	catch(const TiXmlException & ex){
 		AG_TextError("%s", ex.what());
 	}
 
 	AG_ResizeDisplay(g_window->w, g_window->h);
-	menu->show();
 }

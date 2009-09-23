@@ -175,10 +175,9 @@
 		<box x="24" y="14" />
 	</boxes>
 
-	<bonuses name="bonus_flame" count="10" />
-	<bonuses name="bonus_bomb" count="10" />
-	<bonuses name="bonus_slider" count="10" />
-	<bonuses name="bonus_megabomb" count="10" />
+	<bonuses name="bonus_kicker" count="4" />
+	<bonuses name="bonus_slider" count="4" />
+	<bonuses name="bonus_timer" count="4" />
 
 	<creatures name="creature_trap" count="86" />
 </map>

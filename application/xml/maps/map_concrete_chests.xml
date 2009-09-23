@@ -229,10 +229,8 @@
 		<nobox x="18" y="18" />
 	</boxes>
 
-	<bonuses name="bonus_flame" count="10" />
-	<bonuses name="bonus_bomb" count="10" />
-	<bonuses name="bonus_slider" count="10" />
-	<bonuses name="bonus_megabomb" count="10" />
+	<bonuses name="bonus_slider" count="4" />
+	<bonuses name="bonus_megabomb" count="2" />
 
 	<creatures name="creature_cloud" count="13" />
 	<creatures name="creature_trap" count="31" />

@@ -98,18 +98,21 @@ void DeathmatchIntro::show_screen(){
 			winner = game_->winner();
 			if(++score_[winner]==wins_)
 				at_end = true;
+		} else {
+			winner = score_.size();
 		}
-		else winner = score_.size();
 
 		delete game_;
 		game_ = 0;
 		// zobrazit skore
-		if(!show_score_(winner))
+		if(!show_score_(winner)){
 			return;
+		}
 	}
 
-	if(game_)
+	if(game_){
 		delete game_;
+	}
 	game_ = 0;
 }
 

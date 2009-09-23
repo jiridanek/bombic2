@@ -122,10 +122,10 @@
 		<nobox x="18" y="9" />
 	</boxes>
 
-	<bonuses name="bonus_flame" count="10" />
-	<bonuses name="bonus_bomb" count="10" />
-	<bonuses name="bonus_slider" count="10" />
-	<bonuses name="bonus_megabomb" count="10" />
+	<bonuses name="bonus_kicker" count="4" />
+	<bonuses name="bonus_slider" count="4" />
+	<bonuses name="bonus_timer" count="4" />
+	<bonuses name="bonus_megabomb" count="4" />
 
 	<creatures name="creature_cloud" count="4" />
 	<creatures name="creature_rat" count="8" />
