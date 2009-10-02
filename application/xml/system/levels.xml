@@ -4,75 +4,75 @@
 	<episode death_text="death">
 		<level map="map_forest_debug" text="debug"
 			img="intro_forest_debug.jpg" after="intro_forest_debug.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 	</episode>
 -->
 	<episode death_text="death">
 		<level map="map_forest_1" text="newspaper"
 			img="img/intro_toilet.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 		<level map="map_forest_2" text="first_in_forest"
 			img="img/intro_forest_1.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 		<level map="map_forest_3" text="deep_in_forest"
 			img="img/intro_forest_2.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 		<level map="map_forest_winnersculpture" text="stupid_creatures"
 			img="img/intro_forest_3.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 		<level map="map_forest_cabin" text="winnersculpture"
 			img="img/intro_forest_4.jpg" after="intro_forest_4_after.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 		<level map="map_dream_ghost" text="zzz"
 			img="img/intro_forest_5.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 		<level map="map_forest_tworocks" text="ghost_in_dream"
 			img="img/intro_dream.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 		<level map="map_forest_deadbody" text="lost_in_forest"
 			img="img/intro_forest_6.jpg" after="intro_forest_6_after.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 		<level map="map_forest_chest" text="chest"
 			img="img/intro_forest_7.jpg" after="intro_forest_7_after.jpg"
-			dead="intro_dead_forest.jpg" />
+			death="intro_dead_forest.jpg" />
 
 		<level map="map_concrete_1" text="where_is_treasure"
 			img="img/intro_concrete_1.jpg"
-			dead="intro_dead_concrete.jpg" />
+			death="intro_dead_concrete.jpg" />
 		<level map="map_concrete_2" text="complex_of_corridors"
 			img="img/intro_concrete_2.jpg"
-			dead="intro_dead_concrete.jpg" />
+			death="intro_dead_concrete.jpg" />
 		<level map="map_concrete_machine" text="trap"
 			img="img/intro_concrete_3.jpg"
-			dead="intro_dead_concrete.jpg" />
+			death="intro_dead_concrete.jpg" />
 		<level map="map_concrete_3" text="machine"
 			img="img/intro_concrete_4.jpg"
-			dead="intro_dead_concrete.jpg" />
+			death="intro_dead_concrete.jpg" />
 		<level map="map_concrete_chests" text="new_enemy"
 			img="img/intro_concrete_5.jpg" after="intro_concrete_5_after.jpg"
-			dead="intro_dead_concrete.jpg" />
+			death="intro_dead_concrete.jpg" />
 		<level map="map_dream_tv" text="tasty"
 			img="img/intro_dream.jpg"
-			dead="intro_dead_concrete.jpg" />
+			death="intro_dead_concrete.jpg" />
 		<level map="map_concrete_holes" text="favourite_drink"
 			img="img/intro_concrete_6.jpg"
-			dead="intro_dead_concrete.jpg" />
+			death="intro_dead_concrete.jpg" />
 		<level map="map_concrete_rings" text="special_trap"
 			img="img/intro_concrete_7.jpg"
-			dead="intro_dead_concrete.jpg" />
+			death="intro_dead_concrete.jpg" />
 		<level map="map_concrete_final" text="nightmare_monster"
 			img="img/intro_concrete_8.jpg" after="intro_concrete_8_after.jpg"
-			dead="intro_dead_concrete.jpg" />
+			death="intro_dead_concrete.jpg" />
 
 <!-- TODO bonuses and creatures intelligence -->
 
 <!--
 		<level map="map_forest" text="debug"
 			img="img/intro_forest_debug.jpg"
-			dead="intro_dead_desert.jpg" />
+			death="intro_dead_desert.jpg" />
 		<level map="map_forest_debug" text="debug"
 			img="img/intro_forest_debug.jpg"
-			dead="intro_dead_desert.jpg" />
+			death="intro_dead_desert.jpg" />
 -->
 	</episode>
 </levels>

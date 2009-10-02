@@ -21,6 +21,8 @@
 	submenu==0 ? LANG_MENU(menu, item) : LANG_SUBMENU(menu, submenu, item)
 #define LANG_GAME(name, part) \
 	LANG->get_translation(3, "game", name, part)
+#define LANG_GAME_DEATH(name) \
+	LANG->get_translation(2, "game", name)
 
 #define LANG_ROOT_ELEMENT "language"
 #define LANG_HEADING 0

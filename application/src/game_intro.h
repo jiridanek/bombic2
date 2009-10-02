@@ -54,28 +54,38 @@ class GameIntro {
 		/// Konkrétní hra.
 		Game * game_;
 
+		/// Typ obrázek.
+		typedef struct {
+				std::string name;
+				Surface sur;
+				/// Příležitost (smysl) obrázku.
+				enum purpose { BEFORE, AFTER, DEATH };
+			} level_image_t;
+
+
 		/// Vykreslení intro obrazovky.
-		void draw_(SDL_Surface * window, Uint16 level, bool after=false);
+		void draw_(SDL_Surface * window, Uint16 level, level_image_t::purpose purpose);
 		/// Vyčkání na odmáčknutí intro obrazovky.
-		bool wait_(SDL_Surface * window, Uint16 level, bool after=false);
+		bool wait_(SDL_Surface * window, Uint16 level, level_image_t::purpose purpose);
 
 		/// Načtení levelů.
 		void load_levels_(Uint16 episode);
 		/// Získání obrázku.
-		Surface & get_cur_image_(Uint16 level, bool after=false);
+		Surface & get_cur_image_(Uint16 level, level_image_t::purpose purpose);
 
-		/// Mapa a obrázek levelu.
-		typedef struct{ std::string map, img, img_after, text; } level_t;
+		/// Mapa, obrázky a text levelu.
+		typedef struct{ std::string map, img_before, img_after, img_death, text; } level_t;
 		/// Seznam levelů.
 		std::vector< level_t > levels_;
 
-		typedef std::pair< std::string, Surface> image_t;
-		/// Surface příslušící jménu souboru.
-		image_t image_;
+		/// Obrázek příslušící levelu.
+		level_image_t level_image_;
 
 		Uint16 cur_episode_, ///< Aktuální epizoda.
 			cur_level_, ///< Aktuální level.
 			players_count_; ///< Počet hráčů.
+		/// Text aktuální epizody.
+		std::string cur_episode_death_text_;
 };
 
 #endif

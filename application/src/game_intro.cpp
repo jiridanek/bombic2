@@ -42,7 +42,7 @@ void GameIntro::show_screen(){
 	Uint16 old_level = cur_level_;
 	while(cur_level_ < levels_.size()){
 		// uvodni obrazovka levelu
-		draw_(g_window, cur_level_);
+		draw_(g_window, cur_level_, level_image_t::BEFORE);
 		// vygenerovani noveho levelu
 		if(!gameBase_ || game_){
 			if(gameBase_) delete gameBase_;
@@ -60,7 +60,7 @@ void GameIntro::show_screen(){
 			}
 		}
 
-		if(!wait_(g_window, cur_level_))
+		if(!wait_(g_window, cur_level_, level_image_t::BEFORE))
 			return;
 
 		// vygenerovani nove hry z pripraveneho zakladu
@@ -80,50 +80,63 @@ void GameIntro::show_screen(){
 		// koncova obrazovka levelu
 		if(old_level!=cur_level_){
 			if(!levels_[old_level].img_after.empty()){
-				draw_(g_window, old_level, true);
-				if(!wait_(g_window, old_level, true))
+				draw_(g_window, old_level, level_image_t::AFTER);
+				if(!wait_(g_window, old_level, level_image_t::AFTER))
 					return;
 			}
 			old_level = cur_level_;
+		} else {
+			// level se nezmenil => hrac umrel
+			draw_(g_window, cur_level_, level_image_t::DEATH);
+			if(!wait_(g_window, cur_level_, level_image_t::DEATH))
+				return;
 		}
 	}
 	delete game_;
 	game_ = 0;
 }
 
-void GameIntro::draw_(SDL_Surface * window, Uint16 level, bool after){
+void GameIntro::draw_(SDL_Surface * window, Uint16 level, level_image_t::purpose purpose){
 	// pozadi
 	clear_surface(Color::black, window);
 	// obrazek levelu
-	Surface sur = get_cur_image_(level, after);
+	Surface sur = get_cur_image_(level, purpose);
 	int x = (window->w-sur.width())/2, y = (window->h-sur.height())/2;
 	draw_surface(x, y, sur.getSurface(), window);
 	// stin textu
-	sur = get_multiline_text((*g_font)[17],
-		LANG_GAME(levels_[level].text.c_str(),
-			after ? LANG_AFTER_LEVEL : LANG_BEFORE_LEVEL),
-		Color::black);
+	const char * text = 0;
+	switch(purpose){
+		case level_image_t::BEFORE:
+			text = LANG_GAME(levels_[level].text.c_str(), LANG_BEFORE_LEVEL);
+			break;
+		case level_image_t::AFTER:
+			text = LANG_GAME(levels_[level].text.c_str(), LANG_AFTER_LEVEL);
+			break;
+		case level_image_t::DEATH:
+			text = LANG_GAME_DEATH(cur_episode_death_text_.c_str());
+			break;
+		default:
+			throw string("unhandled level_image_t::purpose");
+	}
+	sur = get_multiline_text((*g_font)[17], text, Color::black);
 	draw_surface(x +GAME_INTRO_PADDING+1, y +GAME_INTRO_PADDING+1,
 		sur.getSurface(), window);
 	// text levelu
-	sur = get_multiline_text((*g_font)[17],
-		LANG_GAME(levels_[level].text.c_str(),
-			after ? LANG_AFTER_LEVEL : LANG_BEFORE_LEVEL),
-		Color::white);
+	sur = get_multiline_text((*g_font)[17], text, Color::white);
 	draw_surface(x +GAME_INTRO_PADDING, y +GAME_INTRO_PADDING,
 		sur.getSurface(), window);
 	// zobrazit v okne
 	SDL_Flip(window);
 }
 
-bool GameIntro::wait_(SDL_Surface * window, Uint16 level, bool after){
+bool GameIntro::wait_(SDL_Surface * window, Uint16 level, level_image_t::purpose purpose){
 	// pockame na klavesu, pri pokusu o ukonceni ukoncime
 	SDLKey key;
 	while(true){
 		switch(wait_event(key)){
 			case SDL_VIDEORESIZE:
 				// uvodni obrazovka levelu
-				draw_(g_window, level, after);
+				draw_(g_window, level, purpose);
 				continue;
 			case SDL_QUIT:
 				AG_Quit();
@@ -256,17 +269,21 @@ void GameIntro::load_levels_(Uint16 episode){
 	try {
 		el = TiXmlRootElement(doc, filename, "levels", false);
 		el = el->FirstChildElement("episode");
+		// najdu element pozadovane epizody
 		while(episode-- && el)
 			el = el->NextSiblingElement("episode");
 		if(!el)
 			throw string("too few episodes");
+		// ulozi klicovy text pro epizodu
+		readAttr(el, "death_text", cur_episode_death_text_);
 		// ulozeni vsech levelu do seznamu
 		levels_.clear();
 		level_t level;
 		for(el = el->FirstChildElement("level") ; el ;
 					el = el->NextSiblingElement("level")){
 			readAttr(el, "map", level.map);
-			readAttr(el, "img", level.img);
+			readAttr(el, "img", level.img_before);
+			readAttr(el, "death", level.img_death);
 			if(!readAttr(el, "after", level.img_after, false))
 				level.img_after = "";
 			readAttr(el, "text", level.text);
@@ -281,20 +298,37 @@ void GameIntro::load_levels_(Uint16 episode){
 	}
 }
 
-Surface & GameIntro::get_cur_image_(Uint16 level, bool after){
-	string img_name = after ?
-		levels_[level].img_after : levels_[level].img;
-	if(image_.first==img_name)
-		return image_.second;
-	image_.first = img_name;
+Surface & GameIntro::get_cur_image_(Uint16 level,
+		level_image_t::purpose purpose){
+	string img_name;
+	switch(purpose){
+		case level_image_t::BEFORE:
+			img_name = levels_[level].img_before;
+			break;
+		case level_image_t::AFTER:
+			img_name = levels_[level].img_after;
+			break;
+		case level_image_t::DEATH:
+			img_name = levels_[level].img_death;
+			break;
+		default:
+			throw string("unhandled level_image_t::purpose");
+	}
+	if(level_image_.name == img_name)
+		return level_image_.sur;
+
+	// zahodit stare jmeno
+	level_image_.name.clear();
 	// odalokovat
-	image_.second = 0;
+	level_image_.sur = 0;
 	// naalokovat novy
 	if(!locate_file("", img_name, img_name))
 		TiXmlError("levels", "Can't locate image file "+img_name);
-	image_.second = IMG_Load(img_name.c_str());
-	if(!image_.second.getSurface())
+	level_image_.sur = IMG_Load(img_name.c_str());
+	if(!level_image_.sur.getSurface())
 		TiXmlError("levels", "Unable to load "+img_name);
-	return image_.second;
+	// v image_ uz mame platny obrazek, vlozime tam i jeho jmeno
+	level_image_.name = img_name;
+	return level_image_.sur;
 }
 
