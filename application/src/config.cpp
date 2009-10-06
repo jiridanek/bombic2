@@ -13,13 +13,20 @@ using namespace std;
 /*************** class Config ******************************/
 Config* Config::myself_ptr_ = 0;
 
+/**
+ * @return Pointer na jedinou instanci třídy Config.
+ * @throw string Chybová hláška, pokud není zatím vytvořena instance třídy Config.
+ */
 Config* Config::get_instance(){
 	if(!myself_ptr_)
 		throw string("in Config::get_instance(): no Config instance created.");
 	return myself_ptr_;
 }
 
-/**
+/** @details
+ * Inicializuje klávesy hráčů,
+ * nahrává konfiguraci hry.
+ * @throw string Chybová hláška, pokud již je instance třídy Config vytvořena.
  */
 Config::Config() {
 	if(myself_ptr_)
@@ -40,13 +47,14 @@ Config::Config() {
 }
 
 /** @details
- * Vynuluje myself_pointer_.
+ * Zruší instanci třídy Config.
  */
 Config::~Config(){
 	myself_ptr_ = 0;
 }
 
-/**
+/** @details
+ * Načte konfiguraci ze souboru CONFIG_FILENAME.
  */
 void Config::load_configuration_(){
 	TiXmlDocument doc;
@@ -63,7 +71,18 @@ void Config::load_configuration_(){
 	}
 }
 
-/**
+/** @details
+ * Načte z XML souboru nastavení hry.
+ * Konkrétně načítá:
+ *	* Rychlost hry
+ *	* Odhad exploze
+ *	* Rozdělit obrazovku
+ *	* Celoobrazovkový mód
+ *	* Povolit zvuk
+ *	* Jazyk
+ *
+ * @param rootEl root element xml souboru
+ * @throw string Chybové hlášení pokud není rychlost ve stanovených mezích.
  */
 void Config::load_properties_(TiXmlElement * rootEl){
 	readAttr(rootEl, "speed", speed_);
@@ -87,7 +106,9 @@ void Config::load_properties_(TiXmlElement * rootEl){
 	}
 }
 
-/**
+/** @details
+ * Načte z XML souboru nastavení kláves hráčů.
+ * @param rootEl root element xml souboru
  */
 void Config::load_players_(TiXmlElement * rootEl){
 	string el_name, key_name, action_name;
@@ -109,15 +130,31 @@ void Config::load_players_(TiXmlElement * rootEl){
 	players_changed_ = false;
 }
 
-/**
+/** @details
+ * Nastaví klávesu pro akci hráče.
+ * @param player_num číslo hráče, jehož nastavení měníme
+ * @param action akce, jíž přiřazujeme klávesu
+ * @param key klávesa
+ * @return True pokud nedošlo ke konfliktu, jinak false.
+ * @see set_key_action_()
  */
 bool Config::set_key_action_(Uint16 player_num, KEY_ACTIONS action,
-						SDLKey key){
+			SDLKey key){
 	Uint16 pl; KEY_ACTIONS ac;
 	return set_key_action_(player_num, action, key, pl, ac);
 }
 
-/**
+/** @details
+ * Nastaví klávesu pro akci hráče.
+ * Kontroluje jestli došlo ke konfliktu s jiným hráčem,
+ * pokud ano, konfliktní hráč přijde o své nastavení.
+ * Nastavovaná akce dostane vždy svou klávesu výhradně.
+ * @param player_num číslo hráče, jehož nastavení měníme
+ * @param action akce, jíž přiřazujeme klávesu
+ * @param key klávesa
+ * @param conflict_pl číslo hráče, který je v konfliktu - výstupní parametr
+ * @param conflict_ac akce hráče, která je v konfliktu - výstupní parametr
+ * @return True pokud nedošlo ke konfliktu, jinak false.
  */
 bool Config::set_key_action_(Uint16 player_num, KEY_ACTIONS action,
 			SDLKey key, Uint16 & conflict_pl, KEY_ACTIONS & conflict_ac){
@@ -137,7 +174,10 @@ bool Config::set_key_action_(Uint16 player_num, KEY_ACTIONS action,
 	return true;
 }
 
-/**
+/** @details
+ * @param name název akce
+ * @return Akce příslušící zadanému názvu.
+ * @throw string Chybová hláška, pokud názvu neodpovídá žádná akce.
  */
 KEY_ACTIONS Config::name2action_(const std::string & name){
 	if(name=="up") return KEY_UP;
@@ -150,7 +190,10 @@ KEY_ACTIONS Config::name2action_(const std::string & name){
 	return KEY_TIMER;
 }
 
-/**
+/** @details
+ * @param action akce
+ * @return Název příslušící zadané akci.
+ * @throw string Chybová hláška, pokud akci neumíme přiřadit název.
  */
 const char * Config::action2name_(KEY_ACTIONS action){
 	switch(action){
@@ -160,21 +203,34 @@ const char * Config::action2name_(KEY_ACTIONS action){
 		case KEY_LEFT: return "left";
 		case KEY_PLANT: return "plant";
 		case KEY_TIMER: return "timer";
+		default:
+			throw string("Config::action2name_(): unhandled key_action");
+			return 0;
 	}
-	throw string("Config::action2name_(): unhandled key_action");
-	return 0;
 }
 
-
+/**
+ * @param player_num číslo hráče
+ * @param action akce
+ * @return Klávesa přiřazená akci hráče.
+ */
 SDLKey Config::player(Uint16 player_num, KEY_ACTIONS action) const {
 	return players_[player_num][action];
 }
 
+/**
+ * @return Perioda vypočtená z konstantně přednastavené rychlosti
+ * a odchylky rychlosti z dynamické konfigurace.
+ */
 Uint16 Config::move_period() const {
 	return MOVE_PERIOD - speed_ +
 		( CONFIG_SPEED_MIN + CONFIG_SPEED_MAX )/2;
 }
 
+/** @details
+ * Uloží konfiguraci do souboru CONFIG_FILENAME.
+ * @see set_properties_(), set_players_()
+ */
 void Config::save_configuration_(){
 	TiXmlDocument doc;
 	TiXmlElement *root_el;
@@ -192,7 +248,17 @@ void Config::save_configuration_(){
 	}
 }
 
-/**
+/** @details
+ * Uloží do XML nastavení hry.
+ * Konkrétně ukládá:
+ *	* Rychlost hry
+ *	* Odhad exploze
+ *	* Rozdělit obrazovku
+ *	* Celoobrazovkový mód
+ *	* Povolit zvuk
+ *	* Jazyk
+ *
+ * @param rootEl root element xml souboru
  */
 void Config::set_properties_(TiXmlElement * rootEl){
 	rootEl->SetAttribute("speed", speed_);
@@ -205,7 +271,9 @@ void Config::set_properties_(TiXmlElement * rootEl){
 	rootEl->SetAttribute("default", language_.c_str());
 }
 
-/**
+/** @details
+ * Uloží do XML nastavení kláves hráčů.
+ * @param rootEl root element xml souboru
  */
 void Config::set_players_(TiXmlElement * rootEl){
 	if(!players_changed_) return;
@@ -233,6 +301,9 @@ void Config::set_players_(TiXmlElement * rootEl){
 
 /********************** class KeyNames ****************************/
 
+/** @details
+ * Inicializuje mapu kláves.
+ */
 KeyNames::KeyNames(){
 	SDLKey key;
 	for(key = SDLK_FIRST ; key != SDLK_LAST;
@@ -242,6 +313,11 @@ KeyNames::KeyNames(){
 	names_keys_.erase("unknown key");
 }
 
+/**
+ * @param name název klávesy
+ * @return Klávesa odpovídající názvu,
+ * nebo SDLK_FIRST když taková klávesa neexistuje.
+ */
 SDLKey KeyNames::name2key(const std::string & name){
 	names_keys_t::iterator it = names_keys_.find(name);
 	if(it==names_keys_.end())
@@ -249,6 +325,10 @@ SDLKey KeyNames::name2key(const std::string & name){
 	return it->second;
 }
 
+/**
+ * @param key klávesa
+ * @return Název zadané klávesy.
+ */
 const char* KeyNames::key2name(SDLKey key){
 	return SDL_GetKeyName(key);
 }

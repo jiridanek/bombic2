@@ -124,10 +124,10 @@ SDL_Surface* GameBaseLoader::load_src_surface(TiXmlElement *El,
 
 /*************** class GameBase ******************************/
 
-/** @details
- * Předpřipraví mapu, atd TODO
+/**
  * @param players_count počet hráčů
  * @param mapname název mapy
+ * @see load_map_()
  */
 GameBase::GameBase(Uint16 players_count, const std::string & mapname){
 	players_.insert(players_.end(), players_count, 0);
@@ -135,9 +135,9 @@ GameBase::GameBase(Uint16 players_count, const std::string & mapname){
 }
 
 /** @details
- * Předpřipraví mapu, atd TODO
  * @param players_count počet hráčů
  * @param mapname název mapy
+ * @see load_map_(), load_bonuses_()
  */
 GameBase::GameBase(Uint16 players_count, const std::string & mapname,
 			const bonuses_t & bonuses, bool creatures){
@@ -151,9 +151,12 @@ GameBase::GameBase(Uint16 players_count, const std::string & mapname,
  * vytvoří struktury s generovanými objekty.
  * @param players_count počet hráčů
  * @param mapname název mapy
+ * @param deathmatch vytváří-li mapu pro deathmatch
+ * @param creatures má-li připravit do mapy také příšery
+ * @see TiXmlError()
  */
 void GameBase::load_map_(Uint16 players_count, const std::string & mapname,
-				bool deathmatch, bool creatures){
+			bool deathmatch, bool creatures){
 	// nacteni hodnot z xml
 	TiXmlDocument doc;
 	TiXmlElement *map_el;
@@ -381,6 +384,11 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 	}
 }
 
+/** @details
+ * Načte z XML a vloží do mapy hráče pro deathmatch.
+ * @param playersEl element v XML souboru specifikující výchozí pozici hráče
+ * @param count počet hráčů
+ */
 void GameBase::load_players_deathmatch_(TiXmlElement *playersEl, Uint16 count){
 	if(!playersEl)
 		TiXmlError("missing element <players ...>");

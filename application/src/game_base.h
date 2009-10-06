@@ -45,9 +45,9 @@ class GameBaseLoader {
  * připraví hrací pole a vloží do něj (a nikam jinam) pevně umístěné objekty.
  * Náhodně generované objekty (statické, respektive dynamické) se uloží do
  * seznamů statických, respektive dynamických objektů.
- * TODO bomb, flame, icons atd.
+ * Bomby, plameny a ikony se zde nepřipravují, nejsou základními objekty mapy.
  * Z této předpřipravené struktury se vytvoří konkrétní hra, proto je friend s třídou Game.
- * @see GameIntro, DeathmatchIntro.
+ * @see GameIntro, DeathmatchIntro, GameTools.
  */
 class GameBase: public GameBaseLoader {
 	friend class Game;

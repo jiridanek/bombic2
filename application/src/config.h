@@ -19,7 +19,8 @@ enum KEY_ACTIONS { KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_PLANT, KEY_TIMER }
 #define KEY_ACTIONS_COUNT 6
 
 /** Pojmenování kláves.
- * TODO
+ * Třída obstarávající převod mezi
+ * klávesovými konstantami a názvy kláves.
  */
 class KeyNames {
 	public:
