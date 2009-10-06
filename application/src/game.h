@@ -151,13 +151,21 @@ class Game {
 				Uint16 rect_half_size, Uint16 map_size) const;
 		/// Vykreslení obrazovky.
 		void draw_(SDL_Surface * window);
-		/// Vykreslení scény hráče.
+		/// Vykreslení pohledu hráče.
 		void draw_players_view_(SDL_Surface *window, Uint16 player_num);
-		/// Vykreslení hráčů do jedné scény.
+		/// Vykreslení jednoho pohledu pro více hráčů.
 		void draw_one_view_(SDL_Surface * window);
-		/// Vykreslení kousku scény.
+		/// Vykreslení části mapy.
 		void draw_map_(bool bg, SDL_Surface* window, SDL_Rect & map_view,
 			Uint16 from_x, Uint16 from_y, Uint16 to_x, Uint16 to_y );
+		/// Vykreslení pozadí jednoho políčka mapy.
+		void draw_map_field_bg_(SDL_Surface* window, SDL_Rect & map_view,
+			Uint16 column, Uint16 field);
+		/// Vykreslení popředí jednoho políčka mapy.
+		void draw_map_field_fg_(SDL_Surface* window, SDL_Rect & map_view,
+			Uint16 column, Uint16 field);
+
+
 
 		/// Hýbnutí světem.
 		bool move_();

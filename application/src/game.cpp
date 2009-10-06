@@ -355,7 +355,7 @@ void Game::insert_MO_(const MapObject* mapObject,
  * @param window surface okna pro vykreslení
  */
 void Game::play(SDL_Surface* window){
-	// konstrukce zarizujici spravny pocet obrazku za sekundu
+	// konstrukce zarizujici maximalni pocet obrazku za sekundu
 // 	Uint8 fps=10;
 // 	Uint32 fps_last= 0;
 
@@ -384,7 +384,7 @@ void Game::play(SDL_Surface* window){
 
 		// vykresleni scen pro jednotlive hrace
 		draw_(window);
-		// cekani - chceme presny pocet obrazku za sekundu
+		// cekani - chceme maximalni pocet obrazku za sekundu
 // 		fps_last= SDL_fps(fps_last, fps);
 
 		this_time = SDL_GetTicks();
@@ -407,7 +407,7 @@ void Game::play(SDL_Surface* window){
 		}
 		last_time = this_time;
 
-		// zbyvaji nejake prisery?
+		// zbyva nejaky protivnik?
 		if((!remaining_creatures_ && !deathmatch_)
 		|| (players_.size()<=1 && deathmatch_) )
 			at_end=true;
@@ -415,7 +415,10 @@ void Game::play(SDL_Surface* window){
 	}
 }
 
-/**
+/** @details
+ * Podle nastavení v configu a počtu hráčů
+ * rozdělí hrací plochu do několika pohledů.
+ * @param window surface okna, které rozděluji
  */
 void Game::set_players_view_(SDL_Surface* window){
 	clear_surface(Color::black, window);
@@ -434,6 +437,11 @@ void Game::set_players_view_(SDL_Surface* window){
 	}
 }
 
+/** @details
+ * Jeden pohled společný pro všechny hráče.
+ * Typicky přes celé okno, velikost je však omezena.
+ * @param window surface okna, které rozděluji
+ */
 void Game::set_players_view_1_(SDL_Surface * window){
 	Uint16 win_w = window->w, win_h = window->h,
 		map_w = CELL_SIZE*
@@ -447,6 +455,13 @@ void Game::set_players_view_1_(SDL_Surface * window){
 	win_view.y = map_h < win_h ? (win_h-map_h)/2 : 0;
 }
 
+/** @details
+ * Dva pohledy pro dva hráče.
+ * Řeší zda rozdělovat vodorovně či svisle,
+ * kdo kde bude.
+ * Každý musí mít stejně velký prostor.
+ * @param window surface okna, které rozděluji
+ */
 void Game::set_players_view_2_(SDL_Surface * window){
 	Uint16 half_w = window->w/2, half_h = window->h/2,
 		win_w = window->w, win_h = window->h,
@@ -494,6 +509,13 @@ void Game::set_players_view_2_(SDL_Surface * window){
 	}
 }
 
+/** @details
+ * Čtyři pohledy pro tři nebo čtyři hráče.
+ * Vždy rozdělí na čtvrtiny(dva sloupce, dva řádky),
+ * je předem jasně dáno, kdo kde bude.
+ * Každý má stejně velký prostor.
+ * @param window surface okna, které rozděluji
+ */
 void Game::set_players_view_4_(SDL_Surface * window){
 	Uint16 half_w = window->w/2, half_h = window->h/2,
 		map_w = CELL_SIZE*
@@ -524,6 +546,15 @@ void Game::set_players_view_4_(SDL_Surface * window){
 	}
 }
 
+/** @details
+ * Pro jednu souřadnici (x nebo y) počítá,
+ * o kolik je třeba posunout mapu, aby byl hřáč uprostřed
+ * a zároveň byl dostatečně využit pohled (roh mapy nesmí být uvnitř pohledu).
+ * @param player_coor souřadnice hráče
+ * @param rect_half_size polovina rozměru pohledu
+ * @param map_size rozměr mapy
+ * @return Posun mapy v pixelech.
+ */
 Uint16 Game::count_rect_shift_(Uint16 player_coor,
 			Uint16 rect_half_size, Uint16 map_size) const{
 	Uint16 rect_shift=0;
@@ -540,6 +571,10 @@ Uint16 Game::count_rect_shift_(Uint16 player_coor,
 	return rect_shift;
 }
 
+/** @details
+ * Vykreslí pohledy a panely hráčů.
+ * @param window surface, do kterého máme kreslit
+ */
 void Game::draw_(SDL_Surface* window){
 	if(players_.empty()) return;
 
@@ -563,6 +598,13 @@ void Game::draw_(SDL_Surface* window){
 	SDL_Flip(window);
 }
 
+/** @details
+ * Vykreslí pohled určitého hráče.
+ * Zjišťuje posunutí mapy vůči pohledu,
+ * vykresluje prvně vše v pozadí, pak vše v popředí.
+ * @param window surface, do kterého máme kreslit
+ * @param player_num číslo hráče, pro kterého máme vykreslit pohled
+ */
 void Game::draw_players_view_(SDL_Surface* window, Uint16 player_num){
 	// obnovim map_view
 	Uint16 i,
@@ -584,6 +626,12 @@ void Game::draw_players_view_(SDL_Surface* window, Uint16 player_num){
 	}
 }
 
+/** @details
+ * Jako střed vykreslování vezme aritmetický průměr pozic hráčů.
+ * Zjišťuje posunutí mapy vůči pohledu,
+ * vykresluje prvně vše v pozadí, pak vše v popředí.
+ * @param window surface, do kterého máme kreslit
+ */
 void Game::draw_one_view_(SDL_Surface* window){
 	// obnovim map_view
 	Uint16 i, shift_x=0, shift_y=0;
@@ -609,15 +657,18 @@ void Game::draw_one_view_(SDL_Surface* window){
 }
 
 /** @details
- * Vykreslí nejdříve objekty pozadí (background, floorobject)
- * následně ostatní, až poté panely.
+ * Vykreslí část mapy v pohledu.
  * @param window surface okna pro vykreslení
+ * @param map_view pohled
+ * @param from_x x-ová souřadnice počátku vykreslování
+ * @param from_y y-ová souřadnice počátku vykreslování
+ * @param to_x x-ová souřadnice konce vykreslování
+ * @param to_y y-ová souřadnice konce vykreslování
  */
 void Game::draw_map_(bool bg, SDL_Surface* window, SDL_Rect & map_view,
 			Uint16 from_x, Uint16 from_y, Uint16 to_x, Uint16 to_y){
 
 	Uint16 column, field;
-	map_array_t::value_type::value_type::iterator it, end_it;
 	// poprve projdu mapu a vykreslim pozadi a objekty na pozadi
 	// objekty na policku seradim
 	for(field = from_y ; field<map_array_[0].size() ; ++field){
@@ -625,40 +676,67 @@ void Game::draw_map_(bool bg, SDL_Surface* window, SDL_Rect & map_view,
 		for(column= from_x ; column< map_array_.size() ; ++column){
 			map_view.w = (column>to_x ? map_array_.size() : column+1) *CELL_SIZE;
 			if(bg){
-				it = map_array_[column][field].begin();
-				end_it = map_array_[column][field].end();
-				// vykreslim pozadi a objekt na zemi
-				while( (it=find_if(it, end_it, isTypeOf::isBgType)) !=end_it){
-					(*it)->draw(window, map_view);
-					++it;
-				}
+				draw_map_field_bg_(window, map_view, column, field);
 			}
 			else {
-				// objekty na policku seradim
-				map_array_[column][field].sort(isUnder);
-				// vykreslim ty co nejsou pozadi
-				for(it= map_array_[column][field].begin() ;
-						it!= map_array_[column][field].end() ;
-						++it){
-
-					if(isTypeOf::isBgType(*it)) continue;
-					// v praxi potrebuju prohodit dva hrace pokud jsou v zakrytu
-					// spodniho vykreslim vzdycky, horniho bud preskocim nebo vykreslim
-					if( (*it)->type() == PLAYER && rand()%2 ){
-						Player * player1 = static_cast<Player *>(*it);
-						// !! jeste nevim jestli player2 je opravdu PLAYER !!
-						--it;
-						Player * player2 = static_cast<Player *>(*it);
-						++it;
-						if(player2->type() == PLAYER && *player1 == *player2)
-							continue;
-					}
-					(*it)->draw(window, map_view);
-				}
+				draw_map_field_fg_(window, map_view, column, field);
 			}
 			if(column > to_x) break;
 		}
 		if(field > to_y) break;
+	}
+}
+
+/** @details
+ * Vykreslí pozadí (background, floorobject) jednoho políčka mapy.
+ * @param window surface okna pro vykreslení
+ * @param map_view pohled
+ * @param column x-ová souřadnice políčka mapy
+ * @param field y-ová souřadnice políčka mapy
+ */
+void Game::draw_map_field_bg_(SDL_Surface* window, SDL_Rect & map_view,
+			Uint16 column, Uint16 field){
+	map_array_t::value_type::value_type::iterator it, end_it;
+	it = map_array_[column][field].begin();
+	end_it = map_array_[column][field].end();
+	// vykreslim pozadi a objekt na zemi
+	while( (it=find_if(it, end_it, isTypeOf::isBgType)) !=end_it){
+		(*it)->draw(window, map_view);
+		++it;
+	}
+}
+
+/** @details
+ * Seřadí objekty na políčku.
+ * Vykreslí objekty v popředí jednoho políčka mapy.
+ * @param window surface okna pro vykreslení
+ * @param map_view pohled
+ * @param column x-ová souřadnice políčka mapy
+ * @param field y-ová souřadnice políčka mapy
+ */
+void Game::draw_map_field_fg_(SDL_Surface* window, SDL_Rect & map_view,
+			Uint16 column, Uint16 field){
+	// objekty na policku seradim
+	map_array_[column][field].sort(isUnder);
+
+	map_array_t::value_type::value_type::iterator it, end_it;
+	// vykreslim ty co nejsou pozadi
+	for(it = map_array_[column][field].begin(), end_it = map_array_[column][field].end() ;
+			it != end_it ; ++it){
+
+		if(isTypeOf::isBgType(*it)) continue;
+		// v praxi potrebuju prohodit dva hrace pokud jsou v zakrytu
+		// spodniho vykreslim vzdycky, horniho bud preskocim nebo vykreslim
+		if( (*it)->type() == PLAYER && rand()%2 ){
+			Player * player1 = static_cast<Player *>(*it);
+			// !! jeste nevim jestli player2 je opravdu PLAYER !!
+			--it;
+			Player * player2 = static_cast<Player *>(*it);
+			++it;
+			if(player2->type() == PLAYER && *player1 == *player2)
+				continue;
+		}
+		(*it)->draw(window, map_view);
 	}
 }
 

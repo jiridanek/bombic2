@@ -141,16 +141,6 @@ void Creature::draw(SDL_Surface *window, const SDL_Rect & rect){
 
 	// vykresli animaci podle natoceni, posune souradnice podle pozice pohledu
 	anim_(d_).draw(window, x + rect.x, y + rect.y);
-
-	/*/ TODO debug
-	draw_pixel(window, x_, y_, Color::red);
-	Surface sur = get_text( (*g_font)[10],
-		x2string(lives_).c_str(),
-// 		("["+x2string(x_/CELL_SIZE)+","+x2string(y_/CELL_SIZE)+","+x2string(this->getZ())+"] "
-// 			+x2string(speed_rate_)+":"+x2string(speed_diff_)).c_str(),
-		Color::yellow);
-	draw_surface(x-CELL_SIZE, y, sur.getSurface(), window);
-	//*/
 }
 
 /** @details

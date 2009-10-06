@@ -169,11 +169,6 @@ Surface & Surface::operator= (SDL_Surface * sur_SDL){
 	}
 	return *this;
 }
-// TODO zmenit na getSurface()
-SDL_Surface* Surface::GetSurface() const {
-	std::cerr << "use getSurface instead of GetSurface" << std::endl;
-	return surface_;
-}
 SDL_Surface* Surface::getSurface() const {
 	return surface_;
 }

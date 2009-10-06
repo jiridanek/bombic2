@@ -132,7 +132,7 @@ bool Bomb::move_by_direction_(){
 }
 
 /** @details
- * Nastaví flag pro výbuch.
+ * Výbuch bomby.
  * Vytvoří plameny s ohledem na okolí.
  * Ohlídá si, aby běžela pouze jednou,
  * protože nemá smysl vytvářet plameny dvakrát.
@@ -265,7 +265,9 @@ void Bomb::kick(DIRECTION d){
 }
 
 
-/** TODO
+/** @details
+ * Odstraní bombě ruční odpalování,
+ * spustí klasické odpočítávání.
  */
 void Bomb::remove_timer(){
 	timer_ = false;
@@ -281,8 +283,6 @@ void Bomb::remove_timer(){
 void Bomb::update_presumptions_(){
 
 	target_field_ = find_target_field_();
-	// TODO debug
-// 	std::cout << x << "," << y << std::endl;
 
 	// pres vsechny smery
 	for(Uint16 dir=0 ; dir<4 ; ++dir){
@@ -598,12 +598,12 @@ MegaBomb::MegaBomb(const Animation & anim, Uint16 x, Uint16 y,
 
 
 
-/** @details TODO
- * Nastaví flag pro výbuch.
- * Ohlídá si, aby běžela pouze jednou,
- * protože nemá smysl vytvářet plameny dvakrát.
+/** @details
+ * Výbuch bomby.
  * Pokud může (s ohledem na okolí) rozmístí a nechá bouchnout
  * okolo sebe čtyři bomby (maximálně).
+ * Ohlídá si, aby běžela pouze jednou,
+ * protože se nesmí vytvářet bomby vícekrát.
  */
 void MegaBomb::explode(){
 	if(explodes_) return;
@@ -634,13 +634,17 @@ void MegaBomb::explode(){
 	Bomb::explode();
 }
 
+/** @details
+ * Pokud to jde (s ohledem na okolí), vloží na políčko novou bombu.
+ */
 void MegaBomb::try_insert_bomb_(const field_t & field){
 	// kdyz tam muzeme umistit bombu
 	if(!GAME->field_withObject(field, isTypeOf::isWallBox)){
 		// umistime tam bombu
 		Bomb * bomb = GAME->tools->bomb_normal(field, flamesize_);
-		// hned bouchne
-// 		bomb->explode();
+		// hned nebouchne, prvne musi bouchnout hlavni stredova bomba,
+		// od ni pak automaticky bouchne i nově vytvořená
+
 		// vlozime ji do hry (mapy)
 		GAME->insert_object(field, bomb);
 	}

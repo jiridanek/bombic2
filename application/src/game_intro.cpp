@@ -31,9 +31,14 @@ extern Fonts * g_font;
 
 /** @details
  * Ukáže úvodní obrazovku levelu, vygeneruje konkrétní hru,
- * čeká na klávesu, spustí hru. Po skončení spustí hru znova TODO
+ * čeká na vstup od uživatele, spustí hru.
+ * Po skončení hry ukáže podle jejího výsledku obrazovku smrti
+ * nebo obrazovku po levelu (je-li).
+ * Po uživatelově vstupu spustí hru znovu, nebo přechází do dalšího levelu.
+ * Při neúspěšném čekání na uživatelův vstup (zavření okna, typicky stisk ESC)
+ * ukončí základní smyčku.
  * @throw string Chybové hlášení pokud není inicializována hra.
- * @see new_game(), load_game();
+ * @see new_game(), load_game(), wait_();
  */
 void GameIntro::show_screen(){
 	if(!gameTools_)
