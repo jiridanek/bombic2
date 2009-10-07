@@ -28,6 +28,9 @@ class Presumption;
 class GameTools: public GameBaseLoader{
 	public:
 		GameTools();
+
+		Uint16 getFlamePeriod();
+
 		Flame* flame_top(Uint16 x, Uint16 y) const;
 		Flame* flame_top(const field_t & field) const {
 			return flame_top(field.first, field.second);

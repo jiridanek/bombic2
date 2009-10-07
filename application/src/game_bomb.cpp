@@ -610,6 +610,9 @@ void MegaBomb::explode(){
 	// zde nenastavovat explodes_ na true
 	// nastavi se na konci v Bomb::explode()
 
+	// zatřást hrou
+	GAME->shake_views();
+
 	// aktualni policko
 	field_t curr_field(x_/CELL_SIZE, y_/CELL_SIZE);
 

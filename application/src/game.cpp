@@ -606,23 +606,27 @@ void Game::draw_(SDL_Surface* window){
  * @param player_num číslo hráče, pro kterého máme vykreslit pohled
  */
 void Game::draw_players_view_(SDL_Surface* window, Uint16 player_num){
+	player_t & game_player = players_[player_num];
 	// obnovim map_view
-	Uint16 i,
-		shift_x = count_rect_shift_(players_[player_num].player->getX(),
-			players_[player_num].win_view.w/2, map_width()*CELL_SIZE),
-		shift_y = count_rect_shift_(players_[player_num].player->getY(),
-			players_[player_num].win_view.h/2, map_height()*CELL_SIZE);
+	Sint16 i,
+		shift_x = count_rect_shift_(game_player.player->getX(),
+			game_player.win_view.w/2, map_width()*CELL_SIZE),
+		shift_y = count_rect_shift_(game_player.player->getY(),
+			game_player.win_view.h/2, map_height()*CELL_SIZE);
 
-	players_[player_num].map_view.x=
-		players_[player_num].win_view.x - shift_x;
-	players_[player_num].map_view.y=
-		players_[player_num].win_view.y - shift_y;
+	shift_x += game_player.shaker.getDiffX();
+	shift_y += game_player.shaker.getDiffY();
+
+	game_player.map_view.x=
+		game_player.win_view.x - shift_x;
+	game_player.map_view.y=
+		game_player.win_view.y - shift_y;
 	// vykreslim pozadi a pak prisery
 	for(i=0 ; i<2 ; ++i){
-		draw_map_(i==0, window, players_[player_num].map_view,
+		draw_map_(i==0, window, game_player.map_view,
 			shift_x/CELL_SIZE, shift_y/CELL_SIZE,
-			(shift_x+players_[player_num].win_view.w)/CELL_SIZE,
-			(shift_y+players_[player_num].win_view.h)/CELL_SIZE );
+			(shift_x+game_player.win_view.w)/CELL_SIZE,
+			(shift_y+game_player.win_view.h)/CELL_SIZE );
 	}
 }
 
@@ -634,25 +638,30 @@ void Game::draw_players_view_(SDL_Surface* window, Uint16 player_num){
  */
 void Game::draw_one_view_(SDL_Surface* window){
 	// obnovim map_view
-	Uint16 i, shift_x=0, shift_y=0;
+	Sint16 i, shift_x=0, shift_y=0;
 
 	for(players_it it = players_.begin() ; it!=players_.end() ; ++it){
 		shift_x += it->second.player->getX();
 		shift_y += it->second.player->getY();
 	}
-	player_t & player = players_.begin()->second;
+	player_t & game_player = players_.begin()->second;
 	shift_x = count_rect_shift_(shift_x / players_.size(),
-			player.win_view.w/2, map_width()*CELL_SIZE),
+			game_player.win_view.w/2, map_width()*CELL_SIZE),
 	shift_y = count_rect_shift_(shift_y / players_.size(),
-			player.win_view.h/2, map_height()*CELL_SIZE);
-	player.map_view.x= player.win_view.x - shift_x;
-	player.map_view.y= player.win_view.y - shift_y;
+			game_player.win_view.h/2, map_height()*CELL_SIZE);
+
+	shift_x += game_player.shaker.getDiffX();
+	shift_y += game_player.shaker.getDiffY();
+
+
+	game_player.map_view.x= game_player.win_view.x - shift_x;
+	game_player.map_view.y= game_player.win_view.y - shift_y;
 	// vykreslim pozadi a pak prisery
 	for(i=0 ; i<2 ; ++i){
-		draw_map_(i==0, window, player.map_view,
+		draw_map_(i==0, window, game_player.map_view,
 			shift_x/CELL_SIZE, shift_y/CELL_SIZE,
-			(shift_x+player.win_view.w)/CELL_SIZE,
-			(shift_y+player.win_view.h)/CELL_SIZE );
+			(shift_x+game_player.win_view.w)/CELL_SIZE,
+			(shift_y+game_player.win_view.h)/CELL_SIZE );
 	}
 }
 
@@ -740,6 +749,11 @@ void Game::draw_map_field_fg_(SDL_Surface* window, SDL_Rect & map_view,
 	}
 }
 
+void Game::shake_views(){
+	for(players_it it = players_.begin() ; it!=players_.end() ; ++it){
+		it->second.shaker.shake(2*tools->getFlamePeriod()/MOVE_PERIOD);
+	}
+}
 
 /** @details
  * Projde všechny dynamické objekty hry a zavolá na nich fci move().
@@ -770,7 +784,8 @@ bool Game::move_(){
 
 /** @details
  * Projde všechny dynamické i statické objekty hry a zavolá na nich fci update().
- * @see MapObject::update()
+ * Obnoví i zatřasení pohledy.
+ * @see MapObject::update(), GameShaker::update()
  */
 void Game::update_(){
 	dynamicMOs_t::iterator d_it;
@@ -782,6 +797,11 @@ void Game::update_(){
 	// staticke
 	for(s_it= staticMOs_.begin() ; s_it!= staticMOs_.end() ; ++s_it){
 		(*s_it)->update();
+	}
+
+	// obnovit shaker pro hrace
+	for(players_it it = players_.begin() ; it!=players_.end() ; ++it){
+		it->second.shaker.update();
 	}
 }
 

@@ -115,6 +115,13 @@ void GameTools::load_bonuses_(TiXmlElement *bonusesEl, const Surface & sur_src){
 	}
 }
 
+/** @details
+ * @return Doba v milisekundách, po kterou hoří plamen.
+ */
+Uint16 GameTools::getFlamePeriod(){
+	return flame_period_*1000;
+}
+
 Flame* GameTools::flame_top(Uint16 x, Uint16 y) const {
 	return new Flame(flame_top_, x*CELL_SIZE, y*CELL_SIZE, flame_period_);
 }

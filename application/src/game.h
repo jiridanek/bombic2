@@ -10,9 +10,11 @@
 #include <list>
 #include <vector>
 #include <string>
+#include "constants.h"
 #include "SDL_lib.h"
 #include "game_base.h"
 #include "game_tools.h"
+#include "game_shaker.h"
 #include "game_mapobjects.h"
 #include "game_player.h"
 #include "game_bomb.h"
@@ -112,6 +114,8 @@ class Game {
 		/// Pro hráče (nebo spíše bonusy): nechat bouchnout první bombu.
 		void add_others_bonus(Uint16 player_num, const char * bonus_name);
 
+		/// Třesení pohledy
+		void shake_views();
 
 		/// Výška mapy.
 		Uint16 map_height() const;
@@ -165,8 +169,6 @@ class Game {
 		void draw_map_field_fg_(SDL_Surface* window, SDL_Rect & map_view,
 			Uint16 column, Uint16 field);
 
-
-
 		/// Hýbnutí světem.
 		bool move_();
 		/// Posunutí animací.
@@ -201,12 +203,21 @@ class Game {
 
 		/// Typ seznamu bomb.
 		typedef std::list<Bomb*> bombs_t;
-		typedef struct{ Player* player; SDL_Rect win_view, map_view; bombs_t bombs;
-					} player_t;
+		/// Typ hráče s jeho pohledy (na okno a na mapu),
+		/// třesením pohledu a položenými bombami.
+		typedef struct{
+				Player* player;
+				SDL_Rect win_view, map_view;
+				GameShaker shaker;
+				bombs_t bombs;
+			} player_t;
+		/// Typ seznamu hráčů hry, který umí rychle najít hráče podle čísla.
 		typedef std::map< Uint16, player_t > players_t;
+		/// Typ iterátoru do seznamu hráčů.
 		typedef players_t::iterator players_it;
-		/// Pointery na hráče a seznam jejich bomb.
+		/// Hráči hry.
 		players_t players_;
+
 };
 
 #endif
