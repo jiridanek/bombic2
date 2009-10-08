@@ -150,7 +150,7 @@ void Bomb::explode(){
 
 	Uint16 i, dir, next_x, next_y;
 	Sint16 factor_x, factor_y;
-	Flame* flame;
+	Flame* flame = 0;
 	MapObject * obj;
 	// pres vsechny smery
 	for(dir=0 ; dir<4 ; ++dir){

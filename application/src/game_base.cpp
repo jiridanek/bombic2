@@ -493,6 +493,7 @@ void GameBase::load_walls_(TiXmlElement *wallsEl){
 	}
 	catch(const string & s){
 		TiXmlError(filename,s);
+		return;
 	}
 
 	// kontrola jestli koresponduji rozmery obrazku
@@ -638,6 +639,7 @@ void GameBase::load_boxes_(TiXmlElement *boxesEl){
 	}
 	catch(const string & s){
 		TiXmlError(filename,s);
+		return;
 	}
 	// kontrola jestli koresponduji rozmery obrazku
 	if(height_def!=anim_def.height()/CELL_SIZE-toplapping_def)

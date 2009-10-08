@@ -578,19 +578,25 @@ Uint16 Game::count_rect_shift_(Uint16 player_coor,
 void Game::draw_(SDL_Surface* window){
 	if(players_.empty()) return;
 
-	SDL_Rect * p_view;
+	SDL_Rect * p_view = 0;
 	if(!CONFIG->split_screen()){
+		// p_view je jeden nemenny
 		p_view = &players_.begin()->second.win_view;
 		SDL_SetClipRect(window, p_view);
+		// vykresluji pouze jeden pohled pro vsechny hrace
 		draw_one_view_(window);
 	}
 	for(players_it player_it = players_.begin() ;
 			player_it!=players_.end() ; ++player_it){
 		if(CONFIG->split_screen()){
+			// p_view je pro kazdeho hrace jiny
 			p_view = &player_it->second.win_view;
 			SDL_SetClipRect(window, p_view);
+			// vykresluji pro kazdeho hrace vlastni pohled
 			draw_players_view_(window, player_it->first);
 		}
+		// ovsem do pohledu (at spolecneho nebo vlastniho)
+		// vykresluji kazdemu hraci jeho panel
 		player_it->second.player->draw_panel(window, *p_view);
 	}
 	SDL_SetClipRect(window, 0);

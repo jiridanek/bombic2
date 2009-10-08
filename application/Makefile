@@ -1,7 +1,8 @@
-#DEBUG_FLAGS=-g
-LIBS=`agar-config --libs` $(DEBUG_FLAGS) -lSDL_ttf -lSDL_image
-CFLAGS= `agar-config --cflags ` $(DEBUG_FLAGS) -Wall -I./libs/tinyxml
+#OPTIMATION=-O3
+LIBS=`agar-config --libs` $(OPTIMATION) -lSDL_ttf -lSDL_image
+CFLAGS= `agar-config --cflags ` $(OPTIMATION) -Wall -I./libs/tinyxml
 CC= ccache g++
+#CC= g++
 
 TARGET= bombic 
 OBJECTFILES= $(shell find src -name '*.cpp' | sed 's/.cpp/.o/')
