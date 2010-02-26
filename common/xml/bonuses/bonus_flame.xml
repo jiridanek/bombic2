@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<bonus name="bonus_flame" src="bonuses.bmp">
+	<img x="1" y="1" />
+</bonus>

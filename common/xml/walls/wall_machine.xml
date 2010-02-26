@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<wall 	name="wall_machine" src="map_concrete.bmp">
+	<img x="257" y="204" width="3" height="3" toplapping="1" />
+</wall>

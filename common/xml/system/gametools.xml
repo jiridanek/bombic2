@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<gametools src="gametools.bmp">
+	<!-- obrazek plamene, ruzne smery -->
+	<flame timeperiod="1">
+		<top x="205" y="1">
+			<animation rate="10">
+				<animation_item x="205" y="52" />
+				<animation_item x="205" y="103" />
+			</animation>
+		</top>
+		<bottom x="307" y="1">
+			<animation rate="10">
+				<animation_item x="307" y="52" />
+				<animation_item x="307" y="103" />
+			</animation>
+		</bottom>
+		<topbottom x="256" y="1">
+			<animation rate="10">
+				<animation_item x="256" y="52" />
+				<animation_item x="256" y="103" />
+			</animation>
+		</topbottom>
+		<left x="1" y="1">
+			<animation rate="10">
+				<animation_item x="1" y="52" />
+				<animation_item x="1" y="103" />
+			</animation>
+		</left>
+		<right x="103" y="1">
+			<animation rate="10">
+				<animation_item x="103" y="52" />
+				<animation_item x="103" y="103" />
+			</animation>
+		</right>
+		<leftright x="52" y="1">
+			<animation rate="10">
+				<animation_item x="52" y="52" />
+				<animation_item x="52" y="103" />
+			</animation>
+		</leftright>
+		<cross x="154" y="1">
+			<animation rate="10">
+				<animation_item x="154" y="52" />
+				<animation_item x="154" y="103" />
+			</animation>
+		</cross>
+	</flame>
+	<!-- obrazek bomb -->
+	<bombs speed="15">
+		<normal x="1" y="158">
+			<animation rate="2">
+				<animation_item x="52" y="158" />
+				<animation_item x="103" y="158" />
+				<animation_item x="154" y="158" />
+				<animation_item x="205" y="158" />
+				<animation_item x="256" y="158" />
+				<animation_item x="307" y="158" />
+			</animation>
+		</normal>
+		<mega x="1" y="205">
+			<animation rate="2">
+				<animation_item x="52" y="205" />
+				<animation_item x="103" y="205" />
+				<animation_item x="154" y="205" />
+				<animation_item x="205" y="205" />
+				<animation_item x="256" y="205" />
+				<animation_item x="307" y="205" />
+			</animation>
+		</mega>
+
+
+<!-- 		<presumption x="358" y="1" transparency="200" /> -->
+
+		<presumption x="358" y="1" transparency="20">
+			<animation rate="20">
+				<animation_item x="358" y="52" />
+				<animation_item x="358" y="103" />
+			</animation>
+		</presumption>
+
+	</bombs>
+	<!-- obrazky zobrazovacich panelu jednotlivych bombicu -->
+	<!-- rozmery a souradnice v pixelech -->
+	<panels height="68" width="163">
+		<player0 x="1" y="358" />
+		<player1 x="1" y="289" />
+		<player2 x="165" y="358" />
+		<player3 x="165" y="289" />
+	</panels>
+	<!-- zmenseniny bonusu zobrazujici se v panelu hry -->
+	<bonuses height="24" width="24">
+		<megabomb x="1" y="427" draw_x="62" draw_y="21" />
+		<shield x="26" y="427"  draw_x="112" draw_y="1" />
+		<illness x="51" y="427" draw_x="112" draw_y="42" />
+		<timer x="76" y="427" draw_x="62" draw_y="42" />
+		<slider x="101" y="427" draw_x="2" draw_y="43" />
+		<kicker x="126" y="427" draw_x="38" draw_y="43" />
+		<fireman x="151" y="427" draw_x="112" draw_y="21" />
+	</bonuses>
+</gametools>

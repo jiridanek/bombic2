@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<floorobject name="floor_deadbody" src="img/mapa0.bmp" >
-
-	<img	x="409" y="354" height="1" width="2" />
-
-</floorobject>

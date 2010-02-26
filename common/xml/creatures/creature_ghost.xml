@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<creature name="creature_ghost" src="creature_ghost.bmp" _shadow_src="creature_ghost_s.bmp"
+		height="72" width="50" speed="5" lives="1" intelligence="9" >
+
+	<up x="0" y="144" shadow_x="0" shadow_y="144" transparency="180">
+		<animation rate="4" >
+			<animation_item x="52" y="144" shadow_x="52" shadow_y="144" />
+			<animation_item x="103" y="144" shadow_x="103" shadow_y="144" />
+			<animation_item x="154" y="144" shadow_x="154" shadow_y="144" />
+			<animation_item x="205" y="144" shadow_x="205" shadow_y="144" />
+		</animation>
+	</up>
+	<left x="0" y="0" shadow_x="0" shadow_y="0" transparency="180">
+		<animation rate="4" >
+			<animation_item x="52" y="0" shadow_x="52" shadow_y="0" />
+			<animation_item x="103" y="0" shadow_x="103" shadow_y="0" />
+			<animation_item x="154" y="0" shadow_x="154" shadow_y="0" />
+			<animation_item x="205" y="0" shadow_x="205" shadow_y="0" />
+		</animation>
+	</left>
+	<down x="0" y="216" shadow_x="0" shadow_y="216" transparency="180">
+		<animation rate="4" >
+			<animation_item x="52" y="216" shadow_x="52" shadow_y="216" />
+			<animation_item x="103" y="216" shadow_x="103" shadow_y="216" />
+			<animation_item x="154" y="216" shadow_x="154" shadow_y="216" />
+			<animation_item x="205" y="216" shadow_x="205" shadow_y="216" />
+		</animation>
+	</down>
+	<right x="0" y="72" shadow_x="0" shadow_y="72" transparency="180">
+		<animation rate="4" >
+			<animation_item x="52" y="72" shadow_x="52" shadow_y="72" />
+			<animation_item x="103" y="72" shadow_x="103" shadow_y="72" />
+			<animation_item x="154" y="72" shadow_x="154" shadow_y="72" />
+			<animation_item x="205" y="72" shadow_x="205" shadow_y="72" />
+		</animation>
+	</right>
+	<burned x="0" y="288" transparency="180">
+		<animation rate="4" >
+			<animation_item x="52" y="288" />
+			<animation_item x="103" y="288" />
+			<animation_item x="154" y="288" />
+			<animation_item x="205" y="288" />
+		</animation>
+	</burned>
+</creature>

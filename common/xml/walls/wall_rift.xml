@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<wall 	name="wall_rift" src="map_concrete.bmp">
+	<img x="103" y="102" height="2" />
+</wall>

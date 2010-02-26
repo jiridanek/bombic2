@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<creature name="player2" src="player2.bmp" shadow_src="player_s.bmp"
+		height="70"	width="50" speed="10">
+	<!-- specifikace smeru -->
+	<up x="1" y="143" shadow_x="1" shadow_y="143" >
+		<animation rate="10" >
+			<animation_item x="52" y="143" shadow_x="52" shadow_y="143" />
+			<animation_item x="103" y="143" shadow_x="103" shadow_y="143" />
+			<animation_item x="154" y="143" shadow_x="154" shadow_y="143" />
+			<animation_item x="205" y="143" shadow_x="205" shadow_y="143" />
+			<animation_item x="256" y="143" shadow_x="256" shadow_y="143" />
+			<animation_item x="307" y="143" shadow_x="307" shadow_y="143" />
+			<animation_item x="358" y="143" shadow_x="358" shadow_y="143" />
+<!-- 			<animation_item x="409" y="143" shadow_x="409" shadow_y="143" /> -->
+		</animation>
+	</up>
+	<left x="1" y="0" shadow_x="1" shadow_y="0">
+		<animation rate="10" >
+			<animation_item x="52" y="0" shadow_x="52" shadow_y="0" />
+			<animation_item x="103" y="0" shadow_x="103" shadow_y="0" />
+			<animation_item x="154" y="0" shadow_x="154" shadow_y="0" />
+			<animation_item x="205" y="0" shadow_x="205" shadow_y="0" />
+			<animation_item x="256" y="0" shadow_x="256" shadow_y="0" />
+			<animation_item x="307" y="0" shadow_x="307" shadow_y="0" />
+			<animation_item x="358" y="0" shadow_x="358" shadow_y="0" />
+<!-- 			<animation_item x="409" y="0" shadow_x="409" shadow_y="0" /> -->
+		</animation>
+	</left>
+	<down x="1" y="214" shadow_x="1" shadow_y="214">
+		<animation rate="10" >
+			<animation_item x="52" y="214" shadow_x="52" shadow_y="214" />
+			<animation_item x="103" y="214" shadow_x="103" shadow_y="214" />
+			<animation_item x="154" y="214" shadow_x="154" shadow_y="214" />
+			<animation_item x="205" y="214" shadow_x="205" shadow_y="214" />
+			<animation_item x="256" y="214" shadow_x="256" shadow_y="214" />
+			<animation_item x="307" y="214" shadow_x="307" shadow_y="214" />
+			<animation_item x="358" y="214" shadow_x="358" shadow_y="214" />
+<!-- 			<animation_item x="409" y="214" shadow_x="409" shadow_y="214" /> -->
+		</animation>
+	</down>
+	<right x="1" y="72" shadow_x="1" shadow_y="72">
+		<animation rate="10" >
+			<animation_item x="52" y="72" shadow_x="52" shadow_y="72" />
+			<animation_item x="103" y="72" shadow_x="103" shadow_y="72" />
+			<animation_item x="154" y="72" shadow_x="154" shadow_y="72" />
+			<animation_item x="205" y="72" shadow_x="205" shadow_y="72" />
+			<animation_item x="256" y="72" shadow_x="256" shadow_y="72" />
+			<animation_item x="307" y="72" shadow_x="307" shadow_y="72" />
+			<animation_item x="358" y="72" shadow_x="358" shadow_y="72" />
+<!-- 			<animation_item x="409" y="72" shadow_x="409" shadow_y="72" /> -->
+		</animation>
+	</right>
+	<!-- specifikace umirani -->
+	<burned x="1" y="285">
+		<animation rate="10" >
+			<animation_item x="52" y="285" />
+			<animation_item x="103" y="285" />
+			<animation_item x="154" y="285" />
+			<animation_item x="205" y="285" />
+			<animation_item x="256" y="285" />
+			<animation_item x="307" y="285" />
+			<animation_item x="358" y="285" />
+			<animation_item x="409" y="285" />
+		</animation>
+	</burned>
+</creature>

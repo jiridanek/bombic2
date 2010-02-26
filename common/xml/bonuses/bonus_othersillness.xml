@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<bonus name="bonus_othersillness" src="bonuses.bmp">
+	<img x="205" y="52" />
+</bonus>

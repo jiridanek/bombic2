@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<wall 	name="wall_block_c" src="img/map_concrete.bmp">
-	<img x="103" y="304" toplapping="1" />
-</wall>
