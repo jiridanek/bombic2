@@ -6,6 +6,8 @@
 #include <QWidget>
 #include <QTabWidget>
 #include <QSignalMapper>
+#include <QList>
+#include <QPixmap>
 
 class MapObjectPalette: public QWidget {
 
@@ -18,7 +20,7 @@ public slots:
 	void loadObject();
 
 private slots:
-	void objectButtonToggled(QWidget * buttonWidget);
+	void objectButtonToggled(int objectPaletteIndex);
 
 private:
 	enum Pages {
@@ -29,7 +31,9 @@ private:
 		const QString & tabLabel);
 
 	QTabWidget * tabs_;
+	QList<QWidget *> tabsWidgets_;
 	QSignalMapper * signalMapper_;
+	QList<QPixmap> objectPalette_;
 };
 
 

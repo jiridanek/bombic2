@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
 	MapView * mapView = new MapView(win);
 	layout->addWidget(mapView->getViewport(), 0, 0);
 
+
 	MapObjectPalette * palette = new MapObjectPalette(win);
 	layout->addWidget(palette, 0, 1);
 
