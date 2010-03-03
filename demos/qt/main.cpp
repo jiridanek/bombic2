@@ -12,12 +12,11 @@ int main(int argc, char *argv[]) {
 	QWidget * win = new QWidget;
 	QGridLayout * layout = new QGridLayout(win);
 
-	MapView * mapView = new MapView(win);
-	layout->addWidget(mapView->getViewport(), 0, 0);
-
-
 	MapObjectPalette * palette = new MapObjectPalette(win);
 	layout->addWidget(palette, 0, 1);
+
+	MapView * mapView = new MapView(win, palette);
+	layout->addWidget(mapView->getViewport(), 0, 0);
 
 	win->show();
 

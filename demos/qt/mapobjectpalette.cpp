@@ -3,13 +3,15 @@
 #include <QVBoxLayout>
 #include <QIcon>
 #include <QScrollArea>
+#include <QBitmap>
 
 #include "mapobjectpalette.h"
 
 #define MAP_OBJECT_PALETTE_MIN_WIDTH 270
 
 MapObjectPalette::MapObjectPalette(QWidget * parent):
-		QWidget(parent) {
+		QWidget(parent),
+		selectedObjectIndex_(MAP_OBJECT_PALETTE_INDEX_INVALID) {
 
 	QVBoxLayout * layout = new QVBoxLayout(this);
 
@@ -27,7 +29,7 @@ MapObjectPalette::MapObjectPalette(QWidget * parent):
 
 	signalMapper_ = new QSignalMapper(this);
 	connect(signalMapper_, SIGNAL(mapped(int)),
-		this, SLOT(objectButtonToggled(int)));
+		this, SLOT(objectButtonClicked(int)));
 }
 
 void MapObjectPalette::addPage(MapObjectPalette::Pages pageIndex,
@@ -62,6 +64,11 @@ void MapObjectPalette::loadObject() {
 	// TODO make this better using filechooser and xml parsing
 	QPixmap sourcePixmap("../../common/img/maps/mapa0.bmp");
 	QPixmap objectPixmap = sourcePixmap.copy(460, 1, 50, 100);
+
+	objectPixmap.setMask(
+		objectPixmap.createMaskFromColor(Qt::magenta));
+
+
 	int objectPaletteIndex = objectPalette_.size();
 	objectPalette_.append(objectPixmap);
 
@@ -85,16 +92,41 @@ void MapObjectPalette::loadObject() {
 
 #include <iostream>
 
-void MapObjectPalette::objectButtonToggled(int objectPaletteIndex) {
+void MapObjectPalette::objectButtonClicked(int objectPaletteIndex) {
 	QPushButton * buttonWidget = static_cast<QPushButton *>(
 		signalMapper_->mapping(objectPaletteIndex) );
-	std::cout << objectPaletteIndex << ": " << buttonWidget->isChecked() << std::endl;
 
+	if(buttonWidget->isChecked()) {
+		selectObject(objectPaletteIndex);
+	} else {
+		unselectObject();
+	}
 }
 
 
+void MapObjectPalette::selectObject(int objectIndex) {
+	// make sure there isn't some selected
+	unselectObject();
+	selectedObjectIndex_ = objectIndex;
+}
 
+void MapObjectPalette::unselectObject() {
+	if(hasSelectedObject()) {
+		// is valid - unselect it
+		QPushButton * buttonWidget = static_cast<QPushButton *>(
+			signalMapper_->mapping(selectedObjectIndex_) );
+		buttonWidget->setChecked(false);
 
+		selectedObjectIndex_ = MAP_OBJECT_PALETTE_INDEX_INVALID;
+	}
+}
+
+bool MapObjectPalette::hasSelectedObject() {
+	return MAP_OBJECT_PALETTE_INDEX_IS_VALID(selectedObjectIndex_);
+}
+const QPixmap & MapObjectPalette::getSelectedObject() {
+	return objectPalette_[selectedObjectIndex_];
+}
 
 
 
