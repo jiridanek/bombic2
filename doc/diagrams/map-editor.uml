@@ -1,0 +1,1167 @@
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<uml version="6">
+  <argo version="6">
+    <documentation>
+      <authorname>Karel Fišer</authorname>
+      <authoremail>Karl.von.Bahnhof@centrum.cz</authoremail>
+      <version>0.28.1</version>
+      <description>
+        Bombič map editor je intuitivní editor map, pomocí kterého lze z předpřipravených objektů poskládat různorodé mapy.
+      </description>
+    </documentation>
+    <settings>
+      <notationlanguage>UML 1.4</notationlanguage>
+      <showboldnames>false</showboldnames>
+      <useguillemots>false</useguillemots>
+      <showassociationnames>true</showassociationnames>
+      <showvisibility>false</showvisibility>
+      <showmultiplicity>false</showmultiplicity>
+      <showinitialvalue>false</showinitialvalue>
+      <showproperties>false</showproperties>
+      <showtypes>true</showtypes>
+      <showstereotypes>false</showstereotypes>
+      <showsingularmultiplicities>true</showsingularmultiplicities>
+      <defaultshadowwidth>1</defaultshadowwidth>
+      <hidebidirectionalarrows>true</hidebidirectionalarrows>    
+      <fontname>Dialog</fontname>
+      <fontsize>12</fontsize>
+      <defaultstereotypeview>0</defaultstereotypeview>
+      <activediagram>Class Diagram</activediagram>
+    </settings>
+    <searchpath href="PROJECT_DIR" />
+    <members>
+      <member type="profile"
+              name="map-editor_profile.profile" />
+      <member type="xmi"
+              name="map-editor.xmi" />
+      <member type="pgml"
+              name="map-editor_ClassDiagram.pgml"
+              diagramclass="org.argouml.uml.diagram.static_structure.ui.UMLClassDiagram"
+              diagramname="Class Diagram" />
+      <member type="pgml"
+              name="map-editor_UseCaseDiagram.pgml"
+              diagramclass="org.argouml.uml.diagram.use_case.ui.UMLUseCaseDiagram"
+              diagramname="Use Case Diagram" />
+      <member type="pgml"
+              name="map-editor_CollaborationDiagram.pgml"
+              diagramclass="org.argouml.uml.diagram.collaboration.ui.UMLCollaborationDiagram"
+              diagramname="Collaboration Diagram" />
+      <member type="todo"
+              name="map-editor.todo" />
+    </members>
+    <historyfile name="" />
+  </argo>
+<profile>
+		<plugin>
+			UML 1.4
+		</plugin>
+		<plugin>
+			CodeGeneration
+		</plugin>
+		<plugin>
+			GoodPractices
+		</plugin>
+		<plugin>
+			C++
+		</plugin>
+		<userDefined>
+			<filename>QtUmlProfile.xmi</filename>
+			<model>
+			</model>
+		</userDefined>
+</profile>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Sat Mar 06 20:05:52 CET 2010'>
+  <XMI.header>    <XMI.documentation>
+      <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
+      <XMI.exporterVersion>0.28.1(6) revised on $Date: 2007-05-12 08:08:08 +0200 (Sat, 12 May 2007) $ </XMI.exporterVersion>
+    </XMI.documentation>
+    <XMI.metamodel xmi.name="UML" xmi.version="1.4"/></XMI.header>
+  <XMI.content>
+    <UML:Model xmi.id = '127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000B36'
+      name = 'Bombic map editor' visibility = 'public' isSpecification = 'false'
+      isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+      <UML:Namespace.ownedElement>
+        <UML:Collaboration xmi.id = '127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CDE'
+          name = 'Collaboration of parts in Bombic map editor' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
+          <UML:Namespace.ownedElement>
+            <UML:ClassifierRole xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EA'
+              name = 'Editovaná mapa' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:ClassifierRole.multiplicity>
+                <UML:Multiplicity xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EC'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EB'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:ClassifierRole.multiplicity>
+              <UML:ClassifierRole.base>
+                <UML:Class xmi.idref = '127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CE7'/>
+              </UML:ClassifierRole.base>
+              <UML:ClassifierRole.availableFeature>
+                <UML:Attribute xmi.idref = '127-0-0-2--6d2af4ac:12733384633:-8000:0000000000000EDE'/>
+              </UML:ClassifierRole.availableFeature>
+            </UML:ClassifierRole>
+          </UML:Namespace.ownedElement>
+        </UML:Collaboration>
+        <UML:Class xmi.id = '127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CE7'
+          name = 'MapView' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:Classifier.feature>
+            <UML:Attribute xmi.id = '127-0-0-2--6d2af4ac:12733384633:-8000:0000000000000EDE'
+              name = 'viewport_' visibility = 'private' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '127-0-0-2--6d2af4ac:12733384633:-8000:0000000000000EDF'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '127-0-0-2--6d2af4ac:12733384633:-8000:0000000000000EE0'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType href = 'http://argouml.org/user-profiles/QtUmlProfile.xmi#860929-.:0000000000000124'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+            <UML:Attribute xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156D'
+              name = 'map_' visibility = 'private' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156E'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156F'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:Class xmi.idref = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156C'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:Class xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:0000000000001304'
+          name = 'MapObjectPalette' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:Classifier.feature>
+            <UML:Attribute xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:000000000000130C'
+              name = 'objectPalette_' visibility = 'private' isSpecification = 'false'
+              ownerScope = 'instance' changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:000000000000130D'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:000000000000130E'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType href = 'http://argouml.org/user-profiles/QtUmlProfile.xmi#860929-.:0000000000486'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+            <UML:Attribute xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001563'
+              name = 'selectedObjectIndex_' visibility = 'private' isSpecification = 'false'
+              ownerScope = 'instance' changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001564'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001565'
+                      lower = '1' upper = '1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:DataType href = 'http://argouml-cpp.tigris.org/profile/CppUmlProfile.xmi#.:0000000000000873'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:Class xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001566'
+          name = 'ResourceHandler' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:Classifier.feature>
+            <UML:Operation xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156A'
+              name = 'loadMapObject' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156B'
+                  name = 'return' isSpecification = 'false' kind = 'return'>
+                  <UML:Parameter.type>
+                    <UML:Class xmi.idref = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001570'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000157F'
+              name = 'loadMap' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001580'
+                  name = 'return' isSpecification = 'false' kind = 'return'>
+                  <UML:Parameter.type>
+                    <UML:Class xmi.idref = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156C'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+                <UML:Parameter xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001581'
+                  name = 'filename' isSpecification = 'false' kind = 'in'>
+                  <UML:Parameter.type>
+                    <UML:DataType href = 'http://argouml.org/user-profiles/QtUmlProfile.xmi#860929-.:0000000000555'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+            <UML:Operation xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001582'
+              name = 'loadMap' visibility = 'public' isSpecification = 'false' ownerScope = 'instance'
+              isQuery = 'false' concurrency = 'sequential' isRoot = 'false' isLeaf = 'false'
+              isAbstract = 'false'>
+              <UML:BehavioralFeature.parameter>
+                <UML:Parameter xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001583'
+                  name = 'return' isSpecification = 'false' kind = 'return'>
+                  <UML:Parameter.type>
+                    <UML:Class xmi.idref = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156C'/>
+                  </UML:Parameter.type>
+                </UML:Parameter>
+              </UML:BehavioralFeature.parameter>
+            </UML:Operation>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:Class xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156C'
+          name = 'BombicMap' visibility = 'public' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
+          <UML:Classifier.feature>
+            <UML:Attribute xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001571'
+              name = 'mapObjects_' visibility = 'private' isSpecification = 'false' ownerScope = 'instance'
+              changeability = 'changeable' targetScope = 'instance'>
+              <UML:StructuralFeature.multiplicity>
+                <UML:Multiplicity xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001577'>
+                  <UML:Multiplicity.range>
+                    <UML:MultiplicityRange xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001576'
+                      lower = '0' upper = '-1'/>
+                  </UML:Multiplicity.range>
+                </UML:Multiplicity>
+              </UML:StructuralFeature.multiplicity>
+              <UML:StructuralFeature.type>
+                <UML:Class xmi.idref = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001570'/>
+              </UML:StructuralFeature.type>
+            </UML:Attribute>
+          </UML:Classifier.feature>
+        </UML:Class>
+        <UML:Class xmi.id = '127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001570'
+          name = 'BombicMapObject' visibility = 'public' isSpecification = 'false'
+          isRoot = 'false' isLeaf = 'false' isAbstract = 'false' isActive = 'false'/>
+      </UML:Namespace.ownedElement>
+    </UML:Model>
+    <UML:ClassifierRole xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012ED'
+      isSpecification = 'false' isRoot = 'false' isLeaf = 'false' isAbstract = 'false'/>
+  </XMI.content>
+</XMI>
+<pgml description="org.argouml.uml.diagram.static_structure.ui.UMLClassDiagram|127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000B36"
+      name="Class Diagram"
+>
+  <group name="Fig0"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[328, 280, 183, 85]pathVisible=false;stereotypeView=0;operationsVisible=true;attributesVisible=true;"
+       href="127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CE7"
+       fill="1"
+       fillcolor="white"
+       stroke="1"
+       strokecolor="black"
+  >
+    <private>
+    </private>
+    
+    <rectangle name="Fig0.0"
+      x="328"
+      y="280"
+      width="183"
+      height="85"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+    />
+    <group name="Fig0.1"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[328, 280, 183, 0]"
+         href="127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CE7"
+         fill="1"
+         fillcolor="white"
+         stroke="1"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig0.1.0"
+        x="328"
+        y="280"
+        width="183"
+        height="0"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      />
+    </group>
+    <text name="Fig0.2"
+      x="328"
+      y="280"
+      width="183"
+      height="21"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+      textcolor="black"
+      font="Dialog"
+      italic="false"
+      bold="false"
+      textsize="12"
+      justification="Center"
+    >MapView</text>
+    <group name="Fig0.3"
+         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[328, 339, 183, 25]"
+         href="127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CE7"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig0.3.0"
+        x="328"
+        y="339"
+        width="183"
+        height="25"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig0.3.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="328"
+                y="339" />
+        <lineto x="510"
+                y="339" />
+      </path>
+    </group>
+    <group name="Fig0.4"
+         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[328, 301, 183, 38]"
+         href="127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CE7"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig0.4.0"
+        x="328"
+        y="301"
+        width="183"
+        height="38"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig0.4.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="328"
+                y="301" />
+        <lineto x="510"
+                y="301" />
+      </path>
+      <text name="Fig0.4.2"
+        x="328"
+        y="302"
+        width="168"
+        height="14"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Dialog"
+        italic="false"
+        bold="false"
+        textsize="12"
+        justification="Left"
+      >viewport_ : QGraphicsView</text>
+      <text name="Fig0.4.3"
+        x="328"
+        y="316"
+        width="122"
+        height="23"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Dialog"
+        italic="false"
+        bold="false"
+        textsize="12"
+        justification="Left"
+      >map_ : BombicMap</text>
+    </group>
+    <rectangle name="Fig0.5"
+      x="328"
+      y="280"
+      width="183"
+      height="85"
+      fill="0"
+      fillcolor="white"
+      stroke="1"
+      strokecolor="black"
+    />
+  </group>
+  <group name="Fig1"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[608, 280, 262, 83]pathVisible=false;stereotypeView=0;operationsVisible=true;attributesVisible=true;"
+       href="127-0-0-2--7a4da191:127339c01ac:-8000:0000000000001304"
+       fill="1"
+       fillcolor="white"
+       stroke="1"
+       strokecolor="black"
+  >
+    <private>
+    </private>
+    
+    <rectangle name="Fig1.0"
+      x="608"
+      y="280"
+      width="262"
+      height="83"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+    />
+    <group name="Fig1.1"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[608, 280, 262, 0]"
+         href="127-0-0-2--7a4da191:127339c01ac:-8000:0000000000001304"
+         fill="1"
+         fillcolor="white"
+         stroke="1"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig1.1.0"
+        x="608"
+        y="280"
+        width="262"
+        height="0"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      />
+    </group>
+    <text name="Fig1.2"
+      x="608"
+      y="280"
+      width="262"
+      height="21"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+      textcolor="black"
+      font="Dialog"
+      italic="false"
+      bold="false"
+      textsize="12"
+      justification="Center"
+    >MapObjectPalette</text>
+    <group name="Fig1.3"
+         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[608, 338, 262, 24]"
+         href="127-0-0-2--7a4da191:127339c01ac:-8000:0000000000001304"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig1.3.0"
+        x="608"
+        y="338"
+        width="262"
+        height="24"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig1.3.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="608"
+                y="338" />
+        <lineto x="869"
+                y="338" />
+      </path>
+    </group>
+    <group name="Fig1.4"
+         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[608, 301, 262, 37]"
+         href="127-0-0-2--7a4da191:127339c01ac:-8000:0000000000001304"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig1.4.0"
+        x="608"
+        y="301"
+        width="262"
+        height="37"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig1.4.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="608"
+                y="301" />
+        <lineto x="869"
+                y="301" />
+      </path>
+      <text name="Fig1.4.2"
+        x="608"
+        y="302"
+        width="262"
+        height="14"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Dialog"
+        italic="false"
+        bold="false"
+        textsize="12"
+        justification="Left"
+      >objectPalette_ : /usr/include/QtCore/QList</text>
+      <text name="Fig1.4.3"
+        x="608"
+        y="316"
+        width="167"
+        height="23"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Dialog"
+        italic="false"
+        bold="false"
+        textsize="12"
+        justification="Left"
+      >selectedObjectIndex_ : int</text>
+    </group>
+    <rectangle name="Fig1.5"
+      x="608"
+      y="280"
+      width="262"
+      height="83"
+      fill="0"
+      fillcolor="white"
+      stroke="1"
+      strokecolor="black"
+    />
+  </group>
+  <group name="Fig2"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[936, 368, 423, 97]pathVisible=false;stereotypeView=0;operationsVisible=true;attributesVisible=true;"
+       href="127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001566"
+       fill="1"
+       fillcolor="white"
+       stroke="1"
+       strokecolor="black"
+  >
+    <private>
+    </private>
+    
+    <rectangle name="Fig2.0"
+      x="936"
+      y="368"
+      width="423"
+      height="97"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="0 255 255"
+    />
+    <group name="Fig2.1"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[936, 368, 423, 0]"
+         href="127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001566"
+         fill="1"
+         fillcolor="white"
+         stroke="1"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig2.1.0"
+        x="936"
+        y="368"
+        width="423"
+        height="0"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      />
+    </group>
+    <text name="Fig2.2"
+      x="936"
+      y="368"
+      width="423"
+      height="21"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+      textcolor="black"
+      font="Dialog"
+      italic="false"
+      bold="false"
+      textsize="12"
+      justification="Center"
+    >ResourceHandler</text>
+    <group name="Fig2.3"
+         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[936, 410, 423, 54]"
+         href="127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001566"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig2.3.0"
+        x="936"
+        y="410"
+        width="423"
+        height="54"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig2.3.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="936"
+                y="410" />
+        <lineto x="1358"
+                y="410" />
+      </path>
+      <text name="Fig2.3.2"
+        x="936"
+        y="411"
+        width="232"
+        height="14"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Dialog"
+        italic="false"
+        bold="false"
+        textsize="12"
+        justification="Left"
+      >loadMapObject() : BombicMapObject</text>
+      <text name="Fig2.3.3"
+        x="936"
+        y="425"
+        width="387"
+        height="17"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Dialog"
+        italic="false"
+        bold="false"
+        textsize="12"
+        justification="Left"
+      >loadMap(filename : /usr/include/QtCore/QString) : BombicMap</text>
+      <text name="Fig2.3.4"
+        x="936"
+        y="439"
+        width="152"
+        height="20"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Dialog"
+        italic="false"
+        bold="false"
+        textsize="12"
+        justification="Left"
+      >loadMap() : BombicMap</text>
+    </group>
+    <group name="Fig2.4"
+         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[936, 389, 423, 21]"
+         href="127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001566"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig2.4.0"
+        x="936"
+        y="389"
+        width="423"
+        height="21"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig2.4.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="936"
+                y="389" />
+        <lineto x="1358"
+                y="389" />
+      </path>
+    </group>
+    <rectangle name="Fig2.5"
+      x="936"
+      y="368"
+      width="423"
+      height="97"
+      fill="0"
+      fillcolor="white"
+      stroke="1"
+      strokecolor="black"
+    />
+  </group>
+  <group name="Fig3"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[16, 112, 209, 69]pathVisible=false;stereotypeView=0;operationsVisible=true;attributesVisible=true;"
+       href="127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156C"
+       fill="1"
+       fillcolor="white"
+       stroke="1"
+       strokecolor="black"
+  >
+    <private>
+    </private>
+    
+    <rectangle name="Fig3.0"
+      x="16"
+      y="112"
+      width="209"
+      height="69"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="0 255 255"
+    />
+    <group name="Fig3.1"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[16, 112, 209, 0]"
+         href="127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156C"
+         fill="1"
+         fillcolor="white"
+         stroke="1"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig3.1.0"
+        x="16"
+        y="112"
+        width="209"
+        height="0"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      />
+    </group>
+    <text name="Fig3.2"
+      x="16"
+      y="112"
+      width="209"
+      height="21"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+      textcolor="black"
+      font="Dialog"
+      italic="false"
+      bold="false"
+      textsize="12"
+      justification="Center"
+    >BombicMap</text>
+    <group name="Fig3.3"
+         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[16, 156, 209, 24]"
+         href="127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156C"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig3.3.0"
+        x="16"
+        y="156"
+        width="209"
+        height="24"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig3.3.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="16"
+                y="156" />
+        <lineto x="224"
+                y="156" />
+      </path>
+    </group>
+    <group name="Fig3.4"
+         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[16, 133, 209, 23]"
+         href="127-0-0-2-4b16097d:127344a1e6e:-8000:000000000000156C"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig3.4.0"
+        x="16"
+        y="133"
+        width="209"
+        height="23"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig3.4.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="16"
+                y="133" />
+        <lineto x="224"
+                y="133" />
+      </path>
+      <text name="Fig3.4.2"
+        x="16"
+        y="134"
+        width="209"
+        height="20"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        textcolor="black"
+        font="Dialog"
+        italic="false"
+        bold="false"
+        textsize="12"
+        justification="Left"
+      >mapObjects_ : BombicMapObject</text>
+    </group>
+    <rectangle name="Fig3.5"
+      x="16"
+      y="112"
+      width="209"
+      height="69"
+      fill="0"
+      fillcolor="white"
+      stroke="1"
+      strokecolor="black"
+    />
+  </group>
+  <group name="Fig4"
+       description="org.argouml.uml.diagram.static_structure.ui.FigClass[16, 16, 119, 67]pathVisible=false;stereotypeView=0;operationsVisible=true;attributesVisible=true;"
+       href="127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001570"
+       fill="1"
+       fillcolor="white"
+       stroke="1"
+       strokecolor="black"
+  >
+    <private>
+    </private>
+    
+    <rectangle name="Fig4.0"
+      x="16"
+      y="16"
+      width="119"
+      height="67"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="0 255 255"
+    />
+    <group name="Fig4.1"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[16, 16, 119, 0]"
+         href="127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001570"
+         fill="1"
+         fillcolor="white"
+         stroke="1"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig4.1.0"
+        x="16"
+        y="16"
+        width="119"
+        height="0"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      />
+    </group>
+    <text name="Fig4.2"
+      x="16"
+      y="16"
+      width="119"
+      height="21"
+      fill="1"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+      textcolor="black"
+      font="Dialog"
+      italic="false"
+      bold="false"
+      textsize="12"
+      justification="Center"
+    >BombicMapObject</text>
+    <group name="Fig4.3"
+         description="org.argouml.uml.diagram.ui.FigOperationsCompartment[16, 58, 119, 24]"
+         href="127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001570"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig4.3.0"
+        x="16"
+        y="58"
+        width="119"
+        height="24"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig4.3.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="16"
+                y="58" />
+        <lineto x="134"
+                y="58" />
+      </path>
+    </group>
+    <group name="Fig4.4"
+         description="org.argouml.uml.diagram.ui.FigAttributesCompartment[16, 37, 119, 21]"
+         href="127-0-0-2-4b16097d:127344a1e6e:-8000:0000000000001570"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig4.4.0"
+        x="16"
+        y="37"
+        width="119"
+        height="21"
+        fill="1"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+      <path name="Fig4.4.1"
+        description="org.argouml.uml.diagram.ui.FigEditableCompartment$FigSeperator"
+        fill="1"
+        fillcolor="white"
+        stroke="1"
+        strokecolor="black"
+      >
+        <moveto x="16"
+                y="37" />
+        <lineto x="134"
+                y="37" />
+      </path>
+    </group>
+    <rectangle name="Fig4.5"
+      x="16"
+      y="16"
+      width="119"
+      height="67"
+      fill="0"
+      fillcolor="white"
+      stroke="1"
+      strokecolor="black"
+    />
+  </group>
+</pgml>
+<pgml description="org.argouml.uml.diagram.use_case.ui.UMLUseCaseDiagram|127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000B36"
+      name="Use Case Diagram"
+>
+</pgml>
+<pgml description="org.argouml.uml.diagram.collaboration.ui.UMLCollaborationDiagram|127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CDE"
+      name="Collaboration Diagram"
+>
+  <group name="Fig0"
+       description="org.argouml.uml.diagram.collaboration.ui.FigClassifierRole[252, 162, 171, 50]pathVisible=false;stereotypeView=0;"
+       href="127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EA"
+       fill="1"
+       fillcolor="white"
+       stroke="1"
+       strokecolor="black"
+  >
+    <private>
+    </private>
+    
+    <rectangle name="Fig0.0"
+      x="252"
+      y="162"
+      width="171"
+      height="50"
+      fill="1"
+      fillcolor="0 255 255"
+      stroke="1"
+      strokecolor="0 255 255"
+    />
+    <rectangle name="Fig0.1"
+      x="252"
+      y="162"
+      width="171"
+      height="50"
+      fill="1"
+      fillcolor="white"
+      stroke="1"
+      strokecolor="black"
+    />
+    <group name="Fig0.2"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[252, 162, 90, 18]"
+         href="127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EA"
+         fill="0"
+         fillcolor="0 255 255"
+         stroke="0"
+         strokecolor="black"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig0.2.0"
+        x="252"
+        y="162"
+        width="90"
+        height="18"
+        fill="0"
+        fillcolor="0 255 255"
+        stroke="0"
+        strokecolor="black"
+      />
+    </group>
+    <text name="Fig0.3"
+      x="252"
+      y="176"
+      width="171"
+      height="21"
+      fill="0"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+      textcolor="black"
+      font="Dialog"
+      italic="false"
+      bold="false"
+      textsize="12"
+      justification="Center"
+    >/Editovaná mapa:MapView</text>
+  </group>
+</pgml>
+<todo>
+<todolist>
+</todolist>
+<resolvedcritics>
+</resolvedcritics>
+</todo>
+</uml>

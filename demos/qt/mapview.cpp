@@ -23,7 +23,11 @@ void MapView::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) {
 		} else {
 			itemToBeAdded_->setPixmap(palette_->getSelectedObject());
 		}
-		itemToBeAdded_->setPos(mouseEvent->scenePos());
+		itemToBeAdded_->setOffset(0, -50); // it is the toplapping
+		QPoint eventPoint = mouseEvent->scenePos().toPoint();
+		// set position to rounded point
+		itemToBeAdded_->setPos( ( (eventPoint - QPoint(25, 25) )/50)*50 );
+		itemToBeAdded_->setZValue(itemToBeAdded_->y());
 	}
 }
 
@@ -33,8 +37,12 @@ void MapView::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) {
 	}
 
 	if(palette_->hasSelectedObject()) {
-		QGraphicsPixmapItem * item =
-			addPixmap(palette_->getSelectedObject());
-		item->setPos(mouseEvent->scenePos());
+		// copy the item
+		QGraphicsPixmapItem * newItem = new QGraphicsPixmapItem;
+		newItem->setPixmap(itemToBeAdded_->pixmap());
+		newItem->setOffset(itemToBeAdded_->offset());
+		newItem->setPos(itemToBeAdded_->pos());
+		newItem->setZValue(itemToBeAdded_->zValue());
+		addItem(newItem);
 	}
 }
