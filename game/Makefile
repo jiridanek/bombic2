@@ -1,6 +1,6 @@
 #OPTIMATION=-O3
 LIBS=`agar-config --libs` $(OPTIMATION) -lSDL_ttf -lSDL_image
-CFLAGS= `agar-config --cflags ` $(OPTIMATION) -Wall -I./libs/tinyxml -I./src
+CFLAGS= `agar-config --cflags ` $(OPTIMATION) -Wall -I./libs/tinyxml -I./src -I../common/src
 CC= ccache g++
 #CC= g++
 
@@ -23,7 +23,7 @@ src/%.o: src/%.cpp $(HEADERFILES) $(LIBS_HEADERFILES)
 libs/%.o: libs/%.cpp $(LIBS_HEADERFILES)
 	$(CC) -c $< $(CFLAGS) -o $@
 
-.PHONY: clean distclean docs
+.PHONY: clean distclean
 
 clean:
 	rm -f $(TARGET) $(OBJECTFILES)
@@ -31,5 +31,3 @@ clean:
 distclean: clean
 	rm -f $(LIBS_OBJECTFILES)
 
-docs:
-	doxygen

@@ -4,19 +4,29 @@
 
 default: game
 
+MAKE_IN=make -C
+QT_PROJECT=qmake -project
+QT_MAKEFILE=qmake -makefile
+CD=cd
+DOXYGEN=doxygen
+
 # Phony targets
 .PHONY: default game map-editor clean distclean docs
 
 # Build game
 game:
-	$(MAKE) -C game
+	$(MAKE_IN) game
 
 # Build map-editor
-map-editor:
-	$(MAKE) -C map-editor
+map-editor: map-editor/Makefile
+	$(MAKE_IN) map-editor
+map-editor/Makefile:
+	$(CD) map-editor && $(QT_PROJECT) && $(QT_MAKEFILE)
 
 # Common remote targets
-clean distclean docs:
-	$(MAKE) -C game $@
-	$(MAKE) -C map-editor $@
-	
+clean distclean: map-editor/Makefile
+	$(MAKE_IN) game $@
+	$(MAKE_IN) map-editor $@
+docs:
+	$(CD) game && $(DOXYGEN)
+	$(CD) map-editor && $(DOXYGEN)
