@@ -12,6 +12,7 @@
 #include <string>
 #include <helpers/sdl.h>
 #include <constants.h>
+#include <singleton.h>
 #include "base.h"
 #include "tools.h"
 #include "shaker.h"
@@ -23,7 +24,7 @@
 #define GAME_PLAYER_VIEW_MAX_HEIGHT Uint16(12)
 
 
-#define GAME Game::get_instance()
+#define GAME SINGLETON_SHORTCUT(Game)
 
 /** Konkrétní hra.
  * Instance třídy Game obstarává jednu konkrétní hru.
@@ -38,10 +39,10 @@
  * @see GameIntro, DeathmatchIntro, GameBase.
  */
 class Game {
-	public:
-		/// Získat pointer na jedinou instanci třídy.
-		static Game* get_instance();
 
+	SINGLETON_DEFINITION(Game)
+
+	public:
 		/// Inicializace hry.
 		Game(const GameBase & base, GameTools * gameTools,
 				bool deathmatch=false, bool bombsatend=false);
@@ -132,8 +133,6 @@ class Game {
 		/// Pointer pro nadstavbové věci pro hru.
 		GameTools * tools;
 	private:
-		/// Pointer na jedinou instanci třídy.
-		static Game* myself_ptr_;
 		/// Seznam statických objektů mapy.
 		staticMOs_t staticMOs_;
 		/// Seznam dynamických objektů mapy.

@@ -27,13 +27,7 @@
 using namespace std;
 
 /*************** class Game ******************************/
-Game* Game::myself_ptr_ = 0;
-
-Game* Game::get_instance(){
-	if(!myself_ptr_)
-		throw string("in Game::get_instance(): no Game instance created.");
-	return myself_ptr_;
-}
+SINGLETON_INIT(Game);
 
 
 /**
@@ -45,16 +39,15 @@ Game::Game(const GameBase & base, GameTools * gameTools,
 			tools(gameTools), remaining_creatures_(0),
 			remaining_periods_(500),
 			deathmatch_(deathmatch), bombsatend_(bombsatend) {
-	if(myself_ptr_)
-		throw string("in Game constructor: another Game instance created.");
-	myself_ptr_ = this;
+
+	SINGLETON_CONSTRUCT;
 	// zkusit nahrat umistene a vygenerovat ostatni objekty
 	try{
 		load_placed_MOs_(base.base_array_);
 		load_generated_MOs_(base);
 	}
 	catch(...){
-		myself_ptr_ = 0;
+		SINGLETON_DESTROY;
 		throw;
 	}
 }
@@ -79,7 +72,7 @@ Game::~Game(){
 		delete (*it);
 	}
 
-	myself_ptr_ = 0;
+	SINGLETON_DESTROY;
 }
 
 /** @details
