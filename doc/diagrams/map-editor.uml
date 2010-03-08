@@ -38,14 +38,6 @@
               name="map-editor_ClassDiagram.pgml"
               diagramclass="org.argouml.uml.diagram.static_structure.ui.UMLClassDiagram"
               diagramname="Class Diagram" />
-      <member type="pgml"
-              name="map-editor_UseCaseDiagram.pgml"
-              diagramclass="org.argouml.uml.diagram.use_case.ui.UMLUseCaseDiagram"
-              diagramname="Use Case Diagram" />
-      <member type="pgml"
-              name="map-editor_CollaborationDiagram.pgml"
-              diagramclass="org.argouml.uml.diagram.collaboration.ui.UMLCollaborationDiagram"
-              diagramname="Collaboration Diagram" />
       <member type="todo"
               name="map-editor.todo" />
     </members>
@@ -70,7 +62,7 @@
 			</model>
 		</userDefined>
 </profile>
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Sun Mar 07 13:08:11 CET 2010'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Mon Mar 08 09:22:20 CET 2010'>
   <XMI.header>    <XMI.documentation>
       <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
       <XMI.exporterVersion>0.28.1(6) revised on $Date: 2007-05-12 08:08:08 +0200 (Sat, 12 May 2007) $ </XMI.exporterVersion>
@@ -81,30 +73,6 @@
       name = 'Bombic map editor' visibility = 'public' isSpecification = 'false'
       isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
       <UML:Namespace.ownedElement>
-        <UML:Collaboration xmi.id = '127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CDE'
-          name = 'Collaboration of parts in Bombic map editor' isSpecification = 'false'
-          isRoot = 'false' isLeaf = 'false' isAbstract = 'false'>
-          <UML:Namespace.ownedElement>
-            <UML:ClassifierRole xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EA'
-              name = 'Editovaná mapa' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
-              isAbstract = 'false'>
-              <UML:ClassifierRole.multiplicity>
-                <UML:Multiplicity xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EC'>
-                  <UML:Multiplicity.range>
-                    <UML:MultiplicityRange xmi.id = '127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EB'
-                      lower = '1' upper = '1'/>
-                  </UML:Multiplicity.range>
-                </UML:Multiplicity>
-              </UML:ClassifierRole.multiplicity>
-              <UML:ClassifierRole.base>
-                <UML:Class xmi.idref = '127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CE7'/>
-              </UML:ClassifierRole.base>
-              <UML:ClassifierRole.availableFeature>
-                <UML:Attribute xmi.idref = '127-0-0-2--6d2af4ac:12733384633:-8000:0000000000000EDE'/>
-              </UML:ClassifierRole.availableFeature>
-            </UML:ClassifierRole>
-          </UML:Namespace.ownedElement>
-        </UML:Collaboration>
         <UML:Class xmi.id = '127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CE7'
           name = 'MapView' visibility = 'public' isSpecification = 'false' isRoot = 'false'
           isLeaf = 'false' isAbstract = 'false' isActive = 'false'>
@@ -2247,84 +2215,6 @@
       <lineto x="328"
               y="392" />
     </path>
-  </group>
-</pgml>
-<pgml description="org.argouml.uml.diagram.use_case.ui.UMLUseCaseDiagram|127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000B36"
-      name="Use Case Diagram"
->
-</pgml>
-<pgml description="org.argouml.uml.diagram.collaboration.ui.UMLCollaborationDiagram|127-0-0-2--4fb42c20:12733187ce1:-8000:0000000000000CDE"
-      name="Collaboration Diagram"
->
-  <group name="Fig0"
-       description="org.argouml.uml.diagram.collaboration.ui.FigClassifierRole[252, 162, 171, 50]pathVisible=false;stereotypeView=0;"
-       href="127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EA"
-       fill="1"
-       fillcolor="white"
-       stroke="1"
-       strokecolor="black"
-  >
-    <private>
-    </private>
-    
-    <rectangle name="Fig0.0"
-      x="252"
-      y="162"
-      width="171"
-      height="50"
-      fill="1"
-      fillcolor="0 255 255"
-      stroke="1"
-      strokecolor="0 255 255"
-    />
-    <rectangle name="Fig0.1"
-      x="252"
-      y="162"
-      width="171"
-      height="50"
-      fill="1"
-      fillcolor="white"
-      stroke="1"
-      strokecolor="black"
-    />
-    <group name="Fig0.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[252, 162, 90, 18]"
-         href="127-0-0-2--7a4da191:127339c01ac:-8000:00000000000012EA"
-         fill="0"
-         fillcolor="0 255 255"
-         stroke="0"
-         strokecolor="black"
-    >
-      <private>
-      </private>
-      
-      <rectangle name="Fig0.2.0"
-        x="252"
-        y="162"
-        width="90"
-        height="18"
-        fill="0"
-        fillcolor="0 255 255"
-        stroke="0"
-        strokecolor="black"
-      />
-    </group>
-    <text name="Fig0.3"
-      x="252"
-      y="176"
-      width="171"
-      height="21"
-      fill="0"
-      fillcolor="white"
-      stroke="0"
-      strokecolor="black"
-      textcolor="black"
-      font="Dialog"
-      italic="false"
-      bold="false"
-      textsize="12"
-      justification="Center"
-    >/Editovaná mapa:MapView</text>
   </group>
 </pgml>
 <todo>
