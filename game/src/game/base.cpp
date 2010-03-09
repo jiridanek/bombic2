@@ -176,7 +176,7 @@ void GameBase::load_map_(Uint16 players_count, const std::string & mapname,
 		if(height<=2)
 			throw string("the value of attribute height must be greater than 2.");
 		readAttr(map_el, "width", width);
-		if(height<=2)
+		if(width<=2)
 			throw string("the value of attribute width must be greater than 2.");
 	}
 	catch(const string & s){
