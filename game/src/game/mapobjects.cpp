@@ -61,7 +61,7 @@ void DynamicMO::setFieldInMap(Uint16 old_x, Uint16 old_y){
 	old_x/=CELL_SIZE; old_y/=CELL_SIZE;
 	if(old_x==x && old_y==y) return;
 	// zmena policka
-	Game::get_instance()->change_position(old_x, old_y, x, y, this);
+	GAME->change_position(old_x, old_y, x, y, this);
 }
 
 /**************** isTypeOf *************************/

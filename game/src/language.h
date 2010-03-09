@@ -10,8 +10,9 @@
 #include <string>
 #include <helpers/sdl.h>
 #include <helpers/tixml.h>
+#include <singleton.h>
 
-#define LANG Language::get_instance()
+#define LANG SINGLETON_SHORTCUT(Language)
 
 #define LANG_MENU(menu, item) \
 	LANG->get_translation(3, "menu", menu, item)
@@ -83,10 +84,10 @@
 class Language {
 	friend class Config;
 	friend class MenuOptions;
-	public:
-		/// Získat pointer na jedinou instanci třídy.
-		static Language * get_instance();
 
+	SINGLETON_DEFINITION(Language)
+
+	public:
 		/// Inicializace jazyka ze souboru.
 		Language();
 		/// Destruktor.
@@ -94,8 +95,6 @@ class Language {
 		/// Překlad.
 		const char * get_translation(int depth, ...);
 	private:
-		/// Pointer na jedinou instanci třídy.
-		static Language* myself_ptr_;
 		/// Načte konfiguraci z XML.
 		void set_language_(const std::string & lang);
 		/// XML dokument s jazykem.

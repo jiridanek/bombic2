@@ -23,7 +23,10 @@
 #define GAME_PLAYER_VIEW_MAX_WIDTH Uint16(16)
 #define GAME_PLAYER_VIEW_MAX_HEIGHT Uint16(12)
 
-
+/** Zkratka pro ziskani pointru na singleton.
+ * Makro se expanduje ve volani inline fce, ktera poskytuje pointer
+ * na jedinou instanci tridy Game.
+ */
 #define GAME SINGLETON_SHORTCUT(Game)
 
 /** Konkrétní hra.
@@ -32,7 +35,7 @@
  * Game může vytvořit pouze jedinou instanci, která je typicky držena
  * z GameIntro nebo DeathmatchIntro. Implementuje nástroje,
  * kterými tuto skutečnost hlídá a poskytuje svůj pointer globálně,
- * prostřednictvím fce Game::get_instance().
+ * prostřednictvím makra GAME.
  * Ve svých strukturách uchovává statické i dynamické objekty hry.
  * Stará se o hru samotnou, její spuštění, správné časování a ukončení.
  * Podává informace o typu ukončení hry.

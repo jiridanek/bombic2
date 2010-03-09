@@ -13,6 +13,7 @@
 #include <helpers/tixml.h>
 #include <helpers/sdl.h>
 #include <language.h>
+#include <singleton.h>
 
 /// Akce, které se dají vyvolat klávesami hráče.
 enum KEY_ACTIONS { KEY_UP, KEY_RIGHT, KEY_DOWN, KEY_LEFT, KEY_PLANT, KEY_TIMER };
@@ -40,7 +41,7 @@ class KeyNames {
 #define CONFIG_SPEED_MIN 1
 #define CONFIG_SPEED_MAX 9
 
-#define CONFIG Config::get_instance()
+#define CONFIG SINGLETON_SHORTCUT(Config)
 
 /** Konfigurace hry.
  * Instance třídy Config obstarává konfiguraci hry od jejího naloadování,
@@ -58,9 +59,10 @@ class Config {
 	friend class MenuOptions;
 	friend class MenuOptionsControls;
 	friend class BonusIllnessConfused;
+
+	SINGLETON_DEFINITION(Config)
+
 	public:
-		/// Získat pointer na jedinou instanci třídy.
-		static Config* get_instance();
 
 		/// Inicializace konfigu ze souboru.
 		Config();
@@ -84,8 +86,6 @@ class Config {
 		SDLKey player(Uint16 player_num, KEY_ACTIONS action) const;
 
 	private:
-		/// Pointer na jedinou instanci třídy.
-		static Config* myself_ptr_;
 		/// Typ seznamu hráčů a jejich kláves.
 		typedef std::vector< std::vector< SDLKey > > players_t;
 		/// Seznam kláves hráčů.

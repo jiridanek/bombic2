@@ -6,27 +6,19 @@
 #include <helpers/stl.h>
 #include "language.h"
 
-Language * Language::myself_ptr_ = 0;
-
-Language* Language::get_instance(){
-	if(!myself_ptr_)
-		throw std::string("in Language::get_instance(): no Language instance created.");
-	return myself_ptr_;
-}
+SINGLETON_INIT(Language);
 
 /**
  */
 Language::Language() {
-	if(myself_ptr_)
-		throw std::string("in Language constructor: another Language instance created.");
-	myself_ptr_ = this;
+	SINGLETON_CONSTRUCT;
 }
 
 /** @details
  * Vynuluje myself_pointer_.
  */
 Language::~Language(){
-	myself_ptr_ = 0;
+	SINGLETON_DESTROY;
 }
 
 void Language::set_language_(const std::string & lang){

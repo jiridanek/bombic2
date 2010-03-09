@@ -48,8 +48,7 @@ Uint16 Box::getZ() const {
  * @return Vrací TRUE pokud je již vhodné objekt odstranit.
  */
 bool Box::move(){
-	Game * game = Game::get_instance();
-	bool withFlame = game->field_withObject(
+	bool withFlame = GAME->field_withObject(
 				x_/CELL_SIZE, y_/CELL_SIZE, FLAME);
 	// je v ohni => hori
 	if(withFlame)
@@ -62,7 +61,7 @@ bool Box::move(){
 	if(burning_ && burned_ && !withFlame){
 		// spali policko na kterym byl
 		Background * bg = static_cast<Background *>(
-			game->field_getObject(
+			GAME->field_getObject(
 				x_/CELL_SIZE, y_/CELL_SIZE, BACKGROUND) );
 		if(bg) bg->set_burned();
 		return true;

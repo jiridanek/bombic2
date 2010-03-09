@@ -11,17 +11,7 @@
 using namespace std;
 
 /*************** class Config ******************************/
-Config* Config::myself_ptr_ = 0;
-
-/**
- * @return Pointer na jedinou instanci třídy Config.
- * @throw string Chybová hláška, pokud není zatím vytvořena instance třídy Config.
- */
-Config* Config::get_instance(){
-	if(!myself_ptr_)
-		throw string("in Config::get_instance(): no Config instance created.");
-	return myself_ptr_;
-}
+SINGLETON_INIT(Config);
 
 /** @details
  * Inicializuje klávesy hráčů,
@@ -29,9 +19,7 @@ Config* Config::get_instance(){
  * @throw string Chybová hláška, pokud již je instance třídy Config vytvořena.
  */
 Config::Config() {
-	if(myself_ptr_)
-		throw string("in Config constructor: another Config instance created.");
-	myself_ptr_ = this;
+	SINGLETON_CONSTRUCT;
 	try{
 		// pripravit prostor pro ctyry hrace
 		players_t::value_type empty_keys;
@@ -41,7 +29,7 @@ Config::Config() {
 		load_configuration_();
 	}
 	catch(...){
-		myself_ptr_ = 0;
+		SINGLETON_DESTROY;
 		throw;
 	}
 }
@@ -50,7 +38,7 @@ Config::Config() {
  * Zruší instanci třídy Config.
  */
 Config::~Config(){
-	myself_ptr_ = 0;
+	SINGLETON_DESTROY;
 }
 
 /** @details

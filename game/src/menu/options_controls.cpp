@@ -5,10 +5,6 @@
 #include <config.h>
 #include "options_controls.h"
 
-#ifndef CONFIG
-#define CONFIG Config::get_instance()
-#endif
-
 extern SDL_Surface * g_window;
 extern Fonts * g_font;
 
