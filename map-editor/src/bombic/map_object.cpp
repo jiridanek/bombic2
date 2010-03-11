@@ -1,7 +1,8 @@
 
 #include "map_object.h"
 
-BombicMapObject::BombicMapObject() {
+BombicMapObject::BombicMapObject(const QString & name, const QPixmap & pixmap):
+		name_(name), pixmap_(pixmap) {
 }
 
 BombicMapObject::~BombicMapObject() {

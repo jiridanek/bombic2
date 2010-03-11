@@ -30,12 +30,12 @@ class MapObjectPalette: public QWidget {
 
 
 	private:
-		enum Pages {
+		enum Page {
 			wallPage, boxPage, creaturePage, floorobjectPage
 		};
 
 		void tabsConstruct_();
-		void tabsAddPage_(MapObjectPalette::Pages pageIndex,
+		void tabsAddPage_(MapObjectPalette::Page pageIndex,
 			const QString & tabLabel);
 
 // 		void selectObject(int objectIndex);

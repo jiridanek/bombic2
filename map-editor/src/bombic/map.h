@@ -8,17 +8,24 @@
 #include <QList>
 #include <QLinkedList>
 
+class BombicMapBackground;
 class BombicMapObject;
 
 class BombicMap {
 
 	public:
-		BombicMap();
+		BombicMap(int width, int height,
+				BombicMapBackground * background);
 		~BombicMap();
 
 	private:
 		QString name_;
 		QString filename_;
+
+		int width_;
+		int height_;
+		BombicMapBackground * background_;
+
 		QList< QList< QLinkedList<BombicMapObject *> > > fields_;
 
 

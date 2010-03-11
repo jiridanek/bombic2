@@ -10,10 +10,16 @@
 class BombicMapObject {
 
 	public:
-		BombicMapObject();
+		BombicMapObject(const QString & name, const QPixmap & pixmap);
 		~BombicMapObject();
 
-	private:
+		enum Type {
+			Floorobject, Wall, Box, Creature, Player
+		};
+
+		virtual BombicMapObject::Type type() =0;
+
+	protected:
 		QString name_;
 		QPixmap pixmap_;
 

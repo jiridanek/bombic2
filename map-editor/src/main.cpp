@@ -15,7 +15,6 @@
 #include <QApplication>
 #include <QWidget>
 #include <QGridLayout>
-#include <QGraphicsView>
 
 #include "resource_handler.h"
 #include "map_object_palette.h"
@@ -34,7 +33,7 @@ int main(int argc, char *argv[]) {
 	MapView * mapView = new MapView(win);
 
 	// poskladat prvky gui do layoutu okna
-	layout->addWidget(mapView->getViewport(), 1, 0);
+	layout->addWidget(mapView, 1, 0);
 	layout->addWidget(palette, 1, 1);
 
 	win->show();
