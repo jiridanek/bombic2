@@ -1,7 +1,10 @@
 
+#include <constants.h>
+
 #include "resource_handler.h"
 
 #include "bombic/map.h"
+#include "bombic/map_background.h"
 #include "bombic/map_object.h"
 
 SINGLETON_INIT(ResourceHandler);
@@ -112,7 +115,7 @@ bool ResourceHandler::openXmlByName(const QString & name,
 }
 
 bool ResourceHandler::locateFile(QString & filename) {
-	if(filename.empty()) {
+	if(filename.isEmpty()) {
 		// file cannot have empty name
 		return false;
 	}
@@ -125,7 +128,7 @@ bool ResourceHandler::locateFile(QString & filename) {
 		return QFile::exists(filename);
 	}
 
-	bool located = locateFileInPath(
+	bool located = locateFileInDir(
 		QDir::homePath()+SEARCH_DIR_IN_HOME, filename);
 	if(located) {
 		return true;
@@ -133,7 +136,7 @@ bool ResourceHandler::locateFile(QString & filename) {
 
 	const char * paths[] = SEARCH_PATHS;
 	for( int i=0 ; paths[i] != 0 && !located ; ++i ){
-		located = locateFileInDir(paths[i], filename);
+		located = locateFileInDir(QString(paths[i]), filename);
 	}
 	return located;
 }
