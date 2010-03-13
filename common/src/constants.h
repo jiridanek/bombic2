@@ -12,6 +12,18 @@
 /// Pripona XML souboru.
 #define XML_FILE_EXTENSION ".xml"
 
+#ifndef INSTALL_DIR
+/// Adresar, do ktereho se bude instalovat.
+#define INSTALL_DIR ".."
+#endif
+/// Adresar v domovskem adresari uzivatele, ktery bude take prohledavany.
+#define SEARCH_DIR_IN_HOME ".bombic"
+/// Inicializator pole adresaru pro prohledavani (zakonceny nulou (0)).
+#define SEARCH_PATHS { INSTALL_DIR"/common", INSTALL_DIR"/game", 0 }
+/// Hloubka, do ktere se ma adresarova struktura prohledavat.
+#define SEARCH_DEPTH 5
+
+
 /********************* Game-specific definitions *********************/
 
 /// Perioda, se kterou se provádí hýbnutí světem.

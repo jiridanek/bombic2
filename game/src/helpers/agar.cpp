@@ -1,6 +1,7 @@
 
 #include <stdlib.h> // for getenv
 #include <iostream>
+#include <constants.h>
 #include "agar.h"
 
 using namespace std;
@@ -85,14 +86,14 @@ bool is_file(const std::string &path){
 static bool locate_in_dir(int depth, const std::string & path,
 		const std::string & name, std::string & res){
 
-	if(++depth>SEARCH_DEPTH)
-		return false;
-
 	if( (name[name.size()-1]!='/' && is_file(path + "/" + name))
 	||  (name[name.size()-1]=='/' && is_dir (path + "/" + name)) ){
 		res = path+"/"+name;
 		return true;
 	}
+
+	if(++depth>SEARCH_DEPTH)
+		return false;
 
 	AG_Dir * dir = AG_OpenDir(path.c_str());
 	if(dir == 0)
@@ -190,7 +191,7 @@ bool get_home_path(std::string & path) {
 	else {
 		path = home;
 		path+= "/";
-		path+= SEARCH_HOME;
+		path+= SEARCH_DIR_IN_HOME;
 		return true;
 	}
 }

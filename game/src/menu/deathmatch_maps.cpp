@@ -8,6 +8,16 @@ char MenuDeathmatchMaps::map_name[MENU_DEATHMATCH_MAPS_BUFFSIZE] = "";
 std::string MenuDeathmatchMaps::map_path = "";
 AG_FileDlg * MenuDeathmatchMaps::file_dlg = 0;
 
+
+static void makePathAbsolute(std::string & path) {
+	if(path[0]!='/') {
+		// the path is relative, make it absolute
+		char wd[MENU_DEATHMATCH_MAX_PATH_LENGTH];
+		AG_GetCWD(wd, MENU_DEATHMATCH_MAX_PATH_LENGTH);
+		path = std::string(wd) + "/" + path;
+	}
+}
+
 MenuDeathmatchMaps::MenuDeathmatchMaps(){
 	AG_WindowMaximize(win);
 	AG_WindowSetPadding(win, MENU_OFFSET,
@@ -33,6 +43,7 @@ MenuDeathmatchMaps::MenuDeathmatchMaps(){
 			buttons_.push_back(path);
 	}
 	for( Uint16 i=0 ; i < buttons_.size() ; ++i ){
+		makePathAbsolute(buttons_[i]);
 		createDirButton(buttons_[i].c_str());
 		if(map_path.empty())
 			map_path = buttons_[i];
@@ -50,6 +61,7 @@ void MenuDeathmatchMaps::createDirButton(const char * label){
 	AG_Button * button = AG_ButtonNew(win, 0, label);
 	AG_ExpandHoriz(button);
 	AG_ButtonJustify(button, AG_TEXT_LEFT);
+
 	AG_SetEvent(button, "button-pushed", handlerDirButton, "%s", label);
 	AG_AddEvent(button, "window-keyup", handlerItems, 0);
 }

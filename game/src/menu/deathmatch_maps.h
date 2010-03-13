@@ -11,7 +11,8 @@
 #include "base.h"
 
 #define MENU_DEATHMATCH_MAPS_DIR "maps"
-#define MENU_DEATHMATCH_MAPS_BUFFSIZE 256
+#define MENU_DEATHMATCH_MAPS_BUFFSIZE 250
+#define MENU_DEATHMATCH_MAX_PATH_LENGTH 1000
 
 class MenuDeathmatchMaps: public MenuBase {
 	friend class MenuDeathmatch;

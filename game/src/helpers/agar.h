@@ -24,13 +24,6 @@ void setFocusOnMotion(AG_Widget *w);
 
 void handlerMousemotion(AG_Event *event);
 
-#define SEARCH_HOME ".bombic"
-#ifndef PWD
-#define PWD "."
-#endif
-#define SEARCH_PATHS { PWD"/../common", PWD, 0 }
-#define SEARCH_DEPTH 5
-
 bool is_dir(const std::string & path);
 bool is_file(const std::string & path);
 
