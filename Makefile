@@ -5,7 +5,7 @@
 default: game
 
 MAKE_IN=make -C
-QT_PROJECT=qmake -project
+QT_PROJECT=qmake -project INCLUDEPATH+=../common/src
 QT_MAKEFILE=qmake -makefile
 CD=cd
 DOXYGEN=doxygen

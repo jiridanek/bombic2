@@ -15,13 +15,18 @@ ResourceHandler::~ResourceHandler() {
 	SINGLETON_DESTROY;
 }
 
+BombicMap * ResourceHandler::loadMap() {
+}
+
+BombicMapBackground * ResourceHandler::loadMapBackground(
+		const QString & name) {
+	
+}
+
 BombicMapObject * ResourceHandler::loadMapObject() {
 }
 
-BombicMap * ResourceHandler::loadMapFromFile(const QString & filename) {
-}
-
-BombicMap * ResourceHandler::loadMap() {
+BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
 }
 
 void ResourceHandler::saveMap(BombicMap * bombicMap) {

@@ -2,6 +2,7 @@
 #include <helpers/sdl.h>
 #include <game/game_intro.h>
 #include <language.h>
+#include <constants.h>
 #include "load_save.h"
 
 std::string MenuLoadSaveGame::path = "";
@@ -37,7 +38,7 @@ MenuLoadGame::MenuLoadGame(){
 		AG_FileDlgSetFilename(file_dlg, "%s", filename.c_str());
 
 	AG_FileDlgAddType(file_dlg, LANG_MENU(LANG_LOAD_GAME, LANG_FILE_TYPE),
-			TIXML_FILE_EXTENSION, handlerLoadGame, 0);
+			XML_FILE_EXTENSION, handlerLoadGame, 0);
 
 	AG_SpacerNewHoriz(win);
 }
@@ -78,7 +79,7 @@ MenuSaveGame::MenuSaveGame(){
 	AG_FileDlgSetFilename(file_dlg, "%s", filename.c_str());
 
 	AG_FileDlgAddType(file_dlg, LANG_MENU(LANG_SAVE_GAME, LANG_FILE_TYPE),
-			TIXML_FILE_EXTENSION, handlerSaveGame, 0);
+			XML_FILE_EXTENSION, handlerSaveGame, 0);
 
 	AG_SpacerNewHoriz(win);
 }
@@ -86,7 +87,7 @@ MenuSaveGame::MenuSaveGame(){
 void MenuSaveGame::handlerSaveGame(AG_Event * event){
 	std::string filepath( AG_STRING(1) );
 	// pridat priponu
-	std::string ext(TIXML_FILE_EXTENSION);
+	std::string ext(XML_FILE_EXTENSION);
 	Uint16 name_s = filepath.size(), ext_s = ext.size();
 	if(name_s<=ext_s || filepath.substr(name_s-ext_s)!=ext)
 		filepath+= ext;

@@ -4,9 +4,13 @@
 #include <QGraphicsView>
 #include <QGridLayout>
 
+#include <constants.h>
+
 #include "map_scene.h"
 
+#include "resource_handler.h"
 #include "bombic/map.h"
+#include "bombic/map_background.h"
 #include "bombic/map_object.h"
 
 SINGLETON_INIT(MapView);
@@ -15,19 +19,17 @@ MapView::MapView(QWidget * parent):
 		QWidget(parent), viewport_(0), scene_(0) {
 
 	SINGLETON_CONSTRUCT;
-}
 
-MapView::MapView(int width, int height,
-		BombicMapBackground * background,
-		QWidget * parent): QWidget(parent) {
+	BombicMapBackground * defaultMapBg =
+		RESOURCE_HANDLER->loadMapBackground(DEFAULT_MAP_BACKGROUND);
 
-	SINGLETON_CONSTRUCT;
-
-	scene_ = new MapScene(width, height, background, this);
+	scene_ = new MapScene(DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT,
+		defaultMapBg, this);
 	viewport_ = new QGraphicsView(scene_);
 
 	gridLayout()->addWidget(viewport_, 0, 1);
 }
+
 MapView::~MapView() {
 	SINGLETON_DESTROY;
 }

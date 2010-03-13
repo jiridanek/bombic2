@@ -22,9 +22,6 @@ class MapView: public QWidget {
 
 	public:
 		explicit MapView(QWidget * parent = 0);
-		MapView(int width, int height,
-				BombicMapBackground * background,
-				QWidget * parent = 0);
 
 		~MapView();
 

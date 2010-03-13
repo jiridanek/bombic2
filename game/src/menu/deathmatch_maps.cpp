@@ -1,6 +1,7 @@
 
 #include <helpers/tixml.h>
 #include <language.h>
+#include <constants.h>
 #include "deathmatch_maps.h"
 
 char MenuDeathmatchMaps::map_name[MENU_DEATHMATCH_MAPS_BUFFSIZE] = "";
@@ -40,7 +41,7 @@ MenuDeathmatchMaps::MenuDeathmatchMaps(){
 	file_dlg = createFileDlg(true, map_path.c_str(), LANG_DEATHMATCH, LANG_MAPS);
 	AG_FileDlgAddType(file_dlg,
 		LANG_SUBMENU(LANG_DEATHMATCH, LANG_MAPS, LANG_FILE_TYPE),
-		TIXML_FILE_EXTENSION, handlerCheckMap, 0);
+		XML_FILE_EXTENSION, handlerCheckMap, 0);
 
 	AG_SpacerNewHoriz(win);
 }

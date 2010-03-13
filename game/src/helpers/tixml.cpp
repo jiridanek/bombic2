@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 
+#include <constants.h>
 #include "tixml.h"
 #include "agar.h"
 
@@ -22,7 +23,7 @@ using namespace std;
 TiXmlElement* TiXmlRootElement(TiXmlDocument & doc, std::string & filename,
 				const std::string& rootEl_name, bool checkAttr_name){
 	// pridat priponu?
-	string ext(TIXML_FILE_EXTENSION);
+	string ext(XML_FILE_EXTENSION);
 	Uint16 name_s = filename.size(), ext_s = ext.size();
 	if(name_s<=ext_s || filename.substr(name_s-ext_s)!=ext)
 		filename+= ext;

@@ -5,7 +5,6 @@
 #ifndef TIXML_HELPER_H
 #define TIXML_HELPER_H
 
-#define TIXML_FILE_EXTENSION ".xml"
 
 #include <iostream>
 #include <string>
@@ -14,6 +13,7 @@
 
 #include <tinyxml.h>
 #include <SDL.h>
+#include <constants.h>
 #include "stl.h"
 
 /// Načte dokument a v něm najde RootElement, variabilně kontroluje atribut name.

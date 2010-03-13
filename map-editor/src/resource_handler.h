@@ -11,6 +11,7 @@
 
 
 class BombicMap;
+class BombicMapBackground;
 class BombicMapObject;
 
 class ResourceHandler: public QObject {
@@ -23,16 +24,17 @@ class ResourceHandler: public QObject {
 		ResourceHandler(QObject * parent = 0);
 		~ResourceHandler();
 
-		BombicMapObject * loadMapObject();
-
-		BombicMap * loadMapFromFile(const QString & filename);
-
 		BombicMap * loadMap();
 
 		void saveMap(BombicMap * bombicMap);
 
 		void saveMapAs(BombicMap * bombicMap);
 
+		BombicMapBackground * loadMapBackground(const QString & name);
+
+		BombicMapObject * loadMapObject();
+
+		BombicMapObject * loadMapObject(const QString & name);
 };
 
 #endif

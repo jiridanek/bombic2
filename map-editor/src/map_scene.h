@@ -14,7 +14,6 @@ class MapScene: public QGraphicsScene {
 	Q_OBJECT
 
 	public:
-		explicit MapScene(QObject * parent = 0);
 		MapScene(int width, int height,
 				BombicMapBackground * background,
 				QObject * parent = 0);
@@ -25,8 +24,6 @@ class MapScene: public QGraphicsScene {
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
 
 	private:
-		void init(int width, int height,
-				BombicMapBackground * background);
 
 		BombicMap * map_;
 
