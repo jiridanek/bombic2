@@ -22,12 +22,13 @@ MapView::MapView(QWidget * parent):
 
 	BombicMapBackground * defaultMapBg =
 		RESOURCE_HANDLER->loadMapBackground(DEFAULT_MAP_BACKGROUND);
+	if(defaultMapBg) {
+		scene_ = new MapScene(DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT,
+			defaultMapBg, this);
+		viewport_ = new QGraphicsView(scene_);
 
-	scene_ = new MapScene(DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT,
-		defaultMapBg, this);
-	viewport_ = new QGraphicsView(scene_);
-
-	gridLayout()->addWidget(viewport_, 0, 1);
+		gridLayout()->addWidget(viewport_, 0, 1);
+	}
 }
 
 MapView::~MapView() {

@@ -14,7 +14,7 @@ class BombicMapBackground {
 
 	public:
 		BombicMapBackground(const QString & name,
-				const QPixmap texture);
+				const QPixmap & texture);
 		~BombicMapBackground();
 
 		enum WallSituation {

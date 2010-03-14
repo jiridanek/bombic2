@@ -4,7 +4,7 @@
 #include "wall.h"
 
 BombicMapBackground::BombicMapBackground(const QString & name,
-		const QPixmap texture) : name_(name), texture_(texture) {
+		const QPixmap & texture) : name_(name), texture_(texture) {
 
 }
 

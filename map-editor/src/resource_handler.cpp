@@ -21,6 +21,7 @@ ResourceHandler::~ResourceHandler() {
 BombicMap * ResourceHandler::loadMap() {
 }
 
+#include <QDebug>
 BombicMapBackground * ResourceHandler::loadMapBackground(
 		const QString & name) {
 	QDomElement rootEl;
@@ -30,6 +31,7 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 
 	if(!rootEl.hasAttribute("src")) {
 		// handle it
+		qDebug() << "hasn't attr src";
 		return 0;
 	}
 	if(!openSourcePixmap(rootEl.attribute("src"))) {
@@ -39,18 +41,32 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 	QDomElement bgEl = rootEl.namedItem("clean_bg").toElement();
 	if(bgEl.isNull()) {
 		// handle it
+		qDebug() << "hasn't clean_bg element";
 		return 0;
 	}
 	if(!bgEl.hasAttribute("x")) {
 		// handle it
+		qDebug() << "hasn't attr x";
 		return 0;
 	}
-	int x = bgEl.hasAttribute("x");
+	bool converted;
+	int x = bgEl.attribute("x").toInt(&converted);
+	if(!converted) {
+		// handle it
+		qDebug() << "attr x not converted";
+		return 0;
+	}
 	if(!bgEl.hasAttribute("y")) {
 		// handle it
+		qDebug() << "hasn't attr y";
 		return 0;
 	}
-	int y = bgEl.hasAttribute("y");
+	int y = bgEl.attribute("y").toInt(&converted);
+	if(!converted) {
+		// handle it
+		qDebug() << "attr y not converted";
+		return 0;
+	}
 	BombicMapBackground * mapBg =
 		new BombicMapBackground(name,
 			sourcePixmap_.copy(x, y, CELL_SIZE, CELL_SIZE) );
@@ -74,10 +90,16 @@ void ResourceHandler::saveMapAs(BombicMap * bombicMap) {
 
 bool ResourceHandler::openSourcePixmap(const QString & name) {
 
+	if(name==sourcePixmapName_) {
+		// the pixmap is loaded 
+		return true;
+	}
+
 	QString filename = name;
 	bool fileLocated = locateFile(filename);
 	if(!fileLocated) {
 		// TODO handle it
+		qDebug() << "file " << filename << " not located";
 		return false;
 	}
 
@@ -93,12 +115,14 @@ bool ResourceHandler::openXmlByName(const QString & name,
 	bool fileLocated = locateFile(filename);
 	if(!fileLocated) {
 		// TODO handle it
+		qDebug() << "file " << filename << " not located";
 		return false;
 	}
 
 	QFile file(filename);
 	if(!file.open(QIODevice::ReadOnly)) {
 		// TODO handle it
+		qDebug() << "can't open file " << filename;
 		return false;
 	}
 
@@ -107,6 +131,7 @@ bool ResourceHandler::openXmlByName(const QString & name,
 	file.close();
 	if(!fileParsed) {
 		// TODO handle it
+		qDebug() << "file " << filename << " is not xml file";
 		return false;
 	}
 
@@ -129,7 +154,7 @@ bool ResourceHandler::locateFile(QString & filename) {
 	}
 
 	bool located = locateFileInDir(
-		QDir::homePath()+SEARCH_DIR_IN_HOME, filename);
+		QDir::homePath()+"/"+SEARCH_DIR_IN_HOME, filename);
 	if(located) {
 		return true;
 	}
@@ -143,7 +168,7 @@ bool ResourceHandler::locateFile(QString & filename) {
 
 bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
 		int depth) {
-
+	// qDebug() << "now in dir " << dir.absolutePath();
 	if(!dir.isReadable()) {
 		return false;
 	}
@@ -159,7 +184,12 @@ bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
 	}
 
 	foreach(QString entryName, dir.entryList(QDir::Dirs)) {
-		bool located = locateFileInDir(entryName, filename, depth);
+		if(entryName.at(0)=='.') {
+			// skip . .. and hidden dirs
+			continue;
+		}
+		bool located = locateFileInDir(
+			dir.filePath(entryName), filename, depth);
 		if(located) {
 			return true;
 		}
