@@ -7,6 +7,8 @@
 #include <QString>
 #include <QPixmap>
 
+class QGraphicsItem;
+
 class BombicMapObject {
 
 	public:
@@ -19,6 +21,9 @@ class BombicMapObject {
 
 		virtual BombicMapObject::Type type() =0;
 
+		virtual QGraphicsItem * createGraphicsItem() =0;
+
+		const QPixmap & pixmap();
 	protected:
 		QString name_;
 		QPixmap pixmap_;

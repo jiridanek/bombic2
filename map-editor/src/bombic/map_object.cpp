@@ -7,3 +7,7 @@ BombicMapObject::BombicMapObject(const QString & name, const QPixmap & pixmap):
 
 BombicMapObject::~BombicMapObject() {
 }
+
+const QPixmap & BombicMapObject::pixmap() {
+	return pixmap_;
+}

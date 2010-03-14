@@ -1,4 +1,5 @@
 
+#include <QLinkedList>
 #include <constants.h>
 
 #include "resource_handler.h"
@@ -6,6 +7,9 @@
 #include "bombic/map.h"
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
+
+#include "resource_handlers/wall.h"
+#include "bombic/wall.h"
 
 SINGLETON_INIT(ResourceHandler);
 
@@ -22,49 +26,78 @@ BombicMap * ResourceHandler::loadMap() {
 }
 
 #include <QDebug>
+
 BombicMapBackground * ResourceHandler::loadMapBackground(
 		const QString & name) {
 	QDomElement rootEl;
-	if(!openXmlByName(name, rootEl)) {
+	if(!loadXmlByName(name, rootEl, "background", true)) {
+		return 0;
+	}
+	if(!loadSourcePixmap(rootEl)) {
+		return 0;
+	}
+	QDomElement bgEl;
+	if(!getSubElement(rootEl, bgEl, "clean_bg")) {
+		return 0;
+	}
+	int x = 0;
+	int y = 0;
+	if(!getAttrsXY(bgEl, x, y)) {
+		return 0;
+	}
+	BombicMapBackground * mapBg =
+		new BombicMapBackground(name,
+			sourcePixmap_.copy(x, y, CELL_SIZE, CELL_SIZE) );
+	// will create anonymous walls
+	WallResourceHandler wallRH("");
+
+	#define CREATE_AND_ADD(situation, tagName) \
+		do { \
+			QDomElement wallEl; \
+			bool succes = getSubElement( \
+				rootEl, wallEl, tagName); \
+			if(!success) { \
+				delete mapBg; \
+				return 0; \
+			} \
+			BombicWall * bombicWall = wallRH.createWall(wallEl); \
+			if(!bombicWall) { \
+				delete mapBg; \
+				return 0; \
+			} \
+			mapBg->setWall(situation, bombicWall); \
+		while(0)
+	CREATE_AND_ADD(BombicMapBackground::TopLeft, "topleft");
+	CREATE_AND_ADD(BombicMapBackground::TopRight, "topright");
+	CREATE_AND_ADD(BombicMapBackground::BottomLeft, "bottomleft");
+	CREATE_AND_ADD(BombicMapBackground::BottomRight, "bottomright");
+	CREATE_AND_ADD(BombicMapBackground::Top, "top");
+	CREATE_AND_ADD(BombicMapBackground::Bottom, "bottom");
+	CREATE_AND_ADD(BombicMapBackground::Left, "left");
+	CREATE_AND_ADD(BombicMapBackground::Right, "right");;
+	#undef CREATE_AND_ADD
+
+	return mapBg;
+}
+
+BombicMapBackground * ResourceHandler::loadWall(
+		const QString & name) {
+	QDomElement rootEl;
+	if(!loadXmlByName(name, rootEl, "background", true)) {
 		return 0;
 	}
 
-	if(!rootEl.hasAttribute("src")) {
-		// handle it
-		qDebug() << "hasn't attr src";
-		return 0;
-	}
-	if(!openSourcePixmap(rootEl.attribute("src"))) {
+	if(!loadSourcePixmap(rootEl)) {
 		return 0;
 	}
 
-	QDomElement bgEl = rootEl.namedItem("clean_bg").toElement();
-	if(bgEl.isNull()) {
-		// handle it
-		qDebug() << "hasn't clean_bg element";
+	QDomElement bgEl;
+	if(!getSubElement(rootEl, bgEl, "clean_bg")) {
 		return 0;
 	}
-	if(!bgEl.hasAttribute("x")) {
-		// handle it
-		qDebug() << "hasn't attr x";
-		return 0;
-	}
-	bool converted;
-	int x = bgEl.attribute("x").toInt(&converted);
-	if(!converted) {
-		// handle it
-		qDebug() << "attr x not converted";
-		return 0;
-	}
-	if(!bgEl.hasAttribute("y")) {
-		// handle it
-		qDebug() << "hasn't attr y";
-		return 0;
-	}
-	int y = bgEl.attribute("y").toInt(&converted);
-	if(!converted) {
-		// handle it
-		qDebug() << "attr y not converted";
+	int x = 0;
+	int y = 0;
+	if(!getAttrsXY(bgEl, x, y)) {
 		return 0;
 	}
 	BombicMapBackground * mapBg =
@@ -76,6 +109,7 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 	return mapBg;
 }
 
+
 BombicMapObject * ResourceHandler::loadMapObject() {
 }
 
@@ -86,57 +120,6 @@ void ResourceHandler::saveMap(BombicMap * bombicMap) {
 }
 
 void ResourceHandler::saveMapAs(BombicMap * bombicMap) {
-}
-
-bool ResourceHandler::openSourcePixmap(const QString & name) {
-
-	if(name==sourcePixmapName_) {
-		// the pixmap is loaded 
-		return true;
-	}
-
-	QString filename = name;
-	bool fileLocated = locateFile(filename);
-	if(!fileLocated) {
-		// TODO handle it
-		qDebug() << "file " << filename << " not located";
-		return false;
-	}
-
-	sourcePixmap_ = QPixmap(filename);
-	sourcePixmapName_ = name;
-	return true;
-}
-
-bool ResourceHandler::openXmlByName(const QString & name,
-		QDomElement & rootEl) {
-
-	QString filename = name + XML_FILE_EXTENSION;
-	bool fileLocated = locateFile(filename);
-	if(!fileLocated) {
-		// TODO handle it
-		qDebug() << "file " << filename << " not located";
-		return false;
-	}
-
-	QFile file(filename);
-	if(!file.open(QIODevice::ReadOnly)) {
-		// TODO handle it
-		qDebug() << "can't open file " << filename;
-		return false;
-	}
-
-	QDomDocument doc;
-	bool fileParsed = doc.setContent(&file);
-	file.close();
-	if(!fileParsed) {
-		// TODO handle it
-		qDebug() << "file " << filename << " is not xml file";
-		return false;
-	}
-
-	rootEl = doc.documentElement();
-	return true;
 }
 
 bool ResourceHandler::locateFile(QString & filename) {
@@ -195,6 +178,120 @@ bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
 		}
 	}
 	return false;
+}
+
+bool ResourceHandler::loadXmlByName(const QString & name,
+		QDomElement & rootEl, const QString & rootElTagName,
+		bool checkAttrName) {
+
+	QString filename = name + XML_FILE_EXTENSION;
+	bool fileLocated = locateFile(filename);
+	if(!fileLocated) {
+		// TODO handle it
+		qDebug() << "file " << filename << " not located";
+		return false;
+	}
+
+	QFile file(filename);
+	if(!file.open(QIODevice::ReadOnly)) {
+		// TODO handle it
+		qDebug() << "can't open file " << filename;
+		return false;
+	}
+
+	QDomDocument doc;
+	bool fileParsed = doc.setContent(&file);
+	file.close();
+	if(!fileParsed) {
+		// TODO handle it
+		qDebug() << "file " << filename << " is not xml file";
+		return false;
+	}
+
+	rootEl = doc.documentElement();
+
+	if(rootEl.tagName()!=rootElTagName) {
+		// TODO handle it
+		qDebug() << "the root element of " << filename << " should be " << rootElTagName;
+		return false;
+	}
+	if(checkAttrName && rootEl.attribute("name")!=name) {
+		// TODO handle it
+		qDebug() << "the name in root element of " << filename << " should be " << name;
+		return false;
+	}
+
+	return true;
+}
+
+bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
+		const QString & attrName) {
+	// get name of pixmap
+	if(!el.hasAttribute(attrName)) {
+		// handle it
+		qDebug() << "hasn't attr " << attrName;
+		return false;
+	}
+	QString name = el.attribute(attrName);
+	// load the pixmap
+	if(name==sourcePixmapName_) {
+		// the pixmap is loaded
+		return true;
+	}
+	// first locate the file
+	QString filename = name;
+	bool fileLocated = locateFile(filename);
+	if(!fileLocated) {
+		// TODO handle it
+		qDebug() << "file " << filename << " not located";
+		return false;
+	}
+	// store the pixmap and its name
+	sourcePixmap_ = QPixmap(filename);
+	sourcePixmapName_ = name;
+	return true;
+}
+
+bool ResourceHandler::getSubElement(const QDomElement & el,
+		QDomElement & subEl, const QString & subElTagName) {
+
+	subEl = el.namedItem(subElTagName).toElement();
+	if(subEl.isNull()) {
+		// handle it
+		qDebug() << "element " << el.tagName() << " hasn't subelement " << subElTagName;
+		return false;
+	}
+
+	return true;
+}
+
+bool ResourceHandler::getIntAttr(const QDomElement & el,
+		int & attr, const QString & attrName, bool successIfMissing) {
+
+	if(!el.hasAttribute(attrName)) {
+		if(successIfMissing) {
+			return true;
+		} else {
+			// handle it
+			qDebug() << "element " << el.tagName() << " hasn't attribute " << attrName;
+			return false;
+		}
+	}
+	bool converted;
+	int a = el.attribute(attrName).toInt(&converted);
+	if(!converted) {
+		// handle it
+		qDebug() << "attribute " << attrName << " in element "
+			<< el.tagName() << " cannot be converted to int";
+		return false;
+	}
+
+	attr = a;
+	return true;
+}
+
+bool ResourceHandler::getAttrsXY(const QDomElement & el, int & x, int & y) {
+	return getIntAttr(el, x, "x") && getIntAttr(el, y, "y");
 }
 
 

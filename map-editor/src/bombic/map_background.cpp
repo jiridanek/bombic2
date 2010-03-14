@@ -11,7 +11,9 @@ BombicMapBackground::BombicMapBackground(const QString & name,
 BombicMapBackground::~BombicMapBackground() {
 	BombicWall * wall;
 	foreach(wall, walls_) {
-		delete wall;
+		if(wall) {
+			delete wall;
+		}
 	}
 }
 
