@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <QPixmap>
+#include <QPointF>
 
 class QGraphicsItem;
 
@@ -21,7 +22,8 @@ class BombicMapObject {
 
 		virtual BombicMapObject::Type type() =0;
 
-		virtual QGraphicsItem * createGraphicsItem() =0;
+		virtual QGraphicsItem * createGraphicsItem(
+				const QPointF & position) =0;
 
 		const QPixmap & pixmap();
 	protected:

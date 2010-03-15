@@ -2,12 +2,14 @@
 #include "map_scene.h"
 
 #include <QBrush>
+#include <QGraphicsItem>
 
 #include <constants.h>
 
 #include "bombic/map.h"
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
+#include "bombic/wall.h"
 
 MapScene::MapScene(int width, int height,
 		BombicMapBackground * background,
@@ -19,10 +21,19 @@ MapScene::MapScene(int width, int height,
 	// create clean map
 	map_ = new BombicMap(width, height, background);
 	// insert enclosure walls
-	BombicWall wall = background->getWall(BombicMapBackground::TopLeft);
-	QGraphicsItem * item = wall->createGraphicsItem();
-	item->setPos(0, 0);
-	addItem(item);
+	QRectF adjScene =
+		sceneRect().adjusted(0, 0, -CELL_SIZE+1, -CELL_SIZE+1);
+	BombicWall * wall = 0;
+	wall = background->getWall(BombicMapBackground::TopLeft);
+	addItem(wall->createGraphicsItem( adjScene.topLeft() ));
+	wall = background->getWall(BombicMapBackground::TopRight);
+	addItem(wall->createGraphicsItem( adjScene.topRight() ));
+	wall = background->getWall(BombicMapBackground::BottomLeft);
+	addItem(wall->createGraphicsItem( adjScene.bottomLeft() ));
+	wall = background->getWall(BombicMapBackground::BottomRight);
+	addItem(wall->createGraphicsItem( adjScene.bottomRight() ));
+
+
 }
 
 

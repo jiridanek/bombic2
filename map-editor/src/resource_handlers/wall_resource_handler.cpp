@@ -1,5 +1,9 @@
 
+#include <QPixmap>
+
 #include <constants.h>
+
+#include "wall_resource_handler.h"
 
 #include "../resource_handler.h"
 #include "../bombic/map_object.h"
@@ -31,7 +35,7 @@ BombicWall * WallResourceHandler::createWall(const QDomElement & imgEl) {
 	}
 	// get pixmap
 	QPixmap pixmap = RESOURCE_HANDLER->sourcePixmap_.copy(
-		x, y - t*CELL_SIZE, w*CELL_SIZE, (h+t)*CELL_SIZE);
+		x, y, w*CELL_SIZE, (h+t)*CELL_SIZE);
 
 	return new BombicWall(name_, pixmap, w, h, t);
 }

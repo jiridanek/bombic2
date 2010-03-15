@@ -23,8 +23,8 @@ const QPixmap & BombicMapBackground::texture() {
 
 BombicWall * BombicMapBackground::getWall(
 		BombicMapBackground::WallSituation wallSituation) {
-	if(0 <= wallSituation && wallSituation < walls_.size()) {
-		return walls_.at(wallSituation);
+	if(walls_.contains(wallSituation)) {
+		return walls_.value(wallSituation);
 	} else {
 		return 0;
 	}
@@ -32,5 +32,5 @@ BombicWall * BombicMapBackground::getWall(
 
 void BombicMapBackground::setWall(BombicWall * wall,
 		BombicMapBackground::WallSituation wallSituation) {
-	walls_[wallSituation] = wall;
+	walls_.insert(wallSituation, wall);
 }

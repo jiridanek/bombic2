@@ -14,8 +14,9 @@ BombicMapObject::Type BombicWall::type() {
 	return Wall;
 }
 
-QGraphicsItem * BombicWall::createGraphicsItem() {
+QGraphicsItem * BombicWall::createGraphicsItem(const QPointF & position) {
 	QGraphicsPixmapItem * gi = new QGraphicsPixmapItem(pixmap_);
-	gi->setOffset(0, -toplapping_);
+	gi->setOffset(0, -toplapping_*CELL_SIZE);
+	gi->setPos(position);
 	return gi;
 }

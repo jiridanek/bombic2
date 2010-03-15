@@ -26,6 +26,8 @@ MapView::MapView(QWidget * parent):
 		scene_ = new MapScene(DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT,
 			defaultMapBg, this);
 		viewport_ = new QGraphicsView(scene_);
+// 		TODO viewport_->setMaximumSize(
+// 			scene_->sceneRect().toRect().size() );
 
 		gridLayout()->addWidget(viewport_, 0, 1);
 	}

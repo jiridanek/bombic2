@@ -7,7 +7,7 @@
 #include <QDomElement>
 #include <QString>
 
-#include "map_object.h"
+#include "map_object_resource_handler.h"
 
 class BombicWall;
 

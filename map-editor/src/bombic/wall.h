@@ -18,7 +18,8 @@ class BombicWall: public BombicMapObject {
 
 		virtual BombicMapObject::Type type();
 
-		virtual QGraphicsItem * createGraphicsItem();
+		virtual QGraphicsItem * createGraphicsItem(
+				const QPointF & position);
 
 	private:
 		QSize size_;

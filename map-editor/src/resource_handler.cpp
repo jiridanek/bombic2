@@ -1,5 +1,6 @@
 
 #include <QLinkedList>
+#include <QBitmap>
 #include <constants.h>
 
 #include "resource_handler.h"
@@ -8,7 +9,7 @@
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
 
-#include "resource_handlers/wall.h"
+#include "resource_handlers/wall_resource_handler.h"
 #include "bombic/wall.h"
 
 SINGLETON_INIT(ResourceHandler);
@@ -54,7 +55,7 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 	#define CREATE_AND_ADD(situation, tagName) \
 		do { \
 			QDomElement wallEl; \
-			bool succes = getSubElement( \
+			bool success = getSubElement( \
 				rootEl, wallEl, tagName); \
 			if(!success) { \
 				delete mapBg; \
@@ -65,50 +66,20 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 				delete mapBg; \
 				return 0; \
 			} \
-			mapBg->setWall(situation, bombicWall); \
-		while(0)
+			mapBg->setWall(bombicWall, situation); \
+		} while(0)
 	CREATE_AND_ADD(BombicMapBackground::TopLeft, "topleft");
-	CREATE_AND_ADD(BombicMapBackground::TopRight, "topright");
-	CREATE_AND_ADD(BombicMapBackground::BottomLeft, "bottomleft");
-	CREATE_AND_ADD(BombicMapBackground::BottomRight, "bottomright");
-	CREATE_AND_ADD(BombicMapBackground::Top, "top");
 	CREATE_AND_ADD(BombicMapBackground::Bottom, "bottom");
-	CREATE_AND_ADD(BombicMapBackground::Left, "left");
+	CREATE_AND_ADD(BombicMapBackground::BottomRight, "bottomright");
+	CREATE_AND_ADD(BombicMapBackground::BottomLeft, "bottomleft");
+	CREATE_AND_ADD(BombicMapBackground::Top, "top");
+	CREATE_AND_ADD(BombicMapBackground::TopRight, "topright");
 	CREATE_AND_ADD(BombicMapBackground::Right, "right");;
+	CREATE_AND_ADD(BombicMapBackground::Left, "left");
 	#undef CREATE_AND_ADD
 
 	return mapBg;
 }
-
-BombicMapBackground * ResourceHandler::loadWall(
-		const QString & name) {
-	QDomElement rootEl;
-	if(!loadXmlByName(name, rootEl, "background", true)) {
-		return 0;
-	}
-
-	if(!loadSourcePixmap(rootEl)) {
-		return 0;
-	}
-
-	QDomElement bgEl;
-	if(!getSubElement(rootEl, bgEl, "clean_bg")) {
-		return 0;
-	}
-	int x = 0;
-	int y = 0;
-	if(!getAttrsXY(bgEl, x, y)) {
-		return 0;
-	}
-	BombicMapBackground * mapBg =
-		new BombicMapBackground(name,
-			sourcePixmap_.copy(x, y, CELL_SIZE, CELL_SIZE) );
-	// TODO load walls
-
-
-	return mapBg;
-}
-
 
 BombicMapObject * ResourceHandler::loadMapObject() {
 }
@@ -249,6 +220,11 @@ bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 	// store the pixmap and its name
 	sourcePixmap_ = QPixmap(filename);
 	sourcePixmapName_ = name;
+
+	// set the pixmap transparent
+	sourcePixmap_.setMask(
+		sourcePixmap_.createMaskFromColor(Qt::magenta));
+
 	return true;
 }
 

@@ -6,7 +6,7 @@
 
 #include <QString>
 #include <QPixmap>
-#include <QList>
+#include <QHash>
 
 class BombicWall;
 
@@ -33,7 +33,7 @@ class BombicMapBackground {
 		QString name_;
 		QPixmap texture_;
 
-		QList<BombicWall *> walls_;
+		QHash<WallSituation, BombicWall *> walls_;
 
 };
 
