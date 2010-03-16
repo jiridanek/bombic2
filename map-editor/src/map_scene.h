@@ -6,8 +6,10 @@
 
 #include <QGraphicsScene>
 
-class BombicMap;
+#include "bombic/map.h"
+
 class BombicMapBackground;
+class BombicMapObject;
 
 class MapScene: public QGraphicsScene {
 
@@ -18,6 +20,9 @@ class MapScene: public QGraphicsScene {
 				BombicMapBackground * background,
 				QObject * parent = 0);
 		~MapScene();
+
+		void insert(BombicMapObject * object,
+				const BombicMap::Field & dstField);
 
 	protected:
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);

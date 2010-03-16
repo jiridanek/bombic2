@@ -3,6 +3,7 @@
 
 #include <QGraphicsView>
 #include <QGridLayout>
+#include <QSlider>
 
 #include <constants.h>
 
@@ -26,10 +27,14 @@ MapView::MapView(QWidget * parent):
 		scene_ = new MapScene(DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT,
 			defaultMapBg, this);
 		viewport_ = new QGraphicsView(scene_);
-// 		TODO viewport_->setMaximumSize(
-// 			scene_->sceneRect().toRect().size() );
+		gridLayout()->addWidget(viewport_, 1, 0, 1, 2);
 
-		gridLayout()->addWidget(viewport_, 0, 1);
+		zoomSlider_ = new QSlider(Qt::Horizontal, this);
+		gridLayout()->addWidget(zoomSlider_, 2, 1);
+		connect(zoomSlider_, SIGNAL(valueChanged(int)),
+			this, SLOT(setZoom(int)) );
+		zoomSlider_->setRange(30, 150);
+		zoomSlider_->setValue(100);
 	}
 }
 
@@ -45,4 +50,10 @@ QGridLayout * MapView::gridLayout() {
 		return new QGridLayout(this);
 	}
 
+}
+
+void MapView::setZoom(int zoom) {
+	qreal z = zoom/100.0;
+	viewport_->resetTransform();
+	viewport_->scale(z, z);
 }

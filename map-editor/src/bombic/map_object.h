@@ -7,6 +7,7 @@
 #include <QString>
 #include <QPixmap>
 #include <QPointF>
+#include <QSize>
 
 class QGraphicsItem;
 
@@ -26,10 +27,16 @@ class BombicMapObject {
 				const QPointF & position) =0;
 
 		const QPixmap & pixmap();
+
+		virtual const QSize & size();
+
+		virtual bool canBeWith(BombicMapObject * object);
+
 	protected:
 		QString name_;
 		QPixmap pixmap_;
-
+		/// Velikost v polickach (kolik zabira policek).
+		QSize size_;
 };
 
 #endif

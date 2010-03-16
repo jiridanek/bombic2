@@ -5,7 +5,9 @@
 #define BOMBIC_MAP_H_GUARD_
 
 #include <QString>
-#include <QList>
+#include <QVector>
+#include <QPoint>
+#include <QRect>
 #include <QLinkedList>
 
 class BombicMapBackground;
@@ -18,15 +20,25 @@ class BombicMap {
 				BombicMapBackground * background);
 		~BombicMap();
 
+		typedef QPoint Field;
+
+		void insert(BombicMapObject * object,
+				const BombicMap::Field & dstField);
+
+		bool canInsert(BombicMapObject * object,
+				const BombicMap::Field & dstField);
+
+		const QRect & fieldsRect();
+
 	private:
 		QString name_;
 		QString filename_;
 
-		int width_;
-		int height_;
+		QRect fieldsRect_;
 		BombicMapBackground * background_;
 
-		QList< QList< QLinkedList<BombicMapObject *> > > fields_;
+		typedef QVector< QVector< QLinkedList<BombicMapObject *> > > FieldsT;
+		FieldsT fields_;
 
 
 };

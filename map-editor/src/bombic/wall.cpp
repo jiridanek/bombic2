@@ -7,7 +7,8 @@
 BombicWall::BombicWall(const QString & name, const QPixmap & pixmap,
 		int width, int height, int toplapping):
 				BombicMapObject(name, pixmap),
-				size_(width, height), toplapping_(toplapping) {
+				toplapping_(toplapping) {
+	size_ = QSize(width, height);
 }
 
 BombicMapObject::Type BombicWall::type() {
@@ -19,4 +20,16 @@ QGraphicsItem * BombicWall::createGraphicsItem(const QPointF & position) {
 	gi->setOffset(0, -toplapping_*CELL_SIZE);
 	gi->setPos(position);
 	return gi;
+}
+
+bool BombicWall::canBeWith(BombicMapObject * object) {
+	// wall can be on the same field only with another wall
+	if(object->type() == Wall) {
+		BombicWall * wallObj = static_cast<BombicWall *>(object);
+		// but only if right one of them is anonymous (background) wall
+		return (wallObj->name_.isEmpty() && !this->name_.isEmpty())
+			|| (!wallObj->name_.isEmpty() && this->name_.isEmpty());
+	} else {
+		return false;
+	}
 }

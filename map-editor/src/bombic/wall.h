@@ -4,10 +4,6 @@
 #ifndef BOMBIC_WALL_H_GUARD_
 #define BOMBIC_WALL_H_GUARD_
 
-#include <QString>
-#include <QPixmap>
-#include <QSize>
-
 #include "map_object.h"
 
 class BombicWall: public BombicMapObject {
@@ -21,8 +17,9 @@ class BombicWall: public BombicMapObject {
 		virtual QGraphicsItem * createGraphicsItem(
 				const QPointF & position);
 
+		virtual bool canBeWith(BombicMapObject * object);
+
 	private:
-		QSize size_;
 		int toplapping_;
 };
 
