@@ -19,6 +19,7 @@ QGraphicsItem * BombicWall::createGraphicsItem(const QPointF & position) {
 	QGraphicsPixmapItem * gi = new QGraphicsPixmapItem(pixmap_);
 	gi->setOffset(0, -toplapping_*CELL_SIZE);
 	gi->setPos(position);
+	gi->setZValue(position.y());
 	return gi;
 }
 

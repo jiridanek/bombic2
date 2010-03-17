@@ -15,6 +15,7 @@
 #include <QApplication>
 #include <QWidget>
 #include <QGridLayout>
+#include <QSplitter>
 
 #include "resource_handler.h"
 #include "map_object_palette.h"
@@ -25,16 +26,18 @@ int main(int argc, char *argv[]) {
 	QApplication app(argc, argv);
 
 	QWidget * win = new QWidget;
-	QGridLayout * layout = new QGridLayout(win);
+	QGridLayout * winLayout = new QGridLayout(win);
 
 	// konstrukce singletonu
 	new ResourceHandler(win);
-	MapObjectPalette * palette = new MapObjectPalette(win);
-	MapView * mapView = new MapView(win);
+	new MapObjectPalette(win);
+	new MapView(win);
 
 	// poskladat prvky gui do layoutu okna
-	layout->addWidget(mapView, 1, 0);
-	layout->addWidget(palette, 1, 1);
+	QSplitter * winSplitter = new QSplitter(win);
+	winSplitter->addWidget(MAP_VIEW);
+	winSplitter->addWidget(MAP_OBJECT_PALETTE);
+	winLayout->addWidget(winSplitter, 0, 0);
 
 	win->show();
 

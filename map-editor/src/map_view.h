@@ -11,7 +11,7 @@
 
 class QGraphicsView;
 class QGridLayout;
-class QSlider;
+class ZoomWidget;
 class MapScene;
 class BombicMapBackground;
 
@@ -21,8 +21,6 @@ class MapView: public QWidget {
 
 	SINGLETON_DEFINITION(MapView)
 
-	public slots:
-		void setZoom(int zoom);
 
 	public:
 		explicit MapView(QWidget * parent = 0);
@@ -31,10 +29,14 @@ class MapView: public QWidget {
 
 		QGridLayout * gridLayout();
 
+	public slots:
+		void setZoom(qreal zoomQuotient);
+
 	private:
 		QGraphicsView * viewport_;
 		MapScene * scene_;
-		QSlider * zoomSlider_;
+		ZoomWidget * zoomWidget_;
+		qreal lastZoomQuotient_;
 		// dalsi prvky jako fieldview, viewtoolbar
 
 };

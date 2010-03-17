@@ -18,10 +18,9 @@ game:
 	$(MAKE_IN) game
 
 # Build map-editor
-map-editor: map-editor/Makefile
-	$(MAKE_IN) map-editor
-map-editor/Makefile:
+map-editor:
 	$(CD) map-editor && $(QT_PROJECT) && $(QT_MAKEFILE)
+	$(MAKE_IN) map-editor
 
 # Common remote targets
 clean distclean: map-editor/Makefile

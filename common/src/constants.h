@@ -45,5 +45,12 @@
 /// Pozadi pouzite v map editoru jako vychozi.
 #define DEFAULT_MAP_BACKGROUND "bg_forest"
 
+/// Jednotka zoomovaciho posuvniku.
+#define ZOOM_STEP 0.1
+/// Minimalni hodnota zoomovani.
+#define ZOOM_MINIMUM_VALUE 0.3
+/// Maximalni hodnota.
+#define ZOOM_MAXIMUM_VALUE 1.5
+
 
 #endif

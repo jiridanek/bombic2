@@ -3,12 +3,12 @@
 
 #include <QGraphicsView>
 #include <QGridLayout>
-#include <QSlider>
 
 #include <constants.h>
 
 #include "map_scene.h"
 
+#include "qt/zoomwidget.h"
 #include "resource_handler.h"
 #include "bombic/map.h"
 #include "bombic/map_background.h"
@@ -17,7 +17,8 @@
 SINGLETON_INIT(MapView);
 
 MapView::MapView(QWidget * parent):
-		QWidget(parent), viewport_(0), scene_(0) {
+		QWidget(parent), viewport_(0), scene_(0),
+		lastZoomQuotient_(1.0) {
 
 	SINGLETON_CONSTRUCT;
 
@@ -29,12 +30,11 @@ MapView::MapView(QWidget * parent):
 		viewport_ = new QGraphicsView(scene_);
 		gridLayout()->addWidget(viewport_, 1, 0, 1, 2);
 
-		zoomSlider_ = new QSlider(Qt::Horizontal, this);
-		gridLayout()->addWidget(zoomSlider_, 2, 1);
-		connect(zoomSlider_, SIGNAL(valueChanged(int)),
-			this, SLOT(setZoom(int)) );
-		zoomSlider_->setRange(30, 150);
-		zoomSlider_->setValue(100);
+		zoomWidget_ = new ZoomWidget(ZOOM_STEP,
+			ZOOM_MINIMUM_VALUE, ZOOM_MAXIMUM_VALUE);
+		connect(zoomWidget_, SIGNAL(zoomChanged(qreal)),
+			this, SLOT(setZoom(qreal)) );
+		gridLayout()->addWidget(zoomWidget_, 2, 1);
 	}
 }
 
@@ -49,11 +49,14 @@ QGridLayout * MapView::gridLayout() {
 	} else {
 		return new QGridLayout(this);
 	}
-
 }
 
-void MapView::setZoom(int zoom) {
-	qreal z = zoom/100.0;
-	viewport_->resetTransform();
-	viewport_->scale(z, z);
+void MapView::setZoom(qreal zoomQuotient) {
+	if(zoomQuotient==1.0) {
+		viewport_->resetTransform();
+	} else {
+		qreal dz = zoomQuotient/lastZoomQuotient_;
+		viewport_->scale(dz, dz);
+	}
+	lastZoomQuotient_ = zoomQuotient;
 }
