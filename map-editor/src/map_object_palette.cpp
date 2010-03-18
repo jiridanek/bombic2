@@ -14,6 +14,8 @@
 #include "qt/flowlayout.h"
 #include "bombic/map_object.h"
 
+#include "resource_handler.h"
+
 #define MAP_OBJECT_PALETTE_MIN_WIDTH 240
 
 SINGLETON_INIT(MapObjectPalette);
@@ -42,9 +44,11 @@ void MapObjectPalette::tabsConstruct_() {
 	tabs_.widget->setMinimumWidth(MAP_OBJECT_PALETTE_MIN_WIDTH);
 	layout->addWidget(tabs_.widget);
 
-// 	QPushButton * loadButton = new QPushButton(tr("Load"), this);
-// 	connect(loadButton, SIGNAL(clicked()), this, SLOT(loadObject()));
-// 	layout->addWidget(loadButton);
+	QPushButton * loadButton =
+		new QPushButton(tr("Load new map object"), this);
+	connect(loadButton, SIGNAL(clicked()),
+		RESOURCE_HANDLER, SLOT(loadMapObject()));
+	layout->addWidget(loadButton);
 
 	signalMapper_ = new QSignalMapper(this);
 // 	connect(signalMapper_, SIGNAL(mapped(int)),

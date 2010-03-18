@@ -6,7 +6,7 @@
 
 #include <QWidget>
 #include <QString>
-#include <QList>
+#include <QHash>
 #include <QPoint>
 #include <singleton.h>
 
@@ -44,7 +44,7 @@ class MapObjectPalette: public QWidget {
 		typedef struct {
 			QTabWidget * widget;
 
-			QList< QLayout * > layouts;
+			QHash< Page, QLayout * > layouts;
 		} Tabs;
 
 		Tabs tabs_;
