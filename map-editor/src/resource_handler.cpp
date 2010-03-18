@@ -2,6 +2,7 @@
 #include <QLinkedList>
 #include <QBitmap>
 #include <QMessageBox>
+#include <QFileDialog>
 #include <constants.h>
 
 #include "resource_handler.h"
@@ -12,6 +13,7 @@
 
 #include "resource_handlers/wall_resource_handler.h"
 #include "bombic/wall.h"
+#include "map_object_palette.h"
 
 SINGLETON_INIT(ResourceHandler);
 
@@ -30,7 +32,7 @@ BombicMap * ResourceHandler::loadMap() {
 BombicMapBackground * ResourceHandler::loadMapBackground(
 		const QString & name) {
 	QDomElement rootEl;
-	if(!loadXmlByName(name, rootEl, "background", true)) {
+	if(!loadXml(name, rootEl, true, "background")) {
 		return 0;
 	}
 	if(!loadSourcePixmap(rootEl)) {
@@ -48,8 +50,8 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 	BombicMapBackground * mapBg =
 		new BombicMapBackground(name,
 			sourcePixmap_.copy(x, y, CELL_SIZE, CELL_SIZE) );
-	// will create anonymous walls
-	WallResourceHandler wallRH("");
+
+	WallResourceHandler wallRH;
 
 	#define CREATE_AND_ADD(situation, tagName) \
 		do { \
@@ -60,7 +62,7 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 				delete mapBg; \
 				return 0; \
 			} \
-			BombicWall * bombicWall = wallRH.createWall(wallEl); \
+			BombicWall * bombicWall = wallRH.createWall("", wallEl); \
 			if(!bombicWall) { \
 				delete mapBg; \
 				return 0; \
@@ -80,10 +82,43 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 	return mapBg;
 }
 
-BombicMapObject * ResourceHandler::loadMapObject() {
+void ResourceHandler::loadMapObject() {
+	QString filename = QFileDialog::getOpenFileName(
+		MAP_OBJECT_PALETTE, tr("Map object file"), "",
+		tr("Map object files")+" (*"XML_FILE_EXTENSION")" );
+	if(!filename.isEmpty()) {
+		QString name = attrNameValueFromName(filename);
+		if(MAP_OBJECT_PALETTE->containsObject(name)) {
+			QMessageBox::information(MAP_OBJECT_PALETTE,
+				tr("Object already in palette"),
+				tr("The object with name")+" "+name+" "
+				+tr("is already in palette") );
+		} else {
+			BombicMapObject * obj = loadMapObject(filename);
+			if(obj) {
+				MAP_OBJECT_PALETTE->addObject(obj);
+			}
+		}
+	}
 }
 
 BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
+	QDomElement rootEl;
+	if(!loadXml(name, rootEl, true)) {
+		return 0;
+	}
+	MapObjectResourceHandler * objRH =
+		MapObjectResourceHandler::createResourceHandler(rootEl);
+	if(!objRH) {
+		return 0;
+	}
+	if(!loadSourcePixmap(rootEl)) {
+		delete objRH;
+		return 0;
+	}
+	BombicMapObject * obj = objRH->createMapObject(rootEl);
+	delete objRH;
+	return obj;
 }
 
 void ResourceHandler::saveMap(BombicMap * bombicMap) {
@@ -94,16 +129,25 @@ void ResourceHandler::saveMapAs(BombicMap * bombicMap) {
 
 bool ResourceHandler::locateFile(QString & filename) {
 	if(filename.isEmpty()) {
+		showError(tr("Trying to locate file with empty name"));
 		// file cannot have empty name
 		return false;
 	}
-	if(filename[filename.size()-1]=='/') {
-		// file cannot end with slash
+	if(filename.endsWith("/")) {
+		showError(
+			tr("Trying to locate file that ends up with slash (/)")
+			+"\n"+filename);
 		return false;
 	}
-	if(filename[0]=='/') {
+	if(filename.startsWith("/")) {
 		// the filename (its path) is absolute
-		return QFile::exists(filename);
+		if(QFile::exists(filename)) {
+			return true;
+		} else {
+			showError(filename+"\n"+
+				tr("specified by absolute path doesn't exists"));
+			return false; \
+		}
 	}
 
 	bool located = locateFileInDir(
@@ -116,7 +160,12 @@ bool ResourceHandler::locateFile(QString & filename) {
 	for( int i=0 ; paths[i] != 0 && !located ; ++i ){
 		located = locateFileInDir(QString(paths[i]), filename);
 	}
-	return located;
+	if(located) {
+		return true;
+	} else {
+		showError(tr("File")+" "+filename+" "+tr("wasn't located"));
+		return false;
+	}
 }
 
 bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
@@ -150,14 +199,16 @@ bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
 	return false;
 }
 
-bool ResourceHandler::loadXmlByName(const QString & name,
-		QDomElement & rootEl, const QString & rootElTagName,
-		bool checkAttrName) {
+bool ResourceHandler::loadXml(const QString & name,
+		QDomElement & rootEl, bool checkAttrName,
+		const QString & rootElTagName) {
 
-	QString filename = name + XML_FILE_EXTENSION;
+	QString filename = name;
+	if(!filename.endsWith(XML_FILE_EXTENSION)) {
+		filename += XML_FILE_EXTENSION;
+	}
 	bool fileLocated = locateFile(filename);
 	if(!fileLocated) {
-		showError(tr("File")+" "+filename+" "+tr("didn't located"));
 		return false;
 	}
 
@@ -183,19 +234,40 @@ bool ResourceHandler::loadXmlByName(const QString & name,
 
 	rootEl = doc.documentElement();
 
-	if(rootEl.tagName()!=rootElTagName) {
+	// some checking
+	if(!rootElTagName.isEmpty() && rootEl.tagName()!=rootElTagName) {
 		showError(tr("Wrong root element, it should be")+" "+
 			rootElTagName, filename);
 		return false;
 	}
-	if(checkAttrName && rootEl.attribute("name")!=name) {
-		showError(tr("Wrong value of attribute name, it should be")+" "+
-			name, rootEl, filename);
-		return false;
+	if(checkAttrName) {
+		QString nameValue = attrNameValueFromName(name);
+		if(rootEl.attribute("name")!=nameValue) {
+			showError(
+				tr("Wrong value of attribute name, it should be")
+				+" "+nameValue, rootEl, filename);
+			return false;
+		}
 	}
 
 	return true;
 }
+
+QString ResourceHandler::attrNameValueFromName(const QString & name) {
+	QString attrNameValue = name;
+	// strip extension
+	QString ext = XML_FILE_EXTENSION;
+	if(attrNameValue.endsWith(ext)) {
+		attrNameValue.chop(ext.size());
+	}
+	// remove path
+	int slashPos = attrNameValue.lastIndexOf("/");
+	if(slashPos>=0) {
+		attrNameValue.remove(0, slashPos+1);
+	}
+	return attrNameValue;
+}
+
 
 bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 		const QString & attrName) {
@@ -214,7 +286,6 @@ bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 	QString filename = name;
 	bool fileLocated = locateFile(filename);
 	if(!fileLocated) {
-		showError(tr("File")+" "+filename+" "+tr("didn't located"));
 		return false;
 	}
 	// load pixmap

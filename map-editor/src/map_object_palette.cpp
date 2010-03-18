@@ -54,26 +54,6 @@ void MapObjectPalette::tabsConstruct_() {
 // 	connect(signalMapper_, SIGNAL(mapped(int)),
 // 		this, SLOT(objectButtonClicked(int)));
 
-
-	for(int i = 1 ; i < 7 ; ++i) {
-
-		// TODO make this better using filechooser and xml parsing
-		QPixmap sourcePixmap("../common/img/maps/mapa0.bmp");
-		QPixmap objectPixmap = sourcePixmap.copy(460, 1, (i-(i+3)%4)*CELL_SIZE, (2+i%2)*CELL_SIZE);
-
-		objectPixmap.setMask(
-			objectPixmap.createMaskFromColor(Qt::magenta));
-
-		QPushButton * objectButton = new QPushButton();
-		objectButton->setCheckable(true);
-		objectButton->setChecked(false);
-
-		QIcon buttonIcon(objectPixmap);
-		objectButton->setIcon(buttonIcon);
-		objectButton->setIconSize(objectPixmap.size());
-
-		tabs_.layouts[wallPage]->addWidget(objectButton);
-	}
 }
 
 void MapObjectPalette::tabsAddPage_(MapObjectPalette::Page pageIndex,
@@ -94,3 +74,22 @@ void MapObjectPalette::tabsAddPage_(MapObjectPalette::Page pageIndex,
 	tabs_.widget->insertTab(pageIndex, page, tabLabel);
 	tabs_.layouts[pageIndex] = scrollAreaLayout;
 }
+
+bool MapObjectPalette::containsObject(const QString & objectName) {
+	return false;
+}
+
+void MapObjectPalette::addObject(BombicMapObject * object) {
+	QIcon buttonIcon(object->pixmap());
+
+	QPushButton * objectButton = new QPushButton;
+	objectButton->setCheckable(true);
+	objectButton->setChecked(false);
+
+	objectButton->setIcon(buttonIcon);
+	objectButton->setIconSize(object->pixmap().size());
+
+	tabs_.layouts[wallPage]->addWidget(objectButton);
+}
+
+

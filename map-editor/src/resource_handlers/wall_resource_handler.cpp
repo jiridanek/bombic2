@@ -9,16 +9,19 @@
 #include "../bombic/map_object.h"
 #include "../bombic/wall.h"
 
-WallResourceHandler::WallResourceHandler(const QString & name):
-		MapObjectResourceHandler(name) {
-}
 
 BombicMapObject * WallResourceHandler::createMapObject(
-		const QString & filename) {
-
+		const QDomElement & rootEl) {
+	QDomElement imgEl;
+	if(RESOURCE_HANDLER->getSubElement(rootEl, imgEl)) {
+		return createWall(rootEl.attribute("name"), imgEl);
+	} else {
+		return 0;
+	}
 }
 
-BombicWall * WallResourceHandler::createWall(const QDomElement & imgEl) {
+BombicWall * WallResourceHandler::createWall(const QString & name,
+		const QDomElement & imgEl) {
 	// get attributes
 	int x = 0;
 	int y = 0;
@@ -37,5 +40,9 @@ BombicWall * WallResourceHandler::createWall(const QDomElement & imgEl) {
 	QPixmap pixmap = RESOURCE_HANDLER->sourcePixmap_.copy(
 		x, y, w*CELL_SIZE, (h+t)*CELL_SIZE);
 
-	return new BombicWall(name_, pixmap, w, h, t);
+	return new BombicWall(name, pixmap, w, h, t);
+}
+
+BombicMapObject::Type WallResourceHandler::type() {
+	return BombicMapObject::Wall;
 }

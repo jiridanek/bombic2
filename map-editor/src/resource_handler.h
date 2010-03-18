@@ -41,18 +41,24 @@ class ResourceHandler: public QObject {
 
 		BombicMapBackground * loadMapBackground(const QString & name);
 
-		BombicMapObject * loadMapObject();
+	public slots:
+		void loadMapObject();
+
+
+	protected:
 
 		BombicMapObject * loadMapObject(const QString & name);
 
-	protected:
+
 		static bool locateFile(QString & filename);
 		static bool locateFileInDir(const QDir & dir,
 				QString & filename, int depth = 0);
 
-		static bool loadXmlByName(const QString & name, QDomElement & rootEl,
-			const QString & rootElTagName, bool checkAttrName);
+		static bool loadXml(const QString & name,
+			QDomElement & rootEl, bool checkAttrName,
+			const QString & rootElTagName = "");
 
+		static QString attrNameValueFromName(const QString & name);
 
 		bool loadSourcePixmap(const QDomElement & el,
 				const QString & attrName = "src");
@@ -79,6 +85,7 @@ class ResourceHandler: public QObject {
 
 		static QString nodePath(const QDomNode & el,
 				const QString & delimiter = " > ");
+
 		QPixmap sourcePixmap_;
 		QString sourcePixmapName_;
 };

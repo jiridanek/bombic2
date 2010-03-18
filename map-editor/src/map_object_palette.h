@@ -28,7 +28,9 @@ class MapObjectPalette: public QWidget {
 		MapObjectPalette(QWidget * parent = 0);
 		~MapObjectPalette();
 
+		bool containsObject(const QString & objectName);
 
+		void addObject(BombicMapObject * object);
 	private:
 		enum Page {
 			wallPage, boxPage, creaturePage, floorobjectPage
