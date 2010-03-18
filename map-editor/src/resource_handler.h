@@ -8,6 +8,7 @@
 #include <QPixmap>
 #include <QString>
 #include <QDomElement>
+#include <QDomNode>
 #include <QDir>
 #include <singleton.h>
 
@@ -66,7 +67,18 @@ class ResourceHandler: public QObject {
 
 		static bool getAttrsXY(const QDomElement & el, int & x, int & y);
 
+		static void showError(const QString & message);
 
+		static void showError(const QString & message,
+				const QDomElement & el,
+				const QString & filename = "");
+
+		static void showError(const QString & message,
+				const QString & filename,
+				const QDomElement & el = QDomElement());
+
+		static QString nodePath(const QDomNode & el,
+				const QString & delimiter = " > ");
 		QPixmap sourcePixmap_;
 		QString sourcePixmapName_;
 };

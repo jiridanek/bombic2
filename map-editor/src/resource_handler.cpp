@@ -1,6 +1,7 @@
 
 #include <QLinkedList>
 #include <QBitmap>
+#include <QMessageBox>
 #include <constants.h>
 
 #include "resource_handler.h"
@@ -25,8 +26,6 @@ ResourceHandler::~ResourceHandler() {
 
 BombicMap * ResourceHandler::loadMap() {
 }
-
-#include <QDebug>
 
 BombicMapBackground * ResourceHandler::loadMapBackground(
 		const QString & name) {
@@ -122,7 +121,7 @@ bool ResourceHandler::locateFile(QString & filename) {
 
 bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
 		int depth) {
-	// qDebug() << "now in dir " << dir.absolutePath();
+
 	if(!dir.isReadable()) {
 		return false;
 	}
@@ -158,37 +157,40 @@ bool ResourceHandler::loadXmlByName(const QString & name,
 	QString filename = name + XML_FILE_EXTENSION;
 	bool fileLocated = locateFile(filename);
 	if(!fileLocated) {
-		// TODO handle it
-		qDebug() << "file " << filename << " not located";
+		showError(tr("File")+" "+filename+" "+tr("didn't located"));
 		return false;
 	}
 
 	QFile file(filename);
 	if(!file.open(QIODevice::ReadOnly)) {
-		// TODO handle it
-		qDebug() << "can't open file " << filename;
+		showError(filename+"\n"+tr("couldn't be opened"));
 		return false;
 	}
 
-	QDomDocument doc;
-	bool fileParsed = doc.setContent(&file);
+	QDomDocument doc(filename);
+	QString errMsg;
+	int errRow;
+	int errCol;
+	bool fileParsed = doc.setContent(&file, &errMsg, &errRow, &errCol);
 	file.close();
 	if(!fileParsed) {
-		// TODO handle it
-		qDebug() << "file " << filename << " is not xml file";
+		showError(tr("Parse error")+" "+tr("at line")+" "+
+			QString::number(errRow)+" "+tr("and column")+" "+
+			QString::number(errCol)+" "+tr("occure")+".\n"+
+			tr("Details follow")+":\n"+errMsg, filename);
 		return false;
 	}
 
 	rootEl = doc.documentElement();
 
 	if(rootEl.tagName()!=rootElTagName) {
-		// TODO handle it
-		qDebug() << "the root element of " << filename << " should be " << rootElTagName;
+		showError(tr("Wrong root element, it should be")+" "+
+			rootElTagName, filename);
 		return false;
 	}
 	if(checkAttrName && rootEl.attribute("name")!=name) {
-		// TODO handle it
-		qDebug() << "the name in root element of " << filename << " should be " << name;
+		showError(tr("Wrong value of attribute name, it should be")+" "+
+			name, rootEl, filename);
 		return false;
 	}
 
@@ -199,8 +201,7 @@ bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 		const QString & attrName) {
 	// get name of pixmap
 	if(!el.hasAttribute(attrName)) {
-		// handle it
-		qDebug() << "hasn't attr " << attrName;
+		showError(tr("Missing attribute")+" "+attrName, el);
 		return false;
 	}
 	QString name = el.attribute(attrName);
@@ -213,12 +214,18 @@ bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 	QString filename = name;
 	bool fileLocated = locateFile(filename);
 	if(!fileLocated) {
-		// TODO handle it
-		qDebug() << "file " << filename << " not located";
+		showError(tr("File")+" "+filename+" "+tr("didn't located"));
 		return false;
 	}
-	// store the pixmap and its name
-	sourcePixmap_ = QPixmap(filename);
+	// load pixmap
+	QPixmap pixmap(filename);
+	if(pixmap.isNull()) {
+		showError(filename+"\n"+tr("couldn't be opened")+" "+
+			tr("or has unknown format"));
+		return false;
+	}
+	// store the pixmap and its name for future use
+	sourcePixmap_ = pixmap;
 	sourcePixmapName_ = name;
 
 	// set the pixmap transparent
@@ -233,8 +240,7 @@ bool ResourceHandler::getSubElement(const QDomElement & el,
 
 	subEl = el.namedItem(subElTagName).toElement();
 	if(subEl.isNull()) {
-		// handle it
-		qDebug() << "element " << el.tagName() << " hasn't subelement " << subElTagName;
+		showError(tr("Missing subelement")+" "+subElTagName, el);
 		return false;
 	}
 
@@ -248,17 +254,15 @@ bool ResourceHandler::getIntAttr(const QDomElement & el,
 		if(successIfMissing) {
 			return true;
 		} else {
-			// handle it
-			qDebug() << "element " << el.tagName() << " hasn't attribute " << attrName;
+			showError(tr("Missing attribute")+" "+attrName, el);
 			return false;
 		}
 	}
 	bool converted;
 	int a = el.attribute(attrName).toInt(&converted);
 	if(!converted) {
-		// handle it
-		qDebug() << "attribute " << attrName << " in element "
-			<< el.tagName() << " cannot be converted to int";
+		showError(tr("Attribute")+" "+attrName+" "
+			+tr("cannot be converted to integer"), el);
 		return false;
 	}
 
@@ -270,4 +274,41 @@ bool ResourceHandler::getAttrsXY(const QDomElement & el, int & x, int & y) {
 	return getIntAttr(el, x, "x") && getIntAttr(el, y, "y");
 }
 
+void ResourceHandler::showError(const QString & message) {
+	QMessageBox::critical(0, tr("Error in Bombic resource"),
+		message, QMessageBox::Ok);
+}
 
+void ResourceHandler::showError(const QString & message,
+		const QString & filename,
+		const QDomElement & el ) {
+
+	QString final_message;
+	if(!filename.isEmpty()) {
+		final_message = tr("In the file:") + "\n"
+			+ filename + "\n";
+	}
+	if(!el.isNull()) {
+		final_message += tr("In element:") + "\n"
+			+ nodePath(el) + "\n";
+	}
+	final_message += message;
+	showError(final_message);
+}
+
+void ResourceHandler::showError(const QString & message,
+		const QDomElement & el,
+		const QString & filename) {
+	showError(message, filename, el);
+}
+
+QString ResourceHandler::nodePath(const QDomNode & node,
+		const QString & delimiter) {
+	QString path = node.nodeName();
+	for(QDomNode n = node.parentNode() ;
+			!n.isNull() && n.nodeType()!=QDomNode::DocumentNode ;
+			n = n.parentNode() ) {
+		path = n.nodeName() + delimiter + path;
+	}
+	return path;
+}
