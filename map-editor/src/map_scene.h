@@ -24,13 +24,21 @@ class MapScene: public QGraphicsScene {
 		void insert(BombicMapObject * object,
 				const BombicMap::Field & dstField);
 
+	public slots:
+		void unsetWorkingObject();
+		void setWorkingObject(BombicMapObject * object);
+
 	protected:
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
 
 	private:
+		void insertBackgroundFields(const QPixmap & texture);
+		void insertBackgroundWalls(BombicMapBackground * background);
 
 		BombicMap * map_;
+
+		BombicMapObject * workingObject_;
 
 
 };

@@ -19,11 +19,6 @@ MapObjectResourceHandler * MapObjectResourceHandler::createResourceHandler(
 
 
 	// here we don't know which resource handler create
-	// show error - the message about it
-	RESOURCE_HANDLER->showError(
-		tr("Don't know which resource handler create.")+"\n"+
-		tr("The object with root element")+" "+rootEl.tagName()+" "+
-		tr("may be wrong or not supported.");
 
 	return 0;
 

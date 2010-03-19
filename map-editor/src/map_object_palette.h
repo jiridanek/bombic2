@@ -15,6 +15,7 @@
 class QTabWidget;
 class QLayout;
 class QSignalMapper;
+class QPushButton;
 
 class BombicMapObject;
 
@@ -31,6 +32,17 @@ class MapObjectPalette: public QWidget {
 		bool containsObject(const QString & objectName);
 
 		void addObject(BombicMapObject * object);
+
+	signals:
+		void objectUnselected();
+		void objectSelected(BombicMapObject *);
+
+	public slots:
+		void unselectObject();
+
+	private slots:
+		void objectButtonClicked(int objectPaletteIndex);
+
 	private:
 		enum Page {
 			wallPage, boxPage, creaturePage, floorobjectPage
@@ -40,8 +52,9 @@ class MapObjectPalette: public QWidget {
 		void tabsAddPage_(MapObjectPalette::Page pageIndex,
 			const QString & tabLabel);
 
-// 		void selectObject(int objectIndex);
-// 		void unselectObject();
+		void selectObject(int objectPaletteIndex);
+
+		QPushButton * getObjectButton(int objectPaletteIndex);
 
 		typedef struct {
 			QTabWidget * widget;
@@ -51,9 +64,10 @@ class MapObjectPalette: public QWidget {
 
 		Tabs tabs_;
 		QSignalMapper * signalMapper_;
-// 		QList<QPixmap> objectPalette_;
 
-// 		int selectedObjectIndex_;
+		QList<BombicMapObject *> objectPalette_;
+
+		int selectedObjectIndex_;
 
 };
 

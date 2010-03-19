@@ -110,6 +110,11 @@ BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
 	MapObjectResourceHandler * objRH =
 		MapObjectResourceHandler::createResourceHandler(rootEl);
 	if(!objRH) {
+		showError(
+			tr("Don't know which resource handler create.")+"\n"+
+			tr("The object with root element")+" "+
+			rootEl.tagName()+" "+
+			tr("may be wrong or not supported.") );
 		return 0;
 	}
 	if(!loadSourcePixmap(rootEl)) {

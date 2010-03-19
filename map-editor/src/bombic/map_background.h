@@ -6,6 +6,7 @@
 
 #include <QString>
 #include <QPixmap>
+#include <QColor>
 #include <QHash>
 
 class BombicWall;
@@ -23,6 +24,7 @@ class BombicMapBackground {
 		};
 
 		const QPixmap & texture();
+		QColor ambientColor();
 
 		BombicWall * getWall(
 				BombicMapBackground::WallSituation wallSituation);

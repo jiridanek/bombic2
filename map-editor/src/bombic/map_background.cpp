@@ -21,6 +21,16 @@ const QPixmap & BombicMapBackground::texture() {
 	return texture_;
 }
 
+QColor BombicMapBackground::ambientColor() {
+	BombicWall * topLeftWall = getWall(TopLeft);
+	if(topLeftWall) {
+		return topLeftWall->pixmap().toImage().pixel(0,0);
+	} else {
+		return Qt::black;
+	}
+}
+
+
 BombicWall * BombicMapBackground::getWall(
 		BombicMapBackground::WallSituation wallSituation) {
 	if(walls_.contains(wallSituation)) {
