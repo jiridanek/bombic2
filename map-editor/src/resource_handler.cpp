@@ -83,10 +83,10 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 }
 
 void ResourceHandler::loadMapObject() {
-	QString filename = QFileDialog::getOpenFileName(
+	QStringList filenames = QFileDialog::getOpenFileNames(
 		MAP_OBJECT_PALETTE, tr("Map object file"), "",
 		tr("Map object files")+" (*"XML_FILE_EXTENSION")" );
-	if(!filename.isEmpty()) {
+	foreach(QString filename, filenames) {
 		loadMapObject(filename);
 	}
 }
