@@ -11,6 +11,7 @@
 
 class QGraphicsView;
 class QGridLayout;
+class QEvent;
 class ZoomWidget;
 class MapScene;
 class BombicMapBackground;
@@ -31,6 +32,12 @@ class MapView: public QWidget {
 
 	public slots:
 		void setZoom(qreal zoomQuotient);
+
+	signals:
+		void leaved();
+
+	protected:
+		virtual void leaveEvent(QEvent * event);
 
 	private:
 		QGraphicsView * viewport_;

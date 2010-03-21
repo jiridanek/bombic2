@@ -22,6 +22,8 @@ class BombicWall: public BombicMapObject {
 
 		virtual bool canBeWith(BombicMapObject * object);
 
+		bool isBackground();
+
 	private:
 		int toplapping_;
 };

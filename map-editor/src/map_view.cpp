@@ -60,3 +60,7 @@ void MapView::setZoom(qreal zoomQuotient) {
 	}
 	lastZoomQuotient_ = zoomQuotient;
 }
+
+void MapView::leaveEvent(QEvent * event) {
+	emit leaved();
+}

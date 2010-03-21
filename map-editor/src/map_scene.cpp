@@ -3,12 +3,15 @@
 
 #include <QBrush>
 #include <QGraphicsItem>
+#include <QGraphicsSceneMouseEvent>
 #include <QPoint>
+#include <QPointF>
 #include <QRect>
 
 #include <constants.h>
 
 #include "map_object_palette.h"
+#include "map_view.h"
 
 #include "bombic/map.h"
 #include "bombic/map_background.h"
@@ -33,6 +36,10 @@ MapScene::MapScene(int width, int height,
 		this, SLOT(unsetWorkingObject()) );
 	connect(MAP_OBJECT_PALETTE, SIGNAL(objectSelected(BombicMapObject *)),
 		this, SLOT(setWorkingObject(BombicMapObject *)) );
+
+	// connect view to scene
+	connect(MAP_VIEW, SIGNAL(leaved()),
+		this, SLOT(hideWorkingObject()) );
 }
 
 void MapScene::insertBackgroundFields(const QPixmap & texture) {
@@ -101,9 +108,44 @@ void MapScene::insert(BombicMapObject * object,
 }
 
 void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) {
+	if(workingObject_ == 0) {
+		return;
+	}
+	BombicMap::Field eventField = getEventField(mouseEvent);
+	if(map_->canInsert(workingObject_, eventField)) {
+		QGraphicsItem * workingGI = workingObject_->situateGraphicsItem(
+			eventField*CELL_SIZE);
+		if(workingGI->scene()!=this) {
+			// working item is not in the right scene
+			addItem(workingGI);
+		}
+	} else {
+		hideWorkingObject();
+	}
 }
 
 void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) {
+	if(workingObject_ == 0) {
+		return;
+	}
+	BombicMap::Field eventField = getEventField(mouseEvent);
+	if(map_->canInsert(workingObject_, eventField)) {
+		insert(workingObject_->createCopy(), eventField);
+	}
+}
+
+BombicMap::Field MapScene::getEventField(
+		QGraphicsSceneMouseEvent * mouseEvent) {
+	QPoint eventPoint = mouseEvent->scenePos().toPoint();
+	return (eventPoint - QPoint(CELL_SIZE/2, CELL_SIZE/2)) / CELL_SIZE;
+}
+
+void MapScene::setWorkingObject(BombicMapObject * object) {
+	if(workingObject_ == object) {
+		return;
+	}
+	workingObject_ = object;
+	// TODO
 }
 
 void MapScene::unsetWorkingObject() {
@@ -114,10 +156,13 @@ void MapScene::unsetWorkingObject() {
 	// TODO
 }
 
-void MapScene::setWorkingObject(BombicMapObject * object) {
-	if(workingObject_ == object) {
+void MapScene::hideWorkingObject() {
+	if(workingObject_ == 0) {
 		return;
 	}
-	workingObject_ = object;
-	// TODO
+	QGraphicsItem * workingGI = workingObject_->graphicsItem();
+	if(workingGI->scene()==this) {
+		// working item is in the right scene
+		removeItem(workingGI);
+	}
 }
