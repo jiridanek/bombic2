@@ -29,7 +29,7 @@ class MapObjectPalette: public QWidget {
 		MapObjectPalette(QWidget * parent = 0);
 		~MapObjectPalette();
 
-		bool containsObject(const QString & objectName);
+		BombicMapObject * getObject(const QString & objectName);
 
 		void addObject(BombicMapObject * object);
 
@@ -59,13 +59,14 @@ class MapObjectPalette: public QWidget {
 		typedef struct {
 			QTabWidget * widget;
 
-			QHash< Page, QLayout * > layouts;
+			QHash<Page, QLayout *> layouts;
 		} Tabs;
 
 		Tabs tabs_;
 		QSignalMapper * signalMapper_;
 
 		QList<BombicMapObject *> objectPalette_;
+		QHash<QString, BombicMapObject *> objectsByName_;
 
 		int selectedObjectIndex_;
 

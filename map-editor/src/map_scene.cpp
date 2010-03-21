@@ -61,7 +61,7 @@ void MapScene::insertBackgroundWalls(BombicMapBackground * background) {
 		do { \
 			PREPARE_WALL_AND_RECT(situation, moveMethod, getMethod) \
 			/* insert wall (by the top left corner of wall rect) */ \
-			insert(wall, wallRect.topLeft() ); \
+			insert(wall->createCopy(), wallRect.topLeft() ); \
 		} while(0)
 	CORNER(TopLeft, moveTopLeft, topLeft);
 	CORNER(TopRight, moveTopRight, topRight);
@@ -78,7 +78,7 @@ void MapScene::insertBackgroundWalls(BombicMapBackground * background) {
 					field += BombicMap::Field(stepX, stepY) ) { \
 				/* insert wall if it is possible */ \
 				if(map_->canInsert(wall, field)) { \
-					insert(wall, field); \
+					insert(wall->createCopy(), field); \
 				} \
 			} \
 		} while(0)
@@ -97,7 +97,7 @@ void MapScene::insert(BombicMapObject * object,
 		const BombicMap::Field & dstField) {
 
 	map_->insert(object, dstField);
-	addItem(object->createGraphicsItem( dstField*CELL_SIZE ));
+	addItem(object->situateGraphicsItem( dstField*CELL_SIZE ));
 }
 
 void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) {

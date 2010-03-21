@@ -10,6 +10,7 @@
 #include <QSize>
 
 class QGraphicsItem;
+class QGraphicsPixmapItem;
 
 class BombicMapObject {
 
@@ -17,14 +18,19 @@ class BombicMapObject {
 		BombicMapObject(const QString & name, const QPixmap & pixmap);
 		~BombicMapObject();
 
+		virtual BombicMapObject * createCopy() =0;
+
 		enum Type {
 			Floorobject, Wall, Box, Creature, Player
 		};
 
 		virtual BombicMapObject::Type type() =0;
 
-		virtual QGraphicsItem * createGraphicsItem(
+		virtual QGraphicsItem * graphicsItem();
+		virtual QGraphicsItem * situateGraphicsItem(
 				const QPointF & position) =0;
+
+		const QString & name();
 
 		const QPixmap & pixmap();
 
@@ -35,6 +41,7 @@ class BombicMapObject {
 	protected:
 		QString name_;
 		QPixmap pixmap_;
+		QGraphicsPixmapItem * graphicsItem_;
 		/// Velikost v polickach (kolik zabira policek).
 		QSize size_;
 };

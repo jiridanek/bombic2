@@ -87,22 +87,17 @@ void ResourceHandler::loadMapObject() {
 		MAP_OBJECT_PALETTE, tr("Map object file"), "",
 		tr("Map object files")+" (*"XML_FILE_EXTENSION")" );
 	if(!filename.isEmpty()) {
-		QString name = attrNameValueFromName(filename);
-		if(MAP_OBJECT_PALETTE->containsObject(name)) {
-			QMessageBox::information(MAP_OBJECT_PALETTE,
-				tr("Object already in palette"),
-				tr("The object with name")+" "+name+" "
-				+tr("is already in palette") );
-		} else {
-			BombicMapObject * obj = loadMapObject(filename);
-			if(obj) {
-				MAP_OBJECT_PALETTE->addObject(obj);
-			}
-		}
+		loadMapObject(filename);
 	}
 }
 
 BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
+	QString objectName = attrNameValueFromName(name);
+	BombicMapObject * obj = MAP_OBJECT_PALETTE->getObject(objectName);
+	if(obj) {
+		return obj;
+	}
+
 	QDomElement rootEl;
 	if(!loadXml(name, rootEl, true)) {
 		return 0;
@@ -121,8 +116,12 @@ BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
 		delete objRH;
 		return 0;
 	}
-	BombicMapObject * obj = objRH->createMapObject(rootEl);
+	obj = objRH->createMapObject(rootEl);
 	delete objRH;
+	if(!obj) {
+		return 0;
+	}
+	MAP_OBJECT_PALETTE->addObject(obj);
 	return obj;
 }
 

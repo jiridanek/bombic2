@@ -79,8 +79,12 @@ void MapObjectPalette::tabsAddPage_(MapObjectPalette::Page pageIndex,
 	tabs_.layouts.insert(pageIndex, scrollAreaLayout);
 }
 
-bool MapObjectPalette::containsObject(const QString & objectName) {
-	return false;
+BombicMapObject * MapObjectPalette::getObject(const QString & objectName) {
+	if(objectsByName_.contains(objectName)) {
+		return objectsByName_.value(objectName);
+	} else {
+		return 0;
+	}
 }
 
 void MapObjectPalette::addObject(BombicMapObject * object) {
@@ -119,6 +123,7 @@ void MapObjectPalette::addObject(BombicMapObject * object) {
 
 	int objectPaletteIndex = objectPalette_.size();
 	objectPalette_.append(object);
+	objectsByName_.insert(object->name(), object);
 
 	connect(objectButton, SIGNAL(clicked()),
 		signalMapper_, SLOT(map()));

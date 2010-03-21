@@ -12,9 +12,12 @@ class BombicWall: public BombicMapObject {
 		BombicWall(const QString & name, const QPixmap & pixmap,
 				int width, int height, int toplapping);
 
+		virtual BombicMapObject * createCopy();
+		BombicWall * createWallCopy();
+
 		virtual BombicMapObject::Type type();
 
-		virtual QGraphicsItem * createGraphicsItem(
+		virtual QGraphicsItem * situateGraphicsItem(
 				const QPointF & position);
 
 		virtual bool canBeWith(BombicMapObject * object);

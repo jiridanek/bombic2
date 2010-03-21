@@ -14,6 +14,7 @@ BombicMap::BombicMap(int width, int height,
 }
 
 BombicMap::~BombicMap() {
+	// TODO delete objects in map
 }
 
 void BombicMap::insert(BombicMapObject * object,
