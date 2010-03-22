@@ -55,7 +55,7 @@
 /// Okraj graficke polozky MapScene::cantInsertItem_.
 #define CANT_INSERT_ITEM_PEN \
 	/* color, width, style, capStyle, joinStyle*/ \
-	QPen(QColor(0, 0, 255, 128), 4.0)
+	QPen(QColor(255, 255, 255, 128), 3.0)
 /// Plocha graficke polozky MapScene::cantInsertItem_.
 #define CANT_INSERT_ITEM_BRUSH \
 	QBrush(QColor(255, 0, 0, 96))
