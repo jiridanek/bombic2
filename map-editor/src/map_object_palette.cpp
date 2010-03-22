@@ -80,8 +80,9 @@ void MapObjectPalette::tabsAddPage_(MapObjectPalette::Page pageIndex,
 }
 
 BombicMapObject * MapObjectPalette::getObject(const QString & objectName) {
-	if(objectsByName_.contains(objectName)) {
-		return objectsByName_.value(objectName);
+	if(objectIndexesByName_.contains(objectName)) {
+		return objectPalette_.at(
+			objectIndexesByName_.value(objectName) );
 	} else {
 		return 0;
 	}
@@ -116,14 +117,14 @@ void MapObjectPalette::addObject(BombicMapObject * object) {
 
 	QPushButton * objectButton = new QPushButton;
 	objectButton->setCheckable(true);
-	objectButton->setChecked(false);
 
 	objectButton->setIcon(buttonIcon);
 	objectButton->setIconSize(object->pixmap().size());
 
 	int objectPaletteIndex = objectPalette_.size();
 	objectPalette_.append(object);
-	objectsByName_.insert(object->name(), object);
+	objectIndexesByName_.insert(
+		object->name(), objectPaletteIndex);
 
 	connect(objectButton, SIGNAL(clicked()),
 		signalMapper_, SLOT(map()));
@@ -131,11 +132,13 @@ void MapObjectPalette::addObject(BombicMapObject * object) {
 
 	tabs_.layouts.value(page)->addWidget(objectButton);
 	tabs_.widget->setCurrentIndex(page);
+
+	selectObject(objectPaletteIndex);
+	objectButton->setChecked(true);
 }
 
 void MapObjectPalette::objectButtonClicked(int objectPaletteIndex) {
-	QPushButton * button = static_cast<QPushButton *>(
-		signalMapper_->mapping(objectPaletteIndex) );
+	QPushButton * button = getObjectButton(objectPaletteIndex);
 
 	if(button->isChecked()) {
 		selectObject(objectPaletteIndex);
@@ -151,6 +154,16 @@ void MapObjectPalette::selectObject(int objectPaletteIndex) {
 	}
 	selectedObjectIndex_ = objectPaletteIndex;
 	emit objectSelected(objectPalette_[selectedObjectIndex_]);
+}
+
+void MapObjectPalette::selectObject(const QString & objectName) {
+	if(objectIndexesByName_.contains(objectName)) {
+		int objectPaletteIndex =
+			objectIndexesByName_.value(objectName);
+		selectObject(objectPaletteIndex);
+		getObjectButton(objectPaletteIndex)
+			->setChecked(true);
+	}
 }
 
 void MapObjectPalette::unselectObject() {

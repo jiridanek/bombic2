@@ -10,14 +10,14 @@
 #include <QPoint>
 #include <singleton.h>
 
+#include "bombic/map_object.h"
+
 #define MAP_OBJECT_PALETTE SINGLETON_SHORTCUT(MapObjectPalette)
 
 class QTabWidget;
 class QLayout;
 class QSignalMapper;
 class QPushButton;
-
-class BombicMapObject;
 
 class MapObjectPalette: public QWidget {
 
@@ -38,6 +38,11 @@ class MapObjectPalette: public QWidget {
 		void objectSelected(BombicMapObject *);
 
 	public slots:
+		void selectObject(const QString & objectName);
+		inline void selectObject(BombicMapObject * object) {
+			selectObject(object->name());
+		}
+
 		void unselectObject();
 
 	private slots:
@@ -66,7 +71,7 @@ class MapObjectPalette: public QWidget {
 		QSignalMapper * signalMapper_;
 
 		QList<BombicMapObject *> objectPalette_;
-		QHash<QString, BombicMapObject *> objectsByName_;
+		QHash<QString, int> objectIndexesByName_;
 
 		int selectedObjectIndex_;
 

@@ -95,6 +95,7 @@ BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
 	QString objectName = attrNameValueFromName(name);
 	BombicMapObject * obj = MAP_OBJECT_PALETTE->getObject(objectName);
 	if(obj) {
+		MAP_OBJECT_PALETTE->selectObject(objectName);
 		return obj;
 	}
 
