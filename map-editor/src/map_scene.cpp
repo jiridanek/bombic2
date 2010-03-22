@@ -108,7 +108,7 @@ void MapScene::insert(BombicMapObject * object,
 }
 
 void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) {
-	if(workingObject_ == 0) {
+	if(!workingObject_) {
 		return;
 	}
 	BombicMap::Field eventField = getEventField(mouseEvent);
@@ -125,7 +125,7 @@ void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) {
 }
 
 void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) {
-	if(workingObject_ == 0) {
+	if(!workingObject_) {
 		return;
 	}
 	BombicMap::Field eventField = getEventField(mouseEvent);
@@ -137,7 +137,13 @@ void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) {
 BombicMap::Field MapScene::getEventField(
 		QGraphicsSceneMouseEvent * mouseEvent) {
 	QPoint eventPoint = mouseEvent->scenePos().toPoint();
-	return (eventPoint - QPoint(CELL_SIZE/2, CELL_SIZE/2)) / CELL_SIZE;
+	QPoint relativeMiddle(CELL_SIZE/2, CELL_SIZE/2);
+	if(workingObject_) {
+		relativeMiddle.setX(workingObject_->size().width());
+		relativeMiddle.setY(workingObject_->size().height());
+		relativeMiddle *= CELL_SIZE/2;
+	}
+	return (eventPoint - relativeMiddle) / CELL_SIZE;
 }
 
 void MapScene::setWorkingObject(BombicMapObject * object) {
@@ -150,7 +156,7 @@ void MapScene::setWorkingObject(BombicMapObject * object) {
 }
 
 void MapScene::unsetWorkingObject() {
-	if(workingObject_ == 0) {
+	if(!workingObject_) {
 		return;
 	}
 	hideWorkingObject();
@@ -160,7 +166,7 @@ void MapScene::unsetWorkingObject() {
 }
 
 void MapScene::hideWorkingObject() {
-	if(workingObject_ == 0) {
+	if(!workingObject_) {
 		return;
 	}
 	QGraphicsItem * workingGI = workingObject_->graphicsItem();

@@ -34,7 +34,7 @@ class MapScene: public QGraphicsScene {
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
 
 	private:
-		static BombicMap::Field getEventField(
+		BombicMap::Field getEventField(
 				QGraphicsSceneMouseEvent * mouseEvent);
 		void insertBackgroundFields(const QPixmap & texture);
 		void insertBackgroundWalls(BombicMapBackground * background);
