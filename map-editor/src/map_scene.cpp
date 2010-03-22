@@ -2,7 +2,9 @@
 #include "map_scene.h"
 
 #include <QBrush>
+#include <QPen>
 #include <QGraphicsItem>
+#include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QPoint>
 #include <QPointF>
@@ -21,7 +23,8 @@
 MapScene::MapScene(int width, int height,
 		BombicMapBackground * background,
 		QObject * parent):
-				QGraphicsScene(parent), workingObject_(0) {
+				QGraphicsScene(parent), workingObject_(0),
+				cantInsertItem_(new QGraphicsRectItem) {
 	// set the scene
 	setSceneRect(0, 0, width*CELL_SIZE, height*CELL_SIZE);
 	setBackgroundBrush(background->ambientColor());
@@ -40,6 +43,13 @@ MapScene::MapScene(int width, int height,
 	// connect view to scene
 	connect(MAP_VIEW, SIGNAL(leaved()),
 		this, SLOT(hideWorkingObject()) );
+
+	// set the "cant insert item"
+	cantInsertItem_->setPen(CANT_INSERT_ITEM_PEN);
+	cantInsertItem_->setBrush(CANT_INSERT_ITEM_BRUSH);
+	cantInsertItem_->setZValue(sceneRect().height()+1);
+	cantInsertItem_->hide();
+	addItem(cantInsertItem_);
 }
 
 void MapScene::insertBackgroundFields(const QPixmap & texture) {
@@ -112,15 +122,24 @@ void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) {
 		return;
 	}
 	BombicMap::Field eventField = getEventField(mouseEvent);
+	QPointF insertionPoint = eventField*CELL_SIZE;
+	QGraphicsItem * workingGI = workingObject_->situateGraphicsItem(
+		insertionPoint);
 	if(map_->canInsert(workingObject_, eventField)) {
-		QGraphicsItem * workingGI = workingObject_->situateGraphicsItem(
-			eventField*CELL_SIZE);
+		cantInsertItem_->hide();
+		workingGI->show();
 		if(workingGI->scene()!=this) {
 			// working item is not in the right scene
 			addItem(workingGI);
 		}
 	} else {
-		hideWorkingObject();
+		workingGI->hide();
+
+		cantInsertItem_->setPos(insertionPoint);
+		cantInsertItem_->setRect( QRectF(
+			QPointF(0, 0),
+			workingObject_->size()*CELL_SIZE ) );
+		cantInsertItem_->show();
 	}
 }
 
@@ -174,4 +193,6 @@ void MapScene::hideWorkingObject() {
 		// working item is in the right scene
 		removeItem(workingGI);
 	}
+
+	cantInsertItem_->hide();
 }

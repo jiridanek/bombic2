@@ -8,6 +8,7 @@
 
 #include "bombic/map.h"
 
+class QGraphicsRectItem;
 class BombicMapBackground;
 class BombicMapObject;
 
@@ -43,6 +44,7 @@ class MapScene: public QGraphicsScene {
 
 		BombicMapObject * workingObject_;
 
+		QGraphicsRectItem * cantInsertItem_;
 
 };
 

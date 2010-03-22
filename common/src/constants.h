@@ -52,5 +52,12 @@
 /// Maximalni hodnota.
 #define ZOOM_MAXIMUM_VALUE 1.5
 
+/// Okraj graficke polozky MapScene::cantInsertItem_.
+#define CANT_INSERT_ITEM_PEN \
+	/* color, width, style, capStyle, joinStyle*/ \
+	QPen(QColor(0, 0, 255, 128), 4.0)
+/// Plocha graficke polozky MapScene::cantInsertItem_.
+#define CANT_INSERT_ITEM_BRUSH \
+	QBrush(QColor(255, 0, 0, 96))
 
 #endif
