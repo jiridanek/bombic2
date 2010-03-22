@@ -145,6 +145,7 @@ void MapScene::setWorkingObject(BombicMapObject * object) {
 		return;
 	}
 	workingObject_ = object;
+	MAP_VIEW->showWorkingObjectLabel(object->pixmap());
 	// TODO
 }
 
@@ -152,6 +153,8 @@ void MapScene::unsetWorkingObject() {
 	if(workingObject_ == 0) {
 		return;
 	}
+	hideWorkingObject();
+	MAP_VIEW->hideWorkingObjectLabel();
 	workingObject_ = 0;
 	// TODO
 }

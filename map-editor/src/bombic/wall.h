@@ -24,8 +24,6 @@ class BombicWall: public BombicMapObject {
 
 		bool isBackground();
 
-	private:
-		int toplapping_;
 };
 
 #endif

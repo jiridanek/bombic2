@@ -39,7 +39,8 @@ void BombicMap::insert(BombicMapObject * object,
 bool BombicMap::canInsert(BombicMapObject * object,
 		const BombicMap::Field & dstField) {
 	QRect objRect(dstField, object->size());
-	if(!fieldsRect_.contains(objRect)) {
+	QRect toplappingRect = objRect.adjusted(0, -object->toplapping(), 0, 0);
+	if(!fieldsRect_.contains(toplappingRect)) {
 		return false;
 	}
 	int top = objRect.top();

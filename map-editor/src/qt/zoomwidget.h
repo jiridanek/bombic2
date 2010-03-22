@@ -20,10 +20,10 @@ class ZoomWidget: public QWidget {
 
 	signals:
 		void zoomChanged(qreal zoomQuotient);
-
+	public slots:
+		void reset();
 	protected slots:
 		void change(int sliderValue);
-		void reset();
 
 	protected:
 		qreal slider2zoomValue(int sliderValue);

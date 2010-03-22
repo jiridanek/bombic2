@@ -3,6 +3,8 @@
 
 #include <QGraphicsView>
 #include <QGridLayout>
+#include <QLabel>
+#include <QEvent>
 
 #include <constants.h>
 
@@ -18,23 +20,31 @@ SINGLETON_INIT(MapView);
 
 MapView::MapView(QWidget * parent):
 		QWidget(parent), viewport_(0), scene_(0),
-		lastZoomQuotient_(1.0) {
+		zoomWidget_(0), lastZoomQuotient_(1.0) {
 
 	SINGLETON_CONSTRUCT;
+
+	viewport_ = new QGraphicsView;
+	gridLayout()->addWidget(viewport_, 1, 0, 1, 2);
+
+	workingObjectLabel_ = new QLabel;
+	workingObjectLabel_->setScaledContents(true);
+	workingObjectLabel_->setMaximumHeight(CELL_SIZE);
+	gridLayout()->addWidget(workingObjectLabel_, 2, 0);
+
+	zoomWidget_ = new ZoomWidget(ZOOM_STEP,
+		ZOOM_MINIMUM_VALUE, ZOOM_MAXIMUM_VALUE);
+	connect(zoomWidget_, SIGNAL(zoomChanged(qreal)),
+		this, SLOT(setZoom(qreal)) );
+	gridLayout()->addWidget(zoomWidget_, 2, 1);
+
 
 	BombicMapBackground * defaultMapBg =
 		RESOURCE_HANDLER->loadMapBackground(DEFAULT_MAP_BACKGROUND);
 	if(defaultMapBg) {
 		scene_ = new MapScene(DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT,
 			defaultMapBg, this);
-		viewport_ = new QGraphicsView(scene_);
-		gridLayout()->addWidget(viewport_, 1, 0, 1, 2);
-
-		zoomWidget_ = new ZoomWidget(ZOOM_STEP,
-			ZOOM_MINIMUM_VALUE, ZOOM_MAXIMUM_VALUE);
-		connect(zoomWidget_, SIGNAL(zoomChanged(qreal)),
-			this, SLOT(setZoom(qreal)) );
-		gridLayout()->addWidget(zoomWidget_, 2, 1);
+		viewport_->setScene(scene_);
 	}
 }
 
@@ -62,5 +72,18 @@ void MapView::setZoom(qreal zoomQuotient) {
 }
 
 void MapView::leaveEvent(QEvent * event) {
+	event->accept();
 	emit leaved();
+}
+
+void MapView::showWorkingObjectLabel(const QPixmap & objectPixmap) {
+	workingObjectLabel_->setPixmap(objectPixmap);
+	QSize pixmapSize = objectPixmap.size();
+	int labelWidth = pixmapSize.width()
+		* workingObjectLabel_->maximumHeight() / pixmapSize.height();
+	workingObjectLabel_->setMaximumWidth(labelWidth);
+	workingObjectLabel_->show();
+}
+void MapView::hideWorkingObjectLabel() {
+	workingObjectLabel_->hide();
 }

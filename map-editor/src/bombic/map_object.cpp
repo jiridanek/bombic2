@@ -5,7 +5,7 @@
 
 BombicMapObject::BombicMapObject(const QString & name, const QPixmap & pixmap):
 		name_(name), pixmap_(pixmap),
-		graphicsItem_(0), size_(1, 1) {
+		graphicsItem_(0), size_(1, 1), toplapping_(0) {
 }
 
 BombicMapObject::~BombicMapObject() {
@@ -26,6 +26,10 @@ const QPixmap & BombicMapObject::pixmap() {
 
 const QSize & BombicMapObject::size() {
 	return size_;
+}
+
+int BombicMapObject::toplapping() {
+	return toplapping_;
 }
 
 QGraphicsItem * BombicMapObject::graphicsItem() {

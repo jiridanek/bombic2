@@ -7,9 +7,9 @@
 
 BombicWall::BombicWall(const QString & name, const QPixmap & pixmap,
 		int width, int height, int toplapping):
-				BombicMapObject(name, pixmap),
-				toplapping_(toplapping) {
+				BombicMapObject(name, pixmap) {
 	size_ = QSize(width, height);
+	toplapping_ = toplapping;
 }
 
 BombicMapObject * BombicWall::createCopy() {

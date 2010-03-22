@@ -35,6 +35,7 @@ class BombicMapObject {
 		const QPixmap & pixmap();
 
 		virtual const QSize & size();
+		virtual int toplapping();
 
 		virtual bool canBeWith(BombicMapObject * object);
 
@@ -44,6 +45,8 @@ class BombicMapObject {
 		QGraphicsPixmapItem * graphicsItem_;
 		/// Velikost v polickach (kolik zabira policek).
 		QSize size_;
+		/// Pocet presahujicich policek (na ose y).
+		int toplapping_;
 };
 
 #endif
