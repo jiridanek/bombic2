@@ -24,6 +24,7 @@ class MapScene: public QGraphicsScene {
 
 		void insert(BombicMapObject * object,
 				const BombicMap::Field & dstField);
+		void remove(BombicMapObject * object);
 
 	public slots:
 		void setWorkingObject(BombicMapObject * object);
@@ -31,8 +32,13 @@ class MapScene: public QGraphicsScene {
 		void hideWorkingObject();
 
 	protected:
-		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent);
-		virtual void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent);
+		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
+		virtual void mousePressEvent(QGraphicsSceneMouseEvent * event);
+		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
+		virtual void dragEnterEvent(QGraphicsSceneDragDropEvent * event);
+		virtual void dragMoveEvent(QGraphicsSceneDragDropEvent * event);
+		virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent * event);
+		virtual void dropEvent(QGraphicsSceneDragDropEvent * event);
 
 	private:
 		BombicMap::Field getEventField(

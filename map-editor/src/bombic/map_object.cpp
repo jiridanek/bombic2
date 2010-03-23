@@ -5,7 +5,7 @@
 
 BombicMapObject::BombicMapObject(const QString & name, const QPixmap & pixmap):
 		name_(name), pixmap_(pixmap),
-		graphicsItem_(0), size_(1, 1), toplapping_(0) {
+		graphicsItem_(0), rect_(0, 0, 1, 1), toplapping_(0) {
 }
 
 BombicMapObject::~BombicMapObject() {
@@ -24,8 +24,19 @@ const QPixmap & BombicMapObject::pixmap() {
 	return pixmap_;
 }
 
-const QSize & BombicMapObject::size() {
-	return size_;
+const QRect & BombicMapObject::rect() {
+	return rect_;
+}
+
+BombicMap::Field BombicMapObject::field() {
+	return rect_.topLeft();
+}
+
+void BombicMapObject::setField(const BombicMap::Field & field) {
+	rect_.moveTopLeft(field);
+}
+QSize BombicMapObject::size() {
+	return rect_.size();
 }
 
 int BombicMapObject::toplapping() {

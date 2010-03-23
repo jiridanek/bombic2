@@ -72,7 +72,7 @@ void MapView::setZoom(qreal zoomQuotient) {
 }
 
 void MapView::leaveEvent(QEvent * event) {
-	event->accept();
+	Q_UNUSED(event);
 	emit leaved();
 }
 

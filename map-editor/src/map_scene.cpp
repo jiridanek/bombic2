@@ -6,6 +6,9 @@
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneDragDropEvent>
+#include <QDrag>
+#include <QMimeData>
 #include <QPoint>
 #include <QPointF>
 #include <QRect>
@@ -117,11 +120,20 @@ void MapScene::insert(BombicMapObject * object,
 	addItem(object->situateGraphicsItem( dstField*CELL_SIZE ));
 }
 
-void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) {
+void MapScene::remove(BombicMapObject * object) {
+
+	removeItem(object->graphicsItem());
+	map_->remove(object);
+}
+
+#include <QDebug>
+
+void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
+	qDebug() << "move";
 	if(!workingObject_) {
 		return;
 	}
-	BombicMap::Field eventField = getEventField(mouseEvent);
+	BombicMap::Field eventField = getEventField(event);
 	QPointF insertionPoint = eventField*CELL_SIZE;
 	QGraphicsItem * workingGI = workingObject_->situateGraphicsItem(
 		insertionPoint);
@@ -143,19 +155,40 @@ void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) {
 	}
 }
 
-void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) {
+void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * event) {
+	qDebug() << "press";
+	QDrag * drag = new QDrag(event->widget());
+	drag->setMimeData(new QMimeData);
+	drag->start();
 	if(!workingObject_) {
 		return;
 	}
-	BombicMap::Field eventField = getEventField(mouseEvent);
+	BombicMap::Field eventField = getEventField(event);
 	if(map_->canInsert(workingObject_, eventField)) {
 		insert(workingObject_->createCopy(), eventField);
 	}
 }
 
+void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
+	qDebug() << "release";
+}
+
+void MapScene::dragEnterEvent(QGraphicsSceneDragDropEvent * event) {
+	qDebug() << "drag enter";
+}
+void MapScene::dragMoveEvent(QGraphicsSceneDragDropEvent * event) {
+	qDebug() << "drag move";
+}
+void MapScene::dragLeaveEvent(QGraphicsSceneDragDropEvent * event) {
+	qDebug() << "drag leave";
+}
+void MapScene::dropEvent(QGraphicsSceneDragDropEvent * event) {
+	qDebug() << "drop";
+}
+
 BombicMap::Field MapScene::getEventField(
-		QGraphicsSceneMouseEvent * mouseEvent) {
-	QPoint eventPoint = mouseEvent->scenePos().toPoint();
+		QGraphicsSceneMouseEvent * event) {
+	QPoint eventPoint = event->scenePos().toPoint();
 	QPoint relativeMiddle(CELL_SIZE/2, CELL_SIZE/2);
 	if(workingObject_) {
 		relativeMiddle.setX(workingObject_->size().width());

@@ -22,11 +22,13 @@ class BombicMap {
 
 		typedef QPoint Field;
 
-		void insert(BombicMapObject * object,
-				const BombicMap::Field & dstField);
-
 		bool canInsert(BombicMapObject * object,
 				const BombicMap::Field & dstField);
+
+		void insert(BombicMapObject * object,
+				const BombicMap::Field & dstField);
+		void remove(BombicMapObject * object);
+
 
 		const QRect & fieldsRect();
 

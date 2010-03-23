@@ -17,25 +17,6 @@ BombicMap::~BombicMap() {
 	// TODO delete objects in map
 }
 
-void BombicMap::insert(BombicMapObject * object,
-		const BombicMap::Field & dstField) {
-	QRect objRect(dstField, object->size());
-	if(!fieldsRect_.contains(objRect)) {
-		return;
-	}
-	int top = objRect.top();
-	int bottom = objRect.bottom();
-	int left = objRect.left();
-	int right = objRect.right();
-	// for every field occupied by object
-	for(int x = left ; x <= right ; ++x) {
-		for(int y = top ; y <= bottom ; ++y) {
-			// insert the object in the map
-			fields_[x][y].append(object);
-		}
-	}
-}
-
 bool BombicMap::canInsert(BombicMapObject * object,
 		const BombicMap::Field & dstField) {
 	QRect objRect(dstField, object->size());
@@ -60,6 +41,46 @@ bool BombicMap::canInsert(BombicMapObject * object,
 		}
 	}
 	return true;
+}
+
+void BombicMap::insert(BombicMapObject * object,
+		const BombicMap::Field & dstField) {
+	object->setField(dstField);
+	QRect objRect = object->rect();
+	if(!fieldsRect_.contains(objRect)) {
+		return;
+	}
+	int top = objRect.top();
+	int bottom = objRect.bottom();
+	int left = objRect.left();
+	int right = objRect.right();
+	// for every field occupied by object
+	for(int x = left ; x <= right ; ++x) {
+		for(int y = top ; y <= bottom ; ++y) {
+			// insert the object in the map
+			fields_[x][y].append(object);
+		}
+	}
+}
+
+void BombicMap::remove(BombicMapObject * object) {
+/* TODO
+	QRect objRect = object->rect();
+	if(!fieldsRect_.contains(objRect)) {
+		return;
+	}
+	int top = objRect.top();
+	int bottom = objRect.bottom();
+	int left = objRect.left();
+	int right = objRect.right();
+	// for every field occupied by object
+	for(int x = left ; x <= right ; ++x) {
+		for(int y = top ; y <= bottom ; ++y) {
+			// insert the object in the map
+			fields_[x][y].append(object);
+		}
+	}
+*/
 }
 
 const QRect & BombicMap::fieldsRect() {

@@ -8,7 +8,7 @@
 BombicWall::BombicWall(const QString & name, const QPixmap & pixmap,
 		int width, int height, int toplapping):
 				BombicMapObject(name, pixmap) {
-	size_ = QSize(width, height);
+	rect_.setSize(QSize(width, height));
 	toplapping_ = toplapping;
 }
 
@@ -17,7 +17,7 @@ BombicMapObject * BombicWall::createCopy() {
 }
 BombicWall * BombicWall::createWallCopy() {
 	return new BombicWall(name_, pixmap_,
-		size_.width(), size_.height(), toplapping_);
+		rect_.width(), rect_.height(), toplapping_);
 }
 
 
@@ -33,7 +33,7 @@ QGraphicsItem * BombicWall::situateGraphicsItem(const QPointF & position) {
 		graphicsItem_->setOffset(0, -toplapping_*CELL_SIZE);
 	}
 	graphicsItem_->setPos(position);
-	qreal zValue = position.y() + (size_.height()-1)*CELL_SIZE;
+	qreal zValue = position.y() + (rect_.height()-1)*CELL_SIZE;
 	if(isBackground()) {
 		zValue -= 0.5;
 	}

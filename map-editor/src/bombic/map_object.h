@@ -7,7 +7,10 @@
 #include <QString>
 #include <QPixmap>
 #include <QPointF>
+#include <QRect>
 #include <QSize>
+
+#include "map.h"
 
 class QGraphicsItem;
 class QGraphicsPixmapItem;
@@ -34,7 +37,10 @@ class BombicMapObject {
 
 		const QPixmap & pixmap();
 
-		virtual const QSize & size();
+		const QRect & rect();
+		BombicMap::Field field();
+		void setField(const BombicMap::Field & field);
+		QSize size();
 		virtual int toplapping();
 
 		virtual bool canBeWith(BombicMapObject * object);
@@ -44,7 +50,7 @@ class BombicMapObject {
 		QPixmap pixmap_;
 		QGraphicsPixmapItem * graphicsItem_;
 		/// Velikost v polickach (kolik zabira policek).
-		QSize size_;
+		QRect rect_;
 		/// Pocet presahujicich policek (na ose y).
 		int toplapping_;
 };
