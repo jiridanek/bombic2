@@ -41,8 +41,13 @@ class MapScene: public QGraphicsScene {
 		virtual void dropEvent(QGraphicsSceneDragDropEvent * event);
 
 	private:
+		void startDragging(QGraphicsSceneMouseEvent * event);
+		void moveWorkingObject(QGraphicsSceneMouseEvent * event);
+		void insertWorkingObject(QGraphicsSceneMouseEvent * event);
+
 		BombicMap::Field getEventField(
 				QGraphicsSceneMouseEvent * mouseEvent);
+
 		void insertBackgroundFields(const QPixmap & texture);
 		void insertBackgroundWalls(BombicMapBackground * background);
 
@@ -51,6 +56,8 @@ class MapScene: public QGraphicsScene {
 		BombicMapObject * workingObject_;
 
 		QGraphicsRectItem * cantInsertItem_;
+
+		bool mousePressed_;
 
 };
 

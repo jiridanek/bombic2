@@ -27,7 +27,8 @@ MapScene::MapScene(int width, int height,
 		BombicMapBackground * background,
 		QObject * parent):
 				QGraphicsScene(parent), workingObject_(0),
-				cantInsertItem_(new QGraphicsRectItem) {
+				cantInsertItem_(new QGraphicsRectItem),
+				mousePressed_(false) {
 	// set the scene
 	setSceneRect(0, 0, width*CELL_SIZE, height*CELL_SIZE);
 	setBackgroundBrush(background->ambientColor());
@@ -130,6 +131,55 @@ void MapScene::remove(BombicMapObject * object) {
 
 void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
 	qDebug() << "move";
+
+	if(mousePressed_) {
+		mousePressed_ = false;
+		startDragging(event);
+	} else {
+		moveWorkingObject(event);
+	}
+}
+
+void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * event) {
+	switch(event->button()) {
+		case Qt::LeftButton:
+			mousePressed_ = true;
+			qDebug() << "press";
+			break;
+		case Qt::RightButton:
+			// TODO show context menu
+			break;
+		default:
+			// nothing to do
+			break;
+	}
+}
+
+void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
+	switch(event->button()) {
+		case Qt::LeftButton:
+			qDebug() << "release";
+			if(mousePressed_) {
+				// it was a click
+				mousePressed_ = false;
+				insertWorkingObject(event);
+			}
+			break;
+		default:
+			// nothing to do
+			break;
+	}
+}
+
+void MapScene::startDragging(QGraphicsSceneMouseEvent * event) {
+	hideWorkingObject();
+
+	QDrag * drag = new QDrag(event->widget());
+	drag->setMimeData(new QMimeData);
+	drag->start();
+}
+
+void MapScene::moveWorkingObject(QGraphicsSceneMouseEvent * event) {
 	if(!workingObject_) {
 		return;
 	}
@@ -155,11 +205,7 @@ void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
 	}
 }
 
-void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * event) {
-	qDebug() << "press";
-	QDrag * drag = new QDrag(event->widget());
-	drag->setMimeData(new QMimeData);
-	drag->start();
+void MapScene::insertWorkingObject(QGraphicsSceneMouseEvent * event) {
 	if(!workingObject_) {
 		return;
 	}
@@ -169,12 +215,10 @@ void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * event) {
 	}
 }
 
-void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
-	qDebug() << "release";
-}
-
 void MapScene::dragEnterEvent(QGraphicsSceneDragDropEvent * event) {
-	qDebug() << "drag enter";
+	QPoint eventPoint = event->scenePos().toPoint();
+	QPoint relativeMiddle(CELL_SIZE/2, CELL_SIZE/2);
+	qDebug() << "drag enter" << ((eventPoint - relativeMiddle) / CELL_SIZE);
 }
 void MapScene::dragMoveEvent(QGraphicsSceneDragDropEvent * event) {
 	qDebug() << "drag move";
@@ -204,7 +248,6 @@ void MapScene::setWorkingObject(BombicMapObject * object) {
 	}
 	workingObject_ = object;
 	MAP_VIEW->showWorkingObjectLabel(object->pixmap());
-	// TODO
 }
 
 void MapScene::unsetWorkingObject() {
@@ -214,7 +257,6 @@ void MapScene::unsetWorkingObject() {
 	hideWorkingObject();
 	MAP_VIEW->hideWorkingObjectLabel();
 	workingObject_ = 0;
-	// TODO
 }
 
 void MapScene::hideWorkingObject() {
