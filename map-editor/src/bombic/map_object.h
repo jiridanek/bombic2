@@ -44,6 +44,8 @@ class BombicMapObject {
 		virtual int toplapping();
 
 		virtual bool canBeWith(BombicMapObject * object);
+		virtual bool canBeDragged();
+		virtual bool canBeRemoved();
 
 	protected:
 		QString name_;

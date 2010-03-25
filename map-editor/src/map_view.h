@@ -14,9 +14,11 @@ class QGraphicsView;
 class QGridLayout;
 class QEvent;
 class QLabel;
+class QMimeData;
 class ZoomWidget;
 class MapScene;
 class BombicMapBackground;
+class BombicMapObject;
 
 class MapView: public QWidget {
 
@@ -34,6 +36,10 @@ class MapView: public QWidget {
 
 		void showWorkingObjectLabel(const QPixmap & objectPixmap);
 		void hideWorkingObjectLabel();
+
+		static QMimeData * createMimeData(BombicMapObject * object);
+		static BombicMapObject * getMapObject(
+				const QMimeData * mimeData);
 
 	public slots:
 		void setZoom(qreal zoomQuotient);

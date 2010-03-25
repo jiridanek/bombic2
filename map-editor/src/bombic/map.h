@@ -29,6 +29,7 @@ class BombicMap {
 				const BombicMap::Field & dstField);
 		void remove(BombicMapObject * object);
 
+		BombicMapObject * objectOnTop(const BombicMap::Field & field);
 
 		const QRect & fieldsRect();
 

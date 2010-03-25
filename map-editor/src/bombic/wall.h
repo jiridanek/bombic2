@@ -21,6 +21,8 @@ class BombicWall: public BombicMapObject {
 				const QPointF & position);
 
 		virtual bool canBeWith(BombicMapObject * object);
+		virtual bool canBeDragged();
+		virtual bool canBeRemoved();
 
 		bool isBackground();
 

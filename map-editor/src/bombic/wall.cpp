@@ -55,11 +55,20 @@ bool BombicWall::canBeWith(BombicMapObject * object) {
 	if(object->type() == Wall) {
 		BombicWall * wallObj = static_cast<BombicWall *>(object);
 		// but only if exactly one of them is background wall
-		return (wallObj->isBackground() && !this->isBackground())
+		return wallObj==this
+			|| (wallObj->isBackground() && !this->isBackground())
 			|| (!wallObj->isBackground() && this->isBackground());
 	} else {
 		return false;
 	}
+}
+
+bool BombicWall::canBeDragged() {
+	return !isBackground();
+}
+
+bool BombicWall::canBeRemoved() {
+	return !isBackground();
 }
 
 bool BombicWall::isBackground() {

@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QEvent>
+#include <QMimeData>
 
 #include <constants.h>
 
@@ -15,6 +16,8 @@
 #include "bombic/map.h"
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
+
+#define MAP_VIEW_DRAGGED_OBJECT_PROPERTY "draggedBombicMapObject"
 
 SINGLETON_INIT(MapView);
 
@@ -86,4 +89,24 @@ void MapView::showWorkingObjectLabel(const QPixmap & objectPixmap) {
 }
 void MapView::hideWorkingObjectLabel() {
 	workingObjectLabel_->hide();
+}
+
+QMimeData * MapView::createMimeData(BombicMapObject * object) {
+	QMimeData * mimeData = new QMimeData;
+	mimeData->setProperty(
+		MAP_VIEW_DRAGGED_OBJECT_PROPERTY,
+		qVariantFromValue(static_cast<void *>(object)) );
+	return mimeData;
+}
+
+BombicMapObject * MapView::getMapObject(const QMimeData * mimeData) {
+	QVariant objVar =
+		mimeData->property(MAP_VIEW_DRAGGED_OBJECT_PROPERTY);
+	if(!objVar.isValid()) {
+		// property was not set
+		return 0;
+	}
+	BombicMapObject * obj = static_cast<BombicMapObject *>(
+		qVariantValue<void *>(objVar) );
+	return obj;
 }

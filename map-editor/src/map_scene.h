@@ -5,6 +5,8 @@
 #define MAP_SCENE_H_GUARD_
 
 #include <QGraphicsScene>
+#include <QPointF>
+#include <QRect>
 
 #include "bombic/map.h"
 
@@ -45,8 +47,9 @@ class MapScene: public QGraphicsScene {
 		void moveWorkingObject(QGraphicsSceneMouseEvent * event);
 		void insertWorkingObject(QGraphicsSceneMouseEvent * event);
 
-		BombicMap::Field getEventField(
-				QGraphicsSceneMouseEvent * mouseEvent);
+		BombicMap::Field getField(
+				const QPointF & mousePosition,
+				const QRect & relatedObjectRect = QRect(0,0,1,1));
 
 		void insertBackgroundFields(const QPixmap & texture);
 		void insertBackgroundWalls(BombicMapBackground * background);

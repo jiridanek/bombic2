@@ -64,7 +64,6 @@ void BombicMap::insert(BombicMapObject * object,
 }
 
 void BombicMap::remove(BombicMapObject * object) {
-/* TODO
 	QRect objRect = object->rect();
 	if(!fieldsRect_.contains(objRect)) {
 		return;
@@ -76,11 +75,20 @@ void BombicMap::remove(BombicMapObject * object) {
 	// for every field occupied by object
 	for(int x = left ; x <= right ; ++x) {
 		for(int y = top ; y <= bottom ; ++y) {
-			// insert the object in the map
-			fields_[x][y].append(object);
+			// remove the object from the map
+			fields_[x][y].removeAll(object);
 		}
 	}
-*/
+}
+
+BombicMapObject * BombicMap::objectOnTop(const BombicMap::Field & field) {
+	if(!fieldsRect_.contains(field)) {
+		return 0;
+	}
+	if(fields_[field.x()][field.y()].isEmpty()) {
+		return 0;
+	}
+	return fields_[field.x()][field.y()].last();
 }
 
 const QRect & BombicMap::fieldsRect() {

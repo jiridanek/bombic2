@@ -8,7 +8,6 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneDragDropEvent>
 #include <QDrag>
-#include <QMimeData>
 #include <QPoint>
 #include <QPointF>
 #include <QRect>
@@ -127,11 +126,7 @@ void MapScene::remove(BombicMapObject * object) {
 	map_->remove(object);
 }
 
-#include <QDebug>
-
 void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
-	qDebug() << "move";
-
 	if(mousePressed_) {
 		mousePressed_ = false;
 		startDragging(event);
@@ -144,7 +139,6 @@ void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * event) {
 	switch(event->button()) {
 		case Qt::LeftButton:
 			mousePressed_ = true;
-			qDebug() << "press";
 			break;
 		case Qt::RightButton:
 			// TODO show context menu
@@ -158,7 +152,6 @@ void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * event) {
 void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
 	switch(event->button()) {
 		case Qt::LeftButton:
-			qDebug() << "release";
 			if(mousePressed_) {
 				// it was a click
 				mousePressed_ = false;
@@ -172,10 +165,19 @@ void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
 }
 
 void MapScene::startDragging(QGraphicsSceneMouseEvent * event) {
+	BombicMap::Field eventField = getField(event->scenePos());
+	BombicMapObject * draggedObj = map_->objectOnTop(eventField);
+	if(!draggedObj) {
+		// nothing to be dragged
+		return;
+	}
+	if(!draggedObj->canBeDragged()) {
+		return;
+	}
 	hideWorkingObject();
 
 	QDrag * drag = new QDrag(event->widget());
-	drag->setMimeData(new QMimeData);
+	drag->setMimeData(MapView::createMimeData(draggedObj));
 	drag->start();
 }
 
@@ -183,7 +185,8 @@ void MapScene::moveWorkingObject(QGraphicsSceneMouseEvent * event) {
 	if(!workingObject_) {
 		return;
 	}
-	BombicMap::Field eventField = getEventField(event);
+	BombicMap::Field eventField = getField(
+		event->scenePos(), workingObject_->rect());
 	QPointF insertionPoint = eventField*CELL_SIZE;
 	QGraphicsItem * workingGI = workingObject_->situateGraphicsItem(
 		insertionPoint);
@@ -209,36 +212,43 @@ void MapScene::insertWorkingObject(QGraphicsSceneMouseEvent * event) {
 	if(!workingObject_) {
 		return;
 	}
-	BombicMap::Field eventField = getEventField(event);
+	BombicMap::Field eventField = getField(
+		event->scenePos(), workingObject_->rect());
 	if(map_->canInsert(workingObject_, eventField)) {
 		insert(workingObject_->createCopy(), eventField);
 	}
 }
 
 void MapScene::dragEnterEvent(QGraphicsSceneDragDropEvent * event) {
-	QPoint eventPoint = event->scenePos().toPoint();
-	QPoint relativeMiddle(CELL_SIZE/2, CELL_SIZE/2);
-	qDebug() << "drag enter" << ((eventPoint - relativeMiddle) / CELL_SIZE);
+	Q_UNUSED(event);
 }
 void MapScene::dragMoveEvent(QGraphicsSceneDragDropEvent * event) {
-	qDebug() << "drag move";
 }
 void MapScene::dragLeaveEvent(QGraphicsSceneDragDropEvent * event) {
-	qDebug() << "drag leave";
 }
 void MapScene::dropEvent(QGraphicsSceneDragDropEvent * event) {
-	qDebug() << "drop";
+	BombicMapObject * draggedObj =
+		MapView::getMapObject(event->mimeData());
+	if(!draggedObj) {
+		// nothing was dragged
+		return;
+	}
+	BombicMap::Field eventField = getField(
+		event->scenePos(), draggedObj->rect() );
+	if(map_->canInsert(draggedObj, eventField)) {
+		remove(draggedObj);
+		insert(draggedObj, eventField);
+	}
 }
 
-BombicMap::Field MapScene::getEventField(
-		QGraphicsSceneMouseEvent * event) {
-	QPoint eventPoint = event->scenePos().toPoint();
-	QPoint relativeMiddle(CELL_SIZE/2, CELL_SIZE/2);
-	if(workingObject_) {
-		relativeMiddle.setX(workingObject_->size().width());
-		relativeMiddle.setY(workingObject_->size().height());
-		relativeMiddle *= CELL_SIZE/2;
-	}
+BombicMap::Field MapScene::getField(
+		const QPointF & mousePosition,
+		const QRect & relatedObjectRect) {
+	QPoint eventPoint = mousePosition.toPoint();
+	QPoint relativeMiddle(
+		relatedObjectRect.width(),
+		relatedObjectRect.height() );
+	relativeMiddle *= CELL_SIZE/2;
 	return (eventPoint - relativeMiddle) / CELL_SIZE;
 }
 
@@ -271,3 +281,4 @@ void MapScene::hideWorkingObject() {
 
 	cantInsertItem_->hide();
 }
+

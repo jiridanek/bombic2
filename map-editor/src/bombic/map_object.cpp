@@ -55,3 +55,10 @@ bool BombicMapObject::canBeWith(BombicMapObject * object) {
 	return false;
 }
 
+bool BombicMapObject::canBeDragged() {
+	return true;
+}
+
+bool BombicMapObject::canBeRemoved() {
+	return true;
+}
