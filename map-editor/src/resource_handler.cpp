@@ -466,11 +466,22 @@ bool ResourceHandler::getAttrsXY(const QDomElement & el, int & x, int & y) {
 	return getIntAttr(el, x, "x") && getIntAttr(el, y, "y");
 }
 
+/** @details
+ * Zobrazi dialogove okno se zpravou @p message.
+ * @param message textovy  popis chyby
+ * @see QMessageBox::critical()
+ */
 void ResourceHandler::showError(const QString & message) {
 	QMessageBox::critical(0, tr("Error in Bombic resource"),
 		message, QMessageBox::Ok);
 }
 
+/** @details
+ * Zobrazi chybove hlaseni korespondujici s urcitym souborem @p filename.
+ * @param message textovy popis chyby
+ * @param filename jmeno souboru, ve kterem se chyba vyskytla
+ * @param el pripadne xml element, ve kterem chyba nastala 
+ */
 void ResourceHandler::showError(const QString & message,
 		const QString & filename,
 		const QDomElement & el ) {
@@ -488,12 +499,28 @@ void ResourceHandler::showError(const QString & message,
 	showError(final_message);
 }
 
+/** @details
+ * Zobrazi chybove hlaseni korespondujici s urcitym xml elementem @p el.
+ * Vypisuje cestu k elementu.
+ * @param message textovy popis chyby
+ * @param el xml element, ve kterem chyba nastala
+ * @param pripadne jmeno souboru, ve kterem chyba nastala
+ * @see nodePath()
+ */
 void ResourceHandler::showError(const QString & message,
 		const QDomElement & el,
 		const QString & filename) {
 	showError(message, filename, el);
 }
 
+/** @details
+ * Zkonstruuje (textove) cestu k xml uzlu @p node.
+ * Cesta uzlu jsou jmena nadrazenych elementu az ke koreni
+ * xml stromu.
+ * @param node uzel jehoz cesta nas zajima
+ * @param delimiter oddelovac jednotlivych elementu cesty
+ * @return Zkonstruovana cesta uzlu.
+ */
 QString ResourceHandler::nodePath(const QDomNode & node,
 		const QString & delimiter) {
 	QString path = node.nodeName();

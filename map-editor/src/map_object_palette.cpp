@@ -17,34 +17,45 @@
 
 #include "resource_handler.h"
 
+/// Minimalni sirka palety.
 #define MAP_OBJECT_PALETTE_MIN_WIDTH 240
-
+/// Nevalidni index palety
+/// (pouzivany pro index vybraneho objektu, kdyz neni zaadny vybrany).
 #define PALETTE_INDEX_INVALID (-666)
 
 SINGLETON_INIT(MapObjectPalette);
 
-
+/**
+ * @param parent rodicovsky widget
+ */
 MapObjectPalette::MapObjectPalette(QWidget * parent):
 		QWidget(parent),
 		selectedObjectIndex_(PALETTE_INDEX_INVALID) {
 	SINGLETON_CONSTRUCT;
-	tabsConstruct_();
+	tabsConstruct();
+
+	signalMapper_ = new QSignalMapper(this);
+	connect(signalMapper_, SIGNAL(mapped(int)),
+		this, SLOT(objectButtonClicked(int)));
+
 }
 
 MapObjectPalette::~MapObjectPalette() {
 	SINGLETON_DESTROY;
 }
 
-
-void MapObjectPalette::tabsConstruct_() {
+/** @details
+ * Zkonstruuje taby palety a tlacitko pro nacitani.
+ */
+void MapObjectPalette::tabsConstruct() {
 
 	QVBoxLayout * layout = new QVBoxLayout(this);
 
 	tabs_.widget = new QTabWidget(this);
-	tabsAddPage_(wallPage, tr("Wall"));
-	tabsAddPage_(boxPage, tr("Box"));
-	tabsAddPage_(creaturePage, tr("Creature"));
-	tabsAddPage_(floorobjectPage, tr("Floorobject"));
+	tabsAddPage(wallPage, tr("Wall"));
+	tabsAddPage(boxPage, tr("Box"));
+	tabsAddPage(creaturePage, tr("Creature"));
+	tabsAddPage(floorobjectPage, tr("Floorobject"));
 	tabs_.widget->setMinimumWidth(MAP_OBJECT_PALETTE_MIN_WIDTH);
 	layout->addWidget(tabs_.widget);
 
@@ -53,14 +64,15 @@ void MapObjectPalette::tabsConstruct_() {
 	connect(loadButton, SIGNAL(clicked()),
 		RESOURCE_HANDLER, SLOT(loadMapObject()));
 	layout->addWidget(loadButton);
-
-	signalMapper_ = new QSignalMapper(this);
-	connect(signalMapper_, SIGNAL(mapped(int)),
-		this, SLOT(objectButtonClicked(int)));
-
 }
 
-void MapObjectPalette::tabsAddPage_(MapObjectPalette::Page pageIndex,
+/** @details
+ * Prida stranku (tab), zkonstruuje jeji vnitrnosti
+ * potrebne pro spravne scrollovani a skladani tlacitek objektu.
+ * @param pageIndex index pridavane stranky
+ * @param tabLabel popisek pridavaneho tabu
+ */
+void MapObjectPalette::tabsAddPage(MapObjectPalette::Page pageIndex,
 		const QString & tabLabel) {
 
 	QWidget * page = new QWidget;
@@ -79,6 +91,14 @@ void MapObjectPalette::tabsAddPage_(MapObjectPalette::Page pageIndex,
 	tabs_.layouts.insert(pageIndex, scrollAreaLayout);
 }
 
+/** @details
+ * Najde podle jmena @p objectName objekt v palete.
+ * Nalezeny objekt vraci, ale zustava vlastnikem tohoto objektu,
+ * pro ziskani vlastniho objektu viz BombicMapObject::createCopy().
+ * @param objectName jmeno objektu
+ * @return Pointer na nalezeny objekt.
+ * @retval 0 objekt nenalezen
+ */
 BombicMapObject * MapObjectPalette::getObject(const QString & objectName) {
 	if(objectIndexesByName_.contains(objectName)) {
 		return objectPalette_.at(
@@ -88,6 +108,11 @@ BombicMapObject * MapObjectPalette::getObject(const QString & objectName) {
 	}
 }
 
+/** @details
+ * Vlozi objekt @p object do odpovidajici stranky palety.
+ * Prebira vlastnictvi objektu.
+ * @param object pointer na vkladany objekt
+ */
 void MapObjectPalette::addObject(BombicMapObject * object) {
 	Page page;
 	switch(object->type()) {
@@ -137,6 +162,11 @@ void MapObjectPalette::addObject(BombicMapObject * object) {
 	objectButton->setChecked(true);
 }
 
+/** @details
+ * Reakce na stisk tlacitka objektu.
+ * Vybere, nebo zrusi vyber objektu.
+ * @param objectPaletteIndex index do palety objektu
+ */
 void MapObjectPalette::objectButtonClicked(int objectPaletteIndex) {
 	QPushButton * button = getObjectButton(objectPaletteIndex);
 
@@ -147,6 +177,11 @@ void MapObjectPalette::objectButtonClicked(int objectPaletteIndex) {
 	}
 }
 
+/** @details
+ * Zrusi zmacknuti tlacitka pokud je nejaky obejkt vybrany.
+ * Evokuje signal objectSelected().
+ * @param objectPaletteIndex index do palety objektu
+ */
 void MapObjectPalette::selectObject(int objectPaletteIndex) {
 	if(selectedObjectIndex_!=PALETTE_INDEX_INVALID) {
 		getObjectButton(selectedObjectIndex_)
@@ -156,6 +191,9 @@ void MapObjectPalette::selectObject(int objectPaletteIndex) {
 	emit objectSelected(objectPalette_[selectedObjectIndex_]);
 }
 
+/**
+ * @param objectName jmeno objektu pro vyber
+ */
 void MapObjectPalette::selectObject(const QString & objectName) {
 	if(objectIndexesByName_.contains(objectName)) {
 		int objectPaletteIndex =
@@ -166,6 +204,10 @@ void MapObjectPalette::selectObject(const QString & objectName) {
 	}
 }
 
+/** @details
+ * Pokud je nejaky objekt vybran, zrusi vyber a
+ * evokuje signal objectUnselected().
+ */
 void MapObjectPalette::unselectObject() {
 	if(selectedObjectIndex_==PALETTE_INDEX_INVALID) {
 		return;
@@ -177,7 +219,12 @@ void MapObjectPalette::unselectObject() {
 	emit objectUnselected();
 }
 
+/**
+ * @param objectPaletteIndex index do palety objektu
+ * @return Pointer na tlacitko odpovidajici objektu.
+ */
 QPushButton * MapObjectPalette::getObjectButton(int objectPaletteIndex) {
 	return static_cast<QPushButton *>(
 		signalMapper_->mapping(objectPaletteIndex) );
 }
+

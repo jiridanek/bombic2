@@ -44,7 +44,6 @@ class ResourceHandler: public QObject {
 
 	friend class WallResourceHandler;
 
-	/// Definice singletonu.
 	SINGLETON_DEFINITION(ResourceHandler)
 
 	public:
