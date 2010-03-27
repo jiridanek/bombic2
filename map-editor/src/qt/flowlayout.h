@@ -48,27 +48,45 @@
 #include <QRect>
 #include <QWidgetItem>
 
+/** Plynuly layout.
+ * Prvky tohoto layoutu se rozmistuji plynule v rade (horizontalne),
+ * se zalomenim.
+ */  
 class FlowLayout : public QLayout
 {
 public:
+	/// Konstruuje layout s nadrazenym widgetem.
     FlowLayout(QWidget *parent, int margin = 0, int spacing = -1);
+	/// Konstuuje layout bez nadrazeneho widgetu.
     FlowLayout(int spacing = -1);
+	/// Destruuje layout.
     ~FlowLayout();
 
+	/// Prida prvek na konec layoutu.
     void addItem(QLayoutItem *item);
+	/// Ve kterych smerech se ma layout roztahovat.
     Qt::Orientations expandingDirections() const;
+	/// Jestli ma pro urcitou sirku definovanou vysku.
     bool hasHeightForWidth() const;
+	/// Vyska pro urcitou sirku.
     int heightForWidth(int) const;
+	/// Pocet prvku v layoutu.
     int count() const;
+	/// Prvek layoutu na pozici @p index.
     QLayoutItem *itemAt(int index) const;
-    QSize minimumSize() const;
-    void setGeometry(const QRect &rect);
-    QSize sizeHint() const;
+	/// Odstranit a vratit prvek na pozici @p index.
     QLayoutItem *takeAt(int index);
-
+	/// Minimalni velikost layoutu.
+    QSize minimumSize() const;
+	/// Nastavi geometrii layoutu.
+    void setGeometry(const QRect &rect);
+	/// Hint velikosti.
+    QSize sizeHint() const;
+	
 private:
+	/// Provest rozlozeni prvku.
     int doLayout(const QRect &rect, bool testOnly) const;
-
+	/// Seznamm prvku layoutu.
     QList<QLayoutItem *> itemList;
 
 };

@@ -45,6 +45,11 @@
 
 #include "flowlayout.h"
 
+/**
+ * @param parent nadrazeny widget
+ * @param margin prostor vymezeny okolo layoutu
+ * @param spacing prostor vymezeny okolo kazdeho prvku
+ */
 FlowLayout::FlowLayout(QWidget *parent, int margin, int spacing)
     : QLayout(parent)
 {
@@ -52,11 +57,17 @@ FlowLayout::FlowLayout(QWidget *parent, int margin, int spacing)
     setSpacing(spacing);
 }
 
+/**
+ * @param spacing prostor vymezeny okolo kazdeho prvku
+ */
 FlowLayout::FlowLayout(int spacing)
 {
     setSpacing(spacing);
 }
 
+/** @details
+ * Odalokuje prvky layoutu.
+ */
 FlowLayout::~FlowLayout()
 {
     QLayoutItem *item;
@@ -64,22 +75,41 @@ FlowLayout::~FlowLayout()
         delete item;
 }
 
+/** @details
+ * Prida prvek do layoutu, stava se jeho vlastnikem.
+ * Prvek bude odalokovan spolecne s layoutem.
+ * Zapricini prekresleni layoutu.
+ * @param item prvek, ktery ma byt pridan
+ */
 void FlowLayout::addItem(QLayoutItem *item)
 {
     itemList.append(item);
     update();
 }
 
+/**
+ * @return Pocet prvku v layoutu.
+ */
 int FlowLayout::count() const
 {
     return itemList.size();
 }
 
+/**
+ * @param index platny index, musi byt mezi nulou a count()
+ * @return Prvek na pozici @p index.
+ */
 QLayoutItem *FlowLayout::itemAt(int index) const
 {
     return itemList.value(index);
 }
 
+/** @details
+ * Prvek na pozici @p index odstrani z layoutu a vrati jej. 
+ * Vlastnictvi prvku prechazi na volajiciho, prvek jiz nebude
+ * s layoutem odalokovan.
+ * @return Prvek na pozici @p index.
+ */
 QLayoutItem *FlowLayout::takeAt(int index)
 {
     if (index >= 0 && index < itemList.size())
@@ -88,28 +118,49 @@ QLayoutItem *FlowLayout::takeAt(int index)
         return 0;
 }
 
+/**
+ * @retval 0 Vzdy.
+ */
 Qt::Orientations FlowLayout::expandingDirections() const
 {
     return 0;
 }
 
+/**
+ * @retval true Vzdy.
+ */
 bool FlowLayout::hasHeightForWidth() const
 {
     return true;
 }
 
+/** @details
+ * Provede rozlozeni pro sirsku @p width.
+ * Spocita vysku takoveho rozlozeni.
+ * @param width pozadovana sirska
+ * @return Vyska odpovidajici rozlozeni pri zadane sirsce.
+ */
 int FlowLayout::heightForWidth(int width) const
 {
     int height = doLayout(QRect(0, 0, width, 0), true);
     return height;
 }
 
+/** @details
+ * Nastavi geometrii na @p rect,
+ * Pro zadany obdelnik @p rect provede rozlozeni prvku.
+ * @param rect pozadovany obdelnik
+ */
 void FlowLayout::setGeometry(const QRect &rect)
 {
     QLayout::setGeometry(rect);
     doLayout(rect, false);
 }
 
+/** @details
+ * Pro aktualni sirsku spocita korespondujici vysku.
+ * @return Idelani velikost odpovidajici aktualni sirce.
+ */
 QSize FlowLayout::sizeHint() const
 {
 	int w = geometry().width();
@@ -119,6 +170,10 @@ QSize FlowLayout::sizeHint() const
 	return size;
 }
 
+/** @details
+ * Spocita minimalni velikost nejvetsiho prvku.
+ * @return Nejmensi mozna velikost.
+ */
 QSize FlowLayout::minimumSize() const
 {
 	QSize size(0, 0);
@@ -130,6 +185,16 @@ QSize FlowLayout::minimumSize() const
 	return size;
 }
 
+/** @details
+ * Spocita rozlozeni prvku layoutu do obdelniku @p rect.
+ * Pokud je spusten pouze v testovacim rezimu ( @p testOnly je true)
+ * Prvky ve skutecnosti nebudou premisteny.
+ * @param rect obdelnik, do ktereho se ma layout vejit
+ * @param testOnly rezim,
+ *                 @c true - polohy jsou pouze spocitany,
+ *                 @c false - prvky jsou i rozmisteny
+ * @return Vyska prave provedeneho rozlozeni.
+ */
 int FlowLayout::doLayout(const QRect &rect, bool testOnly) const
 {
     int x = rect.x();

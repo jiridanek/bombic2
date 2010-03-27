@@ -21,6 +21,15 @@
 #include "map_object_palette.h"
 #include "map_view.h"
 
+/**
+ * Hlavni inicializator programu.
+ * Vytvori Qt aplikaci, inicializuje okno, singletony,
+ * vytvori hlavni kostru gui.
+ * @param argc
+ * @param argv
+ * @return Uspech programu.
+ * @see QApplication, QApplication::exec()
+ */
 int main(int argc, char *argv[]) {
 
 	QApplication app(argc, argv);

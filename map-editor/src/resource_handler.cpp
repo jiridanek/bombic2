@@ -17,6 +17,9 @@
 
 SINGLETON_INIT(ResourceHandler);
 
+/**
+ * @param parent rodic - predany do QObject::QObject()
+ */
 ResourceHandler::ResourceHandler(QObject * parent):
 		QObject(parent) {
 	SINGLETON_CONSTRUCT;
@@ -29,6 +32,12 @@ ResourceHandler::~ResourceHandler() {
 BombicMap * ResourceHandler::loadMap() {
 }
 
+/**
+ * @param name jmeno pozadi (nebo souboru s pozadim)
+ * @return Nove naalokovane pozadi mapy,
+	vlastnictvi prechazi na volajiciho.
+ * @retval 0 nastala chyba, pozadi nevytvoreno
+ */
 BombicMapBackground * ResourceHandler::loadMapBackground(
 		const QString & name) {
 	QDomElement rootEl;
@@ -82,6 +91,10 @@ BombicMapBackground * ResourceHandler::loadMapBackground(
 	return mapBg;
 }
 
+/** @details
+ * Necha uzivatele vybrat soubory s objekty mapy,
+ * vsechny vybrane objekty se pokusi nahrat.
+ */
 void ResourceHandler::loadMapObject() {
 	QStringList filenames = QFileDialog::getOpenFileNames(
 		MAP_OBJECT_PALETTE, tr("Map object file"), "",
@@ -91,6 +104,19 @@ void ResourceHandler::loadMapObject() {
 	}
 }
 
+/** @details
+ * Spolupracuje s MapObjectPalette.
+ * Pred nahranim noveho objektu se ujisti, ze jeste v palete neni.
+ * Pokud objekt v palete jiz je, vraci objekt z palety.
+ * Jinak se pokusi objekt nacist pomoci
+ * specializovaneho resource handleru. Pokud se podari objekt nacist,
+ * novy objekt registruje v palete a zaroven ho vraci.
+ * Vlastníkem objektu je tedy paleta. Pokud chcete objekt vlastnit,
+ * z vraceneho objektu si vytvorte kopii.
+ * @param name jmeno objektu (nebo primo cesta k souboru)
+ * @return Objekt mapy registrovany v palete.
+ * @retval 0 objekt se nepodarilo nahrat
+ */
 BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
 	QString objectName = attrNameValueFromName(name);
 	BombicMapObject * obj = MAP_OBJECT_PALETTE->getObject(objectName);
@@ -132,6 +158,17 @@ void ResourceHandler::saveMap(BombicMap * bombicMap) {
 void ResourceHandler::saveMapAs(BombicMap * bombicMap) {
 }
 
+/** @details
+ * Pokusi se najit zadany soubor v domovskem adresari,
+ * v adresarich uvedenych v SEARCH_PATHS a vsech podadresarich
+ * az do hloubky SEARCH_DEPTH.
+ * Preskakuje skryte adresare.
+ * Pokud nastane chyba, sam zobrazuje relevantni informace.
+ * @param[in/out] filename jmeno souboru nebo uplna cesta
+ * @return Uspech operace.
+ * @retval true Soubor nalezen (cesta ulozena v @p filename)
+ * @retval false Soubor nenalezen.
+ */
 bool ResourceHandler::locateFile(QString & filename) {
 	if(filename.isEmpty()) {
 		showError(tr("Trying to locate file with empty name"));
@@ -173,6 +210,17 @@ bool ResourceHandler::locateFile(QString & filename) {
 	}
 }
 
+/** @details
+ * Pokusi se najit zadany soubor v adresari @p dir
+ * a vsech podadresarich az do hloubky SEARCH_DEPTH.
+ * Preskakuje skryte adresare.
+ * @param dir soubor, ktery se ma prohledat
+ * @param[in/out] filename jmeno souboru
+ * @param depth dosazena hloubka
+ * @return Uspech operace.
+ * @retval true Soubor nalezen (cesta ulozena v @p filename)
+ * @retval false Soubor nenalezen.
+ */
 bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
 		int depth) {
 
@@ -204,6 +252,20 @@ bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
 	return false;
 }
 
+/** @details
+ * Pokusi se najit a otevrit xml soubor.
+ * Provadi kontroly:
+ * - hodnota atributu name v korenovem elementu
+ * - jmeno korenoveho elementu
+ * Pokud nastane chyba, sam zobrazuje relevantni informace.
+ * @param name jmeno objektu, souboru, nebo cela cesta
+ * @param[out] rootEl korenovy element nove otevreneho xml dokumentu
+ * @param checkAttrName zda se ma kontrolovat hodnota atributu name
+ *                      podle @p name (viz attrNameValueFromName())
+ * @return Uspech operace.
+ * @retval true dokument nacten (korenovy element ulozen v @p rootEl)
+ * @retval false dokument nenacten
+ */
 bool ResourceHandler::loadXml(const QString & name,
 		QDomElement & rootEl, bool checkAttrName,
 		const QString & rootElTagName) {
@@ -258,6 +320,12 @@ bool ResourceHandler::loadXml(const QString & name,
 	return true;
 }
 
+/** @details
+ * Pokud obsahuje @p name priponu xml souboru nebo cestu,
+ * tyto kusy se odstrani.
+ * @param name jmeno objektu, souboru, nebo cela cesta
+ * @return Predpokladane jmeno objektu.
+ */
 QString ResourceHandler::attrNameValueFromName(const QString & name) {
 	QString attrNameValue = name;
 	// strip extension

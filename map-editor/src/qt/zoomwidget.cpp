@@ -7,6 +7,13 @@
 
 #include "zoomwidget.h"
 
+/** @details
+ * Vychozi nastaveni je 100%, tedy v obecnych jednotkach jedna (1)
+ * @param zoomStep po kolika jednotkach zoomovat
+ * @param minValue minimalni hodnota zoomu
+ * @param maxValue maximalni hodnota zoomu
+ * @param parent rodicovsky widget
+ */
 ZoomWidget::ZoomWidget(qreal zoomStep, qreal minValue, qreal maxValue,
 		QWidget * parent):
 				QWidget(parent), unit_(zoomStep) {
@@ -39,19 +46,34 @@ ZoomWidget::ZoomWidget(qreal zoomStep, qreal minValue, qreal maxValue,
 	layout->addWidget(label_, 0, 1);
 }
 
+/**
+ * @param sliderValue nova hodnota zoomu (v jednotkach slideru)
+ */
 void ZoomWidget::change(int sliderValue) {
 	qreal zoomValue = slider2zoomValue(sliderValue);
 	emit zoomChanged(zoomValue);
 	label_->setText( QString::number(qRound(zoomValue*100))+" %");
 }
+
+/** @details
+ * Vychozi nastaveni je 100%, tedy v obecnych jednotkach jedna (1)
+ */
 void ZoomWidget::reset() {
 	slider_->setValue(zoom2sliderValue(1));
 }
 
-
+/**
+ * @param sliderValue hodnota v jednotkach slideru
+ * @return Hodnota prevedena na obecne jednotky.
+ */
 qreal ZoomWidget::slider2zoomValue(int sliderValue) {
 	return sliderValue/100.0/unit_;
 }
+
+/**
+ * @param zoomValue hodnota v obecnych jednotkach
+ * @return Hodnota prevedena na jednotky slideru.
+ */
 int ZoomWidget::zoom2sliderValue(qreal zoomValue) {
 	return qRound(zoomValue*100*unit_);
 }
