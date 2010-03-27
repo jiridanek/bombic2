@@ -341,7 +341,22 @@ QString ResourceHandler::attrNameValueFromName(const QString & name) {
 	return attrNameValue;
 }
 
-
+/** @details
+ * Zdrojovy obrazek je vcelku velky, a je v nem ulozeno vice objektu.
+ * Proto ResourceHandler drzi naposledy nacteny zdrojovy obrazek,
+ * kdyby nekdo priste chtel ten samy, uz se nemusi hledat a nacitat.
+ * Tato funkce tedy z xml atributu @p attrName elementu @p el precte
+ * nazev zdrojoveho obrazku a pokud tento obrazek jiz ma nacteny,
+ * pouze tise uspeje. Pokud je posledni nacteny obrazek jiny,
+ * tento obrazek nacte a ulozi ho do @c sourcePixmap_.
+ * Pokud nastane chyba, sam zobrazuje relevantni informace.
+ * Zdrojovemu obrazku vytvori masku pruhlednosti podle pruhledne barvy.
+ * @param el element, ze ktereho se ma ziskat hodnota atributu
+ * @param attrName jmeno atributu, jehoz hodnota urci jmeno obrazku
+ * @return Uspech operace.
+ * @retval true obrazek byl nacten a ulozen do @c sourcePixmap_
+ * @retval false obrazek nenacten
+ */
 bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 		const QString & attrName) {
 	// get name of pixmap
@@ -379,6 +394,16 @@ bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 	return true;
 }
 
+/** @details
+ * Pokusi se ziskat podelement elementu @p el.
+ * Pokud element neexistuje, sam zobrazuje relevantni informace.
+ * @param el element, o jehoz podelement mame zajem
+ * @param[out] subEl nalezeny podelement
+ * @param subElTagName jmeno podelementu, ktery hledame
+ * @return Uspech operace.
+ * @retval true podelement nalezen a vracen v @p subEl
+ * @retval false podelement chybi
+ */
 bool ResourceHandler::getSubElement(const QDomElement & el,
 		QDomElement & subEl, const QString & subElTagName) {
 
@@ -391,6 +416,20 @@ bool ResourceHandler::getSubElement(const QDomElement & el,
 	return true;
 }
 
+/** @details
+ * Pokusi se ziskat hodnotu atributu @p attrName elementu @p el
+ * a prevest ji na integer.
+ * Pokud nastane chyba, sam zobrazuje relevantni informace.
+ * @param el element, o jehoz atribut mame zajem
+ * @param[out] attr hodnota atributu
+ * @param attrName jmeno atributu, ktery hledame
+ * @param successIfMissing jestli ma uspet pokud atribut uplne chybi
+ * @return Uspech operace.
+ * @retval true hodnota atributu nactena
+ *              (nebo chybi a @p successIfMissing je true)
+ * @retval false hodnota atributu nelze interpretovat jako int
+ *              (nebo chybi a @p successIfMissing je false)
+ */
 bool ResourceHandler::getIntAttr(const QDomElement & el,
 		int & attr, const QString & attrName, bool successIfMissing) {
 
@@ -414,6 +453,15 @@ bool ResourceHandler::getIntAttr(const QDomElement & el,
 	return true;
 }
 
+/** @details
+ * Ziska integer hodnoty atributu x,y.
+ * Atributy nesmi chybet.
+ * @param el element, jehoz atributy nas zajimaji
+ * @param[out] x hodnota atributu x
+ * @param[out] y hodnota atributu y
+ * @return Uspech operace.
+ * @see getIntAttr()
+ */
 bool ResourceHandler::getAttrsXY(const QDomElement & el, int & x, int & y) {
 	return getIntAttr(el, x, "x") && getIntAttr(el, y, "y");
 }
