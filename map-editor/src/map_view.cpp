@@ -17,10 +17,17 @@
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
 
+/// Nazev vlastnosti mime dat uchovavajici tazeny objekt.
 #define MAP_VIEW_DRAGGED_OBJECT_PROPERTY "draggedBombicMapObject"
 
 SINGLETON_INIT(MapView);
 
+/** @details
+ * Vytvori pohled na mapu (QGraphicsView),
+ * nahled pracovniho objektu, a zoomovaci widget.
+ * Vytvori defaultni pozadi mapy a scenu s timto defaultnim pozadim.
+ * @param parent rodicovsky widget
+ */
 MapView::MapView(QWidget * parent):
 		QWidget(parent), viewport_(0), scene_(0),
 		zoomWidget_(0), lastZoomQuotient_(1.0) {
@@ -55,6 +62,13 @@ MapView::~MapView() {
 	SINGLETON_DESTROY;
 }
 
+/** @details
+ * Widget MapView ma jako layout @c QGridLayout.
+ * Abychom v kazde chvili meli k tomuto layoutu pristup,
+ * slouzi tato fce @c gridLayout() jako getter. Zaroven,
+ * pokud jeste layout nebyl vytvoren, novy layout vytvori.
+ * @return Grid layout rodicovskeho widgetu.
+ */
 QGridLayout * MapView::gridLayout() {
 	QLayout * myLayout = layout();
 	if(myLayout) {
@@ -64,6 +78,12 @@ QGridLayout * MapView::gridLayout() {
 	}
 }
 
+/** @details
+ * Nastavi zoom pohledu na mapu.
+ * Pokud je novy zoom 1, resetuje transformacni matici,
+ * pak je tedy prace se scenou mnohem rychlejsi (netransformuje se).
+ * @param zoomQuotient novy transformacni kvocient
+ */
 void MapView::setZoom(qreal zoomQuotient) {
 	if(zoomQuotient==1.0) {
 		viewport_->resetTransform();
@@ -74,11 +94,18 @@ void MapView::setZoom(qreal zoomQuotient) {
 	lastZoomQuotient_ = zoomQuotient;
 }
 
+/** @details
+ * Evokuje signal leaved().
+ * @param event pointer na udalost, ktera handler vyvolala
+ */
 void MapView::leaveEvent(QEvent * event) {
 	Q_UNUSED(event);
 	emit leaved();
 }
 
+/** @details
+ * @param objectPixmap obrazen pracovniho objektu
+ */
 void MapView::showWorkingObjectLabel(const QPixmap & objectPixmap) {
 	workingObjectLabel_->setPixmap(objectPixmap);
 	QSize pixmapSize = objectPixmap.size();
@@ -87,10 +114,18 @@ void MapView::showWorkingObjectLabel(const QPixmap & objectPixmap) {
 	workingObjectLabel_->setMaximumWidth(labelWidth);
 	workingObjectLabel_->show();
 }
+
 void MapView::hideWorkingObjectLabel() {
 	workingObjectLabel_->hide();
 }
 
+/** @details
+ * Naalokuje @c QMimeData a nastavi je tak,
+ * aby prenasela pointer na zadany objekt.
+ * Vlastnictvi vracenych mime dat prechazi na volajiciho.
+ * @param object pointer na neseny objekt
+ * @return Nove alokovana mime data prenasejici @p object.
+ */
 QMimeData * MapView::createMimeData(BombicMapObject * object) {
 	QMimeData * mimeData = new QMimeData;
 	mimeData->setProperty(
@@ -99,6 +134,12 @@ QMimeData * MapView::createMimeData(BombicMapObject * object) {
 	return mimeData;
 }
 
+/** @details
+ * Z mime dat, ktera prenasi pointer na objekt ziska tento objekt.
+ * @param mimeData mime data prnasejici objekt
+ * @return Objekt prenaseny mime daty.
+ * @retval 0 @p mimeData nenesou zadny objekt.
+ */
 BombicMapObject * MapView::getMapObject(const QMimeData * mimeData) {
 	QVariant objVar =
 		mimeData->property(MAP_VIEW_DRAGGED_OBJECT_PROPERTY);
