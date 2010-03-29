@@ -19,6 +19,7 @@ class BombicMapObject {
 
 	public:
 		BombicMapObject(const QString & name, const QPixmap & pixmap);
+		BombicMapObject(BombicMapObject & srcObject);
 		~BombicMapObject();
 
 		virtual BombicMapObject * createCopy() =0;
@@ -36,6 +37,7 @@ class BombicMapObject {
 		const QString & name();
 
 		const QPixmap & pixmap();
+		const QPixmap & thumbnail();
 
 		const QRect & rect();
 		BombicMap::Field field();
@@ -50,6 +52,7 @@ class BombicMapObject {
 	protected:
 		QString name_;
 		QPixmap pixmap_;
+		QPixmap thumbnail_;
 		QGraphicsPixmapItem * graphicsItem_;
 		/// Velikost v polickach (kolik zabira policek).
 		QRect rect_;

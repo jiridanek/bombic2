@@ -23,10 +23,11 @@
 #include "bombic/wall.h"
 
 /** @details
- * Vytvori scenu mapy s velikosti @p width, @p height v polickach
- * a pozadim @p background. Vytvori (a drzi) mapu tak, jak je pouzita
- * ve hre. Nova scena se spoji ( @c connect() ) s paletou objektu
- * a s pohledem na scenu. Pripravi se @c cantInsertItem_.
+ * Vytvori scenu mapy s velikosti @p width, @p height v polickach a pozadim
+ * @p background. Vytvori (a drzi) mapu tak, jak je pouzita ve hre.
+ * Nova scena se spoji (@c connect() ) s paletou objektu a s pohledem na scenu.
+ * Pripravi se insert items (zastupne graficke prvky pouzivane
+ * pri vkladani objektu, kdyz nechceme zobrazit primo obrazek objektu).
  * @param width sirska nove mapy v polickach
  * @param height vyska nove mapy v polickach
  * @param background pozadi nove mapy
@@ -36,7 +37,7 @@ MapScene::MapScene(int width, int height,
 		BombicMapBackground * background,
 		QObject * parent):
 				QGraphicsScene(parent), workingObject_(0),
-				cantInsertItem_(new QGraphicsRectItem),
+				insertionHelperItem_(new QGraphicsRectItem),
 				mousePressed_(false) {
 	// create clean map
 	map_ = new BombicMap(width, height, background);
@@ -57,8 +58,8 @@ MapScene::MapScene(int width, int height,
 	connect(MAP_VIEW, SIGNAL(leaved()),
 		this, SLOT(hideWorkingObject()) );
 
-	// init the "cant insert item"
-	initCantInsertItem();
+	// init the "insert item"
+	initInsertionHelperItem();
 }
 
 /** @details
@@ -124,16 +125,41 @@ void MapScene::insertBackgroundWalls(BombicMapBackground * background) {
 }
 
 /** @details
- * Inicializuje a vlozi prvek sceny, ktery se pouzije,
- * kdyz uzivatel vklada do sceny objekt, ale na konkretni misto
- * sceny to neni mozne. Po inicializaci skryty prvek do sceny vlozi.
+ * Inicializuje a vlozi prveky sceny, ktery se pouziji,
+ * kdyz uzivatel vklada do sceny objekt, ale nechceme zobrazit primo objekt.
+ * Napr. protoze na konkretni misto sceny to neni mozne.
+ * Nechceme mast uzivatele duplikovanim obrazku objektu.
+ * Po inicializaci skryte prvky do sceny vlozi.
  */
-void MapScene::initCantInsertItem() {
-	cantInsertItem_->setPen(CANT_INSERT_ITEM_PEN);
-	cantInsertItem_->setBrush(CANT_INSERT_ITEM_BRUSH);
-	cantInsertItem_->setZValue(sceneRect().height()+1);
-	cantInsertItem_->hide();
-	addItem(cantInsertItem_);
+void MapScene::initInsertionHelperItem() {
+	insertionHelperItem_->setPen(INSERTION_HELPER_ITEM_PEN);
+	insertionHelperItem_->setZValue(sceneRect().height()+1);
+	insertionHelperItem_->hide();
+	addItem(insertionHelperItem_);
+}
+
+/** @details
+ * Zobrazi na misto objektu, jehoz obdelnik je @p objectRect
+ * pomocny graficky prvek, tak, jak byl naposledy nastaven.
+ * Vetsinou chcete ale zaroven nastavit vyznam prvku, pouzijte proto radsi
+ * @c showCanInsertItem() nebo @c showCannotInsertItem().
+ */
+void MapScene::showInsertionHelperItem(const QRect & objectRect) {
+	insertionHelperItem_->setPos(objectRect.topLeft() * CELL_SIZE);
+	insertionHelperItem_->setRect( QRectF(
+		QPointF(0, 0),
+		objectRect.size()*CELL_SIZE ) );
+	insertionHelperItem_->show();
+}
+
+void MapScene::showCanInsertItem(const QRect & objectRect) {
+	insertionHelperItem_->setBrush(CAN_INSERT_ITEM_BRUSH);
+	showInsertionHelperItem(objectRect);
+}
+
+void MapScene::showCannotInsertItem(const QRect & objectRect) {
+	insertionHelperItem_->setBrush(CANNOT_INSERT_ITEM_BRUSH);
+	showInsertionHelperItem(objectRect);
 }
 
 /** @details
@@ -173,9 +199,14 @@ void MapScene::remove(BombicMapObject * object) {
  * @param event udalost, ktera handler vyvolala
  */
 void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
-	if(mousePressed_) {
-		mousePressed_ = false;
-		startDragging(event);
+	if(event->buttons().testFlag(Qt::LeftButton)) {
+		hideWorkingObject();
+		// the button is still pressed
+		if(mousePressed_) {
+			// I have here one press action to start dragging
+			mousePressed_ = false;
+			startDragging(event);
+		}
 	} else {
 		moveWorkingObject(event);
 	}
@@ -234,10 +265,10 @@ void MapScene::startDragging(QGraphicsSceneMouseEvent * event) {
 	if(!draggedObj->canBeDragged()) {
 		return;
 	}
-	hideWorkingObject();
 
 	QDrag * drag = new QDrag(event->widget());
 	drag->setMimeData(MapView::createMimeData(draggedObj));
+	drag->setPixmap(draggedObj->thumbnail());
 	drag->start();
 }
 
@@ -245,7 +276,7 @@ void MapScene::startDragging(QGraphicsSceneMouseEvent * event) {
  * Je-li nejaky pracovni objekt, pohne s nim podle pozice mysi.
  * Lze-li objekt na tuto pozici vlozit, vlozi do sceny (ale nikoli do mapy)
  * primo tento objekt, v opacnem pripade zobrazi na teto pozici
- * zastupnou cantInsertItem_ ve spravne velikosti.
+ * zastupnou @c insertionHelperItem_ ve spravne velikosti a vyznamu cannot insert.
  * @param event udalost, ktera handler vyvolala
  */
 void MapScene::moveWorkingObject(QGraphicsSceneMouseEvent * event) {
@@ -254,11 +285,10 @@ void MapScene::moveWorkingObject(QGraphicsSceneMouseEvent * event) {
 	}
 	BombicMap::Field eventField = getField(
 		event->scenePos(), workingObject_->rect());
-	QPointF insertionPoint = eventField*CELL_SIZE;
 	QGraphicsItem * workingGI = workingObject_->situateGraphicsItem(
-		insertionPoint);
+		eventField*CELL_SIZE);
 	if(map_->canInsert(workingObject_, eventField)) {
-		cantInsertItem_->hide();
+		insertionHelperItem_->hide();
 		workingGI->show();
 		if(workingGI->scene()!=this) {
 			// working item is not in the right scene
@@ -267,11 +297,8 @@ void MapScene::moveWorkingObject(QGraphicsSceneMouseEvent * event) {
 	} else {
 		workingGI->hide();
 
-		cantInsertItem_->setPos(insertionPoint);
-		cantInsertItem_->setRect( QRectF(
-			QPointF(0, 0),
-			workingObject_->size()*CELL_SIZE ) );
-		cantInsertItem_->show();
+		showCannotInsertItem( QRect(
+			eventField, workingObject_->size() ));
 	}
 }
 
@@ -304,17 +331,33 @@ void MapScene::dragEnterEvent(QGraphicsSceneDragDropEvent * event) {
  * @param event udalost, ktera handler vyvolala
  */
 void MapScene::dragMoveEvent(QGraphicsSceneDragDropEvent * event) {
+	BombicMapObject * draggedObj =
+		MapView::getMapObject(event->mimeData());
+	if(!draggedObj) {
+		// nothing was dragged
+		return;
+	}
+	BombicMap::Field eventField = getField(
+		event->scenePos(), draggedObj->rect() );
+	QRect objectRect(eventField, draggedObj->size());
+	if(map_->canInsert(draggedObj, eventField)) {
+		showCanInsertItem(objectRect);
+	} else {
+		showCannotInsertItem(objectRect);
+	}
 }
 /** @details
  * Schova prvky znazornujici tazeny objekt.
  * @param event udalost, ktera handler vyvolala
  */
 void MapScene::dragLeaveEvent(QGraphicsSceneDragDropEvent * event) {
+	Q_UNUSED(event);
+	insertionHelperItem_->hide();
 }
 
 /** @details
  * Mame-li nejaky tazeny objekt a lze jej na pozici mysi vlozit,
- * presune tazeny objekt.
+ * presune tazeny objekt. Schova prvny znazornujici tazeny objekt.
  * @param event udalost, ktera handler vyvolala
  */
 void MapScene::dropEvent(QGraphicsSceneDragDropEvent * event) {
@@ -330,6 +373,7 @@ void MapScene::dropEvent(QGraphicsSceneDragDropEvent * event) {
 		remove(draggedObj);
 		insert(draggedObj, eventField);
 	}
+	insertionHelperItem_->hide();
 }
 
 /** @details
@@ -362,7 +406,7 @@ void MapScene::setWorkingObject(BombicMapObject * object) {
 		return;
 	}
 	workingObject_ = object;
-	MAP_VIEW->showWorkingObjectLabel(object->pixmap());
+	MAP_VIEW->showWorkingObjectLabel(object);
 }
 
 /** @details
@@ -380,7 +424,7 @@ void MapScene::unsetWorkingObject() {
 
 /** @details
  * Odstrani ze sceny pracovni objekt (je-li nejaky) a skryje
- * jeho pripadny zastupny prvek @c cantInsertItem_.
+ * jeho pripadny zastupny prvek @c insertionHelperItem_.
  */
 void MapScene::hideWorkingObject() {
 	if(!workingObject_) {
@@ -392,6 +436,6 @@ void MapScene::hideWorkingObject() {
 		removeItem(workingGI);
 	}
 
-	cantInsertItem_->hide();
+	insertionHelperItem_->hide();
 }
 

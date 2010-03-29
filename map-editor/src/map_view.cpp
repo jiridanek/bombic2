@@ -38,8 +38,6 @@ MapView::MapView(QWidget * parent):
 	gridLayout()->addWidget(viewport_, 1, 0, 1, 2);
 
 	workingObjectLabel_ = new QLabel;
-	workingObjectLabel_->setScaledContents(true);
-	workingObjectLabel_->setMaximumHeight(CELL_SIZE);
 	gridLayout()->addWidget(workingObjectLabel_, 2, 0);
 
 	zoomWidget_ = new ZoomWidget(ZOOM_STEP,
@@ -104,14 +102,10 @@ void MapView::leaveEvent(QEvent * event) {
 }
 
 /** @details
- * @param objectPixmap obrazen pracovniho objektu
+ * @param object pracovniho objektu, ktery chceme zobrazit
  */
-void MapView::showWorkingObjectLabel(const QPixmap & objectPixmap) {
-	workingObjectLabel_->setPixmap(objectPixmap);
-	QSize pixmapSize = objectPixmap.size();
-	int labelWidth = pixmapSize.width()
-		* workingObjectLabel_->maximumHeight() / pixmapSize.height();
-	workingObjectLabel_->setMaximumWidth(labelWidth);
+void MapView::showWorkingObjectLabel(BombicMapObject * object) {
+	workingObjectLabel_->setPixmap(object->thumbnail());
 	workingObjectLabel_->show();
 }
 
@@ -131,6 +125,7 @@ QMimeData * MapView::createMimeData(BombicMapObject * object) {
 	mimeData->setProperty(
 		MAP_VIEW_DRAGGED_OBJECT_PROPERTY,
 		qVariantFromValue(static_cast<void *>(object)) );
+	mimeData->setText(object->name());
 	return mimeData;
 }
 

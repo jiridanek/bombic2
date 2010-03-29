@@ -80,15 +80,22 @@ class MapScene: public QGraphicsScene {
 		void insertBackgroundFields(const QPixmap & texture);
 		/// Vlozit zdi pozadi do sceny.
 		void insertBackgroundWalls(BombicMapBackground * background);
-		/// Inicializovat cantInsertItem_.
-		void initCantInsertItem();
+
+		/// Inicializovat insertionHelperItem_.
+		void initInsertionHelperItem();
+		/// Zobrazit pomocny prvek sceny zobrazujici objekt pri vkladani.
+		void showInsertionHelperItem(const QRect & objectRect);
+		/// Zobrazit pomocny prvek sceny zobrazujici, ze objekt lze vlozit.
+		void showCanInsertItem(const QRect & objectRect);
+		/// Zobrazit pomocny prvek sceny zobrazujici, ze objekt nelze vlozit.
+		void showCannotInsertItem(const QRect & objectRect);
 
 		/// Mapa hry zobrazovana ve scene.
 		BombicMap * map_;
 		/// Pracovni objekt (v cizim vlastnictvi).
 		BombicMapObject * workingObject_;
-		/// Prvek sceny zobrazujici objekt, ktery nelze aktualne pridat.
-		QGraphicsRectItem * cantInsertItem_;
+		/// Pomocny prvek sceny zobrazujici objekt pri vkladani.
+		QGraphicsRectItem * insertionHelperItem_;
 		/// Zda-li je aktualne stisknuto tlacitko mysi,
 		/// na ktere se da navazat uvolnenim za vzniku kliknuti.
 		bool mousePressed_;

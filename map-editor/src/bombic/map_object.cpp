@@ -2,10 +2,19 @@
 #include "map_object.h"
 
 #include <QGraphicsPixmapItem>
+#include <constants.h>
 
 BombicMapObject::BombicMapObject(const QString & name, const QPixmap & pixmap):
 		name_(name), pixmap_(pixmap),
+		thumbnail_(/* init it to null, it will be created on demand*/),
 		graphicsItem_(0), rect_(0, 0, 1, 1), toplapping_(0) {
+}
+
+BombicMapObject::BombicMapObject(BombicMapObject & srcObject):
+		name_(srcObject.name()), pixmap_(srcObject.pixmap()),
+		thumbnail_(srcObject.thumbnail()),
+		graphicsItem_(0), rect_(srcObject.rect()),
+		toplapping_(srcObject.toplapping()) {
 }
 
 BombicMapObject::~BombicMapObject() {
@@ -22,6 +31,13 @@ const QString & BombicMapObject::name() {
 
 const QPixmap & BombicMapObject::pixmap() {
 	return pixmap_;
+}
+
+const QPixmap & BombicMapObject::thumbnail() {
+	if(thumbnail_.isNull()) {
+		thumbnail_ = pixmap_.scaledToHeight(CELL_SIZE);
+	}
+	return thumbnail_;
 }
 
 const QRect & BombicMapObject::rect() {
@@ -52,6 +68,7 @@ QGraphicsItem * BombicMapObject::graphicsItem() {
 }
 
 bool BombicMapObject::canBeWith(BombicMapObject * object) {
+	Q_UNUSED(object);
 	return false;
 }
 

@@ -12,12 +12,12 @@ BombicWall::BombicWall(const QString & name, const QPixmap & pixmap,
 	toplapping_ = toplapping;
 }
 
-BombicMapObject * BombicWall::createCopy() {
-	return createWallCopy();
+BombicWall::BombicWall(BombicWall & srcWall):
+		BombicMapObject(srcWall) {
 }
-BombicWall * BombicWall::createWallCopy() {
-	return new BombicWall(name_, pixmap_,
-		rect_.width(), rect_.height(), toplapping_);
+
+BombicMapObject * BombicWall::createCopy() {
+	return new BombicWall(*this);
 }
 
 

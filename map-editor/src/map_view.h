@@ -7,7 +7,6 @@
 #define MAP_VIEW_H_GUARD_
 
 #include <QWidget>
-#include <QPixmap>
 #include <singleton.h>
 
 /// Zkratka pro ziskani instance singletonu MapView.
@@ -45,7 +44,7 @@ class MapView: public QWidget {
 		QGridLayout * gridLayout();
 
 		/// Zobrazit obrazek pracovniho objektu.
-		void showWorkingObjectLabel(const QPixmap & objectPixmap);
+		void showWorkingObjectLabel(BombicMapObject * object);
 		/// Schovat obrazek pracovniho objektu.
 		void hideWorkingObjectLabel();
 

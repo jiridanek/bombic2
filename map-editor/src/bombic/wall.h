@@ -11,9 +11,9 @@ class BombicWall: public BombicMapObject {
 	public:
 		BombicWall(const QString & name, const QPixmap & pixmap,
 				int width, int height, int toplapping);
+		BombicWall(BombicWall & srcWall);
 
 		virtual BombicMapObject * createCopy();
-		BombicWall * createWallCopy();
 
 		virtual BombicMapObject::Type type();
 
