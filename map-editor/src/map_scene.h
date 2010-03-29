@@ -54,6 +54,8 @@ class MapScene: public QGraphicsScene {
 		virtual void mousePressEvent(QGraphicsSceneMouseEvent * event);
 		/// Handler uvoleni mysi.
 		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
+		/// Handler dvojiteho kliknuti.
+		virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event);
 		/// Handler vstupu tazeni mysi.
 		virtual void dragEnterEvent(QGraphicsSceneDragDropEvent * event);
 		/// Handler pohybu tazeni mysi.
@@ -70,6 +72,8 @@ class MapScene: public QGraphicsScene {
 		void moveWorkingObject(QGraphicsSceneMouseEvent * event);
 		/// Vlozit pracovni objekt do sceny.
 		void insertWorkingObject(QGraphicsSceneMouseEvent * event);
+		/// Odstranit objekt, na ktery se kliklo, ze sceny.
+		void removeClickedObject(QGraphicsSceneMouseEvent * event);
 
 		/// Policko mapy, ktereho se tyka pozice mysi.
 		BombicMap::Field getField(

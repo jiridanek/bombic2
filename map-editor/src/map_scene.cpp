@@ -251,6 +251,21 @@ void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
 }
 
 /** @details
+ * Odstrani ze sceny (a mapy) objekt, na ktery se dvojkliklo (je-li nejaky).
+ * @param event udalost, ktera handler vyvolala
+ */
+void MapScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event) {
+	switch(event->button()) {
+		case Qt::LeftButton:
+			removeClickedObject(event);
+			break;
+		default:
+			// nothing to do
+			break;
+	}
+}
+
+/** @details
  * Zkontroluje je-li pod mysi nejaky objekt k tazeni
  * a nastartuje udalost tazeni tohoto objektu.
  * @param event udalost, ktera handler vyvolala
@@ -316,6 +331,24 @@ void MapScene::insertWorkingObject(QGraphicsSceneMouseEvent * event) {
 	if(map_->canInsert(workingObject_, eventField)) {
 		insert(workingObject_->createCopy(), eventField);
 	}
+}
+
+/** @details
+ * Zkontroluje je-li pod mysi nejaky objekt k odstraneni
+ * a pripadne jej odstrani.
+ * @param event udalost, ktera handler vyvolala
+ */
+void MapScene::removeClickedObject(QGraphicsSceneMouseEvent * event) {
+	BombicMap::Field eventField = getField(event->scenePos());
+	BombicMapObject * clickedObj = map_->objectOnTop(eventField);
+	if(!clickedObj) {
+		// nothing to remove
+		return;
+	}
+	if(!clickedObj->canBeRemoved()) {
+		return;
+	}
+	remove(clickedObj);
 }
 
 /** @details
