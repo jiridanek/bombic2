@@ -21,6 +21,7 @@
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
 #include "bombic/wall.h"
+#include "bombic/generated_object.h"
 
 /** @details
  * Vytvori scenu mapy s velikosti @p width, @p height v polickach a pozadim
@@ -44,9 +45,12 @@ MapScene::MapScene(int width, int height,
 	// set the scene
 	setSceneRect(0, 0, width*CELL_SIZE, height*CELL_SIZE);
 	setBackgroundBrush(background->ambientColor());
+	// background of each field
 	insertBackgroundFields(background->texture());
-	// insert enclosure walls
+	// enclosure walls
 	insertBackgroundWalls(background);
+	// generated objects
+	insertGeneratedObjects();
 
 	// connect palette to scene
 	connect(MAP_OBJECT_PALETTE, SIGNAL(objectUnselected()),
@@ -66,10 +70,13 @@ MapScene::MapScene(int width, int height,
  * @param texture textura pozadi mapy
  */
 void MapScene::insertBackgroundFields(const QPixmap & texture) {
-	for(int x = 0 ; x < sceneRect().width() ; x += CELL_SIZE) {
-		for(int y = 0 ; y < sceneRect().height() ; y += CELL_SIZE) {
+	QRect mapRect = map_->fieldsRect();
+	for(BombicMap::Field f = mapRect.topLeft() ;
+			f.x() <= mapRect.right() ; ++f.rx()) {
+		for(f.ry() = mapRect.top() ;
+				f.y() <= mapRect.bottom() ; ++f.ry()) {
 			QGraphicsItem * bgItem = addPixmap(texture);
-			bgItem->setPos(x, y);
+			bgItem->setPos(f*CELL_SIZE);
 			bgItem->setZValue(-1);
 		}
 	}
@@ -122,6 +129,25 @@ void MapScene::insertBackgroundWalls(BombicMapBackground * background) {
 	SIDE(Bottom, moveBottomLeft, bottomLeft, 1, 0);
 	#undef SIDE
 	#undef PREPARE_WALL_AND_RECT
+}
+
+/** @details
+ */
+void MapScene::insertGeneratedObjects() {
+	QRect mapRect = map_->fieldsRect();
+	for(BombicMap::Field f = mapRect.topLeft() ;
+			f.x() <= mapRect.right() ; ++f.rx()) {
+		for(f.ry() = mapRect.top() ;
+				f.y() <= mapRect.bottom() ; ++f.ry()) {
+			QGraphicsItem * item =
+				map_->generatedBox(f)->graphicsItem();
+			item->setZValue(sceneRect().height()+0.5);
+			addItem(item);
+			item = map_->generatedCreature(f)->graphicsItem();
+			item->setZValue(sceneRect().height()+0.55);
+			addItem(item);
+		}
+	}
 }
 
 /** @details
@@ -350,7 +376,7 @@ void MapScene::removeClickedObject(QGraphicsSceneMouseEvent * event) {
 		return;
 	}
 	remove(clickedObj);
-	delete clockedObj;
+	delete clickedObj;
 }
 
 /** @details

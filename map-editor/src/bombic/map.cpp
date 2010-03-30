@@ -3,14 +3,24 @@
 
 #include "map_background.h"
 #include "map_object.h"
+#include "generated_box.h"
+#include "generated_creature.h"
 
 BombicMap::BombicMap(int width, int height,
 		BombicMapBackground * background):
 			fieldsRect_(0, 0, width, height),
 			background_(background) {
-	FieldsT::value_type::value_type emptyList;
-	FieldsT::value_type column(height, emptyList);
+	FieldsT::value_type::value_type emptyFieldSet;
+	FieldsT::value_type column(height, emptyFieldSet);
 	fields_ = FieldsT(width, column);
+	for(int x = 0 ; x < width ; ++x) {
+		for(int y = 0 ; y < height ; ++y) {
+			fields_[x][y].genBox =
+				new BombicGeneratedBox(Field(x, y));
+			fields_[x][y].genCreature =
+				new BombicGeneratedCreature(Field(x, y));
+		}
+	}
 }
 
 BombicMap::~BombicMap() {
@@ -33,7 +43,8 @@ bool BombicMap::canInsert(BombicMapObject * object,
 		for(int y = top ; y <= bottom ; ++y) {
 			// check, whether there isn't other object,
 			// that exludes this one
-			foreach(BombicMapObject * otherObj, fields_[x][y]) {
+			foreach(BombicMapObject * otherObj,
+					fields_[x][y].objList) {
 				if(!object->canBeWith(otherObj)) {
 					return false;
 				}
@@ -58,7 +69,9 @@ void BombicMap::insert(BombicMapObject * object,
 	for(int x = left ; x <= right ; ++x) {
 		for(int y = top ; y <= bottom ; ++y) {
 			// insert the object in the map
-			fields_[x][y].append(object);
+			// TODO floorobjects prepend
+			fields_[x][y].objList.append(object);
+			// TODO hide generated objects
 		}
 	}
 }
@@ -76,7 +89,7 @@ void BombicMap::remove(BombicMapObject * object) {
 	for(int x = left ; x <= right ; ++x) {
 		for(int y = top ; y <= bottom ; ++y) {
 			// remove the object from the map
-			fields_[x][y].removeAll(object);
+			fields_[x][y].objList.removeAll(object);
 		}
 	}
 }
@@ -85,10 +98,26 @@ BombicMapObject * BombicMap::objectOnTop(const BombicMap::Field & field) {
 	if(!fieldsRect_.contains(field)) {
 		return 0;
 	}
-	if(fields_[field.x()][field.y()].isEmpty()) {
+	if(fields_[field.x()][field.y()].objList.isEmpty()) {
 		return 0;
 	}
-	return fields_[field.x()][field.y()].last();
+	return fields_[field.x()][field.y()].objList.last();
+}
+
+BombicGeneratedObject * BombicMap::generatedBox(
+		const BombicMap::Field & field) {
+	if(!fieldsRect_.contains(field)) {
+		return 0;
+	}
+	return fields_[field.x()][field.y()].genBox;
+}
+
+BombicGeneratedObject * BombicMap::generatedCreature(
+		const BombicMap::Field & field) {
+	if(!fieldsRect_.contains(field)) {
+		return 0;
+	}
+	return fields_[field.x()][field.y()].genCreature;
 }
 
 const QRect & BombicMap::fieldsRect() {

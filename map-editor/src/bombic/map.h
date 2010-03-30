@@ -12,6 +12,7 @@
 
 class BombicMapBackground;
 class BombicMapObject;
+class BombicGeneratedObject;
 
 class BombicMap {
 
@@ -31,6 +32,9 @@ class BombicMap {
 
 		BombicMapObject * objectOnTop(const BombicMap::Field & field);
 
+		BombicGeneratedObject * generatedBox(const BombicMap::Field & field);
+		BombicGeneratedObject * generatedCreature(const BombicMap::Field & field);
+
 		const QRect & fieldsRect();
 
 	private:
@@ -40,7 +44,13 @@ class BombicMap {
 		QRect fieldsRect_;
 		BombicMapBackground * background_;
 
-		typedef QVector< QVector< QLinkedList<BombicMapObject *> > > FieldsT;
+		typedef struct {
+			BombicGeneratedObject * genBox;
+			BombicGeneratedObject * genCreature;
+			QLinkedList<BombicMapObject *> objList;
+		} FieldSetT;
+
+		typedef QVector< QVector< FieldSetT > > FieldsT;
 		FieldsT fields_;
 
 

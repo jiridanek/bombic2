@@ -84,6 +84,8 @@ class MapScene: public QGraphicsScene {
 		void insertBackgroundFields(const QPixmap & texture);
 		/// Vlozit zdi pozadi do sceny.
 		void insertBackgroundWalls(BombicMapBackground * background);
+		/// Vlozit zastupce generovanych objektu.
+		void insertGeneratedObjects();
 
 		/// Inicializovat insertionHelperItem_.
 		void initInsertionHelperItem();
