@@ -257,6 +257,7 @@ void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
 void MapScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event) {
 	switch(event->button()) {
 		case Qt::LeftButton:
+			mousePressed_ = false;
 			removeClickedObject(event);
 			break;
 		default:
@@ -335,7 +336,7 @@ void MapScene::insertWorkingObject(QGraphicsSceneMouseEvent * event) {
 
 /** @details
  * Zkontroluje je-li pod mysi nejaky objekt k odstraneni
- * a pripadne jej odstrani.
+ * a pripadne jej odstrani (a dealokuje).
  * @param event udalost, ktera handler vyvolala
  */
 void MapScene::removeClickedObject(QGraphicsSceneMouseEvent * event) {
@@ -349,6 +350,7 @@ void MapScene::removeClickedObject(QGraphicsSceneMouseEvent * event) {
 		return;
 	}
 	remove(clickedObj);
+	delete clockedObj;
 }
 
 /** @details
