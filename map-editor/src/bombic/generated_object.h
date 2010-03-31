@@ -11,7 +11,15 @@ class QGraphicsItem;
 class BombicGeneratedObject {
 
 	public:
+		BombicGeneratedObject();
 		~BombicGeneratedObject();
+
+		void show();
+		void hide();
+		void allow();
+		void disallow();
+
+		bool allowed();
 
 		QGraphicsItem * graphicsItem();
 
@@ -19,6 +27,9 @@ class BombicGeneratedObject {
 		void setPos(const BombicMap::Field & field);
 
 		QGraphicsItem * graphicsItem_;
+
+		bool allowed_;
+		bool hidden_;
 };
 
 #endif

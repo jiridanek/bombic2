@@ -18,9 +18,8 @@ BombicMapObject::BombicMapObject(BombicMapObject & srcObject):
 }
 
 BombicMapObject::~BombicMapObject() {
-	if(graphicsItem_ && !graphicsItem_->scene()) {
-		// there is some item but it is not in scene
-		// I delete it
+	if(graphicsItem_) {
+		// there is some item - delete it
 		delete graphicsItem_;
 	}
 }
@@ -70,6 +69,14 @@ QGraphicsItem * BombicMapObject::graphicsItem() {
 bool BombicMapObject::canBeWith(BombicMapObject * object) {
 	Q_UNUSED(object);
 	return false;
+}
+
+bool BombicMapObject::blocksBoxGenerating() {
+	return true;
+}
+
+bool BombicMapObject::blocksCreatureGenerating() {
+	return true;
 }
 
 bool BombicMapObject::canBeDragged() {

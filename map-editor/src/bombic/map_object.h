@@ -46,6 +46,8 @@ class BombicMapObject {
 		virtual int toplapping();
 
 		virtual bool canBeWith(BombicMapObject * object);
+		virtual bool blocksBoxGenerating();
+		virtual bool blocksCreatureGenerating();
 		virtual bool canBeDragged();
 		virtual bool canBeRemoved();
 

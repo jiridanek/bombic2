@@ -24,7 +24,14 @@ BombicMap::BombicMap(int width, int height,
 }
 
 BombicMap::~BombicMap() {
-	// TODO delete objects in map
+	for(int x = fieldsRect_.left() ; x <= fieldsRect_.right() ; ++x) {
+		for(int y = fieldsRect_.top() ; y <= fieldsRect_.bottom() ; ++y) {
+			fields_[x][y].genBox =
+				new BombicGeneratedBox(Field(x, y));
+			fields_[x][y].genCreature =
+				new BombicGeneratedCreature(Field(x, y));
+		}
+	}
 }
 
 bool BombicMap::canInsert(BombicMapObject * object,
@@ -69,9 +76,18 @@ void BombicMap::insert(BombicMapObject * object,
 	for(int x = left ; x <= right ; ++x) {
 		for(int y = top ; y <= bottom ; ++y) {
 			// insert the object in the map
-			// TODO floorobjects prepend
-			fields_[x][y].objList.append(object);
-			// TODO hide generated objects
+			if(object->type()==BombicMapObject::Floorobject) {
+				fields_[x][y].objList.prepend(object);
+			} else {
+				fields_[x][y].objList.append(object);
+			}
+			// hide generating labels if it is blocker
+			if(object->blocksBoxGenerating()) {
+				fields_[x][y].genBox->hide();
+			}
+			if(object->blocksCreatureGenerating()) {
+				fields_[x][y].genCreature->hide();
+			}
 		}
 	}
 }
@@ -90,6 +106,24 @@ void BombicMap::remove(BombicMapObject * object) {
 		for(int y = top ; y <= bottom ; ++y) {
 			// remove the object from the map
 			fields_[x][y].objList.removeAll(object);
+			// show generating labels if there isn̈́'t blocker
+			bool blockBoxGenerating = false;
+			bool blockCreatureGenerating = false;
+			// find the blocker
+			foreach(BombicMapObject * o, fields_[x][y].objList) {
+				if(o->blocksBoxGenerating()) {
+					blockBoxGenerating = true;
+				}
+				if(object->blocksCreatureGenerating()) {
+					blockCreatureGenerating = true;
+				}
+			}
+			if(!blockBoxGenerating) {
+				fields_[x][y].genBox->show();
+			}
+			if(!blockCreatureGenerating) {
+				fields_[x][y].genCreature->show();
+			}
 		}
 	}
 }
