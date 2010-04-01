@@ -10,7 +10,7 @@
 #include <constants.h>
 
 #include "map_scene.h"
-
+#include "map_field_view.h"
 #include "qt/zoomwidget.h"
 #include "resource_handler.h"
 #include "bombic/map.h"
@@ -29,19 +29,19 @@ SINGLETON_INIT(MapView);
  * @param parent rodicovsky widget
  */
 MapView::MapView(QWidget * parent):
-		QWidget(parent), viewport_(0), scene_(0),
-		zoomWidget_(0), lastZoomQuotient_(1.0) {
+		QWidget(parent),
+		viewport_(new QGraphicsView), scene_(0),
+		lastZoomQuotient_(1.0),
+		zoomWidget_( new ZoomWidget(ZOOM_STEP,
+			ZOOM_MINIMUM_VALUE, ZOOM_MAXIMUM_VALUE) ),
+		workingObjectLabel_(new QLabel),
+		fieldView_(new MapFieldView) {
 
 	SINGLETON_CONSTRUCT;
 
-	viewport_ = new QGraphicsView;
+	gridLayout()->addWidget(fieldView_, 0, 0, 1, 2);
 	gridLayout()->addWidget(viewport_, 1, 0, 1, 2);
-
-	workingObjectLabel_ = new QLabel;
 	gridLayout()->addWidget(workingObjectLabel_, 2, 0);
-
-	zoomWidget_ = new ZoomWidget(ZOOM_STEP,
-		ZOOM_MINIMUM_VALUE, ZOOM_MAXIMUM_VALUE);
 	connect(zoomWidget_, SIGNAL(zoomChanged(qreal)),
 		this, SLOT(setZoom(qreal)) );
 	gridLayout()->addWidget(zoomWidget_, 2, 1);

@@ -19,6 +19,7 @@ class QLabel;
 class QMimeData;
 class ZoomWidget;
 class MapScene;
+class MapFieldView;
 class BombicMapBackground;
 class BombicMapObject;
 
@@ -71,15 +72,14 @@ class MapView: public QWidget {
 		QGraphicsView * viewport_;
 		/// Scena mapy.
 		MapScene * scene_;
-		/// Zoomovaci widget.
-		ZoomWidget * zoomWidget_;
 		/// Aktualni (posledni nastaveny) zoom.
 		qreal lastZoomQuotient_;
+		/// Zoomovaci widget.
+		ZoomWidget * zoomWidget_;
 		/// Obrazek pracovniho objektu.
 		QLabel * workingObjectLabel_;
-
-		// dalsi prvky jako fieldview, viewtoolbar
-
+		/// Detailni pohled na jedno policko mapy.
+		MapFieldView * fieldView_;
 };
 
 #endif
