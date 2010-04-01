@@ -32,6 +32,27 @@ ResourceHandler::~ResourceHandler() {
 BombicMap * ResourceHandler::loadMap() {
 }
 
+/** @details
+ * Vytvori mapu s defaultnim pozadim @c DEFAULT_MAP_BACKGROUND
+ * a rozmery <code>DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT</code>.
+ * Vlastnictvi nove naalokovane mapy prechazi na volajiciho.
+ * @return Nove alokovana prazdna mapa s pozadim.
+ */
+BombicMap * ResourceHandler::loadEmptyMap() {
+	BombicMapBackground * defaultBg =
+		loadMapBackground(DEFAULT_MAP_BACKGROUND);
+	if(!defaultBg) {
+		return 0;
+	}
+	BombicMap * newMap = new BombicMap(
+		DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT, defaultBg);
+	if(!newMap) {
+		delete defaultBg;
+		return 0;
+	}
+	return newMap;
+}
+
 /**
  * @param name jmeno pozadi (nebo souboru s pozadim)
  * @return Nove naalokovane pozadi mapy,
@@ -111,7 +132,7 @@ void ResourceHandler::loadMapObject() {
  * Jinak se pokusi objekt nacist pomoci
  * specializovaneho resource handleru. Pokud se podari objekt nacist,
  * novy objekt registruje v palete a zaroven ho vraci.
- * Vlastníkem objektu je tedy paleta. Pokud chcete objekt vlastnit,
+ * Vlastnï¿½kem objektu je tedy paleta. Pokud chcete objekt vlastnit,
  * z vraceneho objektu si vytvorte kopii.
  * @param name jmeno objektu (nebo primo cesta k souboru)
  * @return Objekt mapy registrovany v palete.
@@ -480,7 +501,7 @@ void ResourceHandler::showError(const QString & message) {
  * Zobrazi chybove hlaseni korespondujici s urcitym souborem @p filename.
  * @param message textovy popis chyby
  * @param filename jmeno souboru, ve kterem se chyba vyskytla
- * @param el pripadne xml element, ve kterem chyba nastala 
+ * @param el pripadne xml element, ve kterem chyba nastala
  */
 void ResourceHandler::showError(const QString & message,
 		const QString & filename,

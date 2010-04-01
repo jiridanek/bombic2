@@ -46,12 +46,9 @@ MapView::MapView(QWidget * parent):
 		this, SLOT(setZoom(qreal)) );
 	gridLayout()->addWidget(zoomWidget_, 2, 1);
 
-
-	BombicMapBackground * defaultMapBg =
-		RESOURCE_HANDLER->loadMapBackground(DEFAULT_MAP_BACKGROUND);
-	if(defaultMapBg) {
-		scene_ = new MapScene(DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT,
-			defaultMapBg, this);
+	BombicMap * defaultMap = RESOURCE_HANDLER->loadEmptyMap();
+	if(defaultMap) {
+		scene_ = new MapScene(defaultMap, this);
 		viewport_->setScene(scene_);
 	}
 }

@@ -27,9 +27,7 @@ class MapScene: public QGraphicsScene {
 
 	public:
 		/// Zkonstruuje mapu a jeji scenu.
-		MapScene(int width, int height,
-				BombicMapBackground * background,
-				QObject * parent = 0);
+		MapScene(BombicMap * map, QObject * parent = 0);
 		/// Destruuje mapu a jeji scenu.
 		~MapScene();
 
@@ -81,11 +79,9 @@ class MapScene: public QGraphicsScene {
 				const QRect & relatedObjectRect = QRect(0,0,1,1));
 
 		/// Vlozit pozadi policek do sceny.
-		void insertBackgroundFields(const QPixmap & texture);
-		/// Vlozit zdi pozadi do sceny.
-		void insertBackgroundWalls(BombicMapBackground * background);
+		void insertBackgroundFields();
 		/// Vlozit zastupce generovanych objektu.
-		void insertGeneratedObjects();
+		void insertObjectsGraphicsItems();
 
 		/// Inicializovat insertionHelperItem_.
 		void initInsertionHelperItem();

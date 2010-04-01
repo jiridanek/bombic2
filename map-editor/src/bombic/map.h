@@ -22,6 +22,7 @@ class BombicMap {
 		~BombicMap();
 
 		typedef QPoint Field;
+		typedef QLinkedList<BombicMapObject *> ObjectListT;
 
 		bool canInsert(BombicMapObject * object,
 				const BombicMap::Field & dstField);
@@ -31,13 +32,19 @@ class BombicMap {
 		void remove(BombicMapObject * object);
 
 		BombicMapObject * objectOnTop(const BombicMap::Field & field);
+		const ObjectListT & objectsOnField(const BombicMap::Field & field);
 
 		BombicGeneratedObject * generatedBox(const BombicMap::Field & field);
 		BombicGeneratedObject * generatedCreature(const BombicMap::Field & field);
 
 		const QRect & fieldsRect();
 
+		BombicMapBackground * background();
 	private:
+		/// Vlozit zdi pozadi do mapy.
+		void insertBackgroundWalls();
+
+
 		QString name_;
 		QString filename_;
 
@@ -47,7 +54,7 @@ class BombicMap {
 		typedef struct {
 			BombicGeneratedObject * genBox;
 			BombicGeneratedObject * genCreature;
-			QLinkedList<BombicMapObject *> objList;
+			ObjectListT objList;
 		} FieldSetT;
 
 		typedef QVector< QVector< FieldSetT > > FieldsT;

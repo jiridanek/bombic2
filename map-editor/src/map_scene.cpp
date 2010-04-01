@@ -9,8 +9,7 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QDrag>
 #include <QPoint>
-#include <QPointF>
-#include <QRect>
+#include <QRectF>
 
 #include <constants.h>
 
@@ -24,33 +23,25 @@
 #include "bombic/generated_object.h"
 
 /** @details
- * Vytvori scenu mapy s velikosti @p width, @p height v polickach a pozadim
- * @p background. Vytvori (a drzi) mapu tak, jak je pouzita ve hre.
+ * Vytvori scenu mapy @p map. Prebira vlastnictvi @p map a pri ruseni tuto mapu
+ * dealokuje.
  * Nova scena se spoji (@c connect() ) s paletou objektu a s pohledem na scenu.
- * Pripravi se insert items (zastupne graficke prvky pouzivane
+ * Pripravi se insertion helper items (zastupne graficke prvky pouzivane
  * pri vkladani objektu, kdyz nechceme zobrazit primo obrazek objektu).
- * @param width sirska nove mapy v polickach
- * @param height vyska nove mapy v polickach
- * @param background pozadi nove mapy
+ * @param map zobrazovana mapa
  * @param parent rodicovsky objekt
  */
-MapScene::MapScene(int width, int height,
-		BombicMapBackground * background,
-		QObject * parent):
-				QGraphicsScene(parent), workingObject_(0),
+MapScene::MapScene(BombicMap * map, QObject * parent):
+				QGraphicsScene(parent), map_(map), workingObject_(0),
 				insertionHelperItem_(new QGraphicsRectItem),
 				mousePressed_(false) {
-	// create clean map
-	map_ = new BombicMap(width, height, background);
 	// set the scene
-	setSceneRect(0, 0, width*CELL_SIZE, height*CELL_SIZE);
-	setBackgroundBrush(background->ambientColor());
+	setSceneRect(QRect(QPoint(0, 0), map_->fieldsRect().size()*CELL_SIZE));
+	setBackgroundBrush(map_->background()->ambientColor());
 	// background of each field
-	insertBackgroundFields(background->texture());
-	// enclosure walls
-	insertBackgroundWalls(background);
-	// generated objects
-	insertGeneratedObjects();
+	insertBackgroundFields();
+	// map objects
+	insertObjectsGraphicsItems();
 
 	// connect palette to scene
 	connect(MAP_OBJECT_PALETTE, SIGNAL(objectUnselected()),
@@ -69,8 +60,9 @@ MapScene::MapScene(int width, int height,
 /** @details
  * @param texture textura pozadi mapy
  */
-void MapScene::insertBackgroundFields(const QPixmap & texture) {
+void MapScene::insertBackgroundFields() {
 	QRect mapRect = map_->fieldsRect();
+	QPixmap texture = map_->background()->texture();
 	for(BombicMap::Field f = mapRect.topLeft() ;
 			f.x() <= mapRect.right() ; ++f.rx()) {
 		for(f.ry() = mapRect.top() ;
@@ -83,62 +75,14 @@ void MapScene::insertBackgroundFields(const QPixmap & texture) {
 }
 
 /** @details
- * Do sceny a mapy vlozi obvodove zdi definovane pozadim @p background.
- * @param background pozadi vytvarene mapy
  */
-void MapScene::insertBackgroundWalls(BombicMapBackground * background) {
-	QRect mapRect = map_->fieldsRect();
-
-	#define PREPARE_WALL_AND_RECT(situation, moveMethod, getMethod) \
-		BombicWall * wall = background->getWall( \
-		BombicMapBackground::situation); \
-		/* create wall rect with right size (anywhere) */ \
-		QRect wallRect(QPoint(0,0), wall->size()); \
-		/* move the wall rect to the corner of map */ \
-		wallRect.moveMethod(mapRect.getMethod());
-
-	// corners
-	#define CORNER(situation, moveMethod, getMethod) \
-		do { \
-			PREPARE_WALL_AND_RECT(situation, moveMethod, getMethod) \
-			/* insert wall (by the top left corner of wall rect) */ \
-			insert(wall->createCopy(), wallRect.topLeft() ); \
-		} while(0)
-	CORNER(TopLeft, moveTopLeft, topLeft);
-	CORNER(TopRight, moveTopRight, topRight);
-	CORNER(BottomLeft, moveBottomLeft, bottomLeft);
-	CORNER(BottomRight, moveBottomRight, bottomRight);
-	#undef CORNER
-	// whole sides
-	#define SIDE(situation, moveMethod, getMethod, stepX, stepY) \
-		do { \
-			PREPARE_WALL_AND_RECT(situation, moveMethod, getMethod) \
-			/* along whole side */ \
-			for(BombicMap::Field field = wallRect.topLeft() ; \
-					mapRect.contains(field) ; \
-					field += BombicMap::Field(stepX, stepY) ) { \
-				/* insert wall if it is possible */ \
-				if(map_->canInsert(wall, field)) { \
-					insert(wall->createCopy(), field); \
-				} \
-			} \
-		} while(0)
-	SIDE(Top, moveTopLeft, topLeft, 1, 0);
-	SIDE(Left, moveTopLeft, topLeft, 0, 1);
-	SIDE(Right, moveTopRight, topRight, 0, 1);
-	SIDE(Bottom, moveBottomLeft, bottomLeft, 1, 0);
-	#undef SIDE
-	#undef PREPARE_WALL_AND_RECT
-}
-
-/** @details
- */
-void MapScene::insertGeneratedObjects() {
+void MapScene::insertObjectsGraphicsItems() {
 	QRect mapRect = map_->fieldsRect();
 	for(BombicMap::Field f = mapRect.topLeft() ;
 			f.x() <= mapRect.right() ; ++f.rx()) {
 		for(f.ry() = mapRect.top() ;
 				f.y() <= mapRect.bottom() ; ++f.ry()) {
+			// generated items
 			QGraphicsItem * item =
 				map_->generatedBox(f)->graphicsItem();
 			item->setZValue(sceneRect().height()+0.5);
@@ -146,6 +90,14 @@ void MapScene::insertGeneratedObjects() {
 			item = map_->generatedCreature(f)->graphicsItem();
 			item->setZValue(sceneRect().height()+0.55);
 			addItem(item);
+			// stable items
+			foreach(BombicMapObject * o, map_->objectsOnField(f)) {
+				if(o->graphicsItem()->scene()!=this) {
+					// item is not in this scene
+					addItem(o->situateGraphicsItem(
+						f*CELL_SIZE ));
+				}
+			}
 		}
 	}
 }

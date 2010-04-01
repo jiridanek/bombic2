@@ -54,6 +54,8 @@ class ResourceHandler: public QObject {
 
 		/// Nacte mapu (vybranou uzivatelem).
 		BombicMap * loadMap();
+		/// Nacte prazdnou mapu s defaultnim pozadim.
+		BombicMap * loadEmptyMap();
 		/// Ulozi mapu (do puvodniho umisteni).
 		void saveMap(BombicMap * bombicMap);
 		/// Ulozi mapu do noveho umisteni (vybere uzivatel)
