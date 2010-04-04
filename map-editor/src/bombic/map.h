@@ -92,8 +92,9 @@ class BombicMap {
 			ObjectListT objList;
 		} FieldSetT;
 
-		/// 
+		/// Typ matice policek mapy.
 		typedef QVector< QVector< FieldSetT > > FieldsT;
+		/// Matice policek mapy, velikost odpovida @p fieldsRect_.
 		FieldsT fields_;
 
 

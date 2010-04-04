@@ -7,6 +7,16 @@
 #include "generated_box.h"
 #include "generated_creature.h"
 
+/** @details
+ * Zkonstruuje mapu o rozmerech @p width, @p height s pozadim @p background.
+ * Nova mapa se stava vlastnikem @p background a to bude dealokovano
+ * pri destrukci mapy.
+ * Nove zkonstruovana mapa obsahuje pouze obvodove zdi pozadi a inicializovane
+ * generovane objekty (vsechna policka povolena pro generovani).
+ * @param width sirska mapy v polickach
+ * @param height vyska mapy v polickach
+ * @param background pointer na pozadi
+ */
 BombicMap::BombicMap(int width, int height,
 		BombicMapBackground * background):
 			fieldsRect_(0, 0, width, height),
@@ -75,12 +85,16 @@ void BombicMap::insertBackgroundWalls() {
 	#undef PREPARE_WALL_AND_RECT
 }
 
+/** @details
+ * Dealokuje vsechny objekty mapy a pozadi.
+ */
 BombicMap::~BombicMap() {
 	for(int x = fieldsRect_.left() ; x <= fieldsRect_.right() ; ++x) {
 		for(int y = fieldsRect_.top() ; y <= fieldsRect_.bottom() ; ++y) {
 			delete fields_[x][y].genBox;
 			delete fields_[x][y].genCreature;
 			foreach(BombicMapObject * o, fields_[x][y].objList) {
+				// TODO remove first the object from other fields
 				delete o;
 			}
 		}
@@ -88,6 +102,15 @@ BombicMap::~BombicMap() {
 	delete background_;
 }
 
+/** @details
+ * Kontroluje, zda se objekt vejde do mapy (podle BombicMapObject::size()
+ * a BombicMapObject::toplapping()) a zda muze byt vkladany objekt na policku
+ * zaroven s objekty, ktere jiz na polickach, do kterych objekt zasahuje
+ * (BombicMapObject::canBeWith()).
+ * @param object vkladany objekt
+ * @param dstField policko, na ktere chceme vlozit objekt (leve horni objektu)
+ * @return Zda muze byt objekt vlozen.
+ */
 bool BombicMap::canInsert(BombicMapObject * object,
 		const BombicMap::Field & dstField) {
 	QRect objRect(dstField, object->size());
@@ -115,6 +138,14 @@ bool BombicMap::canInsert(BombicMapObject * object,
 	return true;
 }
 
+/** @details
+ * Vlozi objekt do mapy. Kontroluje pouze, jestli se objekt do mapy vejde.
+ * Nekontroluje toplapping objektu, a ostatni objekty na polick zasazenych
+ * polickach (viz BombicMap::canInsert()).
+ * Prebira vlastnictvi @p object, ktery bude dealokovan v destruktoru mapy.
+ * @param object vkladany objekt
+ * @param dstField policko, na ktere chceme vlozit objekt (leve horni objektu)
+ */
 void BombicMap::insert(BombicMapObject * object,
 		const BombicMap::Field & dstField) {
 	object->setField(dstField);
@@ -146,6 +177,12 @@ void BombicMap::insert(BombicMapObject * object,
 	}
 }
 
+/** @details
+ * Odstrani objekt ze vsech policek, na kterych lezi.
+ * Vlastnictvi objektu prechazi na volajiciho, objekt jiz
+ * nebude dealokovan v destruktoru mapy.
+ * @param object odstranovany objekt
+ */
 void BombicMap::remove(BombicMapObject * object) {
 	QRect objRect = object->rect();
 	if(!fieldsRect_.contains(objRect)) {
@@ -182,6 +219,15 @@ void BombicMap::remove(BombicMapObject * object) {
 	}
 }
 
+/** @details
+ * Pokud je policko @p field a neni prazdne, ziska vrchni objekt na policku.
+ * Poradi objektu na policku je dano poradim pridavani do mapy (LIFO).
+ * Vyjimku tvori floorobject (objekt na zemi), ktery je v dusledku soucasti
+ * pozadi, proto se do mapy pridava jako spodni prvek policka.
+ * @param field policko, jehoz objekt chceme ziskat
+ * @return Objekt, ktery lezi navrchu policka.
+ * @retval 0 Policko neni v mape nebo je prazdne.
+ */
 BombicMapObject * BombicMap::objectOnTop(const BombicMap::Field & field) {
 	if(!fieldsRect_.contains(field)) {
 		return 0;
@@ -192,13 +238,26 @@ BombicMapObject * BombicMap::objectOnTop(const BombicMap::Field & field) {
 	return fields_[field.x()][field.y()].objList.last();
 }
 
-/**
+/** @ details
+ * Seznam objektu na policku (objekty zustavaji vlastnictvim mapy).
+ * Poradi objektu v seznamu je dano poradim na policku, zpusobene
+ * poradim pridavani do mapy.
+ * @param field policko, jehoz objekty chceme ziskat
+ * @return Seznam objektu na policku.
  * @warning @p field musi byt uvnitr mapy - neni provadena zadna kontrola
  */
 const BombicMap::ObjectListT & BombicMap::objectsOnField(const BombicMap::Field & field) {
 	return fields_[field.x()][field.y()].objList;
 }
 
+/** @details
+ * Na kazdem policku vedeme zaznam o tom, zda lze na tomto
+ * policku generovat bedny. Toto je dotaz na strukturu konkretniho policka.
+ * Vracena struktura zustava ve vlastnictvi mapy.
+ * @param field policko, o nemz chceme informace
+ * @return Struktura poskytujici informace o generovane bedne.
+ * @retval 0 Zadane policko neni v mape.
+ */
 BombicGeneratedObject * BombicMap::generatedBox(
 		const BombicMap::Field & field) {
 	if(!fieldsRect_.contains(field)) {
@@ -207,6 +266,14 @@ BombicGeneratedObject * BombicMap::generatedBox(
 	return fields_[field.x()][field.y()].genBox;
 }
 
+/** @details
+ * Na kazdem policku vedeme zaznam o tom, zda lze na tomto
+ * policku generovat prisery. Toto je dotaz na strukturu konkretniho policka.
+ * Vracena struktura zustava ve vlastnictvi mapy.
+ * @param field policko, o nemz chceme informace
+ * @return Struktura poskytujici informace o generovanych priserach.
+ * @retval 0 Zadane policko neni v mape.
+ */
 BombicGeneratedObject * BombicMap::generatedCreature(
 		const BombicMap::Field & field) {
 	if(!fieldsRect_.contains(field)) {
@@ -215,10 +282,17 @@ BombicGeneratedObject * BombicMap::generatedCreature(
 	return fields_[field.x()][field.y()].genCreature;
 }
 
+/**
+ * @return Obdelnik mapy (v jednotkach policek).
+ */
 const QRect & BombicMap::fieldsRect() {
 	return fieldsRect_;
 }
-
+/** @details
+ * Vraceny pointer zustava ve vlastnictvi mapy a bude dealokovan
+ * v destruktoru mapy.
+ * @return Pozadi mapy.
+ */
 BombicMapBackground * BombicMap::background() {
 	return background_;
 }
