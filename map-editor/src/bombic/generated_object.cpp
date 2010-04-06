@@ -4,11 +4,19 @@
 #include <QGraphicsItem>
 #include <constants.h>
 
+/** @details
+ * Defaultne je generovani povoleno a vizualizace zobrazena.
+ * Graficky prvek do sceny by mel byt alokovan v potomcich
+ * teto tridy.
+ */
 BombicGeneratedObject::BombicGeneratedObject():
 		graphicsItem_(0), allowed_(true), hidden_(false) {
 
 }
 
+/** @details
+ * Dealokuje graficky prvek.
+ */
 BombicGeneratedObject::~BombicGeneratedObject() {
 	delete graphicsItem_;
 }
@@ -41,14 +49,25 @@ void BombicGeneratedObject::disallow() {
 	allowed_ = false;
 }
 
+/**
+ * @return Zda je generovani povoleno.
+ */
 bool BombicGeneratedObject::allowed() {
 	return allowed_;
 }
 
+/**
+ * @return Graficky prvek vizualizace do sceny.
+ */
 QGraphicsItem * BombicGeneratedObject::graphicsItem() {
 	return graphicsItem_;
 }
 
+/** @details
+ * Nastavi pozici grafickeho prvku ve scene tak, aby byla
+ * vizualizace spjata s dany polickem @p field.
+ * @param field policko, pro ktere vizualizujeme
+ */
 void BombicGeneratedObject::setPos(const BombicMap::Field & field) {
 	// move to the field
 	graphicsItem_->setPos(field*CELL_SIZE);
@@ -56,3 +75,4 @@ void BombicGeneratedObject::setPos(const BombicMap::Field & field) {
 	graphicsItem_->moveBy(
 		( CELL_SIZE/2 - graphicsItem_->boundingRect().width() )/2.0, 3);
 }
+
