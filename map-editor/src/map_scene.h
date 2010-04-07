@@ -12,6 +12,7 @@
 
 #include "bombic/map.h"
 
+class MapFieldView;
 class QGraphicsRectItem;
 class BombicMapBackground;
 class BombicMapObject;
@@ -24,6 +25,8 @@ class BombicMapObject;
 class MapScene: public QGraphicsScene {
 
 	Q_OBJECT
+
+	friend class MapFieldView;
 
 	public:
 		/// Zkonstruuje mapu a jeji scenu.
@@ -72,6 +75,10 @@ class MapScene: public QGraphicsScene {
 		void insertWorkingObject(QGraphicsSceneMouseEvent * event);
 		/// Odstranit objekt, na ktery se kliklo, ze sceny.
 		void removeClickedObject(QGraphicsSceneMouseEvent * event);
+		/// Vybrat (oznacit) policko.
+		void selectField(QGraphicsSceneMouseEvent * event);
+		/// Zrusit vyber (odoznacit policko).
+		void unselectField();
 
 		/// Policko mapy, ktereho se tyka pozice mysi.
 		BombicMap::Field getField(
@@ -101,7 +108,11 @@ class MapScene: public QGraphicsScene {
 		/// Zda-li je aktualne stisknuto tlacitko mysi,
 		/// na ktere se da navazat uvolnenim za vzniku kliknuti.
 		bool mousePressed_;
-
+		/// Zda-li bylo nevyuzite kliknuti za vzniku dvojkliku.
+		bool mouseClicked_;
+		/// Vybrane (oznacene) policko.
+		BombicMap::Field selectedField_;
+		#define MAP_SCENE_FIELD_NOT_SELECTED BombicMap::Field(-1, -1);
 };
 
 #endif

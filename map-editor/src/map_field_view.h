@@ -11,9 +11,9 @@
 
 #include <QWidget>
 
-#include <bombic/map.h>
-
-class QEvent;
+class QScrollArea;
+class QCheckBox;
+class MapScene;
 
 /** Pohled na policko mapy.
  */
@@ -25,8 +25,11 @@ class MapFieldView: public QWidget {
 		/// Zkonstruuje pohled.
 		explicit MapFieldView(QWidget * parent = 0);
 
+		void update(MapScene * scene);
 	private:
-
+		QScrollArea * scrollArea_;
+		QCheckBox * generateBox_;
+		QCheckBox * generateCreature_;
 };
 
 

@@ -34,7 +34,7 @@
 MapScene::MapScene(BombicMap * map, QObject * parent):
 				QGraphicsScene(parent), map_(map), workingObject_(0),
 				insertionHelperItem_(new QGraphicsRectItem),
-				mousePressed_(false) {
+				mousePressed_(false), mouseClicked_(false) {
 	// set the scene
 	setSceneRect(QRect(QPoint(0, 0), map_->fieldsRect().size()*CELL_SIZE));
 	setBackgroundBrush(map_->background()->ambientColor());
@@ -182,12 +182,12 @@ void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
 		// the button is still pressed
 		if(mousePressed_) {
 			// I have here one press action to start dragging
-			mousePressed_ = false;
 			startDragging(event);
 		}
 	} else {
 		moveWorkingObject(event);
 	}
+	mousePressed_ = mouseClicked_ = false;
 }
 
 /** @details
@@ -219,7 +219,12 @@ void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
 			if(mousePressed_) {
 				// it was a click
 				mousePressed_ = false;
-				insertWorkingObject(event);
+				mouseClicked_ = true;
+				if(workingObject_) {
+					insertWorkingObject(event);
+				} else {
+					selectField(event);
+				}
 			}
 			break;
 		default:
@@ -236,7 +241,10 @@ void MapScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event) {
 	switch(event->button()) {
 		case Qt::LeftButton:
 			mousePressed_ = false;
-			removeClickedObject(event);
+			if(mouseClicked_) {
+				mouseClicked_ = false;
+				removeClickedObject(event);
+			}
 			break;
 		default:
 			// nothing to do
@@ -280,7 +288,7 @@ void MapScene::moveWorkingObject(QGraphicsSceneMouseEvent * event) {
 	BombicMap::Field eventField = getField(
 		event->scenePos(), workingObject_->rect());
 	QGraphicsItem * workingGI = workingObject_->situateGraphicsItem(
-		eventField*CELL_SIZE);
+		eventField*CELL_SIZE - QPointF(2, -2));
 	if(map_->canInsert(workingObject_, eventField)) {
 		insertionHelperItem_->hide();
 		workingGI->show();
@@ -329,6 +337,28 @@ void MapScene::removeClickedObject(QGraphicsSceneMouseEvent * event) {
 	}
 	remove(clickedObj);
 	delete clickedObj;
+}
+
+/** @details
+ * Zkontroluje je-li pod mysi nejake policko a pripadne jej oznaci
+ * jako vybrane (zobrazi jej skrz MapView v MapFieldView).
+ * @param event udalost, ktera handler vyvolala
+ */
+void MapScene::selectField(QGraphicsSceneMouseEvent * event) {
+	selectedField_ = getField(event->scenePos());
+	if(!map_->fieldsRect().contains(selectedField_)) {
+		unselectField();
+		return;
+	}
+
+	// TODO decorate selected field
+	MAP_VIEW->updateFieldView();
+}
+
+void MapScene::unselectField() {
+	selectedField_ = MAP_SCENE_FIELD_NOT_SELECTED;
+	// TODO hide selected field
+	MAP_VIEW->updateFieldView();
 }
 
 /** @details

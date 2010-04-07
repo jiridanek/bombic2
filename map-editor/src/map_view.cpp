@@ -110,6 +110,10 @@ void MapView::hideWorkingObjectLabel() {
 	workingObjectLabel_->hide();
 }
 
+void MapView::updateFieldView() {
+	fieldView_->update(scene_);
+}
+
 /** @details
  * Naalokuje @c QMimeData a nastavi je tak,
  * aby prenasela pointer na zadany objekt.

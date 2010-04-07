@@ -6,6 +6,7 @@
 #ifndef BOMBIC_GENERATED_OBJECT_H_GUARD_
 #define BOMBIC_GENERATED_OBJECT_H_GUARD_
 
+#include <QObject>
 #include "map.h"
 
 class QGraphicsItem;
@@ -19,7 +20,9 @@ class QGraphicsItem;
  * zda lze na tomto policku umistit generovany objekt. Pro praci s touto
  * informaci a pro jeji vizualizaci slouzi potomci teto tridy.
  */
-class BombicGeneratedObject {
+class BombicGeneratedObject: public QObject {
+
+	Q_OBJECT
 
 	public:
 		/// Konstrukce.
@@ -27,6 +30,13 @@ class BombicGeneratedObject {
 		/// Destrukce.
 		~BombicGeneratedObject();
 
+		/// Jestli je generovani povoleno.
+		bool allowed();
+
+		/// Graficky prvek do sceny.
+		QGraphicsItem * graphicsItem();
+
+	public slots:
 		/// Zobrazit vizualizaci.
 		void show();
 		/// Skryt vizualizaci.
@@ -36,11 +46,6 @@ class BombicGeneratedObject {
 		/// Zakazat generovani.
 		void disallow();
 
-		/// Jestli je generovani povoleno.
-		bool allowed();
-
-		/// Graficky prvek do sceny.
-		QGraphicsItem * graphicsItem();
 
 	protected:
 		/// Nastavit pozici grafickeho prvku.

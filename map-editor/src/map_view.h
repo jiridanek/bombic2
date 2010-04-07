@@ -49,6 +49,9 @@ class MapView: public QWidget {
 		/// Schovat obrazek pracovniho objektu.
 		void hideWorkingObjectLabel();
 
+		/// Obnovi policko v detailnim zobrazeni.
+		void updateFieldView();
+
 		/// Vytvorit mime data, ktera prenasi objekt.
 		static QMimeData * createMimeData(BombicMapObject * object);
 		/// Ziskat objekt z mime dat, ktera ho prenasi.

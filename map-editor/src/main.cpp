@@ -49,6 +49,5 @@ int main(int argc, char *argv[]) {
 	winLayout->addWidget(winSplitter, 0, 0);
 
 	win->show();
-
 	return app.exec();
 }

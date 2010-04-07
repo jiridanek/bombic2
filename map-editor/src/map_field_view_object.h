@@ -8,9 +8,7 @@
 
 #include <QLabel>
 
-#include <bombic/map.h>
-
-class QEvent;
+class BombicMapObject;
 
 class MapFieldViewObject: public QLabel {
 
