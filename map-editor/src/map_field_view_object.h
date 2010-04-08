@@ -9,6 +9,7 @@
 #include <QLabel>
 
 class BombicMapObject;
+class QMouseEvent;
 
 class MapFieldViewObject: public QLabel {
 
@@ -18,7 +19,13 @@ class MapFieldViewObject: public QLabel {
 		/// Zkonstruuje pohled.
 		explicit MapFieldViewObject(BombicMapObject * mapObject, QWidget * parent = 0);
 
+	protected:
+		virtual void mouseMoveEvent(QMouseEvent * event);
+		virtual void mouseDoubleClickEvent(QMouseEvent * event);
+
 	private:
+		void startDragging();
+
 		BombicMapObject * object_;
 
 };

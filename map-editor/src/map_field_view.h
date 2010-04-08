@@ -11,9 +11,12 @@
 
 #include <QWidget>
 
+#include "bombic/map.h"
+
 class QScrollArea;
 class QCheckBox;
 class MapScene;
+class BombicGeneratedObject;
 
 /** Pohled na policko mapy.
  */
@@ -27,6 +30,12 @@ class MapFieldView: public QWidget {
 
 		void update(MapScene * scene);
 	private:
+		void disconnectCheckboxes();
+		void connectCheckboxes(BombicMap * map,
+				const BombicMap::Field & field);
+		void connectCheckbox(QCheckBox * checkbox,
+				BombicGeneratedObject * genObj);
+
 		QScrollArea * scrollArea_;
 		QCheckBox * generateBox_;
 		QCheckBox * generateCreature_;
