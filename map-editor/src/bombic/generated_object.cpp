@@ -49,6 +49,13 @@ void BombicGeneratedObject::disallow() {
 	allowed_ = false;
 }
 
+void BombicGeneratedObject::toggleAllowance() {
+	allowed_ = !allowed_;
+	if(!hidden_) {
+		graphicsItem_->setVisible(allowed_);
+	}
+}
+
 /**
  * @return Zda je generovani povoleno.
  */

@@ -52,15 +52,18 @@
 /// Maximalni hodnota.
 #define ZOOM_MAXIMUM_VALUE 1.5
 
-/// Okraj graficke polozky MapScene::insertionHelperItem_.
-#define INSERTION_HELPER_ITEM_PEN \
+/// Okraj pomocne graficke polozky.
+#define HELPER_ITEM_PEN \
 	/* color, width, style, capStyle, joinStyle*/ \
 	QPen(QColor(255, 255, 255, 128), 3.0)
-/// Plocha graficke polozky MapScene::insertionHelperItem_ pokud vkladat lze.
+/// Plocha graficke pomocne polozky pokud vkladat lze.
 #define CAN_INSERT_ITEM_BRUSH \
 	QBrush(QColor(50, 50, 255, 96))
-/// Plocha graficke polozky MapScene::insertionHelperItem_ pokud vkladat nelze.
+/// Plocha graficke pomocne polozky pokud vkladat nelze.
 #define CANNOT_INSERT_ITEM_BRUSH \
 	QBrush(QColor(255, 50, 50, 96))
+/// Plocha graficke pomocne polozky pro zvyrazneni policka, ktere je v detailu.
+#define SELECTED_FIELD_ITEM_BRUSH \
+	QBrush(QColor(255, 255, 255, 52))
 
 #endif

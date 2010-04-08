@@ -34,6 +34,7 @@
 MapScene::MapScene(BombicMap * map, QObject * parent):
 				QGraphicsScene(parent), map_(map), workingObject_(0),
 				insertionHelperItem_(new QGraphicsRectItem),
+				selectedFieldHelperItem_(new QGraphicsRectItem),
 				mousePressed_(false), mouseClicked_(false) {
 	// set the scene
 	setSceneRect(QRect(QPoint(0, 0), map_->fieldsRect().size()*CELL_SIZE));
@@ -53,8 +54,8 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	connect(MAP_VIEW, SIGNAL(leaved()),
 		this, SLOT(hideWorkingObject()) );
 
-	// init the "insert item"
-	initInsertionHelperItem();
+	// init helper items as "insert item" and "item for selected field"
+	initHelperItems();
 }
 
 /** @details
@@ -103,17 +104,27 @@ void MapScene::insertObjectsGraphicsItems() {
 }
 
 /** @details
- * Inicializuje a vlozi prveky sceny, ktery se pouziji,
- * kdyz uzivatel vklada do sceny objekt, ale nechceme zobrazit primo objekt.
+ * Inicializuje prvek, ktery se pouzije,
+ * kdyz uzivatel vklada do sceny objekt, ale nechceme zobrazit primo
+ * tento objekt.
  * Napr. protoze na konkretni misto sceny to neni mozne.
  * Nechceme mast uzivatele duplikovanim obrazku objektu.
- * Po inicializaci skryte prvky do sceny vlozi.
+ * Dale inicializuje prvek, ktery se pouzije pro zvyrazneni policka,
+ * ktere je detailne zobrazeno ve <em>field view</em>.
+ * Po inicializaci prvky do sceny vlozi a skryje.
  */
-void MapScene::initInsertionHelperItem() {
-	insertionHelperItem_->setPen(INSERTION_HELPER_ITEM_PEN);
-	insertionHelperItem_->setZValue(sceneRect().height()+1);
+void MapScene::initHelperItems() {
+	insertionHelperItem_->setPen(HELPER_ITEM_PEN);
+	insertionHelperItem_->setZValue(sceneRect().height()+2);
 	insertionHelperItem_->hide();
 	addItem(insertionHelperItem_);
+
+	selectedFieldHelperItem_->setPen(HELPER_ITEM_PEN);
+	selectedFieldHelperItem_->setBrush(SELECTED_FIELD_ITEM_BRUSH);
+	selectedFieldHelperItem_->setZValue(sceneRect().height()+1);
+	selectedFieldHelperItem_->setRect(0, 0, CELL_SIZE, CELL_SIZE);
+	selectedFieldHelperItem_->hide();
+	addItem(selectedFieldHelperItem_);
 }
 
 /** @details
@@ -182,6 +193,7 @@ void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
 		// the button is still pressed
 		if(mousePressed_) {
 			// I have here one press action to start dragging
+			selectField(event->scenePos());
 			startDragging(event);
 		}
 	} else {
@@ -222,9 +234,8 @@ void MapScene::mouseReleaseEvent(QGraphicsSceneMouseEvent * event) {
 				mouseClicked_ = true;
 				if(workingObject_) {
 					insertWorkingObject(event);
-				} else {
-					selectField(event);
 				}
+				selectField(event->scenePos());
 			}
 			break;
 		default:
@@ -245,6 +256,7 @@ void MapScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event) {
 				mouseClicked_ = false;
 				removeClickedObject(event);
 			}
+			selectField(event->scenePos());
 			break;
 		default:
 			// nothing to do
@@ -317,6 +329,8 @@ void MapScene::insertWorkingObject(QGraphicsSceneMouseEvent * event) {
 		event->scenePos(), workingObject_->rect());
 	if(map_->canInsert(workingObject_, eventField)) {
 		insert(workingObject_->createCopy(), eventField);
+		// disable removing by next click
+		mouseClicked_ = false;
 	}
 }
 
@@ -341,23 +355,24 @@ void MapScene::removeClickedObject(QGraphicsSceneMouseEvent * event) {
 
 /** @details
  * Zkontroluje je-li pod mysi nejake policko a pripadne jej oznaci
- * jako vybrane (zobrazi jej skrz MapView v MapFieldView).
+ * jako vybrane a zobrazi jej v detailu v @c MapFieldView.
  * @param event udalost, ktera handler vyvolala
  */
-void MapScene::selectField(QGraphicsSceneMouseEvent * event) {
-	selectedField_ = getField(event->scenePos());
+void MapScene::selectField(const QPointF & eventPos) {
+	selectedField_ = getField(eventPos);
 	if(!map_->fieldsRect().contains(selectedField_)) {
-		unselectField();
 		return;
 	}
 
-	// TODO decorate selected field
+	selectedFieldHelperItem_->setPos(selectedField_*CELL_SIZE);
+	selectedFieldHelperItem_->show();
 	MAP_VIEW->updateFieldView();
 }
 
 void MapScene::unselectField() {
 	selectedField_ = MAP_SCENE_FIELD_NOT_SELECTED;
-	// TODO hide selected field
+
+	selectedFieldHelperItem_->hide();
 	MAP_VIEW->updateFieldView();
 }
 
@@ -415,6 +430,7 @@ void MapScene::dropEvent(QGraphicsSceneDragDropEvent * event) {
 	if(map_->canInsert(draggedObj, eventField)) {
 		remove(draggedObj);
 		insert(draggedObj, eventField);
+		selectField(event->scenePos());
 	}
 	insertionHelperItem_->hide();
 }

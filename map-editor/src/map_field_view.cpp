@@ -20,9 +20,9 @@ MapFieldView::MapFieldView(QWidget * parent):
 
 	QGridLayout * grid = new QGridLayout(this);
 
-	generateBox_ = new QCheckBox(tr("generate Box"), this);
+	generateBox_ = new QCheckBox(tr("generate &Box"), this);
 	grid->addWidget(generateBox_, 0, 0);
-	generateCreature_ = new QCheckBox(tr("generate Creature"), this);
+	generateCreature_ = new QCheckBox(tr("generate &Creature"), this);
 	grid->addWidget(generateCreature_, 1, 0);
 
 	scrollArea_ = new QScrollArea(this);
@@ -46,11 +46,9 @@ void MapFieldView::update(MapScene * scene) {
 
 	BombicGeneratedObject * genBox = scene->map_->generatedBox(field);
 	generateBox_->disconnect();
-	connect(generateBox_, SIGNAL(pressed()),
-		genBox, SLOT(allow()));
-	connect(generateBox_, SIGNAL(released()),
-		genBox, SLOT(disallow()));
 	generateBox_->setChecked(genBox->allowed());
+	connect(generateBox_, SIGNAL(stateChanged(int)),
+		genBox, SLOT(toggleAllowance()));
 
 	foreach(BombicMapObject * o,
 			scene->map_->objectsOnField(field)) {

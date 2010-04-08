@@ -45,6 +45,8 @@ class BombicGeneratedObject: public QObject {
 		void allow();
 		/// Zakazat generovani.
 		void disallow();
+		/// Zmeni povoleni generovani.
+		void toggleAllowance();
 
 
 	protected:

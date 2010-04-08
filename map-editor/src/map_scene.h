@@ -76,7 +76,7 @@ class MapScene: public QGraphicsScene {
 		/// Odstranit objekt, na ktery se kliklo, ze sceny.
 		void removeClickedObject(QGraphicsSceneMouseEvent * event);
 		/// Vybrat (oznacit) policko.
-		void selectField(QGraphicsSceneMouseEvent * event);
+		void selectField(const QPointF & eventPos);
 		/// Zrusit vyber (odoznacit policko).
 		void unselectField();
 
@@ -90,8 +90,8 @@ class MapScene: public QGraphicsScene {
 		/// Vlozit zastupce generovanych objektu.
 		void insertObjectsGraphicsItems();
 
-		/// Inicializovat insertionHelperItem_.
-		void initInsertionHelperItem();
+		/// Inicializovat pomocne prvky sceny.
+		void initHelperItems();
 		/// Zobrazit pomocny prvek sceny zobrazujici objekt pri vkladani.
 		void showInsertionHelperItem(const QRect & objectRect);
 		/// Zobrazit pomocny prvek sceny zobrazujici, ze objekt lze vlozit.
@@ -105,14 +105,16 @@ class MapScene: public QGraphicsScene {
 		BombicMapObject * workingObject_;
 		/// Pomocny prvek sceny zobrazujici objekt pri vkladani.
 		QGraphicsRectItem * insertionHelperItem_;
+		/// Pomocny prvek sceny zobrazujici vybrane policko.
+		QGraphicsRectItem * selectedFieldHelperItem_;
+		/// Vybrane (oznacene) policko.
+		BombicMap::Field selectedField_;
+		#define MAP_SCENE_FIELD_NOT_SELECTED BombicMap::Field(-1, -1);
 		/// Zda-li je aktualne stisknuto tlacitko mysi,
 		/// na ktere se da navazat uvolnenim za vzniku kliknuti.
 		bool mousePressed_;
 		/// Zda-li bylo nevyuzite kliknuti za vzniku dvojkliku.
 		bool mouseClicked_;
-		/// Vybrane (oznacene) policko.
-		BombicMap::Field selectedField_;
-		#define MAP_SCENE_FIELD_NOT_SELECTED BombicMap::Field(-1, -1);
 };
 
 #endif
