@@ -290,7 +290,7 @@ void MapScene::moveWorkingObject(QGraphicsSceneMouseEvent * event) {
 	BombicMap::Field eventField = getField(
 		event->scenePos(), workingObject_->rect());
 	QGraphicsItem * workingGI = workingObject_->situateGraphicsItem(
-		eventField*CELL_SIZE - QPointF(2, -2));
+		eventField*CELL_SIZE );
 	if(map_->canInsert(workingObject_, eventField)) {
 		insertionHelperItem_->hide();
 		workingGI->show();
