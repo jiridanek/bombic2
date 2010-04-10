@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QEvent>
+#include <QDrag>
 #include <QMimeData>
 
 #include <constants.h>
@@ -146,4 +147,11 @@ BombicMapObject * MapView::getMapObject(const QMimeData * mimeData) {
 	BombicMapObject * obj = static_cast<BombicMapObject *>(
 		qVariantValue<void *>(objVar) );
 	return obj;
+}
+
+void MapView::execDragging(QWidget * srcWidget, BombicMapObject * object) {
+	QDrag * drag = new QDrag(srcWidget);
+	drag->setMimeData(createMimeData(object));
+	drag->setPixmap(object->thumbnail());
+	drag->exec();
 }

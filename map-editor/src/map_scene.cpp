@@ -7,7 +7,6 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneDragDropEvent>
-#include <QDrag>
 #include <QPoint>
 #include <QRectF>
 
@@ -272,18 +271,9 @@ void MapScene::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event) {
 void MapScene::startDragging(QGraphicsSceneMouseEvent * event) {
 	BombicMap::Field eventField = getField(event->scenePos());
 	BombicMapObject * draggedObj = map_->objectOnTop(eventField);
-	if(!draggedObj) {
-		// nothing to be dragged
-		return;
+	if(draggedObj && draggedObj->canBeDragged()) {
+		MapView::execDragging(event->widget(), draggedObj);
 	}
-	if(!draggedObj->canBeDragged()) {
-		return;
-	}
-
-	QDrag * drag = new QDrag(event->widget());
-	drag->setMimeData(MapView::createMimeData(draggedObj));
-	drag->setPixmap(draggedObj->thumbnail());
-	drag->start();
 }
 
 /** @details

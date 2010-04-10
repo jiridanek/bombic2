@@ -24,7 +24,6 @@ class MapFieldViewObject: public QLabel {
 		virtual void mouseDoubleClickEvent(QMouseEvent * event);
 
 	private:
-		void startDragging();
 
 		BombicMapObject * object_;
 

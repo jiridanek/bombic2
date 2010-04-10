@@ -57,7 +57,8 @@ class MapView: public QWidget {
 		/// Ziskat objekt z mime dat, ktera ho prenasi.
 		static BombicMapObject * getMapObject(
 				const QMimeData * mimeData);
-		//TODO startDrag
+		static void execDragging(QWidget * srcWidget,
+				BombicMapObject * object);
 	public slots:
 		/// Nastavi zoom mapy.
 		void setZoom(qreal zoomQuotient);

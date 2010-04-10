@@ -15,7 +15,7 @@
 
 
 MapFieldView::MapFieldView(QWidget * parent):
-		QWidget(parent) {
+		QWidget(parent), oldScrollWidget_(0) {
 	setMaximumHeight(2*CELL_SIZE);
 
 	QGridLayout * grid = new QGridLayout(this);
@@ -59,6 +59,10 @@ void MapFieldView::update(MapScene * scene) {
 			new MapFieldViewObject(mapObj, this) );
 	}
 	// replace scrolled widget with newly created one
+	if(oldScrollWidget_) {
+		delete oldScrollWidget_;
+	}
+	oldScrollWidget_ = scrollArea_->takeWidget();
 	scrollArea_->setWidget(scrollAreaWidget);
 	// and show it
 	scrollAreaWidget->show();
