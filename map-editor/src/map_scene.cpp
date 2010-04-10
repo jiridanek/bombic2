@@ -18,7 +18,6 @@
 #include "bombic/map.h"
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
-#include "bombic/wall.h"
 #include "bombic/generated_object.h"
 
 /** @details
