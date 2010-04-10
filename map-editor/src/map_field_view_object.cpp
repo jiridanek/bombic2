@@ -1,11 +1,18 @@
 
 #include <QMouseEvent>
+#include <QGraphicsItem>
 
 #include "map_field_view_object.h"
 
 #include "map_view.h"
+#include "map_scene.h"
 #include "bombic/map_object.h"
 
+/** @details
+ * Nastavi obrazek objektu.
+ * @param mapObject objekt mapy, ktery chceme vizualizovat
+ * @param parent rodicovsky widget
+ */
 MapFieldViewObject::MapFieldViewObject(
 		BombicMapObject * mapObject, QWidget * parent):
 				QLabel(parent), object_(mapObject) {
@@ -13,7 +20,7 @@ MapFieldViewObject::MapFieldViewObject(
 }
 
 /** @details
- * Pri zmacknutem tlacitku mysi nastartuje tazeni objektu.
+ * Pri zmacknutem tlacitku mysi nastartuje tazeni objektu (pokud je to mozne).
  * @param event udalost, ktera handler vyvolala
  */
 void MapFieldViewObject::mouseMoveEvent(QMouseEvent * event) {
@@ -25,28 +32,23 @@ void MapFieldViewObject::mouseMoveEvent(QMouseEvent * event) {
 }
 
 /** @details
- * Odstrani ze sceny (a mapy) reprezentovany objekt.
+ * Odstrani ze sceny (a mapy) reprezentovany objekt (pokud je to mozne).
  * @param event udalost, ktera handler vyvolala
  */
 void MapFieldViewObject::mouseDoubleClickEvent(QMouseEvent * event) {
 	switch(event->button()) {
 		case Qt::LeftButton:
-// 			removeClickedObject(event);
+			if(object_->canBeRemoved() &&
+					object_->graphicsItem()->scene()) {
+				static_cast<MapScene *>(
+					object_->graphicsItem()->scene() )
+						->remove(object_);
+				delete object_;
+				MAP_VIEW->updateFieldView();
+			}
 			break;
 		default:
 			// nothing to do
 			break;
 	}
 }
-
-/** @details
- * Odstrani (a dealokuje) reprezentovany objekt je-li to povoleno.
- * /
-void MapFieldViewObject::remove() {
-	if(!object_->canBeRemoved()) {
-		return;
-	}
-	remove(clickedObj);
-	delete clickedObj;
-}
-*/

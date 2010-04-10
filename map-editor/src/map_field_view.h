@@ -20,6 +20,9 @@ class BombicGeneratedObject;
 class MapFieldViewObject;
 
 /** Pohled na policko mapy.
+ * Widget, ktery zobrazuje, co je na jednom konkretnim policku.
+ * Navic dava moznost s obsahem policka manipulovat (mazat, presouvat objekty,
+ * nastatovat generovani objektu).
  */
 class MapFieldView: public QWidget {
 
@@ -29,18 +32,30 @@ class MapFieldView: public QWidget {
 		/// Zkonstruuje pohled.
 		explicit MapFieldView(QWidget * parent = 0);
 
+		/// Obnoveni pohledu, pripadne zmena policka.
 		void update(MapScene * scene);
 
 	private:
+		/// Odpojit checkboxy.
 		void disconnectCheckboxes();
+		/// Napojit checkboxy na policko mapy.
 		void connectCheckboxes(BombicMap * map,
 				const BombicMap::Field & field);
+		/// Napojit checkbox na generovany objekt policka.
 		void connectCheckbox(QCheckBox * checkbox,
 				BombicGeneratedObject * genObj);
 
+		/// Posouvaci pole widgetu.
 		QScrollArea * scrollArea_;
+		/// Stary skrolovany kontejner, uchovavany kvuli widgetum
+		/// v nem ulozenym. Pri tazeni objektu se totiz nejdrive
+		/// obnovi pohled a pote se dokonci tazeni objektu.
+		/// Pohled na tazeny objekt tedy musime zachovat dele,
+		/// nez je ve skutecnosti zobrazovan.
 		QWidget * oldScrollWidget_;
+		/// Tlacitko manipulujici s generovanou bednou policka.
 		QCheckBox * generateBox_;
+		/// Tlacitko manipulujici s generovanou priserou policka.
 		QCheckBox * generateCreature_;
 };
 
