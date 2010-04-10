@@ -93,7 +93,7 @@ class ResourceHandler: public QObject {
 		/// Najde podelement podle jmena.
 		static bool getSubElement(const QDomElement & el,
 			QDomElement & subEl,
-			const QString & subElTagName = "img");
+			const QString & subElTagName);
 		/// Precte integer hodnotu atributu.
 		static bool getIntAttr(const QDomElement & el,
 			int & attr, const QString & attrName,
