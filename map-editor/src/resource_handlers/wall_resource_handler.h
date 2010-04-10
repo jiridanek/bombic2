@@ -20,6 +20,10 @@ class WallResourceHandler: public MapObjectResourceHandler {
 			const QDomElement & imgEl);
 
 		virtual BombicMapObject::Type type();
+
+		/// Zda umi nacist objekt reprezentovany takovym XML elementem.
+		virtual bool canHandle(const QDomElement & rootEl);
+
 };
 
 #endif

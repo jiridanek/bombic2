@@ -23,6 +23,7 @@ SINGLETON_INIT(ResourceHandler);
 ResourceHandler::ResourceHandler(QObject * parent):
 		QObject(parent) {
 	SINGLETON_CONSTRUCT;
+	MapObjectResourceHandler::initResourceHandlers();
 }
 
 ResourceHandler::~ResourceHandler() {
@@ -151,7 +152,7 @@ BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
 		return 0;
 	}
 	MapObjectResourceHandler * objRH =
-		MapObjectResourceHandler::createResourceHandler(rootEl);
+		MapObjectResourceHandler::resourceHandler(rootEl);
 	if(!objRH) {
 		showError(
 			tr("Don't know which resource handler create.")+"\n"+
@@ -161,11 +162,9 @@ BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
 		return 0;
 	}
 	if(!loadSourcePixmap(rootEl)) {
-		delete objRH;
 		return 0;
 	}
 	obj = objRH->createMapObject(rootEl);
-	delete objRH;
 	if(!obj) {
 		return 0;
 	}

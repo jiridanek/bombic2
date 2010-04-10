@@ -22,7 +22,7 @@ class BombicMap;
 class BombicMapBackground;
 class BombicMapObject;
 
-class WallResourceHandler;
+class MapObjectResourceHandler;
 
 /** Handler vnejsich prostredku.
  * ResourceHandler obstarava vnejsi prostredky (data)
@@ -42,7 +42,7 @@ class ResourceHandler: public QObject {
 
 	Q_OBJECT
 
-	friend class WallResourceHandler;
+	friend class MapObjectResourceHandler;
 
 	SINGLETON_DEFINITION(ResourceHandler)
 
