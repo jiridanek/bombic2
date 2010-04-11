@@ -20,14 +20,14 @@ BombicBox::BombicBox(const QString & name, const QPixmap & pixmap,
 }
 
 /**
- * @param srcBox box, od ktereho kopirujeme
+ * @param srcBox bedna, od ktere kopirujeme
  */
 BombicBox::BombicBox(BombicBox & srcBox):
 		BombicMapObject(srcBox) {
 }
 
 /**
- * @return Nove vytvorena kopie boxu.
+ * @return Nove vytvorena kopie bedny.
  */
 BombicMapObject * BombicBox::createCopy() {
 	return new BombicBox(*this);
@@ -42,7 +42,7 @@ BombicMapObject::Type BombicBox::type() {
 
 /** @details
  * Graficky prvek do sceny je vytvaren zde on demand,
- * pozicovan tak, aby horni levy bod policka zabraneho boxu byl v bode
+ * pozicovan tak, aby horni levy bod policka zabraneho bednou byl v bode
  * @p position na scene. Souradnice z (z value) je dana horni souradnici
  * spodniho zabraneho policka.
  * @param position pozadovana pozice ve scene
@@ -69,25 +69,3 @@ QGraphicsItem * BombicBox::situateGraphicsItem(const QPointF & position) {
 
 	return graphicsItem_;
 }
-
-/** @details
- * Box muze byt na jednom policku pouze sam.
- * @param object porovnavany objekt
- * @return Zda lze (sebe) umistit na stejne policko s @p object.
- */
-bool BombicBox::canBeWith(BombicMapObject * object) {
-	return BombicMapObject::canBeWith(object);
-}
-/** @details
- * @return Zda lze boxem hybat.
- */
-bool BombicBox::canBeDragged() {
-	return BombicMapObject::canBeDragged();
-}
-/** @details
- * @return Zda lze box odstranit.
- */
-bool BombicBox::canBeRemoved() {
-	return BombicMapObject::canBeRemoved();
-}
-

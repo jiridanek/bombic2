@@ -4,6 +4,8 @@
 #include "resource_handler.h"
 #include "wall_resource_handler.h"
 #include "box_resource_handler.h"
+#include "creature_resource_handler.h"
+#include "floorobject_resource_handler.h"
 
 MapObjectResourceHandler::RHListT MapObjectResourceHandler::resourceHandlers_;
 
@@ -23,6 +25,8 @@ void MapObjectResourceHandler::initResourceHandlers() {
 		resourceHandlers_.append(new className)
 
 	// {---  Register your additional handler here  ---} //
+	REGISTER_HANDLER(FloorobjectResourceHandler);
+	REGISTER_HANDLER(CreatureResourceHandler);
 	REGISTER_HANDLER(BoxResourceHandler);
 	REGISTER_HANDLER(WallResourceHandler);
 

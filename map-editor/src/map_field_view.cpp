@@ -19,8 +19,6 @@
  */
 MapFieldView::MapFieldView(QWidget * parent):
 		QWidget(parent), oldScrollWidget_(0) {
-	setMaximumHeight(2*CELL_SIZE);
-
 	QGridLayout * grid = new QGridLayout(this);
 
 	generateBox_ = new QCheckBox(tr("generate &Box"), this);
@@ -33,7 +31,6 @@ MapFieldView::MapFieldView(QWidget * parent):
 	scrollArea_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
 	grid->addWidget(scrollArea_, 0, 1, 2, 1);
-// 	hide();
 }
 
 /** @details

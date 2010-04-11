@@ -18,15 +18,15 @@ bool BoxResourceHandler::canHandle(const QDomElement & rootEl) {
 }
 
 /** @details
- * Ze zadaneho korenoveho elementu <em>box</em> vytvori prototyp boxu
+ * Ze zadaneho korenoveho elementu <em>box</em> vytvori prototyp bedny
  * reprezentovane timto elementem. Pokud se pri zpracovani dokumentu
  * vyskytne chyba, zobrazi chybove hlaseni.
  * Zda jde o element se spravnym nazvem se jiz nezkouma, proto
  * by melo byt vzdy drive otestovano pomoci @c canHandle().
  * Predpoklada jiz nacteny zdrojovy obrazek v @c ResourceHandler.
- * @param rootEl korenovy element reprezentujici nacitany box
- * @return Nove vytvoreny prototyp boxu (volajici se stava vlastnikem).
- * @retval 0 Doslo k chybe, box nemuze byt vytvoren.
+ * @param rootEl korenovy element reprezentujici nacitanou bednu
+ * @return Nove vytvoreny prototyp bedny (volajici se stava vlastnikem).
+ * @retval 0 Doslo k chybe, bedna nemuze byt vytvoren.
  */
 BombicMapObject * BoxResourceHandler::createMapObject(
 		const QDomElement & rootEl) {

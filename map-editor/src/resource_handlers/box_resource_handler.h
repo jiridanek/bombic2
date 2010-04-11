@@ -1,4 +1,4 @@
-/** @file box.h
+/** @file box_resource_handler.h
  * Resource handler specializovany na bedny BoxResourceHandler
  * umi zpracovat dokument a vytvorit objekt mapy typu bedna.
  */
@@ -12,14 +12,14 @@
 
 class BombicBox;
 
-/** Resource handler specializovany na objekty typu box.
+/** Resource handler specializovany na objekty typu bedna.
  * Zpracovava zdroj reprezentujici bednu a vytvari
  * prototyp teto bedny.
  */
 class BoxResourceHandler: public MapObjectResourceHandler {
 
 	public:
-		/// Vytvorit prototyp zdi.
+		/// Vytvorit prototyp prisery.
 		virtual BombicMapObject * createMapObject(
 				const QDomElement & rootEl);
 		/// Typ vytvareneho objektu.

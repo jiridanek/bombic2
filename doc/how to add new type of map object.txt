@@ -1,0 +1,21 @@
+To add new type of map object to map editor
+---------------------------------==========
+Inherit from BombicMapObject in src/bombic/map_object.h.
+Place your headers to src/bombic/your_new_obj.h
+and implementation to src/bombic/your_new_obj.cpp.
+Your class will be named as BombicYourNewObj (and inherit from BombicMapObject).
+
+Inherit from MapObjectResourceHandler in resource_handlers/map_object_resource_handler.h.
+Place your headers to src/resource_handlers/your_new_obj_resource_handler.h
+and implementation to src/resource_handlers/your_new_obj_resource_handler.cpp
+Your class will be named as YourNewObjResourceHandler (and inherit from MapObjectResourceHandler).
+
+In src/resource_handlers/map_object_resource_handler.cpp
+add #include "resource_handlers/your_new_obj_resource_handler.h".
+Register your resource handler in constructor of MapObjectResourceHandler
+with adding REGISTER_HANDLER(YourNewObjResourceHandler); to the marked place.
+
+Add new object type to BombicMapObject types (the new type will be YourNewObj).
+Add new page to MapObjectPalette tabs (the new page will be yourNewObjPage),
+don't forget to add case to switch in MapObjectPalette::addObject().
+
