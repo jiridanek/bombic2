@@ -47,11 +47,12 @@ QGraphicsItem * BombicCreature::situateGraphicsItem(const QPointF & position) {
 		// create new one
 		// it will be destroyed in BombicMapObject destructor
 		graphicsItem_ = new QGraphicsPixmapItem(pixmap_);
-		graphicsItem_->setOffset(0, -toplapping_*CELL_SIZE);
+		QPointF offset(CELL_SIZE - pixmap_.width(),
+			CELL_SIZE - pixmap_.height() );
+		graphicsItem_->setOffset(offset/2);
 	}
 	graphicsItem_->setPos(position);
-	graphicsItem_->setZValue(
-		position.y() + (rect_.height()-1)*CELL_SIZE );
+	graphicsItem_->setZValue( position.y() );
 
 	/* DEBUG
 	foreach(QGraphicsItem * i, graphicsItem_->children()) {

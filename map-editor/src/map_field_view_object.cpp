@@ -25,7 +25,7 @@ MapFieldViewObject::MapFieldViewObject(
  */
 void MapFieldViewObject::mouseMoveEvent(QMouseEvent * event) {
 	if(event->buttons().testFlag(Qt::LeftButton)) {
-		if(object_->canBeDragged()) {
+		if(object_ && object_->canBeDragged()) {
 			MapView::execDragging(this, object_);
 		}
 	}
@@ -38,13 +38,18 @@ void MapFieldViewObject::mouseMoveEvent(QMouseEvent * event) {
 void MapFieldViewObject::mouseDoubleClickEvent(QMouseEvent * event) {
 	switch(event->button()) {
 		case Qt::LeftButton:
-			if(object_->canBeRemoved() &&
+			if(object_ && object_->canBeRemoved() &&
 					object_->graphicsItem()->scene()) {
-				static_cast<MapScene *>(
-					object_->graphicsItem()->scene() )
-						->remove(object_);
-				delete object_;
+				// we have scene and object to remove
+				MapScene * scene = static_cast<MapScene *>(
+					object_->graphicsItem()->scene() );
+				// so we remove it
+				scene->remove(object_);
+				// update the view
 				MAP_VIEW->updateFieldView();
+				// and delete the object - I hope it is now ok
+				delete object_;
+				object_ = 0;
 			}
 			break;
 		default:

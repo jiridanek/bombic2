@@ -90,6 +90,9 @@ class MapScene: public QGraphicsScene {
 		/// Vlozit zastupce generovanych objektu.
 		void insertObjectsGraphicsItems();
 
+		/// Umisti prisery na policku, aby nebyly uplne v zakrytu.
+		void sortCreatureGraphics(const BombicMap::Field & field);
+
 		/// Inicializovat pomocne prvky sceny.
 		void initHelperItems();
 		/// Zobrazit pomocny prvek sceny zobrazujici objekt pri vkladani.

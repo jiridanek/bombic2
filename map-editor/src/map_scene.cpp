@@ -167,6 +167,10 @@ void MapScene::insert(BombicMapObject * object,
 
 	map_->insert(object, dstField);
 	addItem(object->situateGraphicsItem( dstField*CELL_SIZE ));
+	// update graphics items sorting
+	if(object->type() == BombicMapObject::Creature) {
+		sortCreatureGraphics(dstField);
+	}
 }
 
 /** @details
@@ -175,9 +179,53 @@ void MapScene::insert(BombicMapObject * object,
  * @param object odstranovany objekt
  */
 void MapScene::remove(BombicMapObject * object) {
+	BombicMap::Field objField = object->field();
 
 	removeItem(object->graphicsItem());
 	map_->remove(object);
+
+	if(object->type() == BombicMapObject::Creature) {
+		sortCreatureGraphics(objField);
+	}
+}
+
+/** @details
+ * Kdybychom povolili vkladani vice stejnych priser na jedno policko
+ * a dale nic neresili, budou prisery na policku v zakrytu a nebu ani trochu
+ * patrne, kolik asi jich tam je. Tato fce napomuze tento problem resit tim,
+ * ze vychyli prisery na policku tak, aby ta co je nahore byla plne videt,
+ * a ostatni v zakrytu naznacovaly, kolik jich je.
+ * @param field policko mapy, pro ktere chceme rozestaveni udelat
+ */
+void MapScene::sortCreatureGraphics(const BombicMap::Field & field) {
+	// get creatures on field
+	BombicMap::ObjectListT creatures;
+	int creaturesCount = 0;
+	foreach(BombicMapObject * o, map_->objectsOnField(field)) {
+		if(o->type() == BombicMapObject::Creature) {
+			++creaturesCount;
+			creatures.append(o);
+		}
+	}
+	if(!creaturesCount) {
+		return;
+	}
+	// top whole part of half of count
+	// count of creatures in one direction
+	qreal halfCount = (creaturesCount+1)/2;
+	// maximal difference in one direction
+	qreal maxDiff = qMin(halfCount*2.0, CELL_SIZE/4.0);
+	// step from one to another creature
+	qreal step = maxDiff / halfCount;
+	// current difference
+	qreal diff = maxDiff - step/2.0;
+	// base position on field
+	QPointF pos = field*CELL_SIZE;
+	foreach(BombicMapObject * c, creatures) {
+		c->situateGraphicsItem(
+			pos + QPointF(diff, -diff) );
+		diff -= step;
+	}
 }
 
 /** @details
