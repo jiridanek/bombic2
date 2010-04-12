@@ -8,19 +8,15 @@
 		<player3 x="3" y="10" />
 	</players>
 
-	<walls 	name="wall_block_single">
-	</walls>
-	<boxes 	name="box_container" count="3">
+	<boxes 	name="box_container" random_generated="3">
 	</boxes>
 
 	<bonuses name="bonus_timer" count="3" />
 
-	<creatures name="creature_trap" count="0" />
-	<creatures name="creature_slug" count="1" />
-	<creatures name="creature_cloud" count="0" />
-	<nocreatures>
+	<creatures name="creature_slug" random_generated="1" />
+	<dont_generate>
 		<nocreature x="1" y="4" />
 		<nocreature x="1" y="14" />
-	</nocreatures>
+	</dont_generate>
 
 </map>

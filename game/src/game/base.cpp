@@ -213,7 +213,7 @@ void GameBase::load_map_(Uint16 players_count, const std::string & mapname,
 	load_background_(str);
 
 	// nacteni objektu na zemi
-	load_floorobjects_(map_el->FirstChildElement("floorobject"));
+	load_floorobjects_(map_el->FirstChildElement("floorobjects"));
 	// nacteni hracu
 	if(deathmatch)
 		load_players_deathmatch_(
@@ -232,9 +232,9 @@ void GameBase::load_map_(Uint16 players_count, const std::string & mapname,
 	if(!deathmatch)
 		load_bonuses_(map_el->FirstChildElement("bonuses"));
 	// vytvoreni mapy prazdnych policek pro generovane boxy
-	load_noboxes_(map_el->FirstChildElement("boxes"));
+	load_noboxes_(map_el->FirstChildElement("dont_generate"));
 	// vytvoreni mapy prazdnych policek pro generovane prisery
-	load_nocreatures_(map_el->FirstChildElement("nocreatures"));
+	load_nocreatures_(map_el->FirstChildElement("dont_generate"));
 	// vyhozeni nulovych pointeru
 	clear_null_objects_();
 }
@@ -467,138 +467,119 @@ void GameBase::load_walls_(TiXmlElement *wallsEl){
 	// nenalezen nepovinny tag walls
 	if(!wallsEl) return;
 
-	TiXmlDocument doc;
-	TiXmlElement *rootEl;
-
-	// nacteni atributu
-	string name_def, filename, str;
-	Surface sur_src;
-	Animation anim_def, anim;
-	Uint16 toplapping_def, height_def, width_def,
-		toplapping, height, width, x, y;
-	// TODO overcrossing
-
+	// nacteni zdi
+	string name;
 	try{
-		readAttr(wallsEl, "name", name_def);
-		if(!readAttr(wallsEl, "height", height_def, false))
-			height_def = 1;
-		if(!readAttr(wallsEl, "width", width_def, false))
-			width_def = 1;
+		readAttr(wallsEl, "name", name);
 	}
 	catch(const string & s){
 		TiXmlError("in element <walls ...>: "+s);
 	}
 
-	// nacteni defaultni zdi
-	filename= name_def;
-	rootEl = TiXmlRootElement(doc, filename, "wall", true);
+	string filename= name;
+	TiXmlDocument doc;
+	TiXmlElement *rootEl =
+		TiXmlRootElement(doc, filename, "wall", true);
+	Surface sur_src;
+	Animation anim;
+	Uint16 toplapping;
 	try{
 		sur_src = load_src_surface(rootEl);
-		toplapping_def = load_subEl_animation(rootEl, "img",
-				anim_def, sur_src);
+		toplapping = load_subEl_animation(rootEl, "img",
+				anim, sur_src);
 	}
 	catch(const string & s){
 		TiXmlError(filename,s);
 		return;
 	}
+	// rozmery zdi z velikosti obrazku
+	Uint16 height = anim.height()/CELL_SIZE - toplapping;
+	Uint16 width = anim.width()/CELL_SIZE;
 
-	// kontrola jestli koresponduji rozmery obrazku
-	if(height_def!=anim_def.height()/CELL_SIZE-toplapping_def)
-		TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>");
-
-	if(width_def!= anim_def.width()/CELL_SIZE)
-		TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>");
 	// vytvoreni zdi
-	wallsEl= wallsEl->FirstChildElement("wall");
+	TiXmlElement * el= wallsEl->FirstChildElement("wall");
 	try{
-		while(wallsEl){
+		while(el){
+			Uint16 x, y;
 			try{
-				if(!readAttr(wallsEl, "name", filename, false))
-					filename.clear();
-				if(!readAttr(wallsEl, "height", height, false))
-					height = height_def;
-				if(!readAttr(wallsEl, "width", width, false))
-					width = width_def;
-				readAttr(wallsEl, "x", x);
-				readAttr(wallsEl, "y", y);
+				readAttr(el, "x", x);
+				readAttr(el, "y", y);
 			}
 			catch(const string & s){
-				TiXmlError("in element <walls ...>: "+s);
+				TiXmlError("in element <wall ...>: "+s);
 			}
 
-			// nacteni nove zdi
-			if(!filename.empty() && filename!=name_def){
-				rootEl = TiXmlRootElement(doc, filename, "wall", true);
-				sur_src = load_src_surface(rootEl);
-				toplapping= load_subEl_animation(rootEl, "img",
-						anim, sur_src);
+			insert_wall_(anim, toplapping, x, y, width, height);
 
-				// kontrola jestli koresponduji rozmery obrazku
-				if(height!=anim.height()/CELL_SIZE-toplapping)
-					TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>");
-
-				if(width!= anim.width()/CELL_SIZE)
-					TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>");
-				insert_wall_(anim, toplapping, x, y, width, height);
-			}
-			else{
-				insert_wall_(anim_def, toplapping_def, x, y, width_def, height_def);
-			}
-
-			wallsEl= wallsEl->NextSiblingElement("wall");
+			el= el->NextSiblingElement("wall");
 		}
 	}
 	catch(const string & s){
 		TiXmlError(filename,s);
 	}
+	// try to load next walls
+	load_walls_(wallsEl->NextSiblingElement("walls"));
 }
 
 /** @details
  * Načte z XML a vloží do mapy objekty na zemi.
  * @param floorEl element v XML souboru specifikující objekt na zemi
  */
-void GameBase::load_floorobjects_(TiXmlElement *floorEl){
-	string filename;
-	Uint16 height, width, x,y;
+void GameBase::load_floorobjects_(TiXmlElement *floorsEl){
+	// nenalezen nepovinny tag floorobjects
+	if(!floorsEl) return;
 
+	// nacteni zdi
+	string name;
+	try{
+		readAttr(floorsEl, "name", name);
+	}
+	catch(const string & s){
+		TiXmlError("in element <floorobjects ...>: "+s);
+	}
+
+	string filename= name;
+	TiXmlDocument doc;
+	TiXmlElement *rootEl =
+		TiXmlRootElement(doc, filename, "floorobject", true);
 	Surface sur_src;
 	Animation anim;
-
-	TiXmlDocument doc;
-	TiXmlElement *rootEl;
 	try{
-		while(floorEl){
+		sur_src = load_src_surface(rootEl);
+		load_subEl_animation(rootEl, "img",
+				anim, sur_src);
+	}
+	catch(const string & s){
+		TiXmlError(filename,s);
+		return;
+	}
+	// rozmery zdi z velikosti obrazku
+	Uint16 height = anim.height()/CELL_SIZE;
+	Uint16 width = anim.width()/CELL_SIZE;
+
+	// vytvoreni zdi
+	TiXmlElement * el= floorsEl->FirstChildElement("floorobject");
+	try{
+		while(el){
+			Uint16 x, y;
 			try{
-				readAttr(floorEl, "name", filename);
-				if(!readAttr(floorEl, "height", height, false))
-					height = 1;
-				if(!readAttr(floorEl, "width", width, false))
-					width = 1;
-				readAttr(floorEl, "x", x);
-				readAttr(floorEl, "y", y);
+				readAttr(el, "x", x);
+				readAttr(el, "y", y);
 			}
 			catch(const string & s){
 				TiXmlError("in element <floorobject ...>: "+s);
 			}
-			// nacteni objektu
-			rootEl = TiXmlRootElement(doc, filename, "floorobject", true);
-			sur_src = load_src_surface(rootEl);
-			load_subEl_animation(rootEl, "img", anim, sur_src);
-
-			// kontrola jestli koresponduji rozmery obrazku
-			if(height!=anim.height()/CELL_SIZE)
-				TiXmlError(filename,"the value of attribute height doesn't correspond with value in <floorobject ...> in map.");
-
-			if(width!= anim.width()/CELL_SIZE)
-				TiXmlError(filename,"the value of attribute width doesn't correspond with value in <floorobject ...> in map.");
 
 			insert_floorobject_(anim, x, y, width, height);
-			floorEl= floorEl->NextSiblingElement("floorobject");
+
+			el= el->NextSiblingElement("floorobject");
 		}
 	}
 	catch(const string & s){
 		TiXmlError(filename,s);
 	}
+	// try to load next walls
+	load_floorobjects_(floorsEl->NextSiblingElement("floorobjects"));
 }
 
 /** @details
@@ -609,106 +590,68 @@ void GameBase::load_boxes_(TiXmlElement *boxesEl){
 	// nenalezen nepovinny tag boxes
 	if(!boxesEl) return;
 
-	TiXmlDocument doc;
-	TiXmlElement *rootEl, *El;
-
-	// nacteni atributu
-	string name_def, filename;
-	Surface sur_src;
-	Animation anim_def, anim_burning_def, anim, anim_burning;
-	Uint16 toplapping_def, height_def, width_def, count,
-		toplapping, height, width, x, y;
-
-	// TODO overcrossing
-
+	// nacteni boxu
+	string name;
+	Uint16 random_generated;
 	try{
-		readAttr(boxesEl, "name", name_def);
-		readAttr(boxesEl, "count", count);
-		if(!readAttr(boxesEl, "height", height_def, false))
-			height_def = 1;
-		if(!readAttr(boxesEl, "width", width_def, false))
-			width_def = 1;
+		readAttr(boxesEl, "name", name);
+		if(!readAttr(boxesEl, "random_generated", random_generated, false))
+			random_generated = 0;
 	}
 	catch(const string & s){
 		TiXmlError("in element <boxes ...>: "+s);
 	}
 
-	// nacteni defaultniho boxu
-	filename= name_def;
-	rootEl = TiXmlRootElement(doc, filename, "box", true);
+	string filename= name;
+	TiXmlDocument doc;
+	TiXmlElement *rootEl =
+		TiXmlRootElement(doc, filename, "box", true);
+	Surface sur_src;
+	Animation anim, anim_burning;
+	Uint16 toplapping;
 	try{
 		sur_src = load_src_surface(rootEl);
-
-		toplapping_def=
-		load_subEl_animation(rootEl, "img", anim_def, sur_src);
-		load_subEl_animation(rootEl, "burning", anim_burning_def, sur_src);
+		toplapping = load_subEl_animation(rootEl, "img",
+				anim, sur_src);
+		load_subEl_animation(rootEl, "burning", anim_burning, sur_src);
 	}
 	catch(const string & s){
 		TiXmlError(filename,s);
 		return;
 	}
-	// kontrola jestli koresponduji rozmery obrazku
-	if(height_def!=anim_def.height()/CELL_SIZE-toplapping_def)
-		TiXmlError(filename,"the value of attribute height doesn't correspond with value in <walls ...>.");
-
-	if(width_def!= anim_def.width()/CELL_SIZE)
-		TiXmlError(filename,"the value of attribute width doesn't correspond with value in <walls ...>.");
+	// rozmery boxu z velikosti obrazku
+	Uint16 height = anim.height()/CELL_SIZE - toplapping;
+	Uint16 width = anim.width()/CELL_SIZE;
 
 	// vytvoreni pevnych boxu
-	El= boxesEl->FirstChildElement("box");
+	TiXmlElement * el= boxesEl->FirstChildElement("box");
 	try{
-		while(El){
+		while(el){
+			Uint16 x, y;
 			try{
-				if(!readAttr(El, "name", filename, false))
-					filename.clear();
-				if(!readAttr(El, "height", height, false))
-					height = height_def;
-				if(!readAttr(El, "width", width, false))
-					width = width_def;
-				readAttr(El, "x", x);
-				readAttr(El, "y", y);
+				readAttr(el, "x", x);
+				readAttr(el, "y", y);
 			}
 			catch(const string & s){
 				TiXmlError("in element <boxes ...>: "+s);
 			}
-			// nacteni noveho boxu
-			if(!filename.empty() && filename!=name_def){
-				rootEl = TiXmlRootElement(doc, filename, "box", true);
-				sur_src = load_src_surface(rootEl);
-
-				toplapping =
-				load_subEl_animation(rootEl, "img", anim_def, sur_src);
-				load_subEl_animation(rootEl, "burning", anim_burning_def, sur_src);
-
-				// kontrola jestli koresponduji rozmery obrazku
-				if(height!=anim.height()/CELL_SIZE-toplapping)
-					TiXmlError(filename,"the value of attribute height doesn't correspond with value in <boxes ...>.");
-
-				if(width!= anim.width()/CELL_SIZE)
-					TiXmlError(filename,"the value of attribute width doesn't correspond with value in <boxes ...>.");
-				// vlozeni do mapy
-				insert_box_(anim, anim_burning, toplapping,
-					x, y, width, height);
-			}
-			else{
-				// vlozeni do mapy
-				insert_box_(anim_def, anim_burning_def, toplapping_def,
-					x, y, width_def, height_def);
-			}
-			if(--count==0) break;
-			El= El->NextSiblingElement("box");
+			// vlozeni do mapy
+			insert_box_(anim, anim_burning, toplapping,
+				x, y, width, height);
+			el = el->NextSiblingElement("box");
 		}
 	}
 	catch(const string & s){
 		TiXmlError(filename,s);
 	}
 	// rozsahlejsi bedny nebudou nahodne generovany
-	if(height_def!=1 || width_def!=1) return;
+	if(height!=1 || width!=1) return;
 	// vlozit pouze do seznamu pro pozdejsi nahodne vygenerovani
-	while(count--){
-		insert_box_(anim_def, anim_burning_def, toplapping_def);
+	while(random_generated--){
+		insert_box_(anim, anim_burning, toplapping);
 	}
-
+	// try to load next boxes
+	load_boxes_(boxesEl->NextSiblingElement("boxes"));
 }
 
 /** @details
@@ -719,30 +662,31 @@ void GameBase::load_boxes_(TiXmlElement *boxesEl){
  */
 void GameBase::load_noboxes_(TiXmlElement *boxesEl){
 
-	if(!boxesEl) return;
+	if(boxesEl) {
+		TiXmlElement *El;
+		// zakazana policka z XML
+		El= boxesEl->FirstChildElement("nobox");
+		try{
+			while(El){
+				Uint16 x, y;
+				readAttr(El, "x", x);
+				readAttr(El, "y", y);
 
-	TiXmlElement *El;
-	Uint16 x, y;
-	// zakazana policka z XML
-	El= boxesEl->FirstChildElement("nobox");
-	try{
-		while(El){
-			readAttr(El, "x", x);
-			readAttr(El, "y", y);
-
-			// vlozeni do mapy zakazanych policek
-			if(x<allowed_array_.size() && y<allowed_array_[x].size())
-				allowed_array_[x][y].box = false;
-			El= El->NextSiblingElement("nobox");
+				// vlozeni do mapy zakazanych policek
+				if(x<allowed_array_.size() && y<allowed_array_[x].size())
+					allowed_array_[x][y].box = false;
+				El= El->NextSiblingElement("nobox");
+			}
+		}
+		catch(const string & s){
+			TiXmlError("in element <nobox ...>: "+s);
 		}
 	}
-	catch(const string & s){
-		TiXmlError("in element <nobox ...>: "+s);
-	}
-	// spocitam neobsazena policka v mape
+
+	// spocitam neobsazena policka v mape - ikdyz nemam zadny nobox
 	allowed_boxes_count_= 0;
-	for(x=0; x<base_array_.size() ; ++x){
-		for(y=0 ; y<base_array_[x].size() ; ++y){
+	for(Uint16 x=0; x<base_array_.size() ; ++x){
+		for(Uint16 y=0 ; y<base_array_[x].size() ; ++y){
 			if(allowed_array_[x][y].box)
 				++allowed_boxes_count_;
 		}
@@ -857,7 +801,7 @@ void GameBase::load_bonuses_(const bonuses_t & bonuses){
  */
 void GameBase::load_creatures_(TiXmlElement *creaturesEl){
 	string filename;
-	Uint16 x,y, count, width, height,
+	Uint16 x,y, random_generated, width, height,
 		speed, lives, intelligence;
 	Surface sur_src, sur_src_s;
 	isTypeOf isBadType(BOX, WALL, BONUS);
@@ -868,7 +812,8 @@ void GameBase::load_creatures_(TiXmlElement *creaturesEl){
 		while(creaturesEl){
 			try{
 				readAttr(creaturesEl, "name", filename);
-				readAttr(creaturesEl, "count", count);
+				if(!readAttr(creaturesEl, "random_generated", random_generated, false))
+					random_generated = 0;
 			}
 			catch(const string & s){
 				TiXmlError("in element <creatures ...>: "+s);
@@ -916,11 +861,10 @@ void GameBase::load_creatures_(TiXmlElement *creaturesEl){
 				|| isBadType(base_array_[x][y].back().o) ) continue;
 				insert_creature_(anim_up, anim_right, anim_down, anim_left,
 					anim_burned, x, y, speed, lives, intelligence);
-				if(--count==0) break;
 			}
 
 			// nahodne rozlozeni priser
-			while(count--){
+			while(random_generated--){
 				insert_creature_(anim_up, anim_right, anim_down,
 					anim_left, anim_burned, speed, lives, intelligence);
 			}

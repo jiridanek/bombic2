@@ -18,7 +18,7 @@
 		<wall x="7" y="8" />
 		<wall x="9" y="8" />
 	</walls>
-	<boxes 	name="box_glass" count="24">
+	<boxes 	name="box_glass">
 		<box x="7" y="2" />
 		<box x="8" y="2" />
 		<box x="9" y="2" />
@@ -47,7 +47,7 @@
 
 	<bonuses name="bonus_timer" count="1" />
 
-	<creatures name="creature_tv" count="1">
+	<creatures name="creature_tv">
 		<creature x="8" y="6" />
 	</creatures>
 </map>

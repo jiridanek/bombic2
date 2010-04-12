@@ -16,54 +16,43 @@
                 <player2 x="souradnice hrace 3 v deathmatchi" y="souradnice v polickach" />
                 <player3 x="souradnice hrace 4 v deathmatchi" y="souradnice v polickach" />
 	</players>
-	<!-- hodnoty neuvedenych atributu se podedi z nadrazeneho tagu -->
-	<!-- atributy height a width maji defaultne hodnotu jedna,
-		pokud se neshoduji s vyskou a sirskou nacitaneho objektu vyvola se chyba -->
-	<_walls 	name="jmeno zdi"
-			_height="vyska vlozene zdi"
-			_width="sirska,kolik zabere policek"
-			>
-		<!-- pro kazdou jednu zed musi byt jeden tag wall -->
-		<wall 	x="souradnice umisteni v polickach"
-			y="souradnice umisteni"
-			_name="jmeno"
-			_height="vyska vlozene zdi v polickach"
-			_width="sirska"
-			/>
+
+	<!-- pro zdi (wall), objekty na zemi (floorobject), bedny (box)
+		a prisery (creature) plati nasledujici:
+			pro kazdy typ (podle name) objektu (object)
+			je jeden element (objects) s atributem name
+			a v nem pro kazdou instanci tohoto typu pevne
+			umistenouv mape jeden element (object) s atributy x,y
+			se souradnicemi v polickach
+		u beden a priser navic jeste nepovinny atribut random_generated
+		ktery urcuje kolik objektu navic se ma nahodne vygenerovat -->
+
+	<!-- pro kazdy typ (name) zdi jeden tag walls -->
+	<_walls name="jmeno zdi">
+		<!-- pro kazdou jednu zed mapy jeden tag wall -->
+		<wall x="souradnice umisteni v polickach"
+			y="souradnice umisteni" />
 	</_walls>
-	<!-- floorobject je objekt na zemi po kterem se da chodit,
-		nespali ho plamen a nesmi na nem byt postavena bedna ani zed,
-		jde spise o kosmetickou zalezitost -->
+
 	<!-- pro kazdy jeden objekt musi byt jeden tag floorobject -->
-	<_floorobject 	name="jmeno objektu"
+	<_floorobjects name="jmeno objektu">
+		<floorobject
 			x="souradnice umisteni v polickach"
 			y="souradnice umisteni"
-			_height="vyska objektu v polickach"
-			_width="sirska objektu"
 			/>
-	<!-- pripadna rozsahlejsi (height | width >1)
-		bedna bouchne cela najednou, pricemz
+	</_floorobjects>
+	<!-- pripadna rozsahlejsi bedna bouchne cela najednou, pricemz
 		tyto rozsahlejsi bedny nebudou nahodne generovany -->
-	<_boxes 	name="jmeno bedny"
-			count="pocet v cele mape"
-			_height="vyska v polickach"
-			_width="sirska"
+	<_boxes name="jmeno bedny"
+			_random_generated="pocet navic nahodne generovanych"
 			>
-		<!-- pro kazdou pevne umistenou bednu musi byt jeden tag box
-			ostatni se vygeneruji na nahodne misto -->
+		<!-- pro kazdou pevne umistenou bednu musi byt jeden tag box -->
 		<_box 	x="souradnice umisteni v polickach"
-			y="souradnice umisteni"
-			_name="jmeno"
-			_height="vyska v polickach"
-			_width="sirska"
-			/>
-		<!-- oznaceni mista, kde se nesmi nahodne vygenerovat bedna -->
-		<_nobox	x="souradnice zakazaneho mista v polickach"
-				y="souradnice zakazaneho mista v polickach" >
+			y="souradnice umisteni" />
 	</_boxes>
 	<!-- pro kazdy druh(name) prisery jeden tag creatures -->
 	<_creatures 	name="jmeno prisery(druh)"
-			count="pocet v cele mape"
+			_random_generated="pocet navic nahodne generovanych"
 			>
 		<!-- pro kazdou pevne umistenou potvoru musi byt jeden tag creature
 			ostatni se vygeneruji na nahodne misto -->
@@ -72,13 +61,17 @@
 				/>
 	</_creatures>
 	<!-- jeden nepovinny tag pro policka na ktera nechceme generovat prisery -->
-	<_nocreatures>
+	<_dont_generate>
 		<!-- pro kazde policko, ktere chceme vynutit bez prisery jeden tag -->
 		<_nocreature
 			x="souradnice vynuceneho policka bez prisery v polickach"
 			y="souradnice policka bez prisery v polickach"
 			/>
-	</_nocreatures>
+		<!-- oznaceni mista, kde se nesmi nahodne vygenerovat bedna -->
+		<_nobox	x="souradnice zakazaneho mista v polickach"
+				y="souradnice zakazaneho mista v polickach" >
+
+	</_dont_generate>
 
 	<!-- v deathmatchi se nastaveni bonusu prekryje nastavenim
 		z menu, cili pro ciste deathmatchove mapy je zbytecne

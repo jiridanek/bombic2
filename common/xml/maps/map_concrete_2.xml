@@ -8,12 +8,17 @@
 		<player3 x="18" y="2" />
 	</players>
 
+	<walls name="wall_oblong" >
+		<wall x="2" y="0" />
+		<wall x="10" y="0" />
+		<wall x="17" y="0" />
+	</walls>
+	<walls name="wall_redlight" >
+		<wall x="5" y="0" />
+		<wall x="13" y="0" />
+	</walls>
+
 	<walls 	name="wall_block_single">
-		<wall name="wall_oblong" x="2" y="0" height="2" />
-		<wall name="wall_redlight" x="5" y="0" width="3" height="2" />
-		<wall name="wall_oblong" x="10" y="0" height="2" />
-		<wall name="wall_redlight" x="13" y="0" width="3" height="2" />
-		<wall name="wall_oblong" x="17" y="0" height="2" />
 
 		<wall x="1" y="6" />
 		<wall x="1" y="10" />
@@ -37,39 +42,45 @@
 		<wall x="17" y="12" />
 		<wall x="18" y="6" />
 		<wall x="18" y="10" />
-
-		<wall name="wall_block_l" x="7" y="6" />
-		<wall name="wall_block_lr" x="8" y="6" />
-		<wall name="wall_block_lr" x="9" y="6" />
-		<wall name="wall_block_lr" x="10" y="6" />
-		<wall name="wall_block_lr" x="11" y="6" />
-		<wall name="wall_block_r" x="12" y="6" />
-
-		<wall name="wall_block_l" x="2" y="8" />
-		<wall name="wall_block_lr" x="3" y="8" />
-		<wall name="wall_block_lr" x="4" y="8" />
-		<wall name="wall_block_lr" x="5" y="8" />
-		<wall name="wall_block_lr" x="6" y="8" />
-		<wall name="wall_block_lr" x="7" y="8" />
-		<wall name="wall_block_lr" x="8" y="8" />
-		<wall name="wall_block_lr" x="9" y="8" />
-		<wall name="wall_block_lr" x="10" y="8" />
-		<wall name="wall_block_lr" x="11" y="8" />
-		<wall name="wall_block_lr" x="12" y="8" />
-		<wall name="wall_block_lr" x="13" y="8" />
-		<wall name="wall_block_lr" x="14" y="8" />
-		<wall name="wall_block_lr" x="15" y="8" />
-		<wall name="wall_block_lr" x="16" y="8" />
-		<wall name="wall_block_r" x="17" y="8" />
-
-		<wall name="wall_block_l" x="7" y="10" />
-		<wall name="wall_block_lr" x="8" y="10" />
-		<wall name="wall_block_lr" x="9" y="10" />
-		<wall name="wall_block_lr" x="10" y="10" />
-		<wall name="wall_block_lr" x="11" y="10" />
-		<wall name="wall_block_r" x="12" y="10" />
 	</walls>
-	<boxes 	name="box_container" count="45">
+
+	<walls name="wall_block_l" >
+		<wall x="7" y="6" />
+		<wall x="2" y="8" />
+		<wall x="7" y="10" />
+	</walls>
+
+	<walls name="wall_block_lr" >
+		<wall x="8" y="6" />
+		<wall x="9" y="6" />
+		<wall x="10" y="6" />
+		<wall x="11" y="6" />
+		<wall x="3" y="8" />
+		<wall x="4" y="8" />
+		<wall x="5" y="8" />
+		<wall x="6" y="8" />
+		<wall x="7" y="8" />
+		<wall x="8" y="8" />
+		<wall x="9" y="8" />
+		<wall x="10" y="8" />
+		<wall x="11" y="8" />
+		<wall x="12" y="8" />
+		<wall x="13" y="8" />
+		<wall x="14" y="8" />
+		<wall x="15" y="8" />
+		<wall x="16" y="8" />
+		<wall x="8" y="10" />
+		<wall x="9" y="10" />
+		<wall x="10" y="10" />
+		<wall x="11" y="10" />
+	</walls>
+
+	<walls name="wall_block_r" >
+		<wall x="12" y="6" />
+		<wall x="17" y="8" />
+		<wall x="12" y="10" />
+	</walls>
+	<boxes 	name="box_container" random_generated="33">
 		<box x="3" y="2" />
 		<box x="2" y="3" />
 		<box x="3" y="3" />
@@ -84,6 +95,9 @@
 		<box x="16" y="2" />
 		<box x="18" y="4" />
 
+	</boxes>
+
+	<dont_generate>
 		<nobox x="1" y="7" />
 		<nobox x="2" y="7" />
 		<nobox x="3" y="7" />
@@ -120,16 +134,15 @@
 		<nobox x="16" y="9" />
 		<nobox x="17" y="9" />
 		<nobox x="18" y="9" />
-	</boxes>
-
+	</dont_generate>
 	<bonuses name="bonus_kicker" count="4" />
 	<bonuses name="bonus_slider" count="4" />
 	<bonuses name="bonus_timer" count="4" />
 	<bonuses name="bonus_megabomb" count="4" />
 
-	<creatures name="creature_cloud" count="4" />
-	<creatures name="creature_rat" count="8" />
-	<creatures name="creature_trap" count="12" >
+	<creatures name="creature_cloud" random_generated="4" />
+	<creatures name="creature_rat" random_generated="8" />
+	<creatures name="creature_trap" >
 		<creature x="1" y="7" />
 		<creature x="4" y="7" />
 		<creature x="7" y="7" />

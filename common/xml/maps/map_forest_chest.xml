@@ -8,9 +8,13 @@
 		<player3 x="13" y="4" />
 	</players>
 
+	<walls name="wall_cave">
+		<wall x="11" y="0" />
+	</walls>
+	<walls name="wall_chest">
+		<wall x="12" y="2" />
+	</walls>
 	<walls 	name="wall_stone">
-		<wall name="wall_cave" x="11" y="0" width="3" height="2" />
-		<wall name="wall_chest" x="12" y="2" />
 		<wall x="10" y="2" />
 		<wall x="11" y="2" />
 		<wall x="9" y="5" />
@@ -33,7 +37,7 @@
 		<wall x="7" y="8" />
 
 	</walls>
-	<boxes 	name="box_barrel" count="29">
+	<boxes name="box_barrel">
 		<box x="1" y="6" />
 		<box x="1" y="7" />
 		<box x="1" y="8" />
@@ -69,7 +73,7 @@
 	<bonuses name="bonus_slider" count="2" />
 	<bonuses name="bonus_megabomb" count="2" />
 
-	<creatures name="creature_rat" count="8">
+	<creatures name="creature_rat">
 		<creature x="8" y="2" />
 		<creature x="9" y="2" />
 		<creature x="13" y="2" />
@@ -79,7 +83,7 @@
 		<creature x="13" y="10" />
 		<creature x="14" y="10" />
 	</creatures>
-	<creatures name="creature_slug" count="8">
+	<creatures name="creature_slug">
 		<creature x="8" y="3" />
 		<creature x="9" y="3" />
 		<creature x="13" y="3" />
@@ -89,13 +93,13 @@
 		<creature x="13" y="9" />
 		<creature x="14" y="9" />
 	</creatures>
-	<creatures name="creature_cloud" count="4">
+	<creatures name="creature_cloud">
 		<creature x="8" y="6" />
 		<creature x="14" y="6" />
 		<creature x="13" y="4" />
 		<creature x="13" y="8" />
 	</creatures>
-	<creatures name="creature_ghost" count="1">
+	<creatures name="creature_ghost">
 		<creature x="11" y="6" />
 	</creatures>
 </map>

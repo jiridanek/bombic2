@@ -104,78 +104,45 @@ BombicMap * ResourceHandler::loadMap(const QString & name) {
 
 bool ResourceHandler::loadMapWalls(const QDomElement & wallsEl,
 		BombicMap * map) {
-	if(wallsEl.isNull()) {
-		// there is no wall - strange but supported
-		return true;
-	}
-	// values for default object
-	QString defaultName;
-	QSize defaultSize(1, 1);
-	bool success =
-		getStringAttr(wallsEl, defaultName, "name") &&
-		getIntAttr(wallsEl, defaultSize.rwidth(), "width", true) &&
-		getIntAttr(wallsEl, defaultSize.rheight(), "height", true);
-	if(!success) {
-		return false;
-	}
-	// default object
-	BombicMapObject * defaultObj = loadMapObject(defaultName);
-	if(!defaultObj) {
-		return false;
-	}
-	if(defaultObj->size() != defaultSize) {
-		showError( tr(
-			"Size of default wall doesn't correspond with values "
-			"in width and height"), wallsEl);
-		return false;
-	}
-	// for all inserted objects
-	QDomElement wallEl;
-	if(!getSubElement(wallsEl, wallEl, "wall")) {
-		return false;
-	}
-	do {
-		// values for objced
-		BombicMap::Field field;
-		QString name(defaultName);
-		QSize size(defaultSize);
-		success =
-			getAttrsXY(wallEl, field.rx(), field.ry()) &&
-			getStringAttr(wallEl, name, "name", true) &&
-			getIntAttr(wallEl, size.rwidth(), "width", true) &&
-			getIntAttr(wallEl, size.rheight(), "height", true);
-		if(!success) {
+	// for all object prototypes
+	for(QDomElement objEl = wallsEl ; !objEl.isNull() ;
+			objEl = objEl.nextSiblingElement(wallsEl.tagName()) ) {
+
+		// object name
+		QString name;
+		if(!getStringAttr(objEl, name, "name")) {
 			return false;
 		}
 		// the object
-		BombicMapObject * obj = defaultObj;
-		if(name != defaultName) {
-			obj = loadMapObject(name);
-			if(!obj) {
+		BombicMapObject * obj = loadMapObject(name);
+		if(!obj) {
+			return false;
+		}
+		// for all inserted objects
+		QDomElement posEl;
+		if(!getSubElement(objEl, posEl, "wall")) {
+			return false;
+		}
+		do {
+			BombicMap::Field field;
+			if(!getAttrsXY(posEl, field.rx(), field.ry())) {
 				return false;
 			}
-		}
-		if(obj->size() != size) {
-			showError( tr(
-				"Size of wall doesn't correspond with values "
-				"in width and height"), wallEl);
-			return false;
-		}
-		// try to insert
-		if(!map->canInsert(obj, field)) {
-			showError( tr(
-					"Object cannot be inserted to field") +
-					"\n" + "[" +
-					QString::number(field.x()) + "," +
-					QString::number(field.y()) + "]",
-				wallEl );
-			return false;
-		}
-		// OK - it can be inserted, so create copy and insert it
-		map->insert(obj->createCopy(), field);
-		wallEl = wallEl.nextSiblingElement("wall");
-	} while(!wallEl.isNull());
-
+			// try to insert
+			if(!map->canInsert(obj, field)) {
+				showError( tr(
+						"Object cannot be inserted to field") +
+						"\n" + "[" +
+						QString::number(field.x()) + "," +
+						QString::number(field.y()) + "]",
+					posEl );
+				return false;
+			}
+			// OK - it can be inserted, so create copy and insert it
+			map->insert(obj->createCopy(), field);
+			posEl = posEl.nextSiblingElement(posEl.tagName());
+		} while(!posEl.isNull());
+	}
 	// all walls loaded
 	return true;
 }

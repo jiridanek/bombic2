@@ -8,14 +8,20 @@
 		<player3 x="20" y="6" />
 	</players>
 
-	<walls 	name="wall_block_single">
-		<wall name="wall_redlight" x="2" y="0" height="2" width="3" />
-		<wall name="wall_rift" x="7" y="0" height="2" />
-		<wall name="wall_oblong" x="11" y="0" height="2" />
-		<wall name="wall_oblong" x="13" y="0" height="2" />
-		<wall name="wall_oblong" x="17" y="0" height="2" />
-		<wall name="wall_rift" x="23" y="0" height="2" />
+	<walls name="wall_redlight" >
+		<wall x="2" y="0" />
+	</walls>
+	<walls name="wall_rift" >
+		<wall x="7" y="0" />
+		<wall x="23" y="0" />
+	</walls>
+	<walls name="wall_oblong" >
+		<wall x="11" y="0" />
+		<wall x="13" y="0" />
+		<wall x="17" y="0" />
+	</walls>
 
+	<walls 	name="wall_block_single">
 		<wall x="1" y="6" />
 		<wall x="2" y="3" />
 		<wall x="2" y="9" />
@@ -42,12 +48,19 @@
 		<wall x="21" y="3" />
 		<wall x="21" y="9" />
 		<wall x="23" y="6" />
-
-		<wall name="wall_hole" x="10" y="5" width="2" height="2" />
-		<wall name="wall_block_l" x="13" y="6" />
-		<wall name="wall_block_r" x="14" y="6" />
 	</walls>
-	<boxes 	name="box_container" count="51">
+
+	<walls name="wall_hole" >
+		<wall x="10" y="5" />
+	</walls>
+	<walls name="wall_block_l" >
+		<wall x="13" y="6" />
+	</walls>
+	<walls name="wall_block_r" >
+		<wall x="14" y="6" />
+	</walls>
+
+	<boxes name="box_container">
 		<box x="3" y="2" />
 		<box x="4" y="2" />
 		<box x="6" y="2" />
@@ -104,16 +117,16 @@
 	<bonuses name="bonus_slider" count="5" />
 	<bonuses name="bonus_megabomb" count="5" />
 
-	<creatures name="creature_trap" count="10" />
-	<creatures name="creature_trap_red" count="14" />
-	<creatures name="creature_rat_red" count="2">
+	<creatures name="creature_trap" random_generated="10" />
+	<creatures name="creature_trap_red" random_generated="14" />
+	<creatures name="creature_rat_red">
 		<creature x="7" y="2" />
 		<creature x="7" y="10" />
 	</creatures>
-	<creatures name="creature_tv" count="1">
+	<creatures name="creature_tv">
 		<creature x="20" y="6" />
 	</creatures>
-	<creatures name="creature_cloud" count="5">
+	<creatures name="creature_cloud">
 		<creature x="22" y="4" />
 		<creature x="22" y="5" />
 		<creature x="22" y="6" />

@@ -8,11 +8,15 @@
 		<player3 x="13" y="2" />
 	</players>
 
-	<walls 	name="wall_block_single">
-		<wall name="wall_rift" x="3" y="0" height="2" />
-		<wall name="wall_oblong" x="8" y="0" height="2" />
-		<wall name="wall_oblong" x="13" y="0" height="2" />
+	<walls name="wall_rift">
+		<wall x="3" y="0" />
+	</walls>
+	<walls name="wall_oblong">
+		<wall x="8" y="0" />
+		<wall x="13" y="0" />
+	</walls>
 
+	<walls 	name="wall_block_single">
 		<wall x="2" y="3" />
 		<wall x="2" y="5" />
 		<wall x="2" y="7" />
@@ -42,7 +46,7 @@
 		<wall x="14" y="7" />
 		<wall x="14" y="9" />
 	</walls>
-	<boxes 	name="box_container" count="40">
+	<boxes 	name="box_container" random_generated="32">
 		<box x="3" y="2" />
 		<box x="1" y="4" />
 		<box x="13" y="8" />
@@ -55,7 +59,7 @@
 
 	<bonuses name="bonus_speed" count="2" />
 
-	<creatures name="creature_slug" count="8" />
-	<creatures name="creature_cloud" count="4" />
-	<creatures name="creature_rat" count="4" />
+	<creatures name="creature_slug" random_generated="8" />
+	<creatures name="creature_cloud" random_generated="4" />
+	<creatures name="creature_rat" random_generated="4" />
 </map>
