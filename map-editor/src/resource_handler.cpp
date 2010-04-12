@@ -40,6 +40,7 @@ BombicMap * ResourceHandler::loadMap() {
  * @return Nove alokovana prazdna mapa s pozadim.
  */
 BombicMap * ResourceHandler::loadEmptyMap() {
+	return loadMap("map_concrete_holes");
 	BombicMapBackground * defaultBg =
 		loadMapBackground(DEFAULT_MAP_BACKGROUND);
 	if(!defaultBg) {
@@ -52,6 +53,131 @@ BombicMap * ResourceHandler::loadEmptyMap() {
 		return 0;
 	}
 	return newMap;
+}
+
+/** @details
+ * Pokusi se vytvorit mapu zadanou @p name a vlozit do ni
+ * vsechny objekty.
+ * @param name jmeno mapy (nebo primo cesta k souboru)
+ * @return Objekt mapy.
+ * @retval 0 mapu se nepodarilo vyrobit
+ */
+BombicMap * ResourceHandler::loadMap(const QString & name) {
+	QDomElement rootEl;
+	if(!loadXml(name, rootEl, true, "map")) {
+		return 0;
+	}
+	QString bgName;
+	if(!getStringAttr(rootEl, bgName, "background") ) {
+		return 0;
+	}
+	int w, h;
+	bool success =
+		getIntAttr(rootEl, w, "width") &&
+		getIntAttr(rootEl, h, "height");
+	if(!success) {
+		return 0;
+	}
+	BombicMapBackground * mapBg = loadMapBackground(bgName);
+	if(!mapBg) {
+		return 0;
+	}
+	BombicMap * map = new BombicMap(w, h, mapBg);
+	if(!map) {
+		delete mapBg;
+		return 0;
+	}
+
+	// load map objects
+	QDomElement el;
+	success =
+		getSubElement(rootEl, el, "walls", true) &&
+		loadMapWalls(el, map);
+
+	if(!success) {
+		delete map;
+		return 0;
+	}
+
+	return map;
+}
+
+bool ResourceHandler::loadMapWalls(const QDomElement & wallsEl,
+		BombicMap * map) {
+	if(wallsEl.isNull()) {
+		// there is no wall - strange but supported
+		return true;
+	}
+	// values for default object
+	QString defaultName;
+	QSize defaultSize(1, 1);
+	bool success =
+		getStringAttr(wallsEl, defaultName, "name") &&
+		getIntAttr(wallsEl, defaultSize.rwidth(), "width", true) &&
+		getIntAttr(wallsEl, defaultSize.rheight(), "height", true);
+	if(!success) {
+		return false;
+	}
+	// default object
+	BombicMapObject * defaultObj = loadMapObject(defaultName);
+	if(!defaultObj) {
+		return false;
+	}
+	if(defaultObj->size() != defaultSize) {
+		showError( tr(
+			"Size of default wall doesn't correspond with values "
+			"in width and height"), wallsEl);
+		return false;
+	}
+	// for all inserted objects
+	QDomElement wallEl;
+	if(!getSubElement(wallsEl, wallEl, "wall")) {
+		return false;
+	}
+	do {
+		// values for objced
+		BombicMap::Field field;
+		QString name(defaultName);
+		QSize size(defaultSize);
+		success =
+			getAttrsXY(wallEl, field.rx(), field.ry()) &&
+			getStringAttr(wallEl, name, "name", true) &&
+			getIntAttr(wallEl, size.rwidth(), "width", true) &&
+			getIntAttr(wallEl, size.rheight(), "height", true);
+		if(!success) {
+			return false;
+		}
+		// the object
+		BombicMapObject * obj = defaultObj;
+		if(name != defaultName) {
+			obj = loadMapObject(name);
+			if(!obj) {
+				return false;
+			}
+		}
+		if(obj->size() != size) {
+			showError( tr(
+				"Size of wall doesn't correspond with values "
+				"in width and height"), wallEl);
+			return false;
+		}
+		// try to insert
+		if(!map->canInsert(obj, field)) {
+			showError( tr(
+					"Object cannot be inserted to field") +
+					"\n" + "[" +
+					QString::number(field.x()) + "," +
+					QString::number(field.y()) + "]",
+				wallEl );
+			return false;
+		}
+		// OK - it can be inserted, so create copy and insert it
+		map->insert(obj->createCopy(), field);
+		wallEl = wallEl.nextSiblingElement("wall");
+	} while(!wallEl.isNull());
+
+	// all walls loaded
+	return true;
 }
 
 /**
@@ -417,22 +543,54 @@ bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 /** @details
  * Pokusi se ziskat podelement elementu @p el.
  * Pokud element neexistuje, sam zobrazuje relevantni informace.
+ * Pokud subelement chybi, @p subEl je nastaven jako nulovy (@c isNull()).
  * @param el element, o jehoz podelement mame zajem
- * @param[out] subEl nalezeny podelement
+ * @param[out] subEl nalezeny (ci nulovy) podelement
  * @param subElTagName jmeno podelementu, ktery hledame
+ * @param successIfMissing jestli ma uspet pokud element uplne chybi
  * @return Uspech operace.
  * @retval true podelement nalezen a vracen v @p subEl
  * @retval false podelement chybi
  */
 bool ResourceHandler::getSubElement(const QDomElement & el,
-		QDomElement & subEl, const QString & subElTagName) {
+		QDomElement & subEl, const QString & subElTagName,
+		bool successIfMissing) {
 
 	subEl = el.namedItem(subElTagName).toElement();
-	if(subEl.isNull()) {
+	if(subEl.isNull() && !successIfMissing) {
 		showError(tr("Missing subelement")+" "+subElTagName, el);
 		return false;
 	}
 
+	return true;
+}
+
+/** @details
+ * Pokusi se ziskat hodnotu atributu @p attrName elementu @p el.
+ * Pokud nastane chyba, sam zobrazuje relevantni informace.
+ * @param el element, o jehoz atribut mame zajem
+ * @param[out] attr hodnota atributu
+ * @param attrName jmeno atributu, ktery hledame
+ * @param successIfMissing jestli ma uspet pokud atribut uplne chybi
+ * @return Uspech operace.
+ * @retval true hodnota atributu nactena
+ *              (nebo chybi a @p successIfMissing je @c true )
+ * @retval false chybi a @p successIfMissing je @c false
+ */
+bool ResourceHandler::getStringAttr(const QDomElement & el,
+		QString & attr, const QString & attrName,
+		bool successIfMissing) {
+
+	if(!el.hasAttribute(attrName)) {
+		if(successIfMissing) {
+			return true;
+		} else {
+			showError(tr("Missing attribute")+" "+attrName, el);
+			return false;
+		}
+	}
+	// all ok - store the value
+	attr = el.attribute(attrName);
 	return true;
 }
 
@@ -453,23 +611,24 @@ bool ResourceHandler::getSubElement(const QDomElement & el,
 bool ResourceHandler::getIntAttr(const QDomElement & el,
 		int & attr, const QString & attrName, bool successIfMissing) {
 
-	if(!el.hasAttribute(attrName)) {
-		if(successIfMissing) {
-			return true;
-		} else {
-			showError(tr("Missing attribute")+" "+attrName, el);
-			return false;
-		}
+	QString stringAttr;
+	bool success = getStringAttr(el, stringAttr,
+		attrName, successIfMissing);
+	if(stringAttr.isNull()) {
+		// attribute is missing
+		return success;
 	}
+
+	// attribute in not missing - convert it
 	bool converted;
-	int a = el.attribute(attrName).toInt(&converted);
+	int intAttr = stringAttr.toInt(&converted);
 	if(!converted) {
 		showError(tr("Attribute")+" "+attrName+" "
 			+tr("cannot be converted to integer"), el);
 		return false;
 	}
-
-	attr = a;
+	// all ok - store converted value
+	attr = intAttr;
 	return true;
 }
 

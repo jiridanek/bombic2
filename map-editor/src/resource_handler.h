@@ -70,6 +70,12 @@ class ResourceHandler: public QObject {
 
 
 	protected:
+		/// Nacte mapu podle jmena.
+		BombicMap * loadMap(const QString & name);
+		/// Nacte zdi mapy.
+		bool loadMapWalls(const QDomElement & wallsEl,
+				BombicMap * map);
+
 		/// Nacte objekt mapy podle jmena.
 		BombicMapObject * loadMapObject(const QString & name);
 
@@ -93,7 +99,12 @@ class ResourceHandler: public QObject {
 		/// Najde podelement podle jmena.
 		static bool getSubElement(const QDomElement & el,
 			QDomElement & subEl,
-			const QString & subElTagName);
+			const QString & subElTagName,
+			bool successIfMissing = false);
+		/// Precte stringovou hodnotu atributu.
+		static bool getStringAttr(const QDomElement & el,
+			QString & attr, const QString & attrName,
+			bool successIfMissing = false);
 		/// Precte integer hodnotu atributu.
 		static bool getIntAttr(const QDomElement & el,
 			int & attr, const QString & attrName,
