@@ -54,6 +54,9 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 
 	// init helper items as "insert item" and "item for selected field"
 	initHelperItems();
+
+	// if there is some selected object - unselect it at new scene
+	MAP_OBJECT_PALETTE->unselectObject();
 }
 
 /** @details
@@ -90,12 +93,19 @@ void MapScene::insertObjectsGraphicsItems() {
 			item->setZValue(sceneRect().height()+0.55);
 			addItem(item);
 			// stable items
+			bool wasCreature = false;
 			foreach(BombicMapObject * o, map_->objectsOnField(f)) {
 				if(o->graphicsItem()->scene()!=this) {
 					// item is not in this scene
 					addItem(o->situateGraphicsItem(
 						f*CELL_SIZE ));
 				}
+				if(o->type() == BombicMapObject::Creature) {
+					wasCreature = true;
+				}
+			}
+			if(wasCreature) {
+				sortCreatureGraphics(f);
 			}
 		}
 	}
