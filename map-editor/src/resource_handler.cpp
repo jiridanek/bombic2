@@ -40,7 +40,7 @@ BombicMap * ResourceHandler::loadMap() {
  * @return Nove alokovana prazdna mapa s pozadim.
  */
 BombicMap * ResourceHandler::loadEmptyMap() {
-	return loadMap("map_concrete_holes");
+	return loadMap("map_concrete_rings");
 	BombicMapBackground * defaultBg =
 		loadMapBackground(DEFAULT_MAP_BACKGROUND);
 	if(!defaultBg) {
@@ -91,8 +91,14 @@ BombicMap * ResourceHandler::loadMap(const QString & name) {
 	// load map objects
 	QDomElement el;
 	success =
+		getSubElement(rootEl, el, "floorobjects", true) &&
+		loadMapFloorobjects(el, map) &&
 		getSubElement(rootEl, el, "walls", true) &&
-		loadMapWalls(el, map);
+		loadMapWalls(el, map) &&
+		getSubElement(rootEl, el, "boxes", true) &&
+		loadMapBoxes(el, map) &&
+		getSubElement(rootEl, el, "creatures", true) &&
+		loadMapCreatures(el, map);
 
 	if(!success) {
 		delete map;
@@ -102,12 +108,15 @@ BombicMap * ResourceHandler::loadMap(const QString & name) {
 	return map;
 }
 
-bool ResourceHandler::loadMapWalls(const QDomElement & wallsEl,
+#define RH_FOREACH_SIBLING_ELEMENT(itEl, firstEl) \
+	for(QDomElement itEl = firstEl; \
+		!itEl.isNull() ; \
+		itEl = itEl.nextSiblingElement(firstEl.tagName()) )
+
+bool ResourceHandler::loadMapFloorobjects(const QDomElement & floorsEl,
 		BombicMap * map) {
 	// for all object prototypes
-	for(QDomElement objEl = wallsEl ; !objEl.isNull() ;
-			objEl = objEl.nextSiblingElement(wallsEl.tagName()) ) {
-
+	RH_FOREACH_SIBLING_ELEMENT(objEl, floorsEl) {
 		// object name
 		QString name;
 		if(!getStringAttr(objEl, name, "name")) {
@@ -118,32 +127,124 @@ bool ResourceHandler::loadMapWalls(const QDomElement & wallsEl,
 		if(!obj) {
 			return false;
 		}
-		// for all inserted objects
+		// first position element
+		QDomElement posEl;
+		if(!getSubElement(objEl, posEl, "floorobject")) {
+			return false;
+		}
+		if(!insertMapObjects(posEl, obj, map)) {
+			return false;
+		}
+	}
+	// all floor objects loaded
+	return true;
+}
+
+bool ResourceHandler::loadMapWalls(const QDomElement & wallsEl,
+		BombicMap * map) {
+	// for all object prototypes
+	RH_FOREACH_SIBLING_ELEMENT(objEl, wallsEl) {
+		// object name
+		QString name;
+		if(!getStringAttr(objEl, name, "name")) {
+			return false;
+		}
+		// the object
+		BombicMapObject * obj = loadMapObject(name);
+		if(!obj) {
+			return false;
+		}
+		// first position element
 		QDomElement posEl;
 		if(!getSubElement(objEl, posEl, "wall")) {
 			return false;
 		}
-		do {
-			BombicMap::Field field;
-			if(!getAttrsXY(posEl, field.rx(), field.ry())) {
-				return false;
-			}
-			// try to insert
-			if(!map->canInsert(obj, field)) {
-				showError( tr(
-						"Object cannot be inserted to field") +
-						"\n" + "[" +
-						QString::number(field.x()) + "," +
-						QString::number(field.y()) + "]",
-					posEl );
-				return false;
-			}
-			// OK - it can be inserted, so create copy and insert it
-			map->insert(obj->createCopy(), field);
-			posEl = posEl.nextSiblingElement(posEl.tagName());
-		} while(!posEl.isNull());
+		if(!insertMapObjects(posEl, obj, map)) {
+			return false;
+		}
 	}
 	// all walls loaded
+	return true;
+}
+
+bool ResourceHandler::loadMapBoxes(const QDomElement & boxesEl,
+		BombicMap * map) {
+	// for all object prototypes
+	RH_FOREACH_SIBLING_ELEMENT(objEl, boxesEl) {
+		// object name
+		QString name;
+		if(!getStringAttr(objEl, name, "name")) {
+			return false;
+		}
+		// the object
+		BombicMapObject * obj = loadMapObject(name);
+		if(!obj) {
+			return false;
+		}
+		// first position element
+		QDomElement posEl;
+		if(!getSubElement(objEl, posEl, "box", true)) {
+			return false;
+		}
+		if(!insertMapObjects(posEl, obj, map)) {
+			return false;
+		}
+		// TODO random generated objects
+	}
+	// all boxes loaded
+	return true;
+}
+
+bool ResourceHandler::loadMapCreatures(const QDomElement & creaturesEl,
+		BombicMap * map) {
+	// for all object prototypes
+	RH_FOREACH_SIBLING_ELEMENT(objEl, creaturesEl) {
+		// object name
+		QString name;
+		if(!getStringAttr(objEl, name, "name")) {
+			return false;
+		}
+		// the object
+		BombicMapObject * obj = loadMapObject(name);
+		if(!obj) {
+			return false;
+		}
+		// first position element
+		QDomElement posEl;
+		if(!getSubElement(objEl, posEl, "creature", true)) {
+			return false;
+		}
+		if(!insertMapObjects(posEl, obj, map)) {
+			return false;
+		}
+		// TODO random generated objects
+	}
+	// all creatures loaded
+	return true;
+}
+
+bool ResourceHandler::insertMapObjects(const QDomElement & positionEl,
+		BombicMapObject * insertedObject, BombicMap * map) {
+	// for all positions
+	RH_FOREACH_SIBLING_ELEMENT(posEl, positionEl) {
+
+		BombicMap::Field field;
+		if(!getAttrsXY(posEl, field.rx(), field.ry())) {
+			return false;
+		}
+		// try to insert
+		if(!map->canInsert(insertedObject, field)) {
+			showError(
+				tr("Object cannot be inserted to field") +"\n"+
+					"[" + QString::number(field.x()) +","+
+					QString::number(field.y()) + "]",
+				posEl );
+			return false;
+		}
+		// OK - it can be inserted, so create copy and insert it
+		map->insert(insertedObject->createCopy(), field);
+	}
+	// all positions inserted
 	return true;
 }
 

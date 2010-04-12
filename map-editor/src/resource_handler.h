@@ -73,8 +73,16 @@ class ResourceHandler: public QObject {
 		/// Nacte mapu podle jmena.
 		BombicMap * loadMap(const QString & name);
 		/// Nacte zdi mapy.
+		bool loadMapFloorobjects(const QDomElement & floorsEl,
+				BombicMap * map);
 		bool loadMapWalls(const QDomElement & wallsEl,
 				BombicMap * map);
+		bool loadMapBoxes(const QDomElement & boxesEl,
+				BombicMap * map);
+		bool loadMapCreatures(const QDomElement & creaturesEl,
+				BombicMap * map);
+		bool insertMapObjects(const QDomElement & positionEl,
+				BombicMapObject * insertedObject, BombicMap * map);
 
 		/// Nacte objekt mapy podle jmena.
 		BombicMapObject * loadMapObject(const QString & name);
