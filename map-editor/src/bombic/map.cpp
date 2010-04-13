@@ -166,12 +166,12 @@ void BombicMap::insert(BombicMapObject * object,
 			} else {
 				fields_[x][y].objList.append(object);
 			}
-			// hide generating labels if it is blocker
+			// block generating labels if it is blocker
 			if(object->blocksBoxGenerating()) {
-				fields_[x][y].genBox->hide();
+				fields_[x][y].genBox->block();
 			}
 			if(object->blocksCreatureGenerating()) {
-				fields_[x][y].genCreature->hide();
+				fields_[x][y].genCreature->block();
 			}
 		}
 	}
@@ -197,26 +197,26 @@ void BombicMap::remove(BombicMapObject * object) {
 		for(int y = top ; y <= bottom ; ++y) {
 			// remove the object from the map
 			fields_[x][y].objList.removeAll(object);
-			// show generating labels if there isn̈́'t blocker
-			bool blockBoxGenerating = false;
-			bool blockCreatureGenerating = false;
-			// find the blocker
-			foreach(BombicMapObject * o, fields_[x][y].objList) {
-				if(o->blocksBoxGenerating()) {
-					blockBoxGenerating = true;
-				}
-				if(object->blocksCreatureGenerating()) {
-					blockCreatureGenerating = true;
-				}
-			}
-			if(!blockBoxGenerating) {
-				fields_[x][y].genBox->show();
-			}
-			if(!blockCreatureGenerating) {
-				fields_[x][y].genCreature->show();
-			}
+			updateBlockGeneratingObjects(fields_[x][y]);
 		}
 	}
+}
+
+void BombicMap::updateBlockGeneratingObjects(const FieldSetT & fieldSet) {
+	// unblock generating labels if there isn̈́'t blocker
+	bool blockBoxGenerating = false;
+	bool blockCreatureGenerating = false;
+	// find the blocker
+	foreach(BombicMapObject * o, fieldSet.objList) {
+		if(o->blocksBoxGenerating()) {
+			blockBoxGenerating = true;
+		}
+		if(o->blocksCreatureGenerating()) {
+			blockCreatureGenerating = true;
+		}
+	}
+	fieldSet.genBox->setBlocking(blockBoxGenerating);
+	fieldSet.genCreature->setBlocking(blockCreatureGenerating);
 }
 
 /** @details

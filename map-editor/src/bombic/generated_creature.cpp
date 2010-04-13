@@ -13,10 +13,10 @@
  */
 BombicGeneratedCreature::BombicGeneratedCreature(
 		const BombicMap::Field & field) {
-	graphicsItem_ = new QGraphicsSimpleTextItem("C");
+	labelGI_ = new QGraphicsSimpleTextItem("C");
 	// TODO set font
 
 	setPos(field);
 	// move to the right half of field
-	graphicsItem_->moveBy(CELL_SIZE/2, 0);
+	labelGI_->moveBy(CELL_SIZE/2, 0);
 }

@@ -8,6 +8,7 @@
 
 #include <QObject>
 #include "map.h"
+#include "map_object.h"
 
 class QGraphicsItem;
 
@@ -30,36 +31,62 @@ class BombicGeneratedObject: public QObject {
 		/// Destrukce.
 		~BombicGeneratedObject();
 
+		/// Jestli je generovani blokovano jinym objektem.
+		bool blocked();
 		/// Jestli je generovani povoleno.
 		bool allowed();
+		/// Jestli je mozne generovat.
+		bool canGenerate();
 
 		/// Graficky prvek do sceny.
 		QGraphicsItem * graphicsItem();
 
 	public slots:
-		/// Zobrazit vizualizaci.
-		void show();
-		/// Skryt vizualizaci.
-		void hide();
+		/// Zobrazit popisek generovani.
+		void showLabel();
+		/// Skryt popisek generovani.
+		void hideLabel();
+
+		/// Zobrazit popisek generovani.
+		void showObject();
+		/// Skryt popisek generovani.
+		void hideObject();
+
+		/// Blokovat generovani.
+		void block();
+		/// Odblokovat generovani.
+		void unblock();
+		/// Nastavit blokovani generovani.
+		void setBlocking(bool block);
+
 		/// Povolit generovani.
 		void allow();
 		/// Zakazat generovani.
 		void disallow();
 		/// Zmeni povoleni generovani.
 		void toggleAllowance();
+		/// Nastavit povoleni generovani.
+		void setAllowance(bool allow);
 
 
 	protected:
 		/// Nastavit pozici grafickeho prvku.
 		void setPos(const BombicMap::Field & field);
+		/// Nastavit (obnovit) viditelnost grafickeho prvku.
+		void updateLabelVisibility();
 
 		/// graficky prvek do sceny.
-		QGraphicsItem * graphicsItem_;
+		QGraphicsItem * labelGI_;
 
+		/// Jestli je vizualizace popisku generovani skryta.
+		bool labelHidden_;
+		/// Jestli je vizualizace generovanych objektu skryta.
+		bool objectHidden_;
+
+		/// Jestli je generovani blokovano jinym objektem.
+		bool blocked_;
 		/// Jestli je generovani povoleno.
 		bool allowed_;
-		/// Jestli je vizualicaze skryta.
-		bool hidden_;
 };
 
 #endif

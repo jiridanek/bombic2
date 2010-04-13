@@ -10,7 +10,7 @@
  * @param field policko mapy, pro ktere chceme vizualizovat
  */
 BombicGeneratedBox::BombicGeneratedBox(const BombicMap::Field & field) {
-	graphicsItem_ = new QGraphicsSimpleTextItem("B");
+	labelGI_ = new QGraphicsSimpleTextItem("B");
 	// TODO set font
 
 	setPos(field);

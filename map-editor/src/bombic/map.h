@@ -69,19 +69,6 @@ class BombicMap {
 		BombicMapBackground * background();
 
 	private:
-		/// Vlozit zdi pozadi do mapy.
-		void insertBackgroundWalls();
-
-		/// Jmeno mapy.
-		QString name_;
-		/// Soubor, do ktereho se pripadne mapa ulozi.
-		QString filename_;
-
-		/// Obdelnik mapy (v jednotkach policek).
-		QRect fieldsRect_;
-		/// Pozadi mapy.
-		BombicMapBackground * background_;
-
 		/// Mnozina reprezentujici jedno policko.
 		typedef struct {
 			/// Generovana bedna.
@@ -94,6 +81,24 @@ class BombicMap {
 
 		/// Typ matice policek mapy.
 		typedef QVector< QVector< FieldSetT > > FieldsT;
+
+
+		/// Vlozit zdi pozadi do mapy.
+		void insertBackgroundWalls();
+
+		/// Pokusit se odblokovat generovani
+		void updateBlockGeneratingObjects(const FieldSetT & fieldSet);
+
+		/// Jmeno mapy.
+		QString name_;
+		/// Soubor, do ktereho se pripadne mapa ulozi.
+		QString filename_;
+
+		/// Obdelnik mapy (v jednotkach policek).
+		QRect fieldsRect_;
+		/// Pozadi mapy.
+		BombicMapBackground * background_;
+
 		/// Matice policek mapy, velikost odpovida @p fieldsRect_.
 		FieldsT fields_;
 
