@@ -282,6 +282,66 @@ BombicGeneratedObject * BombicMap::generatedCreature(
 	return fields_[field.x()][field.y()].genCreature;
 }
 
+const BombicMap::ObjectListT & BombicMap::generatedBoxes() {
+	return generatedBoxes_;
+}
+const BombicMap::ObjectListT & BombicMap::generatedCreatures() {
+	return generatedCreatures_;
+}
+
+
+void BombicMap::setGeneratedBoxesCount(BombicMapObject * box, int count) {
+	setGeneratedObjectsCount(generatedBoxes_, box, count);
+}
+
+void BombicMap::setGeneratedCreaturesCount(BombicMapObject * creature,
+		int count) {
+	setGeneratedObjectsCount(generatedCreatures_, creature, count);
+}
+
+void BombicMap::setGeneratedObjectsCount(ObjectListT & objList,
+		BombicMapObject * object, int count) {
+	// current count
+	ObjectListT objects;
+	foreach(BombicMapObject * o, objList) {
+		if(o->name() == object->name()) {
+			objects.append(o);
+		}
+	}
+	int diffCount = count - objects.size();
+	if(diffCount < 0) {
+		// we need to remove some objects
+		for(int i = 0 ; i > diffCount ; --i) {
+			BombicMapObject * o =
+				objects.takeAt(qrand() % objects.size());
+			removeGeneratedMapObject(objList, o);
+			delete o;
+		}
+	} else {
+		// we need to add some objects
+		for(int i = 0 ; i < diffCount ; ++i) {
+			addGeneratedMapObject(objList, object->createCopy());
+		}
+	}
+}
+
+void BombicMap::addGeneratedMapObject(ObjectListT & objList,
+		BombicMapObject * object) {
+	objList.append(object);
+	// TODO emit generatedMapObjectAdded(object);
+}
+
+void BombicMap::removeGeneratedMapObject(ObjectListT & objList,
+		BombicMapObject * object) {
+	Field objField = object->field();
+	if(fieldsRect_.contains(objField)) {
+		// the object may be generated somewhere in map
+		// TODO remove from map
+	}
+	objList.removeAll(object);
+}
+
+
 /**
  * @return Obdelnik mapy (v jednotkach policek).
  */

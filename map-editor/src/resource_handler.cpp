@@ -186,10 +186,19 @@ bool ResourceHandler::loadMapBoxes(const QDomElement & boxesEl,
 		if(!getSubElement(objEl, posEl, "box", true)) {
 			return false;
 		}
+		// insert the positioned objects
 		if(!insertMapObjects(posEl, obj, map)) {
 			return false;
 		}
-		// TODO random generated objects
+		// insert the random generated
+		int randomGenerated = 0;
+		if(!getIntAttr(boxesEl, randomGenerated,
+				"random_generated", true)) {
+			return false;
+		}
+		if(randomGenerated > 0) {
+			map->setGeneratedBoxesCount(obj, randomGenerated);
+		}
 	}
 	// all boxes loaded
 	return true;
@@ -214,10 +223,19 @@ bool ResourceHandler::loadMapCreatures(const QDomElement & creaturesEl,
 		if(!getSubElement(objEl, posEl, "creature", true)) {
 			return false;
 		}
+		// insert the positioned objects
 		if(!insertMapObjects(posEl, obj, map)) {
 			return false;
 		}
-		// TODO random generated objects
+		// insert the random generated
+		int randomGenerated = 0;
+		if(!getIntAttr(creaturesEl, randomGenerated,
+				"random_generated", true)) {
+			return false;
+		}
+		if(randomGenerated > 0) {
+			map->setGeneratedBoxesCount(obj, randomGenerated);
+		}
 	}
 	// all creatures loaded
 	return true;

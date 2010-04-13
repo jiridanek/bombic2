@@ -15,6 +15,9 @@ class BombicGeneratedCreature: public BombicGeneratedObject {
 	public:
 		/// Konstrukce pro policko @p field.
 		BombicGeneratedCreature(const BombicMap::Field & field);
+
+		/// Typ generovaneho objektu.
+		virtual BombicMapObject::Type type();
 };
 
 #endif

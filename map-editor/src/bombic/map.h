@@ -10,7 +10,7 @@
 #include <QVector>
 #include <QPoint>
 #include <QRect>
-#include <QLinkedList>
+#include <QList>
 
 class BombicMapBackground;
 class BombicMapObject;
@@ -41,7 +41,7 @@ class BombicMap {
 		/// Policko mapy (souradnice v jednotkach policek).
 		typedef QPoint Field;
 		/// Seznam objektu mapy.
-		typedef QLinkedList<BombicMapObject *> ObjectListT;
+		typedef QList<BombicMapObject *> ObjectListT;
 
 		/// Test zda lze vlozit objekt do mapy.
 		bool canInsert(BombicMapObject * object,
@@ -61,6 +61,15 @@ class BombicMap {
 		BombicGeneratedObject * generatedBox(const BombicMap::Field & field);
 		/// Generovana prisera na policku.
 		BombicGeneratedObject * generatedCreature(const BombicMap::Field & field);
+
+
+		const ObjectListT & generatedBoxes();
+		const ObjectListT & generatedCreatures();
+
+		/// Nastavi pocet boxu k nahodnemu vygenerovani.
+		void setGeneratedBoxesCount(BombicMapObject * box, int count);
+		/// Nastavi pocet priser k nahodnemu vygenerovani.
+		void setGeneratedCreaturesCount(BombicMapObject * creature, int count);
 
 		/// Obdelnik mapy (v jednotkach policek).
 		const QRect & fieldsRect();
@@ -89,6 +98,14 @@ class BombicMap {
 		/// Pokusit se odblokovat generovani
 		void updateBlockGeneratingObjects(const FieldSetT & fieldSet);
 
+		void setGeneratedObjectsCount(ObjectListT & objList,
+				BombicMapObject * object, int count);
+
+		void addGeneratedMapObject(ObjectListT & objList,
+				BombicMapObject * object);
+		void removeGeneratedMapObject(ObjectListT & objList,
+				BombicMapObject * object);
+
 		/// Jmeno mapy.
 		QString name_;
 		/// Soubor, do ktereho se pripadne mapa ulozi.
@@ -96,6 +113,11 @@ class BombicMap {
 
 		/// Obdelnik mapy (v jednotkach policek).
 		QRect fieldsRect_;
+		/// Seznam generovanych beden.
+		ObjectListT generatedBoxes_;
+		/// Seznam generovanych priser.
+		ObjectListT generatedCreatures_;
+
 		/// Pozadi mapy.
 		BombicMapBackground * background_;
 

@@ -15,6 +15,13 @@ class BombicGeneratedBox: public BombicGeneratedObject {
 	public:
 		/// Konstrukce pro policko @p field.
 		BombicGeneratedBox(const BombicMap::Field & field);
+
+		/// Typ generovaneho objektu.
+		virtual BombicMapObject::Type type();
+
+		virtual bool canGenerate();
+
+		virtual void addGeneratedObject(BombicMapObject * mapObject);
 };
 
 #endif

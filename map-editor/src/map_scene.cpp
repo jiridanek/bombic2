@@ -33,6 +33,8 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 				QGraphicsScene(parent), map_(map), workingObject_(0),
 				insertionHelperItem_(new QGraphicsRectItem),
 				selectedFieldHelperItem_(new QGraphicsRectItem),
+				boxesToGenerate_(map->generatedBoxes()),
+				creaturesToGenerate_(map->generatedCreatures()),
 				mousePressed_(false), mouseClicked_(false) {
 	// set the scene
 	setSceneRect(QRect(QPoint(0, 0), map_->fieldsRect().size()*CELL_SIZE));
@@ -41,6 +43,13 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	insertBackgroundFields();
 	// map objects
 	insertObjectsGraphicsItems();
+
+	initFieldsToGenerateObjects();
+
+	generateObjects();
+
+	// connect map to scene
+	// TODO connect(map,
 
 	// connect palette to scene
 	connect(MAP_OBJECT_PALETTE, SIGNAL(objectUnselected()),
@@ -85,13 +94,10 @@ void MapScene::insertObjectsGraphicsItems() {
 		for(f.ry() = mapRect.top() ;
 				f.y() <= mapRect.bottom() ; ++f.ry()) {
 			// generated items
-			QGraphicsItem * item =
-				map_->generatedBox(f)->graphicsItem();
-			item->setZValue(sceneRect().height()+0.5);
-			addItem(item);
-			item = map_->generatedCreature(f)->graphicsItem();
-			item->setZValue(sceneRect().height()+0.55);
-			addItem(item);
+			insertGeneratedObjectItem(
+				map_->generatedBox(f), 0.5 );
+			insertGeneratedObjectItem(
+				map_->generatedCreature(f), 0.55 );
 			// stable items
 			bool wasCreature = false;
 			foreach(BombicMapObject * o, map_->objectsOnField(f)) {
@@ -109,6 +115,119 @@ void MapScene::insertObjectsGraphicsItems() {
 			}
 		}
 	}
+}
+
+void MapScene::insertGeneratedObjectItem(
+		BombicGeneratedObject * genObj, qreal zDiff) {
+
+	QGraphicsItem * item = genObj->graphicsItem();
+	item->setZValue(sceneRect().height() + zDiff);
+	addItem(item);
+}
+
+/** @details
+ */
+void MapScene::initFieldsToGenerateObjects() {
+	QRect mapRect = map_->fieldsRect();
+	for(BombicMap::Field f = mapRect.topLeft() ;
+			f.x() <= mapRect.right() ; ++f.rx()) {
+		for(f.ry() = mapRect.top() ;
+				f.y() <= mapRect.bottom() ; ++f.ry()) {
+
+			initFieldToGenerateObject(
+				map_->generatedBox(f),
+				fieldsToGenerateBoxes_,
+				SLOT(registerGeneratedBoxChange()) );
+			initFieldToGenerateObject(
+				map_->generatedCreature(f),
+				fieldsToGenerateCreatures_,
+				SLOT(registerGeneratedCreatureChange()) );
+		}
+	}
+}
+
+void MapScene::initFieldToGenerateObject(
+		BombicGeneratedObject * genObj,
+		FieldsToGenerateObjectsT & fields,
+		const char * slotMethod ) {
+
+	connect(genObj, SIGNAL(canGenerateChanged()),
+		this, slotMethod );
+	if(genObj->canGenerate()) {
+		fields.insert(genObj);
+	}
+}
+
+void MapScene::registerGeneratedBoxChange() {
+	registerGeneratedObjectChange(
+		qobject_cast<BombicGeneratedObject *>(sender()),
+		boxesToGenerate_, fieldsToGenerateBoxes_ );
+}
+
+void MapScene::registerGeneratedCreatureChange() {
+	registerGeneratedObjectChange(
+		qobject_cast<BombicGeneratedObject *>(sender()),
+		creaturesToGenerate_, fieldsToGenerateCreatures_ );
+}
+
+void MapScene::registerGeneratedObjectChange(
+		BombicGeneratedObject * genObj,
+		BombicMap::ObjectListT & objects,
+		FieldsToGenerateObjectsT & fields) {
+	if(!genObj) {
+		return;
+	}
+	if(genObj->canGenerate()) {
+		fields.insert(genObj);
+	} else {
+		fields.remove(genObj);
+	}
+	generateObjects(objects, fields);
+}
+
+void MapScene::generateObjects() {
+	generateObjects(boxesToGenerate_, fieldsToGenerateBoxes_);
+	generateObjects(creaturesToGenerate_, fieldsToGenerateCreatures_);
+}
+
+void MapScene::generateObjects(
+		BombicMap::ObjectListT & objects,
+		FieldsToGenerateObjectsT & fields) {
+	while(!objects.isEmpty() && !fields.isEmpty()) {
+		BombicMapObject * mapObj = takeRandomObject(objects);
+		BombicGeneratedObject * genObj = takeRandomField(fields);
+		QGraphicsItem * gi = mapObj->situateGraphicsItem(
+			genObj->field()*CELL_SIZE);
+		if(gi->scene() != this) {
+			addItem(gi);
+		}
+		genObj->addGeneratedObject(mapObj);
+	}
+}
+
+BombicGeneratedObject * MapScene::takeRandomField(
+		FieldsToGenerateObjectsT & fields) {
+	if(fields.isEmpty()) {
+		return 0;
+	}
+	FieldsToGenerateObjectsT::iterator it =
+		fields.begin();
+	for(int r = qrand() % fields.size() ; r > 0 ; --r) {
+		// iterate to the r-th item
+		++it;
+	}
+	BombicGeneratedObject * obj = *it;
+	fields.erase(it);
+	return obj;
+}
+
+BombicMapObject * MapScene::takeRandomObject(
+		BombicMap::ObjectListT & objects) {
+	if(objects.isEmpty()) {
+		return 0;
+	}
+	int r = qrand() % objects.size();
+	return objects.takeAt(r);
 }
 
 /** @details

@@ -9,6 +9,7 @@
 #include <QGraphicsScene>
 #include <QPointF>
 #include <QRect>
+#include <QSet>
 
 #include "bombic/map.h"
 
@@ -16,6 +17,7 @@ class MapFieldView;
 class QGraphicsRectItem;
 class BombicMapBackground;
 class BombicMapObject;
+class BombicGeneratedObject;
 
 /** Scena (vyzobrazeni) mapy a interakce s uzivatelem.
  * Scena mapy je zobrazena v MapView, zpracovava uzivateluv vstup
@@ -47,6 +49,10 @@ class MapScene: public QGraphicsScene {
 		void unsetWorkingObject();
 		/// Schovat pracovni objekt.
 		void hideWorkingObject();
+
+
+		void registerGeneratedBoxChange();
+		void registerGeneratedCreatureChange();
 
 	protected:
 		/// Handler pohybu mysi.
@@ -90,6 +96,42 @@ class MapScene: public QGraphicsScene {
 		/// Vlozit zastupce generovanych objektu.
 		void insertObjectsGraphicsItems();
 
+		typedef QSet<BombicGeneratedObject *> FieldsToGenerateObjectsT;
+
+
+
+
+
+void insertGeneratedObjectItem(
+		BombicGeneratedObject * genObj, qreal zDiff);
+void initFieldsToGenerateObjects();
+void initFieldToGenerateObject(
+		BombicGeneratedObject * genObj,
+		FieldsToGenerateObjectsT & fields,
+		const char * slotMethod );
+void registerGeneratedObjectChange(
+		BombicGeneratedObject * genObj,
+		BombicMap::ObjectListT & objects,
+		FieldsToGenerateObjectsT & fields);
+void generateObjects();
+void generateObjects(
+		BombicMap::ObjectListT & objects,
+		FieldsToGenerateObjectsT & fields);
+BombicGeneratedObject * takeRandomField(FieldsToGenerateObjectsT & fields);
+BombicMapObject * takeRandomObject(BombicMap::ObjectListT & objects);
+
+
+
+
+
+
+
+
+
+
+
+
+
 		/// Umisti prisery na policku, aby nebyly uplne v zakrytu.
 		void sortCreatureGraphics(const BombicMap::Field & field);
 
@@ -113,6 +155,13 @@ class MapScene: public QGraphicsScene {
 		/// Vybrane (oznacene) policko.
 		BombicMap::Field selectedField_;
 		#define MAP_SCENE_FIELD_NOT_SELECTED BombicMap::Field(-1, -1);
+
+		BombicMap::ObjectListT boxesToGenerate_;
+		BombicMap::ObjectListT creaturesToGenerate_;
+
+		FieldsToGenerateObjectsT fieldsToGenerateBoxes_;
+		FieldsToGenerateObjectsT fieldsToGenerateCreatures_;
+
 		/// Zda-li je aktualne stisknuto tlacitko mysi,
 		/// na ktere se da navazat uvolnenim za vzniku kliknuti.
 		bool mousePressed_;
