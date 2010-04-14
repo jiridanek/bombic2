@@ -13,6 +13,7 @@
  */
 
 #include <QApplication>
+#include <QDateTime>
 #include <QWidget>
 #include <QGridLayout>
 #include <QSplitter>
@@ -36,6 +37,9 @@ int main(int argc, char *argv[]) {
 
 	QWidget * win = new QWidget;
 	QGridLayout * winLayout = new QGridLayout(win);
+
+	// vytvorit nahodnou posloupnost
+	qsrand( QDateTime::currentDateTime().toTime_t() );
 
 	// konstrukce singletonu
 	new ResourceHandler(win);

@@ -27,7 +27,7 @@ class BombicGeneratedObject: public QObject {
 
 	public:
 		/// Konstrukce.
-		BombicGeneratedObject(const BombicMap::Field);
+		BombicGeneratedObject(const BombicMap::Field & field);
 		/// Destrukce.
 		~BombicGeneratedObject();
 
@@ -43,23 +43,25 @@ class BombicGeneratedObject: public QObject {
 
 		const BombicMap::Field & field();
 
-		/// Jestli je mozne generovat.
+		/// Jestli je mozne generovat dalsi objekt.
 		virtual bool canGenerate();
 
 		virtual void addGeneratedObject(BombicMapObject * mapObject);
 
-		BombicMapObject * takeGeneratedObject();
+		void removeGeneratedObjects();
+
+		const BombicMap::ObjectListT & generatedObjects();
+
+		/// Jestli objekt aktualne blokuje generovani beden.
+		virtual bool blocksBoxGenerating();
+		/// Jestli objekt aktualne blokuje generovani priser.
+		virtual bool blocksCreatureGenerating();
 
 	public slots:
 		/// Zobrazit popisek generovani.
-		void showLabel();
+		void show();
 		/// Skryt popisek generovani.
-		void hideLabel();
-
-		/// Zobrazit popisek generovani.
-		void showObject();
-		/// Skryt popisek generovani.
-		void hideObject();
+		void hide();
 
 		/// Blokovat generovani.
 		void block();
@@ -78,8 +80,9 @@ class BombicGeneratedObject: public QObject {
 		void setAllowance(bool allow);
 
 	signals:
+		/// Zmeneno zda lze generovat dalsi objekt.
 		void canGenerateChanged();
-		void discardingGenerated(BombicMapObject * object);
+		void removingGeneratedObject(BombicMapObject * object);
 
 	protected:
 		/// Nastavit pozici grafickeho prvku.
@@ -96,12 +99,10 @@ class BombicGeneratedObject: public QObject {
 		QGraphicsItem * labelGI_;
 
 		/// Seznam generovanych objektu.
-		QList<BombicMapObject *> generatedObjects_;
+		BombicMap::ObjectListT generatedObjects_;
 
 		/// Jestli je vizualizace popisku generovani skryta.
-		bool labelHidden_;
-		/// Jestli je vizualizace generovanych objektu skryta.
-		bool objectHidden_;
+		bool hidden_;
 
 		/// Jestli je generovani blokovano jinym objektem.
 		bool blocked_;

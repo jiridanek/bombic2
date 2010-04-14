@@ -1,6 +1,7 @@
 
 #include "map_scene.h"
 
+#include <QDebug>
 #include <QBrush>
 #include <QPen>
 #include <QGraphicsItem>
@@ -35,7 +36,8 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 				selectedFieldHelperItem_(new QGraphicsRectItem),
 				boxesToGenerate_(map->generatedBoxes()),
 				creaturesToGenerate_(map->generatedCreatures()),
-				mousePressed_(false), mouseClicked_(false) {
+				mousePressed_(false), mouseClicked_(false),
+				doObjectGenerating_(true) {
 	// set the scene
 	setSceneRect(QRect(QPoint(0, 0), map_->fieldsRect().size()*CELL_SIZE));
 	setBackgroundBrush(map_->background()->ambientColor());
@@ -68,51 +70,49 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	MAP_OBJECT_PALETTE->unselectObject();
 }
 
+#define MAP_SCENE_FOREACH_MAP_FIELD(field) \
+	for(BombicMap::Field field = map_->fieldsRect().topLeft() ; \
+			field.x() <= map_->fieldsRect().right() ; \
+			++field.rx()) \
+		for(field.ry() = map_->fieldsRect().top() ; \
+				field.y() <= map_->fieldsRect().bottom() ; \
+				++field.ry())
+
 /** @details
  * @param texture textura pozadi mapy
  */
 void MapScene::insertBackgroundFields() {
-	QRect mapRect = map_->fieldsRect();
 	QPixmap texture = map_->background()->texture();
-	for(BombicMap::Field f = mapRect.topLeft() ;
-			f.x() <= mapRect.right() ; ++f.rx()) {
-		for(f.ry() = mapRect.top() ;
-				f.y() <= mapRect.bottom() ; ++f.ry()) {
-			QGraphicsItem * bgItem = addPixmap(texture);
-			bgItem->setPos(f*CELL_SIZE);
-			bgItem->setZValue(-1);
-		}
+	MAP_SCENE_FOREACH_MAP_FIELD(f) {
+		QGraphicsItem * bgItem = addPixmap(texture);
+		bgItem->setPos(f*CELL_SIZE);
+		bgItem->setZValue(-1);
 	}
 }
 
 /** @details
  */
 void MapScene::insertObjectsGraphicsItems() {
-	QRect mapRect = map_->fieldsRect();
-	for(BombicMap::Field f = mapRect.topLeft() ;
-			f.x() <= mapRect.right() ; ++f.rx()) {
-		for(f.ry() = mapRect.top() ;
-				f.y() <= mapRect.bottom() ; ++f.ry()) {
-			// generated items
-			insertGeneratedObjectItem(
-				map_->generatedBox(f), 0.5 );
-			insertGeneratedObjectItem(
-				map_->generatedCreature(f), 0.55 );
-			// stable items
-			bool wasCreature = false;
-			foreach(BombicMapObject * o, map_->objectsOnField(f)) {
-				if(o->graphicsItem()->scene()!=this) {
-					// item is not in this scene
-					addItem(o->situateGraphicsItem(
-						f*CELL_SIZE ));
-				}
-				if(o->type() == BombicMapObject::Creature) {
-					wasCreature = true;
-				}
+	MAP_SCENE_FOREACH_MAP_FIELD(f) {
+		// generated items
+		insertGeneratedObjectItem(
+			map_->generatedBox(f), 0.5 );
+		insertGeneratedObjectItem(
+			map_->generatedCreature(f), 0.55 );
+		// stable items
+		bool wasCreature = false;
+		foreach(BombicMapObject * o, map_->objectsOnField(f)) {
+			if(o->graphicsItem()->scene()!=this) {
+				// item is not in this scene
+				addItem(o->situateGraphicsItem(
+					f*CELL_SIZE ));
 			}
-			if(wasCreature) {
-				sortCreatureGraphics(f);
+			if(o->type() == BombicMapObject::Creature) {
+				wasCreature = true;
 			}
+		}
+		if(wasCreature) {
+			sortCreatureGraphics(f);
 		}
 	}
 }
@@ -128,31 +128,30 @@ void MapScene::insertGeneratedObjectItem(
 /** @details
  */
 void MapScene::initFieldsToGenerateObjects() {
-	QRect mapRect = map_->fieldsRect();
-	for(BombicMap::Field f = mapRect.topLeft() ;
-			f.x() <= mapRect.right() ; ++f.rx()) {
-		for(f.ry() = mapRect.top() ;
-				f.y() <= mapRect.bottom() ; ++f.ry()) {
-
-			initFieldToGenerateObject(
-				map_->generatedBox(f),
-				fieldsToGenerateBoxes_,
-				SLOT(registerGeneratedBoxChange()) );
-			initFieldToGenerateObject(
-				map_->generatedCreature(f),
-				fieldsToGenerateCreatures_,
-				SLOT(registerGeneratedCreatureChange()) );
-		}
+	MAP_SCENE_FOREACH_MAP_FIELD(f) {
+		initFieldToGenerateObject(
+			map_->generatedBox(f),
+			fieldsToGenerateBoxes_,
+			SLOT(registerGeneratedBoxChange()),
+			SLOT(addGeneratedBox(BombicMapObject *)) );
+		initFieldToGenerateObject(
+			map_->generatedCreature(f),
+			fieldsToGenerateCreatures_,
+			SLOT(registerGeneratedCreatureChange()),
+			SLOT(addGeneratedCreature(BombicMapObject *)) );
 	}
 }
 
 void MapScene::initFieldToGenerateObject(
 		BombicGeneratedObject * genObj,
 		FieldsToGenerateObjectsT & fields,
-		const char * slotMethod ) {
+		const char * registerGeneratedObjectChangeMethod,
+		const char * addGeneratedObjectMethod ) {
 
 	connect(genObj, SIGNAL(canGenerateChanged()),
-		this, slotMethod );
+		this, registerGeneratedObjectChangeMethod );
+	connect(genObj, SIGNAL(removingGeneratedObject(BombicMapObject *)),
+		this, addGeneratedObjectMethod );
 	if(genObj->canGenerate()) {
 		fields.insert(genObj);
 	}
@@ -179,10 +178,48 @@ void MapScene::registerGeneratedObjectChange(
 	}
 	if(genObj->canGenerate()) {
 		fields.insert(genObj);
+		generateObjects(objects, fields);
 	} else {
 		fields.remove(genObj);
 	}
+}
+
+void MapScene::addGeneratedBox(BombicMapObject * mapObj) {
+	addGeneratedObject( mapObj,
+		boxesToGenerate_, fieldsToGenerateBoxes_ );
+}
+void MapScene::addGeneratedCreature(BombicMapObject * mapObj) {
+	addGeneratedObject( mapObj,
+		creaturesToGenerate_, fieldsToGenerateCreatures_ );
+}
+
+void MapScene::addGeneratedObject( BombicMapObject * mapObj,
+		BombicMap::ObjectListT & objects,
+		FieldsToGenerateObjectsT & fields) {
+	// if the object was in map - update the old field
+	// if no - some other field will be updated but it doesn't matter
+	map_->updateBlockGeneratingObjects(mapObj->field());
+
+	objects.append(mapObj);
 	generateObjects(objects, fields);
+}
+
+void MapScene::toggleObjectGenerating() {
+	doObjectGenerating_ = !doObjectGenerating_;
+	if(doObjectGenerating_) {
+		generateObjects();
+	} else {
+		removeGeneratedObjectsFromMap();
+	}
+}
+
+void MapScene::removeGeneratedObjectsFromMap() {
+	MAP_SCENE_FOREACH_MAP_FIELD(f) {
+		map_->generatedBox(f)
+			->removeGeneratedObjects();
+		map_->generatedCreature(f)
+			->removeGeneratedObjects();
+	}
 }
 
 void MapScene::generateObjects() {
@@ -193,19 +230,27 @@ void MapScene::generateObjects() {
 void MapScene::generateObjects(
 		BombicMap::ObjectListT & objects,
 		FieldsToGenerateObjectsT & fields) {
+
+	if(!doObjectGenerating_) {
+		return;
+	}
+
 	while(!objects.isEmpty() && !fields.isEmpty()) {
 		BombicMapObject * mapObj = takeRandomObject(objects);
-		BombicGeneratedObject * genObj = takeRandomField(fields);
+		BombicGeneratedObject * genObj = getRandomField(fields);
 		QGraphicsItem * gi = mapObj->situateGraphicsItem(
 			genObj->field()*CELL_SIZE);
 		if(gi->scene() != this) {
 			addItem(gi);
 		}
 		genObj->addGeneratedObject(mapObj);
+		map_->updateBlockGeneratingObjects(mapObj->field());
+		if(mapObj->type() == BombicMapObject::Creature) {
+			sortCreatureGraphics(mapObj->field());
+		}
 	}
 }
-
-BombicGeneratedObject * MapScene::takeRandomField(
+BombicGeneratedObject * MapScene::getRandomField(
 		FieldsToGenerateObjectsT & fields) {
 	if(fields.isEmpty()) {
 		return 0;
@@ -216,9 +261,7 @@ BombicGeneratedObject * MapScene::takeRandomField(
 		// iterate to the r-th item
 		++it;
 	}
-	BombicGeneratedObject * obj = *it;
-	fields.erase(it);
-	return obj;
+	return *it;
 }
 
 BombicMapObject * MapScene::takeRandomObject(
@@ -327,21 +370,25 @@ void MapScene::remove(BombicMapObject * object) {
  * @param field policko mapy, pro ktere chceme rozestaveni udelat
  */
 void MapScene::sortCreatureGraphics(const BombicMap::Field & field) {
-	// get creatures on field
 	BombicMap::ObjectListT creatures;
-	int creaturesCount = 0;
+	// get generated creatures on field
+	foreach(BombicMapObject * o, map_->generatedCreature(field)
+			->generatedObjects()) {
+		creatures.append(o);
+	}
+	// get placed creatures on field
 	foreach(BombicMapObject * o, map_->objectsOnField(field)) {
 		if(o->type() == BombicMapObject::Creature) {
-			++creaturesCount;
 			creatures.append(o);
 		}
 	}
-	if(!creaturesCount) {
+
+	if(creatures.isEmpty()) {
 		return;
 	}
 	// top whole part of half of count
 	// count of creatures in one direction
-	qreal halfCount = (creaturesCount+1)/2;
+	qreal halfCount = (creatures.size()+1)/2;
 	// maximal difference in one direction
 	qreal maxDiff = qMin(halfCount*2.0, CELL_SIZE/4.0);
 	// step from one to another creature

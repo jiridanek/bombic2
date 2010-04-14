@@ -54,6 +54,10 @@ class MapScene: public QGraphicsScene {
 		void registerGeneratedBoxChange();
 		void registerGeneratedCreatureChange();
 
+		void addGeneratedBox(BombicMapObject * mapObj);
+		void addGeneratedCreature(BombicMapObject * mapObj);
+
+		void toggleObjectGenerating();
 	protected:
 		/// Handler pohybu mysi.
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
@@ -96,6 +100,8 @@ class MapScene: public QGraphicsScene {
 		/// Vlozit zastupce generovanych objektu.
 		void insertObjectsGraphicsItems();
 
+		void removeGeneratedObjectsFromMap();
+
 		typedef QSet<BombicGeneratedObject *> FieldsToGenerateObjectsT;
 
 
@@ -108,16 +114,21 @@ void initFieldsToGenerateObjects();
 void initFieldToGenerateObject(
 		BombicGeneratedObject * genObj,
 		FieldsToGenerateObjectsT & fields,
-		const char * slotMethod );
+		const char * registerGeneratedObjectChangeMethod,
+		const char * addGeneratedObjectMethod );
 void registerGeneratedObjectChange(
 		BombicGeneratedObject * genObj,
 		BombicMap::ObjectListT & objects,
 		FieldsToGenerateObjectsT & fields);
+void addGeneratedObject( BombicMapObject * mapObj,
+		BombicMap::ObjectListT & objects,
+		FieldsToGenerateObjectsT & fields);
+
 void generateObjects();
 void generateObjects(
 		BombicMap::ObjectListT & objects,
 		FieldsToGenerateObjectsT & fields);
-BombicGeneratedObject * takeRandomField(FieldsToGenerateObjectsT & fields);
+BombicGeneratedObject * getRandomField(FieldsToGenerateObjectsT & fields);
 BombicMapObject * takeRandomObject(BombicMap::ObjectListT & objects);
 
 
@@ -167,6 +178,9 @@ BombicMapObject * takeRandomObject(BombicMap::ObjectListT & objects);
 		bool mousePressed_;
 		/// Zda-li bylo nevyuzite kliknuti za vzniku dvojkliku.
 		bool mouseClicked_;
+
+		/// Zda-li se maji (nebo spis nemaji) generovat objekty.
+		bool doObjectGenerating_;
 };
 
 #endif

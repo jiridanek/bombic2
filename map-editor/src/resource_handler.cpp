@@ -40,7 +40,7 @@ BombicMap * ResourceHandler::loadMap() {
  * @return Nove alokovana prazdna mapa s pozadim.
  */
 BombicMap * ResourceHandler::loadEmptyMap() {
-	return loadMap("map_concrete_rings");
+	return loadMap("map_concrete_2");
 	BombicMapBackground * defaultBg =
 		loadMapBackground(DEFAULT_MAP_BACKGROUND);
 	if(!defaultBg) {
@@ -234,7 +234,7 @@ bool ResourceHandler::loadMapCreatures(const QDomElement & creaturesEl,
 			return false;
 		}
 		if(randomGenerated > 0) {
-			map->setGeneratedBoxesCount(obj, randomGenerated);
+			map->setGeneratedCreaturesCount(obj, randomGenerated);
 		}
 	}
 	// all creatures loaded

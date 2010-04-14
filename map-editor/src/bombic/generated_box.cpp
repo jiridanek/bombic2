@@ -36,3 +36,7 @@ void BombicGeneratedBox::addGeneratedObject(BombicMapObject * mapObject) {
 	BombicGeneratedObject::addGeneratedObject(mapObject);
 	emit canGenerateChanged();
 }
+
+bool BombicGeneratedBox::blocksCreatureGenerating() {
+	return !generatedObjects_.isEmpty();
+}

@@ -22,6 +22,9 @@ class BombicGeneratedBox: public BombicGeneratedObject {
 		virtual bool canGenerate();
 
 		virtual void addGeneratedObject(BombicMapObject * mapObject);
+
+		/// Jestli objekt aktualne blokuje generovani priser.
+		virtual bool blocksCreatureGenerating();
 };
 
 #endif

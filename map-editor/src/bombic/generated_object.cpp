@@ -9,10 +9,9 @@
  * Graficky prvek do sceny by mel byt alokovan v potomcich
  * teto tridy.
  */
-BombicGeneratedObject::BombicGeneratedObject(const BombicMap::Field field):
+BombicGeneratedObject::BombicGeneratedObject(const BombicMap::Field & field):
 		field_(field), labelGI_(0),
-		labelHidden_(false), objectHidden_(false),
-		blocked_(false), allowed_(true) {
+		hidden_(false), blocked_(false), allowed_(true) {
 
 }
 
@@ -23,31 +22,17 @@ BombicGeneratedObject::~BombicGeneratedObject() {
 	delete labelGI_;
 }
 
-void BombicGeneratedObject::showLabel() {
-	if(labelHidden_) {
-		labelHidden_ = false;
+void BombicGeneratedObject::show() {
+	if(hidden_) {
+		hidden_ = false;
 		updateLabelVisibility();
 	}
 }
 
-void BombicGeneratedObject::hideLabel() {
-	if(!labelHidden_) {
-		labelHidden_ = true;
+void BombicGeneratedObject::hide() {
+	if(!hidden_) {
+		hidden_ = true;
 		updateLabelVisibility();
-	}
-}
-
-void BombicGeneratedObject::showObject() {
-	if(objectHidden_) {
-		objectHidden_ = false;
-		updateObjectsVisibility();
-	}
-}
-
-void BombicGeneratedObject::hideObject() {
-	if(!objectHidden_) {
-		objectHidden_ = true;
-		updateObjectsVisibility();
 	}
 }
 
@@ -57,23 +42,6 @@ void BombicGeneratedObject::block() {
 
 void BombicGeneratedObject::unblock() {
 	setBlocking(false);
-}
-
-/**
- * @param block zda se ma generovani blokovat
- */
-void BombicGeneratedObject::setBlocking(bool block) {
-	if(block == blocked_) {
-		return;
-	}
-	blocked_ = block;
-	if(blocked_ == !canGenerate()) {
-		updateLabelVisibility();
-		if(!canGenerate()) {
-			// TODO discardGenerated();
-		}
-		emit canGenerateChanged();
-	}
 }
 
 void BombicGeneratedObject::allow() {
@@ -89,6 +57,18 @@ void BombicGeneratedObject::toggleAllowance() {
 }
 
 /**
+ * @param block zda se ma generovani blokovat
+ */
+void BombicGeneratedObject::setBlocking(bool block) {
+	if(block == blocked_) {
+		return;
+	}
+	blocked_ = block;
+	updateLabelVisibility();
+	removeGeneratedObjects();
+}
+
+/**
  * @param allow zda se ma generovani povolit
  */
 void BombicGeneratedObject::setAllowance(bool allow) {
@@ -96,13 +76,8 @@ void BombicGeneratedObject::setAllowance(bool allow) {
 		return;
 	}
 	allowed_ = allow;
-	if(allowed_ == canGenerate()) {
-		updateLabelVisibility();
-		if(!canGenerate()) {
-			// TODO discardGenerated();
-		}
-		emit canGenerateChanged();
-	}
+	updateLabelVisibility();
+	removeGeneratedObjects();
 }
 
 /**
@@ -129,18 +104,20 @@ bool BombicGeneratedObject::canGenerate() {
 /**
  */
 void BombicGeneratedObject::addGeneratedObject(BombicMapObject * mapObject) {
+	mapObject->setField(field_);
+	mapObject->graphicsItem()->show();
 	generatedObjects_.append(mapObject);
-	updateObjectsVisibility();
 }
 
-BombicMapObject * BombicGeneratedObject::takeGeneratedObject() {
-	if(generatedObjects_.isEmpty()) {
-		return 0;
-	} else {
-		BombicMapObject * o = generatedObjects_.takeLast();
+
+void BombicGeneratedObject::removeGeneratedObjects() {
+	while(!generatedObjects_.isEmpty()) {
+		BombicMapObject * o = generatedObjects_.takeFirst();
 		o->graphicsItem()->hide();
-		return o;
+		emit removingGeneratedObject(o);
 	}
+
+	emit canGenerateChanged();
 }
 
 /**
@@ -155,6 +132,13 @@ QGraphicsItem * BombicGeneratedObject::graphicsItem() {
  */
 const BombicMap::Field & BombicGeneratedObject::field() {
 	return field_;
+}
+
+/** TODO
+ * @return Graficky prvek vizualizace do sceny.
+ */
+const BombicMap::ObjectListT & BombicGeneratedObject::generatedObjects() {
+	return generatedObjects_;
 }
 
 /** @details
@@ -175,11 +159,12 @@ void BombicGeneratedObject::setLabelPos() {
  */
 void BombicGeneratedObject::updateLabelVisibility() {
 	labelGI_->setVisible(
-		!labelHidden_ && canGenerate() );
+		!hidden_ && allowed_ && !blocked_);
 }
 
-void BombicGeneratedObject::updateObjectsVisibility() {
-	foreach(BombicMapObject * o, generatedObjects_) {
-		o->graphicsItem()->setVisible(!objectHidden_);
-	}
+bool BombicGeneratedObject::blocksBoxGenerating() {
+	return false;
+}
+bool BombicGeneratedObject::blocksCreatureGenerating() {
+	return false;
 }

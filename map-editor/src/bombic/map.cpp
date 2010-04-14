@@ -202,10 +202,21 @@ void BombicMap::remove(BombicMapObject * object) {
 	}
 }
 
+void BombicMap::updateBlockGeneratingObjects(const Field & field) {
+	if(fieldsRect_.contains(field)) {
+		updateBlockGeneratingObjects(
+			fields_[field.x()][field.y()]);
+	}
+}
+
 void BombicMap::updateBlockGeneratingObjects(const FieldSetT & fieldSet) {
-	// unblock generating labels if there isn̈́'t blocker
-	bool blockBoxGenerating = false;
-	bool blockCreatureGenerating = false;
+	// check if some generator is blocking some other one
+	bool blockBoxGenerating =
+		fieldSet.genBox->blocksBoxGenerating() ||
+		fieldSet.genCreature->blocksBoxGenerating();
+	bool blockCreatureGenerating =
+		fieldSet.genBox->blocksCreatureGenerating() ||
+		fieldSet.genCreature->blocksCreatureGenerating();
 	// find the blocker
 	foreach(BombicMapObject * o, fieldSet.objList) {
 		if(o->blocksBoxGenerating()) {

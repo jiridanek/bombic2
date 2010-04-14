@@ -62,7 +62,6 @@ class BombicMap {
 		/// Generovana prisera na policku.
 		BombicGeneratedObject * generatedCreature(const BombicMap::Field & field);
 
-
 		const ObjectListT & generatedBoxes();
 		const ObjectListT & generatedCreatures();
 
@@ -70,6 +69,8 @@ class BombicMap {
 		void setGeneratedBoxesCount(BombicMapObject * box, int count);
 		/// Nastavi pocet priser k nahodnemu vygenerovani.
 		void setGeneratedCreaturesCount(BombicMapObject * creature, int count);
+
+		void updateBlockGeneratingObjects(const Field & field);
 
 		/// Obdelnik mapy (v jednotkach policek).
 		const QRect & fieldsRect();

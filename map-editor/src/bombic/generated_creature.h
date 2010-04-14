@@ -18,6 +18,7 @@ class BombicGeneratedCreature: public BombicGeneratedObject {
 
 		/// Typ generovaneho objektu.
 		virtual BombicMapObject::Type type();
+
 };
 
 #endif
