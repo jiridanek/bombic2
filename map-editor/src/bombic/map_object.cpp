@@ -153,3 +153,15 @@ bool BombicMapObject::canBeRemoved() {
 	return true;
 }
 
+/** @details
+ * Razeni na policku znamena, ze objekt bude mirne vychylen z jeho
+ * normalni pozice na policku, aby nebyl v zakrytu jineho objektu
+ * na tomtez policku. To je zejmena pouzitelne u objektu, kterych
+ * muze byt na policku najednou vice.
+ * Objekt muze byt ale vychylen i kdyz je na policku sam.
+ * Defaultne objekt nema byt razen.
+ * @return Zda ma byt na policku razen.
+ */
+bool BombicMapObject::sortOnField() {
+	return false;
+}

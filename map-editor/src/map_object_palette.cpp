@@ -114,6 +114,13 @@ BombicMapObject * MapObjectPalette::getObject(const QString & objectName) {
  * @param object pointer na vkladany objekt
  */
 void MapObjectPalette::addObject(BombicMapObject * object) {
+	// add object to the pallete
+	int objectPaletteIndex = objectPalette_.size();
+	objectPalette_.append(object);
+	objectIndexesByName_.insert(
+		object->name(), objectPaletteIndex);
+
+	// find the page
 	Page page;
 	switch(object->type()) {
 		case BombicMapObject::Wall:
@@ -128,36 +135,32 @@ void MapObjectPalette::addObject(BombicMapObject * object) {
 		case BombicMapObject::Floorobject:
 			page = floorobjectPage;
 			break;
+		case BombicMapObject::Player:
+			// nothing to do with player
+			// user cannot see it as button in palette
+			return;
 		default:
-			QMessageBox::critical(this,
-				tr("Error in Bombic object palette"),
-				tr("Object has unexpected type and cannot"
-					" be added to the object palette.")+"\n"+
-				tr("It's going to be deleted.") );
-			delete object;
+			Q_ASSERT_X(false, "MapObjectPalette::addObject",
+				"adding unexpected object type");
 			return;
 	}
 
-	QIcon buttonIcon(object->pixmap());
-
+	// create object button
 	QPushButton * objectButton = new QPushButton;
 	objectButton->setCheckable(true);
 
+	QIcon buttonIcon(object->pixmap());
 	objectButton->setIcon(buttonIcon);
 	objectButton->setIconSize(object->pixmap().size());
-
-	int objectPaletteIndex = objectPalette_.size();
-	objectPalette_.append(object);
-	objectIndexesByName_.insert(
-		object->name(), objectPaletteIndex);
 
 	connect(objectButton, SIGNAL(clicked()),
 		signalMapper_, SLOT(map()));
 	signalMapper_->setMapping(objectButton, objectPaletteIndex);
 
+	// add button to the tab page
 	tabs_.layouts.value(page)->addWidget(objectButton);
 	tabs_.widget->setCurrentIndex(page);
-
+	// and select it to future use
 	selectObject(objectPaletteIndex);
 	objectButton->setChecked(true);
 }
@@ -184,6 +187,7 @@ void MapObjectPalette::objectButtonClicked(int objectPaletteIndex) {
  */
 void MapObjectPalette::selectObject(int objectPaletteIndex) {
 	if(selectedObjectIndex_!=PALETTE_INDEX_INVALID) {
+		// unselect old selected object
 		getObjectButton(selectedObjectIndex_)
 			->setChecked(false);
 	}
@@ -195,13 +199,21 @@ void MapObjectPalette::selectObject(int objectPaletteIndex) {
  * @param objectName jmeno objektu pro vyber
  */
 void MapObjectPalette::selectObject(const QString & objectName) {
-	if(objectIndexesByName_.contains(objectName)) {
-		int objectPaletteIndex =
-			objectIndexesByName_.value(objectName);
-		selectObject(objectPaletteIndex);
-		getObjectButton(objectPaletteIndex)
-			->setChecked(true);
+	if(!objectIndexesByName_.contains(objectName)) {
+		// cant select object outside palette
+		return;
 	}
+	int objectPaletteIndex =
+		objectIndexesByName_.value(objectName);
+	QPushButton * button =
+		getObjectButton(objectPaletteIndex);
+	if(!button) {
+		// cant select object without button
+		return;
+	}
+
+	selectObject(objectPaletteIndex);
+	button->setChecked(true);
 }
 
 /** @details

@@ -30,6 +30,9 @@ class BombicCreature: public BombicMapObject {
 		virtual bool canBeWith(BombicMapObject * object);
 		/// Jestli objekt blokuje generovani priser.
 		virtual bool blocksCreatureGenerating();
+		/// Jestli ma byt objekt na policku razen.
+		virtual bool sortOnField();
+
 };
 
 #endif

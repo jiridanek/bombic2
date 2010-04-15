@@ -123,7 +123,7 @@ void MapScene::insertObjectsGraphicsItems() {
 					f*CELL_SIZE ));
 			}
 		}
-		sortCreatureGraphics(f);
+		sortGraphicsOnField(f);
 	}
 }
 
@@ -372,7 +372,7 @@ void MapScene::generateObjects(
 		map_->updateGeneratorsBlocking(mapObj->field());
 
 		if(mapObj->type() == BombicMapObject::Creature) {
-			sortCreatureGraphics(mapObj->field());
+			sortGraphicsOnField(mapObj->field());
 		}
 	}
 }
@@ -485,7 +485,7 @@ void MapScene::insert(BombicMapObject * object,
 	addItem(object->situateGraphicsItem( dstField*CELL_SIZE ));
 	// update graphics items sorting
 	if(object->type() == BombicMapObject::Creature) {
-		sortCreatureGraphics(dstField);
+		sortGraphicsOnField(dstField);
 	}
 }
 
@@ -501,36 +501,36 @@ void MapScene::remove(BombicMapObject * object) {
 	map_->remove(object);
 
 	if(object->type() == BombicMapObject::Creature) {
-		sortCreatureGraphics(objField);
+		sortGraphicsOnField(objField);
 	}
 }
 
 /** @details
- * Kdybychom povolili vkladani vice stejnych priser na jedno policko
- * a dale nic neresili, budou prisery na policku v zakrytu a nebu ani trochu
- * patrne, kolik asi jich tam je. Tato fce napomuze tento problem resit tim,
- * ze vychyli prisery na policku tak, aby ta co je nahore byla plne videt,
- * a ostatni v zakrytu naznacovaly, kolik jich je.
+ * Kdybychom povolili vkladani vice stejnych objektu na jedno policko
+ * a dale nic neresili, budou objekty na policku v zakrytu a nebude ani trochu
+ * patrne, kolik asi jich tam je (a ktere). Tato fce napomuze tento problem
+ * resit tim, ze vychyli objekty na policku tak, aby ta co je nahore
+ * byla plne videt, a ostatni v zakrytu naznacovaly, kolik jich je.
  * @param field policko mapy, pro ktere chceme rozestaveni udelat
  */
-void MapScene::sortCreatureGraphics(const BombicMap::Field & field) {
-	// get generated creatures on field
-	BombicMap::ObjectListT creatures(
+void MapScene::sortGraphicsOnField(const BombicMap::Field & field) {
+	// get generated creatures on field - they need to be sorted
+	BombicMap::ObjectListT objects(
 		map_->creatureGenerator(field)->generatedObjects() );
 
 	// get placed creatures on field
 	foreach(BombicMapObject * o, map_->objectsOnField(field)) {
-		if(o->type() == BombicMapObject::Creature) {
-			creatures.append(o);
+		if(o->sortOnField()) {
+			objects.append(o);
 		}
 	}
 
-	if(creatures.isEmpty()) {
+	if(objects.isEmpty()) {
 		return;
 	}
 	// top whole part of half of count
 	// count of creatures in one direction
-	qreal halfCount = (creatures.size()+1)/2;
+	qreal halfCount = (objects.size()+1)/2;
 	// maximal difference in one direction
 	qreal maxDiff = qMin(halfCount*2.0, CELL_SIZE/4.0);
 	// step from one to another creature
@@ -539,7 +539,7 @@ void MapScene::sortCreatureGraphics(const BombicMap::Field & field) {
 	qreal diff = maxDiff - step/2.0;
 	// base position on field
 	QPointF pos = field*CELL_SIZE;
-	foreach(BombicMapObject * o, creatures) {
+	foreach(BombicMapObject * o, objects) {
 		o->situateGraphicsItem(
 			pos + QPointF(diff, -diff) );
 		diff -= step;

@@ -77,6 +77,8 @@ class BombicMapObject {
 		virtual bool canBeDragged();
 		/// Jestli muze byt objekt odstranen z mapy.
 		virtual bool canBeRemoved();
+		/// Jestli ma byt objekt na policku razen.
+		virtual bool sortOnField();
 
 	protected:
 		/// Nazev.

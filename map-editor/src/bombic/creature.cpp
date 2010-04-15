@@ -83,3 +83,9 @@ bool BombicCreature::blocksCreatureGenerating() {
 	return false;
 }
 
+/**
+ * @return Zda ma byt na policku razena.
+ */
+bool BombicCreature::sortOnField() {
+	return true;
+}

@@ -154,7 +154,7 @@ class MapScene: public QGraphicsScene {
 				BombicMap::ObjectListT & objects);
 
 		/// Umisti prisery na policku, aby nebyly uplne v zakrytu.
-		void sortCreatureGraphics(const BombicMap::Field & field);
+		void sortGraphicsOnField(const BombicMap::Field & field);
 
 		/// Inicializovat pomocne prvky sceny.
 		void initHelperItems();
