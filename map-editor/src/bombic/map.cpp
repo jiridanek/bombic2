@@ -12,7 +12,7 @@
  * Nova mapa se stava vlastnikem @p background a to bude dealokovano
  * pri destrukci mapy.
  * Nove zkonstruovana mapa obsahuje pouze obvodove zdi pozadi a inicializovane
- * generoty objektu (vsechna policka povolena pro generovani).
+ * generatory objektu (vsechna policka povolena pro generovani).
  * @param width sirska mapy v polickach
  * @param height vyska mapy v polickach
  * @param background pointer na pozadi
@@ -399,7 +399,17 @@ void BombicMap::setGeneratedObjectsCount(ObjectListT & objList,
 void BombicMap::addGeneratedMapObject(ObjectListT & objList,
 		BombicMapObject * object) {
 	objList.append(object);
-	emit generatedMapObjectAdded(object);
+	switch(object->type()) {
+		case BombicMapObject::Box:
+			emit generatedBoxAdded(object);
+			break;
+		case BombicMapObject::Creature:
+			emit generatedCreatureAdded(object);
+			break;
+		default:
+			Q_ASSERT_X(false, "addGeneratedMapObject",
+				"unhandled object type");
+	}
 }
 
 /** @details
@@ -410,7 +420,17 @@ void BombicMap::addGeneratedMapObject(ObjectListT & objList,
  */
 void BombicMap::removeGeneratedMapObject(ObjectListT & objList,
 		BombicMapObject * object) {
-	emit generatedMapObjectRemoved(object);
+	switch(object->type()) {
+		case BombicMapObject::Box:
+			emit generatedBoxRemoved(object);
+			break;
+		case BombicMapObject::Creature:
+			emit generatedCreatureRemoved(object);
+			break;
+		default:
+			Q_ASSERT_X(false, "removeGeneratedMapObject",
+				"unhandled object type");
+	}
 	objList.removeAll(object);
 	delete object;
 }

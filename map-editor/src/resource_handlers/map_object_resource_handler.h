@@ -1,4 +1,4 @@
-/** @file map_object.h
+/** @file map_object_resource_handler.h
  * Obecny resource handler pro objekt mapy MapObjectResourceHandler
  * predstavuje jednotne api pro nacitani objektu mapy.
  */

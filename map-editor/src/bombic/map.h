@@ -87,11 +87,14 @@ class BombicMap: public QObject {
 		void setGeneratedCreaturesCount(BombicMapObject * creature, int count);
 
 	signals:
-		/// Pridan generovany objekt.
-		void generatedMapObjectAdded(BombicMapObject * object);
-		/// Odstranen generovany objekt.
-		void generatedMapObjectRemoved(BombicMapObject * object);
-
+		/// Pridana generovana bedna.
+		void generatedBoxAdded(BombicMapObject * object);
+		/// Pridana generovana prisera.
+		void generatedCreatureAdded(BombicMapObject * object);
+		/// Odstranena generovana bedna.
+		void generatedBoxRemoved(BombicMapObject * object);
+		/// Odstranena generovana bedna.
+		void generatedCreatureRemoved(BombicMapObject * object);
 
 	private:
 		/// Mnozina reprezentujici jedno policko.
@@ -104,7 +107,7 @@ class BombicMap: public QObject {
 			ObjectListT objList;
 		} FieldSetT;
 
-		/// Typ matice policek mapy. TODO pouzit QMatrix
+		/// Typ matice policek mapy.
 		typedef QVector< QVector< FieldSetT > > FieldsT;
 
 		/// Vlozit zdi pozadi do mapy.

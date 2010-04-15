@@ -51,7 +51,14 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	generateObjects();
 
 	// connect map to scene
-	// TODO connect(map,
+	connect(map, SIGNAL(generatedBoxAdded(BombicMapObject *)),
+		this, SLOT(addGeneratedBox(BombicMapObject *)) );
+	connect(map, SIGNAL(generatedCreatureAdded(BombicMapObject *)),
+		this, SLOT(addGeneratedCreature(BombicMapObject *)) );
+	connect(map, SIGNAL(generatedBoxRemoved(BombicMapObject *)),
+		this, SLOT(removeGeneratedBox(BombicMapObject *)) );
+	connect(map, SIGNAL(generatedCreatureRemoved(BombicMapObject *)),
+		this, SLOT(removeGeneratedCreature(BombicMapObject *)) );
 
 	// connect palette to scene
 	connect(MAP_OBJECT_PALETTE, SIGNAL(objectUnselected()),
@@ -246,6 +253,47 @@ void MapScene::addGeneratedObject( BombicMapObject * mapObj,
 	map_->updateGeneratorsBlocking(mapObj->field());
 
 	objectsToGenerate.append(mapObj);
+	generateObjects(objectsToGenerate, availableGenerators);
+}
+
+/**
+ * @param mapObj objekt, ktery ma byt odstranen
+ */
+void MapScene::removeGeneratedBox(BombicMapObject * mapObj) {
+	removeGeneratedObject( mapObj,
+		boxesToGenerate_, availableBoxGenerators_);
+}
+/**
+ * @param mapObj objekt, ktery ma byt odstranen
+ */
+void MapScene::removeGeneratedCreature(BombicMapObject * mapObj) {
+	removeGeneratedObject( mapObj,
+		creaturesToGenerate_, availableCreatureGenerators_);
+}
+
+/**
+ * @param mapObj objekt, ktery ma byt odstranen
+ * @param objectsToGenerate objekty k vygenerovani
+ * @param availableGenerators generatory, ktere mohou generovat
+ */
+void MapScene::removeGeneratedObject(BombicMapObject * mapObj,
+		BombicMap::ObjectListT & objectsToGenerate,
+		ObjectGeneratorsT & availableGenerators) {
+	if(!objectsToGenerate.contains(mapObj)) {
+		// temporally disable generating
+		bool oldDoObjectGenerating = doObjectGenerating_;
+		doObjectGenerating_ = false;
+		// the object must be generated somewhere in map
+		map_->boxGenerator(mapObj->field())
+			->removeGeneratedObjects();
+		map_->creatureGenerator(mapObj->field())
+			->removeGeneratedObjects();
+		// turn back the object generating
+		doObjectGenerating_ = oldDoObjectGenerating;
+	}
+	Q_ASSERT(objectsToGenerate.contains(mapObj));
+	objectsToGenerate.removeAll(mapObj);
+	// generate again the rest of removed
 	generateObjects(objectsToGenerate, availableGenerators);
 }
 

@@ -61,6 +61,11 @@ class MapScene: public QGraphicsScene {
 		void addGeneratedBox(BombicMapObject * mapObj);
 		/// Pridat generovanou priseru.
 		void addGeneratedCreature(BombicMapObject * mapObj);
+		/// Odstranit generovanou bednu.
+		void removeGeneratedBox(BombicMapObject * mapObj);
+		/// Odstranit generovanou priseru.
+		void removeGeneratedCreature(BombicMapObject * mapObj);
+
 		/// Prepnout, zda generovat objekty ci ne.
 		void toggleObjectGenerating();
 	protected:
@@ -129,6 +134,10 @@ class MapScene: public QGraphicsScene {
 				ObjectGeneratorsT & availableGenerators);
 		/// Pridat generovany objekt.
 		void addGeneratedObject( BombicMapObject * mapObj,
+				BombicMap::ObjectListT & objectsToGenerate,
+				ObjectGeneratorsT & availableGenerators);
+		/// Odstranit generovany objekt.
+		void removeGeneratedObject( BombicMapObject * mapObj,
 				BombicMap::ObjectListT & objectsToGenerate,
 				ObjectGeneratorsT & availableGenerators);
 		/// Generovat objekty k vygenerovani.
