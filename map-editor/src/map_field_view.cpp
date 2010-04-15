@@ -11,10 +11,10 @@
 #include "map_field_view_object.h"
 #include "map_scene.h"
 #include "bombic/map.h"
-#include "bombic/generated_object.h"
+#include "bombic/map_object_generator.h"
 
 /** @details
- * Vytvori tlacitka generovanych objektu a skrolovaci pole.
+ * Vytvori tlacitka generatoru objektu a skrolovaci pole.
  * @param parent rodicovsky widget
  */
 MapFieldView::MapFieldView(QWidget * parent):
@@ -77,7 +77,7 @@ void MapFieldView::update(MapScene * scene) {
 }
 
 /** @details
- * Odpoji oba checkboxy manipulujici s generovanymi objekty.
+ * Odpoji oba checkboxy manipulujici s generatory objektu.
  */
 void MapFieldView::disconnectCheckboxes() {
 	generateBox_->disconnect();
@@ -85,24 +85,24 @@ void MapFieldView::disconnectCheckboxes() {
 }
 
 /** @details
- * Pripoji oba checkboxy manipulujici s generovanymi objekty.
+ * Pripoji oba checkboxy manipulujici s generatory objektu.
  * @param map mapa jejiz policko chceme propojit
- * @param field policko mapy, jehoz generovane objekty chceme pripojit
+ * @param field policko mapy, jehoz generatory objektu chceme pripojit
  */
 void MapFieldView::connectCheckboxes(BombicMap * map,
 		const BombicMap::Field & field) {
-	connectCheckbox(generateBox_, map->generatedBox(field));
-	connectCheckbox(generateCreature_, map->generatedCreature(field));
+	connectCheckbox(generateBox_, map->boxGenerator(field));
+	connectCheckbox(generateCreature_, map->creatureGenerator(field));
 }
 
 /** @details
- * Nastavi a pripoji @p checkbox na generovany objekt @p genObj.
- * @param checkbox tlacitko manipulujici s generovanym objektem.
- * @param genObj generovany objekt, ktery chceme napojit na tlacitko
+ * Nastavi a pripoji @p checkbox na generator objektu @p objGen.
+ * @param checkbox tlacitko manipulujici s generatorem objektu.
+ * @param objGen generator objektu, ktery chceme napojit na tlacitko
  */
 void MapFieldView::connectCheckbox(QCheckBox * checkbox,
-		BombicGeneratedObject * genObj) {
-	checkbox->setChecked(genObj->allowed());
+		BombicMapObjectGenerator * objGen) {
+	checkbox->setChecked(objGen->allowed());
 	connect(checkbox, SIGNAL(stateChanged(int)),
-		genObj, SLOT(toggleAllowance()));
+		objGen, SLOT(toggleAllowance()));
 }

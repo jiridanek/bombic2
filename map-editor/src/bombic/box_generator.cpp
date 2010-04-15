@@ -1,5 +1,5 @@
 
-#include "generated_box.h"
+#include "box_generator.h"
 
 #include <QGraphicsSimpleTextItem>
 #include <constants.h>
@@ -9,8 +9,8 @@
  * ktery se nachazi v leve polovine tohoto policka.
  * @param field policko mapy, pro ktere chceme vizualizovat
  */
-BombicGeneratedBox::BombicGeneratedBox(const BombicMap::Field & field):
-		BombicGeneratedObject(field) {
+BombicBoxGenerator::BombicBoxGenerator(const BombicMap::Field & field):
+		BombicMapObjectGenerator(field) {
 	labelGI_ = new QGraphicsSimpleTextItem("B");
 	// TODO set font
 
@@ -20,23 +20,23 @@ BombicGeneratedBox::BombicGeneratedBox(const BombicMap::Field & field):
 /**
  * @return Typ objektu, ktery generuje.
  */
-BombicMapObject::Type BombicGeneratedBox::type() {
+BombicMapObject::Type BombicBoxGenerator::type() {
 	return BombicMapObject::Box;
 }
 
 /**
  * @return Zda lze aktualne generovat objekt.
  */
-bool BombicGeneratedBox::canGenerate() {
-	return BombicGeneratedObject::canGenerate() &&
+bool BombicBoxGenerator::canGenerate() {
+	return BombicMapObjectGenerator::canGenerate() &&
 		generatedObjects_.isEmpty();
 }
 
-void BombicGeneratedBox::addGeneratedObject(BombicMapObject * mapObject) {
-	BombicGeneratedObject::addGeneratedObject(mapObject);
+void BombicBoxGenerator::addGeneratedObject(BombicMapObject * mapObject) {
+	BombicMapObjectGenerator::addGeneratedObject(mapObject);
 	emit canGenerateChanged();
 }
 
-bool BombicGeneratedBox::blocksCreatureGenerating() {
+bool BombicBoxGenerator::blocksCreatureGenerating() {
 	return !generatedObjects_.isEmpty();
 }

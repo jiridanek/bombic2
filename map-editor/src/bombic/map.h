@@ -14,7 +14,7 @@
 
 class BombicMapBackground;
 class BombicMapObject;
-class BombicGeneratedObject;
+class BombicMapObjectGenerator;
 
 /** Mapa hry Bombic.
  * Udrzuje strukturu mapy, rozlozeni objektu mapy.
@@ -23,10 +23,9 @@ class BombicGeneratedObject;
  * V mape lze urcit, na ktera policka lze tyto objekty generovat,
  * a na ktera ne. Vzhledem k tomu, ze lze generovat pouze prisery a bedny,
  * je implementace primo zamerena na tento konkretni pripad.
- * U kazdeho policka jsou tedy vedeny objekty
- * (jeden pro bednu a jeden pro priseru), kazdy z nich rika, zda-li lze na
- * policku objekt generovat. Pro ucely dokumentace budu nazyvat tyto objekty
- * (instance tridy BombicGeneratedObject) <em>generovane objekty</em>.
+ * U kazdeho policka jsou tedy vedeny generatory
+ * (jeden pro bednu a jeden pro prisery), kazdy z nich rika, zda-li lze na
+ * policku objekt generovat.
  * Nasledne je BombicMap vizualizovana skrze @c MapScene.
  */
 class BombicMap {
@@ -57,10 +56,12 @@ class BombicMap {
 		/// Seznam objektu na policku.
 		const ObjectListT & objectsOnField(const BombicMap::Field & field);
 
-		/// Generovany box na policku.
-		BombicGeneratedObject * generatedBox(const BombicMap::Field & field);
-		/// Generovana prisera na policku.
-		BombicGeneratedObject * generatedCreature(const BombicMap::Field & field);
+		/// Generator beden na policku.
+		BombicMapObjectGenerator * boxGenerator(
+				const BombicMap::Field & field);
+		/// Generator priser na policku.
+		BombicMapObjectGenerator * creatureGenerator(
+				const BombicMap::Field & field);
 
 		const ObjectListT & generatedBoxes();
 		const ObjectListT & generatedCreatures();
@@ -70,7 +71,7 @@ class BombicMap {
 		/// Nastavi pocet priser k nahodnemu vygenerovani.
 		void setGeneratedCreaturesCount(BombicMapObject * creature, int count);
 
-		void updateBlockGeneratingObjects(const Field & field);
+		void updateGeneratorsBlocking(const Field & field);
 
 		/// Obdelnik mapy (v jednotkach policek).
 		const QRect & fieldsRect();
@@ -81,10 +82,10 @@ class BombicMap {
 	private:
 		/// Mnozina reprezentujici jedno policko.
 		typedef struct {
-			/// Generovana bedna.
-			BombicGeneratedObject * genBox;
-			/// Generovana prisera.
-			BombicGeneratedObject * genCreature;
+			/// Generator beden.
+			BombicMapObjectGenerator * boxGen;
+			/// Generator priser.
+			BombicMapObjectGenerator * creatureGen;
 			/// Seznam pevnych objektu.
 			ObjectListT objList;
 		} FieldSetT;
@@ -97,7 +98,7 @@ class BombicMap {
 		void insertBackgroundWalls();
 
 		/// Pokusit se odblokovat generovani
-		void updateBlockGeneratingObjects(const FieldSetT & fieldSet);
+		void updateGeneratorsBlocking(const FieldSetT & fieldSet);
 
 		void setGeneratedObjectsCount(ObjectListT & objList,
 				BombicMapObject * object, int count);

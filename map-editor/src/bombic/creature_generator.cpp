@@ -1,5 +1,5 @@
 
-#include "generated_creature.h"
+#include "creature_generator.h"
 
 #include <QGraphicsItem>
 #include <QGraphicsSimpleTextItem>
@@ -11,9 +11,9 @@
  * ktery se nachazi v prave polovine tohoto policka.
  * @param field policko mapy, pro ktere chceme vizualizovat
  */
-BombicGeneratedCreature::BombicGeneratedCreature(
+BombicCreatureGenerator::BombicCreatureGenerator(
 		const BombicMap::Field & field):
-				BombicGeneratedObject(field) {
+				BombicMapObjectGenerator(field) {
 	labelGI_ = new QGraphicsSimpleTextItem("C");
 	// TODO set font
 
@@ -25,6 +25,6 @@ BombicGeneratedCreature::BombicGeneratedCreature(
 /**
  * @return Typ objektu, ktery generuje.
  */
-BombicMapObject::Type BombicGeneratedCreature::type() {
+BombicMapObject::Type BombicCreatureGenerator::type() {
 	return BombicMapObject::Creature;
 }

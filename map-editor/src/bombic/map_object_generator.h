@@ -1,10 +1,10 @@
-/** @file generated_object.h
+/** @file map_object_generator.h
  * Informace o tom, zda lze na policku generovat nejaky objekt
- * nese trida BombicGeneratedObject.
+ * nese trida TODO.
  */
 
-#ifndef BOMBIC_GENERATED_OBJECT_H_GUARD_
-#define BOMBIC_GENERATED_OBJECT_H_GUARD_
+#ifndef BOMBIC_MAP_OBJECT_GENERATOR_H_GUARD_
+#define BOMBIC_MAP_OBJECT_GENERATOR_H_GUARD_
 
 #include <QObject>
 #include "map.h"
@@ -12,7 +12,7 @@
 
 class QGraphicsItem;
 
-/** Generovany objekt.
+/** Generovany objekt. TODO
  * V mape mame krome pevne umistenych objektu, ktere jsou v konkretni mape
  * pri rozehrati hry vzdy na stejnem miste, jeste generovane objekty,
  * o nichz potrebujeme v mape znat nekolik informaci.
@@ -21,15 +21,15 @@ class QGraphicsItem;
  * zda lze na tomto policku umistit generovany objekt. Pro praci s touto
  * informaci a pro jeji vizualizaci slouzi potomci teto tridy.
  */
-class BombicGeneratedObject: public QObject {
+class BombicMapObjectGenerator: public QObject {
 
 	Q_OBJECT
 
 	public:
 		/// Konstrukce.
-		BombicGeneratedObject(const BombicMap::Field & field);
+		BombicMapObjectGenerator(const BombicMap::Field & field);
 		/// Destrukce.
-		~BombicGeneratedObject();
+		~BombicMapObjectGenerator();
 
 		/// Typ generovaneho objektu.
 		virtual BombicMapObject::Type type() =0;
@@ -58,9 +58,9 @@ class BombicGeneratedObject: public QObject {
 		virtual bool blocksCreatureGenerating();
 
 	public slots:
-		/// Zobrazit popisek generovani.
+		/// Zobrazit popisek generatoru.
 		void show();
-		/// Skryt popisek generovani.
+		/// Skryt popisek generatoru.
 		void hide();
 
 		/// Blokovat generovani.
@@ -89,10 +89,8 @@ class BombicGeneratedObject: public QObject {
 		void setLabelPos();
 		/// Nastavit (obnovit) viditelnost popisku.
 		void updateLabelVisibility();
-		/// Nastavit (obnovit) viditelnost generovaneho objektu.
-		void updateObjectsVisibility();
 
-		/// Policko pro ktere objekt generuje.
+		/// Policko pro ktere se generuje.
 		BombicMap::Field field_;
 
 		/// Graficky prvek popisku do sceny.
@@ -101,7 +99,7 @@ class BombicGeneratedObject: public QObject {
 		/// Seznam generovanych objektu.
 		BombicMap::ObjectListT generatedObjects_;
 
-		/// Jestli je vizualizace popisku generovani skryta.
+		/// Jestli je vizualizace popisku skryta.
 		bool hidden_;
 
 		/// Jestli je generovani blokovano jinym objektem.

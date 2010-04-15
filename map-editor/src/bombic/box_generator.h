@@ -1,20 +1,20 @@
-/** @file generated_box.h
- * Trida nesouci informace o generovani beden @c BombicGeneratedCreature.
+/** @file box_generator.h
+ * Trida nesouci informace o generovani beden @c BombicBoxGenerator.
  */
 
-#ifndef BOMBIC_GENERATED_BOX_H_GUARD_
-#define BOMBIC_GENERATED_BOX_H_GUARD_
+#ifndef BOMBIC_BOX_GENERATOR_H_GUARD_
+#define BOMBIC_BOX_GENERATOR_H_GUARD_
 
-#include "generated_object.h"
+#include "map_object_generator.h"
 
 /** Generovana bedna.
  * Trida  specializovana na vizualizaci generovani beden.
  */
-class BombicGeneratedBox: public BombicGeneratedObject {
+class BombicBoxGenerator: public BombicMapObjectGenerator {
 
 	public:
 		/// Konstrukce pro policko @p field.
-		BombicGeneratedBox(const BombicMap::Field & field);
+		BombicBoxGenerator(const BombicMap::Field & field);
 
 		/// Typ generovaneho objektu.
 		virtual BombicMapObject::Type type();

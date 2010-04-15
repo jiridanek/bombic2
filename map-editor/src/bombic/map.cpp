@@ -4,15 +4,15 @@
 #include "map_background.h"
 #include "map_object.h"
 #include "wall.h"
-#include "generated_box.h"
-#include "generated_creature.h"
+#include "box_generator.h"
+#include "creature_generator.h"
 
 /** @details
  * Zkonstruuje mapu o rozmerech @p width, @p height s pozadim @p background.
  * Nova mapa se stava vlastnikem @p background a to bude dealokovano
  * pri destrukci mapy.
  * Nove zkonstruovana mapa obsahuje pouze obvodove zdi pozadi a inicializovane
- * generovane objekty (vsechna policka povolena pro generovani).
+ * generoty objektu (vsechna policka povolena pro generovani).
  * @param width sirska mapy v polickach
  * @param height vyska mapy v polickach
  * @param background pointer na pozadi
@@ -25,13 +25,13 @@ BombicMap::BombicMap(int width, int height,
 	FieldsT::value_type::value_type emptyFieldSet;
 	FieldsT::value_type column(height, emptyFieldSet);
 	fields_ = FieldsT(width, column);
-	// init generated objects
+	// init generators
 	for(int x = 0 ; x < width ; ++x) {
 		for(int y = 0 ; y < height ; ++y) {
-			fields_[x][y].genBox =
-				new BombicGeneratedBox(Field(x, y));
-			fields_[x][y].genCreature =
-				new BombicGeneratedCreature(Field(x, y));
+			fields_[x][y].boxGen =
+				new BombicBoxGenerator(Field(x, y));
+			fields_[x][y].creatureGen =
+				new BombicCreatureGenerator(Field(x, y));
 		}
 	}
 	// background walls
@@ -91,8 +91,8 @@ void BombicMap::insertBackgroundWalls() {
 BombicMap::~BombicMap() {
 	for(int x = fieldsRect_.left() ; x <= fieldsRect_.right() ; ++x) {
 		for(int y = fieldsRect_.top() ; y <= fieldsRect_.bottom() ; ++y) {
-			delete fields_[x][y].genBox;
-			delete fields_[x][y].genCreature;
+			delete fields_[x][y].boxGen;
+			delete fields_[x][y].creatureGen;
 			foreach(BombicMapObject * o, fields_[x][y].objList) {
 				// TODO remove first the object from other fields
 				delete o;
@@ -166,12 +166,12 @@ void BombicMap::insert(BombicMapObject * object,
 			} else {
 				fields_[x][y].objList.append(object);
 			}
-			// block generating labels if it is blocker
+			// block generators if it is blocker
 			if(object->blocksBoxGenerating()) {
-				fields_[x][y].genBox->block();
+				fields_[x][y].boxGen->block();
 			}
 			if(object->blocksCreatureGenerating()) {
-				fields_[x][y].genCreature->block();
+				fields_[x][y].creatureGen->block();
 			}
 		}
 	}
@@ -197,37 +197,37 @@ void BombicMap::remove(BombicMapObject * object) {
 		for(int y = top ; y <= bottom ; ++y) {
 			// remove the object from the map
 			fields_[x][y].objList.removeAll(object);
-			updateBlockGeneratingObjects(fields_[x][y]);
+			updateGeneratorsBlocking(fields_[x][y]);
 		}
 	}
 }
 
-void BombicMap::updateBlockGeneratingObjects(const Field & field) {
+void BombicMap::updateGeneratorsBlocking(const Field & field) {
 	if(fieldsRect_.contains(field)) {
-		updateBlockGeneratingObjects(
+		updateGeneratorsBlocking(
 			fields_[field.x()][field.y()]);
 	}
 }
 
-void BombicMap::updateBlockGeneratingObjects(const FieldSetT & fieldSet) {
+void BombicMap::updateGeneratorsBlocking(const FieldSetT & fieldSet) {
 	// check if some generator is blocking some other one
-	bool blockBoxGenerating =
-		fieldSet.genBox->blocksBoxGenerating() ||
-		fieldSet.genCreature->blocksBoxGenerating();
-	bool blockCreatureGenerating =
-		fieldSet.genBox->blocksCreatureGenerating() ||
-		fieldSet.genCreature->blocksCreatureGenerating();
+	bool blockBoxes =
+		fieldSet.boxGen->blocksBoxGenerating() ||
+		fieldSet.creatureGen->blocksBoxGenerating();
+	bool blockCreatures =
+		fieldSet.boxGen->blocksCreatureGenerating() ||
+		fieldSet.creatureGen->blocksCreatureGenerating();
 	// find the blocker
 	foreach(BombicMapObject * o, fieldSet.objList) {
 		if(o->blocksBoxGenerating()) {
-			blockBoxGenerating = true;
+			blockBoxes = true;
 		}
 		if(o->blocksCreatureGenerating()) {
-			blockCreatureGenerating = true;
+			blockCreatures = true;
 		}
 	}
-	fieldSet.genBox->setBlocking(blockBoxGenerating);
-	fieldSet.genCreature->setBlocking(blockCreatureGenerating);
+	fieldSet.boxGen->setBlocking(blockBoxes);
+	fieldSet.creatureGen->setBlocking(blockCreatures);
 }
 
 /** @details
@@ -266,15 +266,15 @@ const BombicMap::ObjectListT & BombicMap::objectsOnField(const BombicMap::Field 
  * policku generovat bedny. Toto je dotaz na strukturu konkretniho policka.
  * Vracena struktura zustava ve vlastnictvi mapy.
  * @param field policko, o nemz chceme informace
- * @return Struktura poskytujici informace o generovane bedne.
+ * @return Generator beden.
  * @retval 0 Zadane policko neni v mape.
  */
-BombicGeneratedObject * BombicMap::generatedBox(
+BombicMapObjectGenerator * BombicMap::boxGenerator(
 		const BombicMap::Field & field) {
 	if(!fieldsRect_.contains(field)) {
 		return 0;
 	}
-	return fields_[field.x()][field.y()].genBox;
+	return fields_[field.x()][field.y()].boxGen;
 }
 
 /** @details
@@ -282,15 +282,15 @@ BombicGeneratedObject * BombicMap::generatedBox(
  * policku generovat prisery. Toto je dotaz na strukturu konkretniho policka.
  * Vracena struktura zustava ve vlastnictvi mapy.
  * @param field policko, o nemz chceme informace
- * @return Struktura poskytujici informace o generovanych priserach.
+ * @return Generator priser.
  * @retval 0 Zadane policko neni v mape.
  */
-BombicGeneratedObject * BombicMap::generatedCreature(
+BombicMapObjectGenerator * BombicMap::creatureGenerator(
 		const BombicMap::Field & field) {
 	if(!fieldsRect_.contains(field)) {
 		return 0;
 	}
-	return fields_[field.x()][field.y()].genCreature;
+	return fields_[field.x()][field.y()].creatureGen;
 }
 
 const BombicMap::ObjectListT & BombicMap::generatedBoxes() {

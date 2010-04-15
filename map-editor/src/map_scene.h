@@ -17,7 +17,7 @@ class MapFieldView;
 class QGraphicsRectItem;
 class BombicMapBackground;
 class BombicMapObject;
-class BombicGeneratedObject;
+class BombicMapObjectGenerator;
 
 /** Scena (vyzobrazeni) mapy a interakce s uzivatelem.
  * Scena mapy je zobrazena v MapView, zpracovava uzivateluv vstup
@@ -51,8 +51,8 @@ class MapScene: public QGraphicsScene {
 		void hideWorkingObject();
 
 
-		void registerGeneratedBoxChange();
-		void registerGeneratedCreatureChange();
+		void registerBoxGeneratorChange();
+		void registerCreatureGeneratorChange();
 
 		void addGeneratedBox(BombicMapObject * mapObj);
 		void addGeneratedCreature(BombicMapObject * mapObj);
@@ -97,38 +97,39 @@ class MapScene: public QGraphicsScene {
 
 		/// Vlozit pozadi policek do sceny.
 		void insertBackgroundFields();
-		/// Vlozit zastupce generovanych objektu.
+		/// Vlozit graficke prvky objektu.
 		void insertObjectsGraphicsItems();
 
 		void removeGeneratedObjectsFromMap();
 
-		typedef QSet<BombicGeneratedObject *> FieldsToGenerateObjectsT;
+		typedef QSet<BombicMapObjectGenerator *> ObjectGeneratorsT;
 
 
 
 
 
-void insertGeneratedObjectItem(
-		BombicGeneratedObject * genObj, qreal zDiff);
-void initFieldsToGenerateObjects();
-void initFieldToGenerateObject(
-		BombicGeneratedObject * genObj,
-		FieldsToGenerateObjectsT & fields,
-		const char * registerGeneratedObjectChangeMethod,
+void insertGeneratorItem(
+		BombicMapObjectGenerator * generator, qreal zDiff);
+// TODO
+void initObjectGenerators();
+void initObjectGenerator(
+		BombicMapObjectGenerator * generator,
+		ObjectGeneratorsT & availableGenerators,
+		const char * registerGeneratorChangeMethod,
 		const char * addGeneratedObjectMethod );
-void registerGeneratedObjectChange(
-		BombicGeneratedObject * genObj,
-		BombicMap::ObjectListT & objects,
-		FieldsToGenerateObjectsT & fields);
+void registerGeneratorChange(
+		BombicMapObjectGenerator * generator,
+		BombicMap::ObjectListT & objectsToGenerate,
+		ObjectGeneratorsT & availableGenerators);
 void addGeneratedObject( BombicMapObject * mapObj,
-		BombicMap::ObjectListT & objects,
-		FieldsToGenerateObjectsT & fields);
+		BombicMap::ObjectListT & objectsToGenerate,
+		ObjectGeneratorsT & availableGenerators);
 
 void generateObjects();
 void generateObjects(
-		BombicMap::ObjectListT & objects,
-		FieldsToGenerateObjectsT & fields);
-BombicGeneratedObject * getRandomField(FieldsToGenerateObjectsT & fields);
+		BombicMap::ObjectListT & objectsToGenerate,
+		ObjectGeneratorsT & availableGenerators);
+BombicMapObjectGenerator * getRandomGenerator(ObjectGeneratorsT & generators);
 BombicMapObject * takeRandomObject(BombicMap::ObjectListT & objects);
 
 
@@ -170,8 +171,8 @@ BombicMapObject * takeRandomObject(BombicMap::ObjectListT & objects);
 		BombicMap::ObjectListT boxesToGenerate_;
 		BombicMap::ObjectListT creaturesToGenerate_;
 
-		FieldsToGenerateObjectsT fieldsToGenerateBoxes_;
-		FieldsToGenerateObjectsT fieldsToGenerateCreatures_;
+		ObjectGeneratorsT availableBoxGenerators_;
+		ObjectGeneratorsT availableCreatureGenerators_;
 
 		/// Zda-li je aktualne stisknuto tlacitko mysi,
 		/// na ktere se da navazat uvolnenim za vzniku kliknuti.

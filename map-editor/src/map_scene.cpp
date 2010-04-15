@@ -19,7 +19,7 @@
 #include "bombic/map.h"
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
-#include "bombic/generated_object.h"
+#include "bombic/map_object_generator.h"
 
 /** @details
  * Vytvori scenu mapy @p map. Prebira vlastnictvi @p map a pri ruseni tuto mapu
@@ -46,7 +46,7 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	// map objects
 	insertObjectsGraphicsItems();
 
-	initFieldsToGenerateObjects();
+	initObjectGenerators();
 
 	generateObjects();
 
@@ -94,114 +94,108 @@ void MapScene::insertBackgroundFields() {
  */
 void MapScene::insertObjectsGraphicsItems() {
 	MAP_SCENE_FOREACH_MAP_FIELD(f) {
-		// generated items
-		insertGeneratedObjectItem(
-			map_->generatedBox(f), 0.5 );
-		insertGeneratedObjectItem(
-			map_->generatedCreature(f), 0.55 );
+		// generators
+		insertGeneratorItem(
+			map_->boxGenerator(f), 0.5 );
+		insertGeneratorItem(
+			map_->creatureGenerator(f), 0.55 );
 		// stable items
-		bool wasCreature = false;
 		foreach(BombicMapObject * o, map_->objectsOnField(f)) {
 			if(o->graphicsItem()->scene()!=this) {
 				// item is not in this scene
 				addItem(o->situateGraphicsItem(
 					f*CELL_SIZE ));
 			}
-			if(o->type() == BombicMapObject::Creature) {
-				wasCreature = true;
-			}
 		}
-		if(wasCreature) {
-			sortCreatureGraphics(f);
-		}
+		sortCreatureGraphics(f);
 	}
 }
 
-void MapScene::insertGeneratedObjectItem(
-		BombicGeneratedObject * genObj, qreal zDiff) {
+void MapScene::insertGeneratorItem(
+		BombicMapObjectGenerator * generator, qreal zDiff) {
 
-	QGraphicsItem * item = genObj->graphicsItem();
+	QGraphicsItem * item = generator->graphicsItem();
 	item->setZValue(sceneRect().height() + zDiff);
 	addItem(item);
 }
 
 /** @details
  */
-void MapScene::initFieldsToGenerateObjects() {
+void MapScene::initObjectGenerators() {
 	MAP_SCENE_FOREACH_MAP_FIELD(f) {
-		initFieldToGenerateObject(
-			map_->generatedBox(f),
-			fieldsToGenerateBoxes_,
-			SLOT(registerGeneratedBoxChange()),
+		initObjectGenerator(
+			map_->boxGenerator(f),
+			availableBoxGenerators_,
+			SLOT(registerBoxGeneratorChange()),
 			SLOT(addGeneratedBox(BombicMapObject *)) );
-		initFieldToGenerateObject(
-			map_->generatedCreature(f),
-			fieldsToGenerateCreatures_,
-			SLOT(registerGeneratedCreatureChange()),
+		initObjectGenerator(
+			map_->creatureGenerator(f),
+			availableCreatureGenerators_,
+			SLOT(registerCreatureGeneratorChange()),
 			SLOT(addGeneratedCreature(BombicMapObject *)) );
 	}
 }
 
-void MapScene::initFieldToGenerateObject(
-		BombicGeneratedObject * genObj,
-		FieldsToGenerateObjectsT & fields,
-		const char * registerGeneratedObjectChangeMethod,
+void MapScene::initObjectGenerator(
+		BombicMapObjectGenerator * generator,
+		ObjectGeneratorsT & availableGenerators,
+		const char * registerGeneratorChangeMethod,
 		const char * addGeneratedObjectMethod ) {
 
-	connect(genObj, SIGNAL(canGenerateChanged()),
-		this, registerGeneratedObjectChangeMethod );
-	connect(genObj, SIGNAL(removingGeneratedObject(BombicMapObject *)),
+	connect(generator, SIGNAL(canGenerateChanged()),
+		this, registerGeneratorChangeMethod);
+	connect(generator, SIGNAL(removingGeneratedObject(BombicMapObject *)),
 		this, addGeneratedObjectMethod );
-	if(genObj->canGenerate()) {
-		fields.insert(genObj);
+	if(generator->canGenerate()) {
+		availableGenerators.insert(generator);
 	}
 }
 
-void MapScene::registerGeneratedBoxChange() {
-	registerGeneratedObjectChange(
-		qobject_cast<BombicGeneratedObject *>(sender()),
-		boxesToGenerate_, fieldsToGenerateBoxes_ );
+void MapScene::registerBoxGeneratorChange() {
+	registerGeneratorChange(
+		qobject_cast<BombicMapObjectGenerator *>(sender()),
+		boxesToGenerate_, availableBoxGenerators_);
 }
 
-void MapScene::registerGeneratedCreatureChange() {
-	registerGeneratedObjectChange(
-		qobject_cast<BombicGeneratedObject *>(sender()),
-		creaturesToGenerate_, fieldsToGenerateCreatures_ );
+void MapScene::registerCreatureGeneratorChange() {
+	registerGeneratorChange(
+		qobject_cast<BombicMapObjectGenerator *>(sender()),
+		creaturesToGenerate_, availableCreatureGenerators_);
 }
 
-void MapScene::registerGeneratedObjectChange(
-		BombicGeneratedObject * genObj,
-		BombicMap::ObjectListT & objects,
-		FieldsToGenerateObjectsT & fields) {
-	if(!genObj) {
+void MapScene::registerGeneratorChange(
+		BombicMapObjectGenerator * generator,
+		BombicMap::ObjectListT & objectsToGenerate,
+		ObjectGeneratorsT & availableGenerators) {
+	if(!generator) {
 		return;
 	}
-	if(genObj->canGenerate()) {
-		fields.insert(genObj);
-		generateObjects(objects, fields);
+	if(generator->canGenerate()) {
+		availableGenerators.insert(generator);
+		generateObjects(objectsToGenerate, availableGenerators);
 	} else {
-		fields.remove(genObj);
+		availableGenerators.remove(generator);
 	}
 }
 
 void MapScene::addGeneratedBox(BombicMapObject * mapObj) {
 	addGeneratedObject( mapObj,
-		boxesToGenerate_, fieldsToGenerateBoxes_ );
+		boxesToGenerate_, availableBoxGenerators_);
 }
 void MapScene::addGeneratedCreature(BombicMapObject * mapObj) {
 	addGeneratedObject( mapObj,
-		creaturesToGenerate_, fieldsToGenerateCreatures_ );
+		creaturesToGenerate_, availableCreatureGenerators_);
 }
 
 void MapScene::addGeneratedObject( BombicMapObject * mapObj,
-		BombicMap::ObjectListT & objects,
-		FieldsToGenerateObjectsT & fields) {
+		BombicMap::ObjectListT & objectsToGenerate,
+		ObjectGeneratorsT & availableGenerators) {
 	// if the object was in map - update the old field
 	// if no - some other field will be updated but it doesn't matter
-	map_->updateBlockGeneratingObjects(mapObj->field());
+	map_->updateGeneratorsBlocking(mapObj->field());
 
-	objects.append(mapObj);
-	generateObjects(objects, fields);
+	objectsToGenerate.append(mapObj);
+	generateObjects(objectsToGenerate, availableGenerators);
 }
 
 void MapScene::toggleObjectGenerating() {
@@ -215,49 +209,55 @@ void MapScene::toggleObjectGenerating() {
 
 void MapScene::removeGeneratedObjectsFromMap() {
 	MAP_SCENE_FOREACH_MAP_FIELD(f) {
-		map_->generatedBox(f)
+		map_->boxGenerator(f)
 			->removeGeneratedObjects();
-		map_->generatedCreature(f)
+		map_->creatureGenerator(f)
 			->removeGeneratedObjects();
 	}
 }
 
 void MapScene::generateObjects() {
-	generateObjects(boxesToGenerate_, fieldsToGenerateBoxes_);
-	generateObjects(creaturesToGenerate_, fieldsToGenerateCreatures_);
+	generateObjects(boxesToGenerate_, availableBoxGenerators_);
+	generateObjects(creaturesToGenerate_, availableCreatureGenerators_);
 }
 
 void MapScene::generateObjects(
-		BombicMap::ObjectListT & objects,
-		FieldsToGenerateObjectsT & fields) {
+		BombicMap::ObjectListT & objectsToGenerate,
+		ObjectGeneratorsT & availableGenerators) {
 
 	if(!doObjectGenerating_) {
 		return;
 	}
 
-	while(!objects.isEmpty() && !fields.isEmpty()) {
-		BombicMapObject * mapObj = takeRandomObject(objects);
-		BombicGeneratedObject * genObj = getRandomField(fields);
+	while(!objectsToGenerate.isEmpty() &&
+			!availableGenerators.isEmpty()) {
+		// get object and generator
+		BombicMapObject * mapObj =
+			takeRandomObject(objectsToGenerate);
+		BombicMapObjectGenerator * generator =
+			getRandomGenerator(availableGenerators);
+		// add the graphics
 		QGraphicsItem * gi = mapObj->situateGraphicsItem(
-			genObj->field()*CELL_SIZE);
+			generator->field() * CELL_SIZE);
 		if(gi->scene() != this) {
 			addItem(gi);
 		}
-		genObj->addGeneratedObject(mapObj);
-		map_->updateBlockGeneratingObjects(mapObj->field());
+		// generate add object to generator (generate it)
+		generator->addGeneratedObject(mapObj);
+		map_->updateGeneratorsBlocking(mapObj->field());
+
 		if(mapObj->type() == BombicMapObject::Creature) {
 			sortCreatureGraphics(mapObj->field());
 		}
 	}
 }
-BombicGeneratedObject * MapScene::getRandomField(
-		FieldsToGenerateObjectsT & fields) {
-	if(fields.isEmpty()) {
+BombicMapObjectGenerator * MapScene::getRandomGenerator(
+		ObjectGeneratorsT & generators) {
+	if(generators.isEmpty()) {
 		return 0;
 	}
-	FieldsToGenerateObjectsT::iterator it =
-		fields.begin();
-	for(int r = qrand() % fields.size() ; r > 0 ; --r) {
+	ObjectGeneratorsT::iterator it = generators.begin();
+	for(int r = qrand() % generators.size() ; r > 0 ; --r) {
 		// iterate to the r-th item
 		++it;
 	}
@@ -370,12 +370,10 @@ void MapScene::remove(BombicMapObject * object) {
  * @param field policko mapy, pro ktere chceme rozestaveni udelat
  */
 void MapScene::sortCreatureGraphics(const BombicMap::Field & field) {
-	BombicMap::ObjectListT creatures;
 	// get generated creatures on field
-	foreach(BombicMapObject * o, map_->generatedCreature(field)
-			->generatedObjects()) {
-		creatures.append(o);
-	}
+	BombicMap::ObjectListT creatures(
+		map_->creatureGenerator(field)->generatedObjects() );
+
 	// get placed creatures on field
 	foreach(BombicMapObject * o, map_->objectsOnField(field)) {
 		if(o->type() == BombicMapObject::Creature) {
@@ -397,8 +395,8 @@ void MapScene::sortCreatureGraphics(const BombicMap::Field & field) {
 	qreal diff = maxDiff - step/2.0;
 	// base position on field
 	QPointF pos = field*CELL_SIZE;
-	foreach(BombicMapObject * c, creatures) {
-		c->situateGraphicsItem(
+	foreach(BombicMapObject * o, creatures) {
+		o->situateGraphicsItem(
 			pos + QPointF(diff, -diff) );
 		diff -= step;
 	}

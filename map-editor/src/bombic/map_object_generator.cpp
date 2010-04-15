@@ -1,5 +1,5 @@
 
-#include "generated_object.h"
+#include "map_object_generator.h"
 
 #include <QGraphicsItem>
 #include <constants.h>
@@ -9,57 +9,59 @@
  * Graficky prvek do sceny by mel byt alokovan v potomcich
  * teto tridy.
  */
-BombicGeneratedObject::BombicGeneratedObject(const BombicMap::Field & field):
-		field_(field), labelGI_(0),
-		hidden_(false), blocked_(false), allowed_(true) {
+BombicMapObjectGenerator::BombicMapObjectGenerator(
+		const BombicMap::Field & field):
+				field_(field), labelGI_(0),
+				hidden_(false),
+				blocked_(false), allowed_(true) {
 
 }
 
 /** @details
  * Dealokuje graficky prvek.
  */
-BombicGeneratedObject::~BombicGeneratedObject() {
+BombicMapObjectGenerator::~BombicMapObjectGenerator() {
 	delete labelGI_;
 }
 
-void BombicGeneratedObject::show() {
+void BombicMapObjectGenerator::show() {
 	if(hidden_) {
 		hidden_ = false;
 		updateLabelVisibility();
 	}
 }
 
-void BombicGeneratedObject::hide() {
+void BombicMapObjectGenerator::hide() {
 	if(!hidden_) {
 		hidden_ = true;
 		updateLabelVisibility();
 	}
 }
 
-void BombicGeneratedObject::block() {
+void BombicMapObjectGenerator::block() {
 	setBlocking(true);
 }
 
-void BombicGeneratedObject::unblock() {
+void BombicMapObjectGenerator::unblock() {
 	setBlocking(false);
 }
 
-void BombicGeneratedObject::allow() {
+void BombicMapObjectGenerator::allow() {
 	setAllowance(true);
 }
 
-void BombicGeneratedObject::disallow() {
+void BombicMapObjectGenerator::disallow() {
 	setAllowance(false);
 }
 
-void BombicGeneratedObject::toggleAllowance() {
+void BombicMapObjectGenerator::toggleAllowance() {
 	setAllowance(!allowed_);
 }
 
 /**
  * @param block zda se ma generovani blokovat
  */
-void BombicGeneratedObject::setBlocking(bool block) {
+void BombicMapObjectGenerator::setBlocking(bool block) {
 	if(block == blocked_) {
 		return;
 	}
@@ -71,7 +73,7 @@ void BombicGeneratedObject::setBlocking(bool block) {
 /**
  * @param allow zda se ma generovani povolit
  */
-void BombicGeneratedObject::setAllowance(bool allow) {
+void BombicMapObjectGenerator::setAllowance(bool allow) {
 	if(allow == allowed_) {
 		return;
 	}
@@ -83,34 +85,34 @@ void BombicGeneratedObject::setAllowance(bool allow) {
 /**
  * @return Zda je generovani blokovano jinym objektem.
  */
-bool BombicGeneratedObject::blocked() {
+bool BombicMapObjectGenerator::blocked() {
 	return blocked_;
 }
 
 /**
  * @return Zda je generovani povoleno.
  */
-bool BombicGeneratedObject::allowed() {
+bool BombicMapObjectGenerator::allowed() {
 	return allowed_;
 }
 
 /**
  * @return Zda lze generovat objekt (pouze podle povoleni a blokovani).
  */
-bool BombicGeneratedObject::canGenerate() {
+bool BombicMapObjectGenerator::canGenerate() {
 	return allowed_ && !blocked_;
 }
 
 /**
  */
-void BombicGeneratedObject::addGeneratedObject(BombicMapObject * mapObject) {
+void BombicMapObjectGenerator::addGeneratedObject(BombicMapObject * mapObject) {
 	mapObject->setField(field_);
 	mapObject->graphicsItem()->show();
 	generatedObjects_.append(mapObject);
 }
 
 
-void BombicGeneratedObject::removeGeneratedObjects() {
+void BombicMapObjectGenerator::removeGeneratedObjects() {
 	while(!generatedObjects_.isEmpty()) {
 		BombicMapObject * o = generatedObjects_.takeFirst();
 		o->graphicsItem()->hide();
@@ -123,21 +125,21 @@ void BombicGeneratedObject::removeGeneratedObjects() {
 /**
  * @return Graficky prvek vizualizace do sceny.
  */
-QGraphicsItem * BombicGeneratedObject::graphicsItem() {
+QGraphicsItem * BombicMapObjectGenerator::graphicsItem() {
 	return labelGI_;
 }
 
 /** TODO
  * @return Graficky prvek vizualizace do sceny.
  */
-const BombicMap::Field & BombicGeneratedObject::field() {
+const BombicMap::Field & BombicMapObjectGenerator::field() {
 	return field_;
 }
 
 /** TODO
  * @return Graficky prvek vizualizace do sceny.
  */
-const BombicMap::ObjectListT & BombicGeneratedObject::generatedObjects() {
+const BombicMap::ObjectListT & BombicMapObjectGenerator::generatedObjects() {
 	return generatedObjects_;
 }
 
@@ -146,7 +148,7 @@ const BombicMap::ObjectListT & BombicGeneratedObject::generatedObjects() {
  * vizualizace spjata s dany polickem @p field.
  * @param field policko, pro ktere vizualizujeme
  */
-void BombicGeneratedObject::setLabelPos() {
+void BombicMapObjectGenerator::setLabelPos() {
 	// move to the field
 	labelGI_->setPos(field_ * CELL_SIZE);
 	// move by offset
@@ -157,14 +159,14 @@ void BombicGeneratedObject::setLabelPos() {
 /** @details
  * Nastavi viditelnost grafickeho prvku podle aktualnich hodnot parametru.
  */
-void BombicGeneratedObject::updateLabelVisibility() {
+void BombicMapObjectGenerator::updateLabelVisibility() {
 	labelGI_->setVisible(
 		!hidden_ && allowed_ && !blocked_);
 }
 
-bool BombicGeneratedObject::blocksBoxGenerating() {
+bool BombicMapObjectGenerator::blocksBoxGenerating() {
 	return false;
 }
-bool BombicGeneratedObject::blocksCreatureGenerating() {
+bool BombicMapObjectGenerator::blocksCreatureGenerating() {
 	return false;
 }
