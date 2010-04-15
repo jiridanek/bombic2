@@ -10,6 +10,7 @@
 #include "bombic/map.h"
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
+#include "bombic/map_object_generator.h"
 
 #include "resource_handlers/wall_resource_handler.h"
 #include "bombic/wall.h"
@@ -43,7 +44,7 @@ BombicMap * ResourceHandler::loadMap() {
  * @return Nove alokovana prazdna mapa s pozadim.
  */
 BombicMap * ResourceHandler::loadEmptyMap() {
-	return loadMap("map_concrete_2");
+	return loadMap("map_concrete_rings");
 	BombicMapBackground * defaultBg =
 		loadMapBackground(DEFAULT_MAP_BACKGROUND);
 	if(!defaultBg) {
@@ -107,7 +108,11 @@ BombicMap * ResourceHandler::loadMap(const QString & name) {
 		getSubElement(rootEl, el, "boxes", true) &&
 		loadMapBoxes(el, map) &&
 		getSubElement(rootEl, el, "creatures", true) &&
-		loadMapCreatures(el, map);
+		loadMapCreatures(el, map) &&
+		getSubElement(rootEl, el, "dont_generate", true) &&
+		loadMapNoboxes(el, map) &&
+		loadMapNocreatures(el, map);
+
 
 	if(!success) {
 		delete map;
@@ -318,6 +323,46 @@ bool ResourceHandler::loadMapCreatures(const QDomElement & creaturesEl,
 		}
 	}
 	// all creatures loaded
+	return true;
+}
+
+bool ResourceHandler::loadMapNoboxes(const QDomElement & dontGenerateEl,
+		BombicMap * map) {
+	QDomElement firstNoboxEl;
+	if(!getSubElement(dontGenerateEl, firstNoboxEl, "nobox", true)) {
+		return false;
+	}
+	RH_FOREACH_SIBLING_ELEMENT(noboxEl, firstNoboxEl) {
+		BombicMap::Field field;
+		if(!getAttrsXY(noboxEl, field.rx(), field.ry())) {
+			return false;
+		}
+		BombicMapObjectGenerator * generator =
+			map->boxGenerator(field);
+		if(generator) {
+			generator->disallow();
+		}
+	}
+	return true;
+}
+
+bool ResourceHandler::loadMapNocreatures(const QDomElement & dontGenerateEl,
+		BombicMap * map) {
+	QDomElement firstNocreatureEl;
+	if(!getSubElement(dontGenerateEl, firstNocreatureEl, "nocreature", true)) {
+		return false;
+	}
+	RH_FOREACH_SIBLING_ELEMENT(nocreatureEl, firstNocreatureEl) {
+		BombicMap::Field field;
+		if(!getAttrsXY(nocreatureEl, field.rx(), field.ry())) {
+			return false;
+		}
+		BombicMapObjectGenerator * generator =
+			map->creatureGenerator(field);
+		if(generator) {
+			generator->disallow();
+		}
+	}
 	return true;
 }
 

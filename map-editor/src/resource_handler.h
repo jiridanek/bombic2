@@ -90,6 +90,13 @@ class ResourceHandler: public QObject {
 		bool loadMapCreatures(const QDomElement & creaturesEl,
 				BombicMap * map);
 
+		/// Nacte pole na kterych se nemaji generovat bedny.
+		bool loadMapNoboxes(const QDomElement & dontGenerateEl,
+				BombicMap * map);
+		/// Nacte pole na kterych se nemaji generovat prisery.
+		bool loadMapNocreatures(const QDomElement & dontGenerateEl,
+				BombicMap * map);
+
 		/// Vlozi do mapy objekt na urcite pozice.
 		bool insertMapObjects(const QDomElement & positionEl,
 				BombicMapObject * insertedObject, BombicMap * map);
