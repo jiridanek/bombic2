@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<player name="allplayers" src="allplayers.bmp" height="70" width="50" speed="10">
+	<!-- definice grafiky hracu - pouze do editoru map -->
+	<down x="0" y="0" />
+</player>

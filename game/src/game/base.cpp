@@ -355,7 +355,7 @@ void GameBase::load_players_(TiXmlElement *playersEl, Uint16 count){
 		while( count-- ){
 			filename = "player"+x2string(count);
 			// nacteni hrace
-			rootEl = TiXmlRootElement(doc, filename, "creature", true);
+			rootEl = TiXmlRootElement(doc, filename, "player", true);
 			// zdrojovy obrazek
 			sur_src = load_src_surface(rootEl);
 			sur_src_s = load_src_surface(rootEl, "shadow_src", false);
@@ -424,7 +424,7 @@ void GameBase::load_players_deathmatch_(TiXmlElement *playersEl, Uint16 count){
 			}
 
 			// nacteni hrace
-			rootEl = TiXmlRootElement(doc, filename, "creature", true);
+			rootEl = TiXmlRootElement(doc, filename, "player", true);
 			// zdrojovy obrazek
 			sur_src = load_src_surface(rootEl);
 			sur_src_s = load_src_surface(rootEl, "shadow_src", false);
