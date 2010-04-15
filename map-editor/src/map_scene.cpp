@@ -45,9 +45,9 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	insertBackgroundFields();
 	// map objects
 	insertObjectsGraphicsItems();
-
+	// generators
 	initObjectGenerators();
-
+	// do the generating
 	generateObjects();
 
 	// connect map to scene
@@ -70,6 +70,14 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	MAP_OBJECT_PALETTE->unselectObject();
 }
 
+/** Loop over all fields of scene map.
+ * Iterates with @p field over all fields of scene map.
+ * Starting in top left goes over all columns and in every column
+ * goes to bottom.
+ * The loop variable @p field shouldn't be defined, because
+ * it will be defined (and initialized) here.
+ * @param field name of loop variable
+ */
 #define MAP_SCENE_FOREACH_MAP_FIELD(field) \
 	for(BombicMap::Field field = map_->fieldsRect().topLeft() ; \
 			field.x() <= map_->fieldsRect().right() ; \
@@ -79,7 +87,7 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 				++field.ry())
 
 /** @details
- * @param texture textura pozadi mapy
+ * Prida a napozicuje graficke prvky pozadi mapy.
  */
 void MapScene::insertBackgroundFields() {
 	QPixmap texture = map_->background()->texture();
@@ -91,13 +99,14 @@ void MapScene::insertBackgroundFields() {
 }
 
 /** @details
+ * Vlozi do sceny popisky generatoru a pevne umistenych objektu.
  */
 void MapScene::insertObjectsGraphicsItems() {
 	MAP_SCENE_FOREACH_MAP_FIELD(f) {
 		// generators
-		insertGeneratorItem(
+		insertGeneratorGraphicsItem(
 			map_->boxGenerator(f), 0.5 );
-		insertGeneratorItem(
+		insertGeneratorGraphicsItem(
 			map_->creatureGenerator(f), 0.55 );
 		// stable items
 		foreach(BombicMapObject * o, map_->objectsOnField(f)) {
@@ -111,15 +120,23 @@ void MapScene::insertObjectsGraphicsItems() {
 	}
 }
 
-void MapScene::insertGeneratorItem(
+/**
+ * @param generator generator, jehoz graficky prvek chceme pridat
+ * @param zDiff hodnota ktera bude pridana k souradnici Z pri pozicovani
+ */
+void MapScene::insertGeneratorGraphicsItem(
 		BombicMapObjectGenerator * generator, qreal zDiff) {
 
 	QGraphicsItem * item = generator->graphicsItem();
-	item->setZValue(sceneRect().height() + zDiff);
-	addItem(item);
+	if(item->scene()!=this) {
+		item->setZValue(sceneRect().height() + zDiff);
+		addItem(item);
+	}
 }
 
 /** @details
+ * Inicializuje vsechny generatory mapy.
+ * @see initObjectGenerator()
  */
 void MapScene::initObjectGenerators() {
 	MAP_SCENE_FOREACH_MAP_FIELD(f) {
@@ -136,6 +153,16 @@ void MapScene::initObjectGenerators() {
 	}
 }
 
+/** @details
+ * Pripoji @p generator do slotu pro zmenu generatoru
+ * a pro pridani generovaneho objektu.
+ * Prida @p generator mezi generatory, ktere mohou generovat
+ * samozrejme jen pokud muze generovat.
+ * @param generator generator, ktery chceme inicializovat
+ * @param availableGenerators seznam generatoru, ktere mohou generovat
+ * @param registerGeneratorChangeMethod mistni slot pro zmenu generatoru
+ * @param addGeneratedObjectMethod mistni slot pro pridani generovaneho objektu
+ */
 void MapScene::initObjectGenerator(
 		BombicMapObjectGenerator * generator,
 		ObjectGeneratorsT & availableGenerators,
@@ -151,18 +178,31 @@ void MapScene::initObjectGenerator(
 	}
 }
 
+/**
+ * @see registerGeneratorChange()
+ */
 void MapScene::registerBoxGeneratorChange() {
 	registerGeneratorChange(
 		qobject_cast<BombicMapObjectGenerator *>(sender()),
 		boxesToGenerate_, availableBoxGenerators_);
 }
 
+/**
+ * @see registerGeneratorChange()
+ */
 void MapScene::registerCreatureGeneratorChange() {
 	registerGeneratorChange(
 		qobject_cast<BombicMapObjectGenerator *>(sender()),
 		creaturesToGenerate_, availableCreatureGenerators_);
 }
 
+/** @details
+ * Prida nebo odebere @p generator z @p availableGenerators.
+ * Pokud jej pridal, zkusi vygenerovat objekty.
+ * @param generator generator, ktery zmenu vyvolal
+ * @param objectsToGenerate objekty pro vygenerovani
+ * @param availableGenerators generatory, ktere mohou generovat
+ */
 void MapScene::registerGeneratorChange(
 		BombicMapObjectGenerator * generator,
 		BombicMap::ObjectListT & objectsToGenerate,
@@ -178,15 +218,26 @@ void MapScene::registerGeneratorChange(
 	}
 }
 
+/**
+ * @param mapObj objekt, ktery ma byt pridan
+ */
 void MapScene::addGeneratedBox(BombicMapObject * mapObj) {
 	addGeneratedObject( mapObj,
 		boxesToGenerate_, availableBoxGenerators_);
 }
+/**
+ * @param mapObj objekt, ktery ma byt pridan
+ */
 void MapScene::addGeneratedCreature(BombicMapObject * mapObj) {
 	addGeneratedObject( mapObj,
 		creaturesToGenerate_, availableCreatureGenerators_);
 }
 
+/**
+ * @param mapObj objekt, ktery ma byt pridan
+ * @param objectsToGenerate objekty k vygenerovani
+ * @param availableGenerators generatory, ktere mohou generovat
+ */
 void MapScene::addGeneratedObject( BombicMapObject * mapObj,
 		BombicMap::ObjectListT & objectsToGenerate,
 		ObjectGeneratorsT & availableGenerators) {
@@ -198,6 +249,10 @@ void MapScene::addGeneratedObject( BombicMapObject * mapObj,
 	generateObjects(objectsToGenerate, availableGenerators);
 }
 
+/** @details
+ * Prepne generovani objektu.
+ * Objekty bud vygeneruje, nebo je naopak z mapy odstrani.
+ */
 void MapScene::toggleObjectGenerating() {
 	doObjectGenerating_ = !doObjectGenerating_;
 	if(doObjectGenerating_) {
@@ -207,20 +262,42 @@ void MapScene::toggleObjectGenerating() {
 	}
 }
 
+/** @details
+ * Vyhodi vsechny generovane objekty z mapy.
+ * Pokud je zapnute generovani objektu,
+ * tak ho na dobu odstranovani objektu vypne,
+ * aby se objekty opet nevygenerovali.
+ */
 void MapScene::removeGeneratedObjectsFromMap() {
+	bool oldDoObjectGenerating = doObjectGenerating_;
+	doObjectGenerating_ = false;
 	MAP_SCENE_FOREACH_MAP_FIELD(f) {
 		map_->boxGenerator(f)
 			->removeGeneratedObjects();
 		map_->creatureGenerator(f)
 			->removeGeneratedObjects();
 	}
+	doObjectGenerating_ = oldDoObjectGenerating;
 }
 
+/** @details
+ * Pokusi se vygenerovat nevygenerovane objekty (bedny i prisery),
+ * pokud nejake jsou.
+ */
 void MapScene::generateObjects() {
 	generateObjects(boxesToGenerate_, availableBoxGenerators_);
 	generateObjects(creaturesToGenerate_, availableCreatureGenerators_);
 }
 
+/** @details
+ * Pokusi se vygenerovat nevygenerovane objekty @p objectsToGenerate
+ * do generatoru @p availableGenerators.
+ * Pokud nejake (objekty i generatory) jsou.
+ * Pokud je generovani zakazano (@c doObjectGenerating_ neni nastaveno)
+ * nedela nic.
+ * @param objectsToGenerate objekty k vygenerovani
+ * @param availableGenerators generatory, ktere mohou generovat
+ */
 void MapScene::generateObjects(
 		BombicMap::ObjectListT & objectsToGenerate,
 		ObjectGeneratorsT & availableGenerators) {
@@ -251,6 +328,13 @@ void MapScene::generateObjects(
 		}
 	}
 }
+
+/** @details
+ * Nahodne vybere jeden generator z @p generators.
+ * Ten vrati ale zaroven ponecha v @p generators.
+ * @param generators generatory, z nichz nahodne vybirame
+ * @return Nahodne vybrany generator.
+ */
 BombicMapObjectGenerator * MapScene::getRandomGenerator(
 		ObjectGeneratorsT & generators) {
 	if(generators.isEmpty()) {
@@ -264,6 +348,11 @@ BombicMapObjectGenerator * MapScene::getRandomGenerator(
 	return *it;
 }
 
+/** @details
+ * Nahodne vybere jeden objekt mapy z @p objects a odstrani jej.
+ * @param objects objekty, z nichz nahodne vybirame
+ * @return Nahodne vybrany objekt mapy.
+ */
 BombicMapObject * MapScene::takeRandomObject(
 		BombicMap::ObjectListT & objects) {
 	if(objects.isEmpty()) {
@@ -302,6 +391,7 @@ void MapScene::initHelperItems() {
  * pomocny graficky prvek, tak, jak byl naposledy nastaven.
  * Vetsinou chcete ale zaroven nastavit vyznam prvku, pouzijte proto radsi
  * @c showCanInsertItem() nebo @c showCannotInsertItem().
+ * @param objectRect obdelnik objektu, ktery ma insertItem predstavovat
  */
 void MapScene::showInsertionHelperItem(const QRect & objectRect) {
 	insertionHelperItem_->setPos(objectRect.topLeft() * CELL_SIZE);
@@ -311,18 +401,24 @@ void MapScene::showInsertionHelperItem(const QRect & objectRect) {
 	insertionHelperItem_->show();
 }
 
+/**
+ * @param objectRect obdelnik objektu, ktery ma insertItem predstavovat
+ */
 void MapScene::showCanInsertItem(const QRect & objectRect) {
 	insertionHelperItem_->setBrush(CAN_INSERT_ITEM_BRUSH);
 	showInsertionHelperItem(objectRect);
 }
 
+/**
+ * @param objectRect obdelnik objektu, ktery ma insertItem predstavovat
+ */
 void MapScene::showCannotInsertItem(const QRect & objectRect) {
 	insertionHelperItem_->setBrush(CANNOT_INSERT_ITEM_BRUSH);
 	showInsertionHelperItem(objectRect);
 }
 
 /** @details
- * Dealokuje i mapu, ktera je ve scene zobrazena.
+ * Dealokuje mapu, ktera je ve scene zobrazena.
  */
 MapScene::~MapScene() {
 	delete map_;

@@ -18,7 +18,7 @@
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
 
-/// Nazev vlastnosti mime dat uchovavajici tazeny objekt.
+/// Nazev vlastnosti mime dat uchovavajici pointer na tazeny objekt.
 #define MAP_VIEW_DRAGGED_OBJECT_PROPERTY "draggedBombicMapObject"
 
 SINGLETON_INIT(MapView);
@@ -40,15 +40,19 @@ MapView::MapView(QWidget * parent):
 
 	SINGLETON_CONSTRUCT;
 
+	// add subwidgets
 	gridLayout()->addWidget(fieldView_, 0, 0, 1, 2);
 	gridLayout()->addWidget(viewport_, 1, 0, 1, 2);
 	gridLayout()->addWidget(workingObjectLabel_, 2, 0);
+	// and also connect them
 	connect(zoomWidget_, SIGNAL(zoomChanged(qreal)),
 		this, SLOT(setZoom(qreal)) );
 	gridLayout()->addWidget(zoomWidget_, 2, 1);
 
+	// create default (empty) map
 	BombicMap * defaultMap = RESOURCE_HANDLER->loadEmptyMap();
 	if(defaultMap) {
+		// and scene for it
 		scene_ = new MapScene(defaultMap, this);
 		viewport_->setScene(scene_);
 	}
@@ -82,9 +86,12 @@ QGridLayout * MapView::gridLayout() {
  */
 void MapView::setZoom(qreal zoomQuotient) {
 	if(zoomQuotient==1.0) {
+		// no zoom - reset for responsibility
 		viewport_->resetTransform();
 	} else {
+		// find the difference
 		qreal dz = zoomQuotient/lastZoomQuotient_;
+		// and scale last zoomed viewport
 		viewport_->scale(dz, dz);
 	}
 	lastZoomQuotient_ = zoomQuotient;
@@ -121,12 +128,15 @@ void MapView::updateFieldView() {
  * Vlastnictvi vracenych mime dat prechazi na volajiciho.
  * @param object pointer na neseny objekt
  * @return Nove alokovana mime data prenasejici @p object.
+ * @see getMapObject()
  */
 QMimeData * MapView::createMimeData(BombicMapObject * object) {
 	QMimeData * mimeData = new QMimeData;
+	// the property is only for internal use as the pointer to object
 	mimeData->setProperty(
 		MAP_VIEW_DRAGGED_OBJECT_PROPERTY,
 		qVariantFromValue(static_cast<void *>(object)) );
+	// for external use set the object name
 	mimeData->setText(object->name());
 	return mimeData;
 }
@@ -136,12 +146,15 @@ QMimeData * MapView::createMimeData(BombicMapObject * object) {
  * @param mimeData mime data prnasejici objekt
  * @return Objekt prenaseny mime daty.
  * @retval 0 @p mimeData nenesou zadny objekt.
+ * @see createMimeData()
  */
 BombicMapObject * MapView::getMapObject(const QMimeData * mimeData) {
+	// the internal mimedata bring internal pointer to the object
 	QVariant objVar =
 		mimeData->property(MAP_VIEW_DRAGGED_OBJECT_PROPERTY);
 	if(!objVar.isValid()) {
 		// property was not set
+		// maybe external or different type of mimedata
 		return 0;
 	}
 	BombicMapObject * obj = static_cast<BombicMapObject *>(
@@ -149,6 +162,12 @@ BombicMapObject * MapView::getMapObject(const QMimeData * mimeData) {
 	return obj;
 }
 
+/** @details
+ * Spusti tazeni objektu mapy @p object.
+ * @param srcWidget zdrojovy widget, ze ktereho byl drag vytvoren
+ * @param object objekt mapy, ktery ma byt tazen
+ * @see QDrag::exec(), createMimeData()
+ */
 void MapView::execDragging(QWidget * srcWidget, BombicMapObject * object) {
 	QDrag * drag = new QDrag(srcWidget);
 	drag->setMimeData(createMimeData(object));

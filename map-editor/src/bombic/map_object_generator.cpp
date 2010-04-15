@@ -8,6 +8,7 @@
  * Defaultne je generovani povoleno a vizualizace zobrazena.
  * Graficky prvek do sceny by mel byt alokovan v potomcich
  * teto tridy.
+ * @param field na kterem policku objekty generuje
  */
 BombicMapObjectGenerator::BombicMapObjectGenerator(
 		const BombicMap::Field & field):
@@ -59,14 +60,18 @@ void BombicMapObjectGenerator::toggleAllowance() {
 }
 
 /**
- * @param block zda se ma generovani blokovat
+ * @param block zda se ma generovani blokovat (jinym objektem)
  */
 void BombicMapObjectGenerator::setBlocking(bool block) {
 	if(block == blocked_) {
 		return;
 	}
 	blocked_ = block;
+	emit canGenerateChanged();
 	updateLabelVisibility();
+	// if blocked_ changed to false
+	// there weren't any generated objects
+	// so we can remove "them"
 	removeGeneratedObjects();
 }
 
@@ -78,7 +83,11 @@ void BombicMapObjectGenerator::setAllowance(bool allow) {
 		return;
 	}
 	allowed_ = allow;
+	emit canGenerateChanged();
 	updateLabelVisibility();
+	// if allowed_ changed to true
+	// there weren't any generated objects
+	// so we can remove "them"
 	removeGeneratedObjects();
 }
 
@@ -103,15 +112,24 @@ bool BombicMapObjectGenerator::canGenerate() {
 	return allowed_ && !blocked_;
 }
 
-/**
+/** @details
+ * Zde neni kontrolovano, jestli je mozne objekt vygenerovat,
+ * proto by melo byt vzdy pouzito canGenerate().
+ * @param mapObject objekty, ktery ma byt vygenerovan
  */
-void BombicMapObjectGenerator::addGeneratedObject(BombicMapObject * mapObject) {
+void BombicMapObjectGenerator::addGeneratedObject(
+		BombicMapObject * mapObject) {
 	mapObject->setField(field_);
 	mapObject->graphicsItem()->show();
 	generatedObjects_.append(mapObject);
 }
 
-
+/** @details
+ * Odstrani postupne vsechny generovane objekty a pro kazdy
+ * vyvola signal removingGeneratedObject().
+ * Nakonec vyvola signal canGenerateChanged(), kdyby se nahodou
+ * timto ukonem neco zmenilo.
+ */
 void BombicMapObjectGenerator::removeGeneratedObjects() {
 	while(!generatedObjects_.isEmpty()) {
 		BombicMapObject * o = generatedObjects_.takeFirst();
@@ -123,21 +141,21 @@ void BombicMapObjectGenerator::removeGeneratedObjects() {
 }
 
 /**
- * @return Graficky prvek vizualizace do sceny.
+ * @return Graficky prvek popisku generatoru do sceny.
  */
 QGraphicsItem * BombicMapObjectGenerator::graphicsItem() {
 	return labelGI_;
 }
 
-/** TODO
- * @return Graficky prvek vizualizace do sceny.
+/**
+ * @return Na kterem policku generuje.
  */
 const BombicMap::Field & BombicMapObjectGenerator::field() {
 	return field_;
 }
 
-/** TODO
- * @return Graficky prvek vizualizace do sceny.
+/**
+ * @return Seznam aktualne generovanych objektu.
  */
 const BombicMap::ObjectListT & BombicMapObjectGenerator::generatedObjects() {
 	return generatedObjects_;
@@ -145,8 +163,7 @@ const BombicMap::ObjectListT & BombicMapObjectGenerator::generatedObjects() {
 
 /** @details
  * Nastavi pozici grafickeho prvku ve scene tak, aby byla
- * vizualizace spjata s dany polickem @p field.
- * @param field policko, pro ktere vizualizujeme
+ * vizualizace spjata s polickem, na ktere generuje.
  */
 void BombicMapObjectGenerator::setLabelPos() {
 	// move to the field
@@ -164,9 +181,15 @@ void BombicMapObjectGenerator::updateLabelVisibility() {
 		!hidden_ && allowed_ && !blocked_);
 }
 
+/**
+ * @return Zda blokuje generovani beden.
+ */
 bool BombicMapObjectGenerator::blocksBoxGenerating() {
 	return false;
 }
+/**
+ * @return Zda blokuje generovani priser.
+ */
 bool BombicMapObjectGenerator::blocksCreatureGenerating() {
 	return false;
 }

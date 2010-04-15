@@ -86,26 +86,36 @@ void BombicMap::insertBackgroundWalls() {
 }
 
 /** @details
- * Dealokuje vsechny objekty mapy a pozadi.
+ * Dealokuje vsechny (pevne i generovane) objekty mapy a pozadi.
  */
 BombicMap::~BombicMap() {
+	// placed objects
 	for(int x = fieldsRect_.left() ; x <= fieldsRect_.right() ; ++x) {
 		for(int y = fieldsRect_.top() ; y <= fieldsRect_.bottom() ; ++y) {
-			delete fields_[x][y].boxGen;
-			delete fields_[x][y].creatureGen;
 			foreach(BombicMapObject * o, fields_[x][y].objList) {
-				// TODO remove first the object from other fields
+				// remove first the object from all fields
+				remove(o);
 				delete o;
 			}
+			delete fields_[x][y].boxGen;
+			delete fields_[x][y].creatureGen;
 		}
 	}
+	// generated objects
+	foreach(BombicMapObject * o, generatedBoxes_) {
+		delete o;
+	}
+	foreach(BombicMapObject * o, generatedCreatures_) {
+		delete o;
+	}
+	// background
 	delete background_;
 }
 
 /** @details
  * Kontroluje, zda se objekt vejde do mapy (podle BombicMapObject::size()
  * a BombicMapObject::toplapping()) a zda muze byt vkladany objekt na policku
- * zaroven s objekty, ktere jiz na polickach, do kterych objekt zasahuje
+ * zaroven s objekty, ktere jiz jsou na polickach, do kterych objekt zasahuje
  * (BombicMapObject::canBeWith()).
  * @param object vkladany objekt
  * @param dstField policko, na ktere chceme vlozit objekt (leve horni objektu)
@@ -140,8 +150,9 @@ bool BombicMap::canInsert(BombicMapObject * object,
 
 /** @details
  * Vlozi objekt do mapy. Kontroluje pouze, jestli se objekt do mapy vejde.
- * Nekontroluje toplapping objektu, a ostatni objekty na polick zasazenych
+ * Nekontroluje toplapping objektu, a ostatni objekty na zasazenych
  * polickach (viz BombicMap::canInsert()).
+ * Pokud objekt blokuje generovani, obstara i blokovani generatoru.
  * Prebira vlastnictvi @p object, ktery bude dealokovan v destruktoru mapy.
  * @param object vkladany objekt
  * @param dstField policko, na ktere chceme vlozit objekt (leve horni objektu)
@@ -181,6 +192,7 @@ void BombicMap::insert(BombicMapObject * object,
  * Odstrani objekt ze vsech policek, na kterych lezi.
  * Vlastnictvi objektu prechazi na volajiciho, objekt jiz
  * nebude dealokovan v destruktoru mapy.
+ * Obnovuje blokovani generatoru.
  * @param object odstranovany objekt
  */
 void BombicMap::remove(BombicMapObject * object) {
@@ -202,6 +214,11 @@ void BombicMap::remove(BombicMapObject * object) {
 	}
 }
 
+/** @details
+ * Podle aktualne umistenych (i generovanych) objektu na policku @p field
+ * nastavi blokovani generatoru.
+ * @param field policko, pro ktere se ma obnovit blokovani
+ */
 void BombicMap::updateGeneratorsBlocking(const Field & field) {
 	if(fieldsRect_.contains(field)) {
 		updateGeneratorsBlocking(
@@ -209,6 +226,11 @@ void BombicMap::updateGeneratorsBlocking(const Field & field) {
 	}
 }
 
+/** @details
+ * Podle aktualne umistenych (i generovanych) objektu na policku @p field
+ * nastavi blokovani generatoru.
+ * @param fieldSet policko (jeho obsah), pro ktere se ma obnovit blokovani
+ */
 void BombicMap::updateGeneratorsBlocking(const FieldSetT & fieldSet) {
 	// check if some generator is blocking some other one
 	bool blockBoxes =
@@ -257,7 +279,8 @@ BombicMapObject * BombicMap::objectOnTop(const BombicMap::Field & field) {
  * @return Seznam objektu na policku.
  * @warning @p field musi byt uvnitr mapy - neni provadena zadna kontrola
  */
-const BombicMap::ObjectListT & BombicMap::objectsOnField(const BombicMap::Field & field) {
+const BombicMap::ObjectListT & BombicMap::objectsOnField(
+		const BombicMap::Field & field) {
 	return fields_[field.x()][field.y()].objList;
 }
 
@@ -293,23 +316,51 @@ BombicMapObjectGenerator * BombicMap::creatureGenerator(
 	return fields_[field.x()][field.y()].creatureGen;
 }
 
+/**
+ * @return Seznam vsech beden, ktere maji byt v mape generovany.
+ */
 const BombicMap::ObjectListT & BombicMap::generatedBoxes() {
 	return generatedBoxes_;
 }
+/**
+ * @return Seznam vsech priser, ktere maji byt v mape generovany.
+ */
 const BombicMap::ObjectListT & BombicMap::generatedCreatures() {
 	return generatedCreatures_;
 }
 
 
+/** @details
+ * Nastavi pocet beden stejneho druhu jako @p box pro generovani.
+ * Tento pocet se tedy tyka beden,
+ * ktere maji shodny @c BombicMapObject::name().
+ * @param box prototyp bedny, jejiz pocet pro generovani nastavujeme
+ * @param count novy pocet generovanych beden zadaneho druhu
+ */
 void BombicMap::setGeneratedBoxesCount(BombicMapObject * box, int count) {
 	setGeneratedObjectsCount(generatedBoxes_, box, count);
 }
 
+/** @details
+ * Nastavi pocet priser stejneho druhu jako @p creature pro generovani.
+ * Tento pocet se tedy tyka priser,
+ * ktere maji shodny @c BombicMapObject::name().
+ * @param creature prototyp prisery, jejiz pocet pro generovani nastavujeme
+ * @param count novy pocet generovanych priser zadaneho druhu
+ */
 void BombicMap::setGeneratedCreaturesCount(BombicMapObject * creature,
 		int count) {
 	setGeneratedObjectsCount(generatedCreatures_, creature, count);
 }
 
+/** @details
+ * Nastavi pocet objektu stejneho druhu jako @p object pro generovani.
+ * Tento pocet se tedy tyka objektu,
+ * ktere maji shodny @c BombicMapObject::name().
+ * @param objList seznam generovanych objektu
+ * @param object prototyp objektu, jehoz pocet pro generovani nastavujeme
+ * @param count novy pocet generovanych objektu zadaneho druhu
+ */
 void BombicMap::setGeneratedObjectsCount(ObjectListT & objList,
 		BombicMapObject * object, int count) {
 	// current count
@@ -336,20 +387,32 @@ void BombicMap::setGeneratedObjectsCount(ObjectListT & objList,
 	}
 }
 
+/** @details
+ * Prida generovany objekt do seznamu.
+ * Vlastnictvi objektu prechazi na mapu a objekt bude dealokovan
+ * v destruktoru mapy nebo pri odstranovani ze seznamu.
+ * Vyvola signal generatedMapObjectAdded().
+ * @param objList seznam generovanych objektu
+ * @param object pridavany objekt
+ * @see removeGeneratedMapObject()
+ */
 void BombicMap::addGeneratedMapObject(ObjectListT & objList,
 		BombicMapObject * object) {
 	objList.append(object);
-	// TODO emit generatedMapObjectAdded(object);
+	emit generatedMapObjectAdded(object);
 }
 
+/** @details
+ * Odstrani a dealokuje generovany objekt ze seznamu.
+ * Vyvola signal generatedMapObjectRemoved().
+ * @param objList seznam generovanych objektu
+ * @param object odstranovany objekt
+ */
 void BombicMap::removeGeneratedMapObject(ObjectListT & objList,
 		BombicMapObject * object) {
-	Field objField = object->field();
-	if(fieldsRect_.contains(objField)) {
-		// the object may be generated somewhere in map
-		// TODO remove from map
-	}
+	emit generatedMapObjectRemoved(object);
 	objList.removeAll(object);
+	delete object;
 }
 
 

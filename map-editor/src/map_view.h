@@ -25,9 +25,10 @@ class BombicMapObject;
 
 /** Pohled na mapu a prilehle widgety.
  * Centralnim prvkem je QGraphicsView, ktere zobrazuje mapu.
- * Dale ZoomWidget, a QLabel zobrazujici pracovni objekt.
+ * Dale jsou pripojeny widgety pro interakci s uzivatelem.
+ * Pohled lze zoomovat, zobrazuje aktualni pracovni objekt
+ * a detail vybraneho policka.
  * V ramci MapView je podporovan drag and drop na objekty mapy.
- * TODO
  */
 class MapView: public QWidget {
 
@@ -57,6 +58,7 @@ class MapView: public QWidget {
 		/// Ziskat objekt z mime dat, ktera ho prenasi.
 		static BombicMapObject * getMapObject(
 				const QMimeData * mimeData);
+		/// Spustit tazeni.
 		static void execDragging(QWidget * srcWidget,
 				BombicMapObject * object);
 	public slots:

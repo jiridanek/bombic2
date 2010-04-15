@@ -6,6 +6,7 @@
 #ifndef BOMBIC_MAP_H_GUARD_
 #define BOMBIC_MAP_H_GUARD_
 
+#include <QObject>
 #include <QString>
 #include <QVector>
 #include <QPoint>
@@ -28,7 +29,9 @@ class BombicMapObjectGenerator;
  * policku objekt generovat.
  * Nasledne je BombicMap vizualizovana skrze @c MapScene.
  */
-class BombicMap {
+class BombicMap: public QObject {
+
+	Q_OBJECT
 
 	public:
 		/// Konstrukce prazdne mapy.
@@ -63,14 +66,12 @@ class BombicMap {
 		BombicMapObjectGenerator * creatureGenerator(
 				const BombicMap::Field & field);
 
+		/// Vsechny boxy, ktere se v mape nahodne generuji.
 		const ObjectListT & generatedBoxes();
+		/// Vsechny prisery, ktere se v mape nahodne generuji.
 		const ObjectListT & generatedCreatures();
 
-		/// Nastavi pocet boxu k nahodnemu vygenerovani.
-		void setGeneratedBoxesCount(BombicMapObject * box, int count);
-		/// Nastavi pocet priser k nahodnemu vygenerovani.
-		void setGeneratedCreaturesCount(BombicMapObject * creature, int count);
-
+		/// Obnovit blokovani generatoru policka.
 		void updateGeneratorsBlocking(const Field & field);
 
 		/// Obdelnik mapy (v jednotkach policek).
@@ -78,6 +79,19 @@ class BombicMap {
 
 		/// Pozadi mapy.
 		BombicMapBackground * background();
+
+	public slots:
+		/// Nastavi pocet boxu k nahodnemu vygenerovani.
+		void setGeneratedBoxesCount(BombicMapObject * box, int count);
+		/// Nastavi pocet priser k nahodnemu vygenerovani.
+		void setGeneratedCreaturesCount(BombicMapObject * creature, int count);
+
+	signals:
+		/// Pridan generovany objekt.
+		void generatedMapObjectAdded(BombicMapObject * object);
+		/// Odstranen generovany objekt.
+		void generatedMapObjectRemoved(BombicMapObject * object);
+
 
 	private:
 		/// Mnozina reprezentujici jedno policko.
@@ -90,9 +104,8 @@ class BombicMap {
 			ObjectListT objList;
 		} FieldSetT;
 
-		/// Typ matice policek mapy.
+		/// Typ matice policek mapy. TODO pouzit QMatrix
 		typedef QVector< QVector< FieldSetT > > FieldsT;
-
 
 		/// Vlozit zdi pozadi do mapy.
 		void insertBackgroundWalls();
@@ -100,11 +113,13 @@ class BombicMap {
 		/// Pokusit se odblokovat generovani
 		void updateGeneratorsBlocking(const FieldSetT & fieldSet);
 
+		/// Nastavit pocet objektu k nahodnemu vygenerovani.
 		void setGeneratedObjectsCount(ObjectListT & objList,
 				BombicMapObject * object, int count);
-
+		/// Pridat objekt k vygenerovani.
 		void addGeneratedMapObject(ObjectListT & objList,
 				BombicMapObject * object);
+		/// Odstranit objekt k vygenerovani
 		void removeGeneratedMapObject(ObjectListT & objList,
 				BombicMapObject * object);
 
