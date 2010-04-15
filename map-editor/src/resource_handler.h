@@ -72,16 +72,30 @@ class ResourceHandler: public QObject {
 	protected:
 		/// Nacte mapu podle jmena.
 		BombicMap * loadMap(const QString & name);
-		/// Nacte zdi mapy.
+
+		/// Nacte hrace mapy
+		bool loadMapPlayers(BombicMap * map);
+		bool loadMapPlayers(const QDomElement & playersEl,
+				BombicMap * map);
+		/// Nacte objekty na zemi v mape.
 		bool loadMapFloorobjects(const QDomElement & floorsEl,
 				BombicMap * map);
+		/// Nacte zdi mapy.
 		bool loadMapWalls(const QDomElement & wallsEl,
 				BombicMap * map);
+		/// Nacte bedny mapy.
 		bool loadMapBoxes(const QDomElement & boxesEl,
 				BombicMap * map);
+		/// Nacte prisery mapy.
 		bool loadMapCreatures(const QDomElement & creaturesEl,
 				BombicMap * map);
+
+		/// Vlozi do mapy objekt na urcite pozice.
 		bool insertMapObjects(const QDomElement & positionEl,
+				BombicMapObject * insertedObject, BombicMap * map);
+
+		/// Vlozi do mapy objekt na urcitou (jednu) pozici.
+		bool insertMapObject(const QDomElement & positionEl,
 				BombicMapObject * insertedObject, BombicMap * map);
 
 		/// Nacte objekt mapy podle jmena.

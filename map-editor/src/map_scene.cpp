@@ -371,7 +371,7 @@ void MapScene::generateObjects(
 		generator->addGeneratedObject(mapObj);
 		map_->updateGeneratorsBlocking(mapObj->field());
 
-		if(mapObj->type() == BombicMapObject::Creature) {
+		if(mapObj->sortOnField()) {
 			sortGraphicsOnField(mapObj->field());
 		}
 	}
@@ -484,7 +484,7 @@ void MapScene::insert(BombicMapObject * object,
 	map_->insert(object, dstField);
 	addItem(object->situateGraphicsItem( dstField*CELL_SIZE ));
 	// update graphics items sorting
-	if(object->type() == BombicMapObject::Creature) {
+	if(object->sortOnField()) {
 		sortGraphicsOnField(dstField);
 	}
 }
@@ -500,7 +500,7 @@ void MapScene::remove(BombicMapObject * object) {
 	removeItem(object->graphicsItem());
 	map_->remove(object);
 
-	if(object->type() == BombicMapObject::Creature) {
+	if(object->sortOnField()) {
 		sortGraphicsOnField(objField);
 	}
 }

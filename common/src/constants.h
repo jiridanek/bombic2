@@ -45,6 +45,9 @@
 /// Pozadi pouzite v map editoru jako vychozi.
 #define DEFAULT_MAP_BACKGROUND "bg_forest"
 
+/// Nazev objektu reprezentujici hrace v cooperative modu.
+#define COOPERATIVE_PLAYERS_NAME "allplayers"
+
 /// Jednotka zoomovaciho posuvniku.
 #define ZOOM_STEP 0.1
 /// Minimalni hodnota zoomovani.
@@ -65,5 +68,6 @@
 /// Plocha graficke pomocne polozky pro zvyrazneni policka, ktere je v detailu.
 #define SELECTED_FIELD_ITEM_BRUSH \
 	QBrush(QColor(255, 255, 255, 52))
+
 
 #endif

@@ -15,6 +15,9 @@
 #include "bombic/wall.h"
 #include "map_object_palette.h"
 
+/// Pocet hracu (deathmatche) nacitanych z mapy.
+#define RH_PLAYERS_COUNT 4
+
 SINGLETON_INIT(ResourceHandler);
 
 /**
@@ -50,6 +53,10 @@ BombicMap * ResourceHandler::loadEmptyMap() {
 		DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT, defaultBg);
 	if(!newMap) {
 		delete defaultBg;
+		return 0;
+	}
+	if(!loadMapPlayers(newMap)) {
+		delete newMap;
 		return 0;
 	}
 	return newMap;
@@ -91,6 +98,8 @@ BombicMap * ResourceHandler::loadMap(const QString & name) {
 	// load map objects
 	QDomElement el;
 	success =
+		getSubElement(rootEl, el, "players") &&
+		loadMapPlayers(el, map) &&
 		getSubElement(rootEl, el, "floorobjects", true) &&
 		loadMapFloorobjects(el, map) &&
 		getSubElement(rootEl, el, "walls", true) &&
@@ -112,6 +121,77 @@ BombicMap * ResourceHandler::loadMap(const QString & name) {
 	for(QDomElement itEl = firstEl; \
 		!itEl.isNull() ; \
 		itEl = itEl.nextSiblingElement(firstEl.tagName()) )
+
+bool ResourceHandler::loadMapPlayers(BombicMap * map) {
+	// start of cooperative players
+	BombicMapObject * player =
+		loadMapObject(COOPERATIVE_PLAYERS_NAME);
+	if(!player) {
+		return false;
+	}
+	BombicMap::Field playersField;
+	// starting at 1,1 because of background walls
+	for(BombicMap::Field f(1, 1) ; f.x() < map->fieldsRect().right() ;
+			++f.rx()) {
+		for(f.ry() = 1 ; f.y() < map->fieldsRect().bottom() ;
+				++f.ry()) {
+			if(map->canInsert(player, f)) {
+				playersField = f;
+				break;
+			}
+		}
+		if(!playersField.isNull()) {
+			break;
+		}
+	}
+	Q_ASSERT(!playersField.isNull());
+	// OK - it can be inserted, so create copy and insert it
+	map->insert(player->createCopy(), playersField);
+
+	// start of deathmatch players
+	for(int i = 0 ; i < RH_PLAYERS_COUNT ; ++i) {
+		QString playerName = "player";
+		playerName += QString::number(i);
+		player = loadMapObject(playerName);
+		if(!player) {
+			return false;
+		}
+		map->insert(player->createCopy(), playersField);
+	}
+	// all players successfull loaded
+	return true;
+}
+
+bool ResourceHandler::loadMapPlayers(const QDomElement & playersEl,
+		BombicMap * map) {
+	// start of cooperative players
+	BombicMapObject * player =
+		loadMapObject(COOPERATIVE_PLAYERS_NAME);
+	if(!player) {
+		return false;
+	}
+	if(!insertMapObject(playersEl, player, map)) {
+		return false;
+	}
+	// start of deathmatch players
+	for(int i = 0 ; i < RH_PLAYERS_COUNT ; ++i) {
+		QString playerName = "player";
+		playerName += QString::number(i);
+		QDomElement playerEl;
+		if(!getSubElement(playersEl, playerEl, playerName)) {
+			return false;
+		}
+		player = loadMapObject(playerName);
+		if(!player) {
+			return false;
+		}
+		if(!insertMapObject(playerEl, player, map)) {
+			return false;
+		}
+	}
+	// all players successfull loaded
+	return true;
+}
 
 bool ResourceHandler::loadMapFloorobjects(const QDomElement & floorsEl,
 		BombicMap * map) {
@@ -245,26 +325,34 @@ bool ResourceHandler::insertMapObjects(const QDomElement & positionEl,
 		BombicMapObject * insertedObject, BombicMap * map) {
 	// for all positions
 	RH_FOREACH_SIBLING_ELEMENT(posEl, positionEl) {
-
-		BombicMap::Field field;
-		if(!getAttrsXY(posEl, field.rx(), field.ry())) {
+		if(!insertMapObject(posEl, insertedObject, map)) {
 			return false;
 		}
-		// try to insert
-		if(!map->canInsert(insertedObject, field)) {
-			showError(
-				tr("Object cannot be inserted to field") +"\n"+
-					"[" + QString::number(field.x()) +","+
-					QString::number(field.y()) + "]",
-				posEl );
-			return false;
-		}
-		// OK - it can be inserted, so create copy and insert it
-		map->insert(insertedObject->createCopy(), field);
 	}
 	// all positions inserted
 	return true;
 }
+
+bool ResourceHandler::insertMapObject(const QDomElement & posEl,
+		BombicMapObject * insertedObject, BombicMap * map) {
+	BombicMap::Field field;
+	if(!getAttrsXY(posEl, field.rx(), field.ry())) {
+		return false;
+	}
+	// try to insert
+	if(!map->canInsert(insertedObject, field)) {
+		showError(
+			tr("Object cannot be inserted to field") +"\n"+
+				"[" + QString::number(field.x()) +","+
+				QString::number(field.y()) + "]",
+			posEl );
+		return false;
+	}
+	// OK - it can be inserted, so create copy and insert it
+	map->insert(insertedObject->createCopy(), field);
+	return true;
+}
+
 
 /**
  * @param name jmeno pozadi (nebo souboru s pozadim)

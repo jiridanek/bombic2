@@ -10,8 +10,6 @@
 
 #include "map_object_resource_handler.h"
 
-class BombicCreature;
-
 /** Resource handler specializovany na objekty typu prisera.
  * Zpracovava zdroj reprezentujici priseru a vytvari
  * prototyp teto prisery.
