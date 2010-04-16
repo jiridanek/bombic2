@@ -13,19 +13,21 @@
  */
 
 #include <QApplication>
+#include <QDockWidget>
+#include <QObject>
 #include <QDateTime>
 #include <QWidget>
 #include <QGridLayout>
 #include <QSplitter>
 
+#include "main_window.h"
 #include "resource_handler.h"
 #include "map_object_palette.h"
 #include "map_view.h"
 
 /**
  * Hlavni inicializator programu.
- * Vytvori Qt aplikaci, inicializuje okno, singletony,
- * vytvori hlavni kostru gui.
+ * Vytvori Qt aplikaci, inicializuje okno, singletony.
  * @param argc
  * @param argv
  * @return Uspech programu.
@@ -35,23 +37,15 @@ int main(int argc, char *argv[]) {
 
 	QApplication app(argc, argv);
 
-	QWidget * win = new QWidget;
-	QGridLayout * winLayout = new QGridLayout(win);
-
 	// vytvorit nahodnou posloupnost
 	qsrand( QDateTime::currentDateTime().toTime_t() );
 
 	// konstrukce singletonu
-	new ResourceHandler(win);
-	new MapObjectPalette(win);
-	new MapView(win);
+	new MainWindow;
+	new ResourceHandler(MAIN_WINDOW);
+	new MapObjectPalette(MAIN_WINDOW);
+	new MapView(MAIN_WINDOW);
 
-	// poskladat prvky gui do layoutu okna
-	QSplitter * winSplitter = new QSplitter(win);
-	winSplitter->addWidget(MAP_VIEW);
-	winSplitter->addWidget(MAP_OBJECT_PALETTE);
-	winLayout->addWidget(winSplitter, 0, 0);
-
-	win->show();
+	MAIN_WINDOW->show();
 	return app.exec();
 }

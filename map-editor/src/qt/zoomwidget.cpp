@@ -31,9 +31,12 @@ ZoomWidget::ZoomWidget(qreal zoomStep, qreal minValue, qreal maxValue,
 	slider_ = new QSlider(Qt::Horizontal);
 	connect(slider_, SIGNAL(valueChanged(int)),
 		this, SLOT(change(int)) );
+	connect(slider_, SIGNAL(sliderMoved(int)),
+		this, SLOT(changeLabel(int)) );
 	slider_->setRange(
 		zoom2sliderValue(minValue), zoom2sliderValue(maxValue));
 	slider_->setValue(zoom2sliderValue(1));
+	slider_->setTracking(false);
 
 	slider_->setTickPosition(QSlider::TicksBelow);
 	slider_->setTickInterval(1);
@@ -52,6 +55,14 @@ ZoomWidget::ZoomWidget(qreal zoomStep, qreal minValue, qreal maxValue,
 void ZoomWidget::change(int sliderValue) {
 	qreal zoomValue = slider2zoomValue(sliderValue);
 	emit zoomChanged(zoomValue);
+	changeLabel(sliderValue);
+}
+
+/**
+ * @param sliderValue nova hodnota zoomu (v jednotkach slideru)
+ */
+void ZoomWidget::changeLabel(int sliderValue) {
+	qreal zoomValue = slider2zoomValue(sliderValue);
 	label_->setText( QString::number(qRound(zoomValue*100))+" %");
 }
 

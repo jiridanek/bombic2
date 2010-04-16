@@ -33,6 +33,8 @@ class ZoomWidget: public QWidget {
 	protected slots:
 		/// Zmenit zoom.
 		void change(int sliderValue);
+		/// Zmenit popisek.
+		void changeLabel(int sliderValue);
 
 	protected:
 		/// Prevod jednotek slideru na obecne jednotky.
@@ -41,13 +43,13 @@ class ZoomWidget: public QWidget {
 		int zoom2sliderValue(qreal zoomValue);
 
 	private:
-		/// Jezdec, posuvnik po skale. 
+		/// Jezdec, posuvnik po skale.
 		QSlider * slider_;
 		/// Popisek s hodnotou zoomu.
 		QLabel * label_;
 		/// Resetovaci tlacitko.
 		QPushButton * resetButton_;
-		
+
 		/// Jednotka (pocet obecnych jednotek na jednotku slideru).
 		qreal unit_;
 };

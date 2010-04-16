@@ -105,7 +105,7 @@ QLayoutItem *FlowLayout::itemAt(int index) const
 }
 
 /** @details
- * Prvek na pozici @p index odstrani z layoutu a vrati jej. 
+ * Prvek na pozici @p index odstrani z layoutu a vrati jej.
  * Vlastnictvi prvku prechazi na volajiciho, prvek jiz nebude
  * s layoutem odalokovan.
  * @return Prvek na pozici @p index.
@@ -123,7 +123,7 @@ QLayoutItem *FlowLayout::takeAt(int index)
  */
 Qt::Orientations FlowLayout::expandingDirections() const
 {
-    return 0;
+    return Qt::Horizontal;
 }
 
 /**
@@ -164,7 +164,7 @@ void FlowLayout::setGeometry(const QRect &rect)
 QSize FlowLayout::sizeHint() const
 {
 	int w = geometry().width();
-	// hint podle aktualni sirsky
+	// hint podle aktualni sirky
 	QSize size(w, heightForWidth(w));
 	size += QSize(2*margin(), 2*margin());
 	return size;

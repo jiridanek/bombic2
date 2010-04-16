@@ -47,11 +47,12 @@
 #include <QLayout>
 #include <QRect>
 #include <QWidgetItem>
+#include <QList>
 
 /** Plynuly layout.
  * Prvky tohoto layoutu se rozmistuji plynule v rade (horizontalne),
  * se zalomenim.
- */  
+ */
 class FlowLayout : public QLayout
 {
 public:
@@ -82,7 +83,7 @@ public:
     void setGeometry(const QRect &rect);
 	/// Hint velikosti.
     QSize sizeHint() const;
-	
+
 private:
 	/// Provest rozlozeni prvku.
     int doLayout(const QRect &rect, bool testOnly) const;

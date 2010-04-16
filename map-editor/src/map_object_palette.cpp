@@ -15,6 +15,7 @@
 #include "qt/flowlayout.h"
 #include "bombic/map_object.h"
 
+#include "main_window.h"
 #include "resource_handler.h"
 
 /// Minimalni sirka palety.
@@ -38,6 +39,7 @@ MapObjectPalette::MapObjectPalette(QWidget * parent):
 	connect(signalMapper_, SIGNAL(mapped(int)),
 		this, SLOT(objectButtonClicked(int)));
 
+	MAIN_WINDOW->addMapObjectPalette(this);
 }
 
 MapObjectPalette::~MapObjectPalette() {

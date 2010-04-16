@@ -13,6 +13,7 @@
 #include "map_scene.h"
 #include "map_field_view.h"
 #include "qt/zoomwidget.h"
+#include "main_window.h"
 #include "resource_handler.h"
 #include "bombic/map.h"
 #include "bombic/map_background.h"
@@ -41,13 +42,15 @@ MapView::MapView(QWidget * parent):
 	SINGLETON_CONSTRUCT;
 
 	// add subwidgets
-	gridLayout()->addWidget(fieldView_, 0, 0, 1, 2);
-	gridLayout()->addWidget(viewport_, 1, 0, 1, 2);
-	gridLayout()->addWidget(workingObjectLabel_, 2, 0);
+	gridLayout()->addWidget(viewport_);
+
+	MAIN_WINDOW->addMapView(this);
+	MAIN_WINDOW->addMapFieldView(fieldView_);
+	MAIN_WINDOW->addWorkingObjectLabel(workingObjectLabel_);
+	MAIN_WINDOW->addZoomWidget(zoomWidget_);
 	// and also connect them
 	connect(zoomWidget_, SIGNAL(zoomChanged(qreal)),
 		this, SLOT(setZoom(qreal)) );
-	gridLayout()->addWidget(zoomWidget_, 2, 1);
 
 	// create default (empty) map
 	BombicMap * defaultMap = RESOURCE_HANDLER->loadEmptyMap();

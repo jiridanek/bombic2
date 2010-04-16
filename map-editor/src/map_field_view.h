@@ -10,6 +10,7 @@
 #define MAP_FIELD_VIEW_H_GUARD_
 
 #include <QWidget>
+#include <QString>
 
 #include "bombic/map.h"
 
@@ -36,13 +37,8 @@ class MapFieldView: public QWidget {
 		void update(MapScene * scene);
 
 	private:
-		/// Odpojit checkboxy.
-		void disconnectCheckboxes();
-		/// Napojit checkboxy na policko mapy.
-		void connectCheckboxes(BombicMap * map,
-				const BombicMap::Field & field);
-		/// Napojit checkbox na generovany objekt policka.
-		void connectCheckbox(QCheckBox * checkbox,
+		/// Vytvorit checkbox napojeny na generovany objekt policka.
+		QCheckBox * createCheckbox(const QString & checkboxName,
 				BombicMapObjectGenerator * objGen);
 
 		/// Posouvaci pole widgetu.
@@ -53,10 +49,6 @@ class MapFieldView: public QWidget {
 		/// Pohled na tazeny objekt tedy musime zachovat dele,
 		/// nez je ve skutecnosti zobrazovan.
 		QWidget * oldScrollWidget_;
-		/// Tlacitko manipulujici s generovanou bednou policka.
-		QCheckBox * generateBox_;
-		/// Tlacitko manipulujici s generovanou priserou policka.
-		QCheckBox * generateCreature_;
 };
 
 
