@@ -7,11 +7,14 @@
 
 #include <QMainWindow>
 #include <QDockWidget>
+#include <QString>
+#include <QHash>
 
 #include <singleton.h>
 
 class QWidget;
-class QString;
+class QMenu;
+class QAction;
 
 /// Zkratka, pro pristup k singletonu MainWindow.
 #define MAIN_WINDOW SINGLETON_SHORTCUT(MainWindow)
@@ -29,6 +32,20 @@ class MainWindow: public QMainWindow {
 		MainWindow();
 		~MainWindow();
 
+		enum Menu {
+			FileMenu, MapMenu, EditMenu,
+			ViewMenu, DocksMenu, HelpMenu
+		};
+
+		enum Action {
+			MapSizeAction, MapBackgroundAction,
+			GeneratedBoxesAction, GeneratedCreaturesAction,
+			GenerateObjectsAction
+		};
+
+		QMenu * menu(Menu menu);
+		QAction * action(Action action);
+
 		void addMapObjectPalette(QWidget * paletteWidget);
 		void addMapView(QWidget * mapViewWidget);
 		void addMapFieldView(QWidget * mapFieldViewWidget);
@@ -36,6 +53,15 @@ class MainWindow: public QMainWindow {
 		void addZoomWidget(QWidget * zoomWidget);
 
 	private:
+		void addDock(const QString & name, QWidget * widget,
+				Qt::DockWidgetArea area);
+		void addAction(Action action,
+				const QString & name, bool checkable,
+				const QKeySequence & shortcut, Menu menu);
+
+		QHash<Menu, QMenu *> menus_;
+
+		QHash<Action, QAction *> actions_;
 };
 
 

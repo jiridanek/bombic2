@@ -66,8 +66,10 @@ class MapScene: public QGraphicsScene {
 		/// Odstranit generovanou priseru.
 		void removeGeneratedCreature(BombicMapObject * mapObj);
 
+	private slots:
 		/// Prepnout, zda generovat objekty ci ne.
 		void toggleObjectGenerating();
+
 	protected:
 		/// Handler pohybu mysi.
 		virtual void mouseMoveEvent(QGraphicsSceneMouseEvent * event);

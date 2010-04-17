@@ -10,11 +10,13 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QPoint>
 #include <QRectF>
+#include <QAction>
 
 #include <constants.h>
 
 #include "map_object_palette.h"
 #include "map_view.h"
+#include "main_window.h"
 
 #include "bombic/map.h"
 #include "bombic/map_background.h"
@@ -69,6 +71,13 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	// connect view to scene
 	connect(MAP_VIEW, SIGNAL(leaved()),
 		this, SLOT(hideWorkingObject()) );
+
+	// connect menu actions to scene
+	QAction * generateObjectsAction =
+		MAIN_WINDOW->action(MainWindow::GenerateObjectsAction);
+	generateObjectsAction->setChecked(doObjectGenerating_);
+	connect(generateObjectsAction, SIGNAL(toggled(bool)),
+		this, SLOT(toggleObjectGenerating()) );
 
 	// init helper items as "insert item" and "item for selected field"
 	initHelperItems();
