@@ -17,7 +17,7 @@
 class QScrollArea;
 class QCheckBox;
 class MapScene;
-class BombicMapObjectGenerator;
+class MapObjectGenerator;
 class MapFieldViewObject;
 
 /** Pohled na policko mapy.
@@ -39,7 +39,7 @@ class MapFieldView: public QWidget {
 	private:
 		/// Vytvorit checkbox napojeny na generovany objekt policka.
 		QCheckBox * createCheckbox(const QString & checkboxName,
-				BombicMapObjectGenerator * objGen);
+				MapObjectGenerator * objGen);
 
 		/// Posouvaci pole widgetu.
 		QScrollArea * scrollArea_;

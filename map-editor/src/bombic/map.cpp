@@ -29,9 +29,9 @@ BombicMap::BombicMap(int width, int height,
 	for(int x = 0 ; x < width ; ++x) {
 		for(int y = 0 ; y < height ; ++y) {
 			fields_[x][y].boxGen =
-				new BombicBoxGenerator(Field(x, y));
+				new BoxGenerator(Field(x, y));
 			fields_[x][y].creatureGen =
-				new BombicCreatureGenerator(Field(x, y));
+				new CreatureGenerator(Field(x, y));
 		}
 	}
 	// background walls
@@ -293,7 +293,7 @@ const BombicMap::ObjectListT & BombicMap::objectsOnField(
  * @return Generator beden.
  * @retval 0 Zadane policko neni v mape.
  */
-BombicMapObjectGenerator * BombicMap::boxGenerator(
+MapObjectGenerator * BombicMap::boxGenerator(
 		const BombicMap::Field & field) {
 	if(!fieldsRect_.contains(field)) {
 		return 0;
@@ -309,7 +309,7 @@ BombicMapObjectGenerator * BombicMap::boxGenerator(
  * @return Generator priser.
  * @retval 0 Zadane policko neni v mape.
  */
-BombicMapObjectGenerator * BombicMap::creatureGenerator(
+MapObjectGenerator * BombicMap::creatureGenerator(
 		const BombicMap::Field & field) {
 	if(!fieldsRect_.contains(field)) {
 		return 0;

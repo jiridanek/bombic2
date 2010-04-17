@@ -9,8 +9,8 @@
  * ktery se nachazi v leve polovine tohoto policka.
  * @param field policko mapy, pro ktere chceme vizualizovat
  */
-BombicBoxGenerator::BombicBoxGenerator(const BombicMap::Field & field):
-		BombicMapObjectGenerator(field) {
+BoxGenerator::BoxGenerator(const BombicMap::Field & field):
+		MapObjectGenerator(field) {
 	labelGI_ = new QGraphicsSimpleTextItem("B");
 	// TODO set font
 
@@ -20,24 +20,24 @@ BombicBoxGenerator::BombicBoxGenerator(const BombicMap::Field & field):
 /**
  * @return Typ objektu, ktery generuje.
  */
-BombicMapObject::Type BombicBoxGenerator::type() {
+BombicMapObject::Type BoxGenerator::type() {
 	return BombicMapObject::Box;
 }
 
 /**
  * @return Zda lze aktualne generovat objekt.
  */
-bool BombicBoxGenerator::canGenerate() {
-	return BombicMapObjectGenerator::canGenerate() &&
+bool BoxGenerator::canGenerate() {
+	return MapObjectGenerator::canGenerate() &&
 		generatedObjects_.isEmpty();
 }
 
-void BombicBoxGenerator::addGeneratedObject(BombicMapObject * mapObject) {
-	BombicMapObjectGenerator::addGeneratedObject(mapObject);
+void BoxGenerator::addGeneratedObject(BombicMapObject * mapObject) {
+	MapObjectGenerator::addGeneratedObject(mapObject);
 	emit canGenerateChanged();
 }
 
-bool BombicBoxGenerator::blocksCreatureGenerating() {
+bool BoxGenerator::blocksCreatureGenerating() {
 	return !generatedObjects_.isEmpty();
 }
 

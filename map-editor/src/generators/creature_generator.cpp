@@ -11,9 +11,9 @@
  * ktery se nachazi v prave polovine tohoto policka.
  * @param field policko mapy, pro ktere chceme vizualizovat
  */
-BombicCreatureGenerator::BombicCreatureGenerator(
+CreatureGenerator::CreatureGenerator(
 		const BombicMap::Field & field):
-				BombicMapObjectGenerator(field) {
+				MapObjectGenerator(field) {
 	labelGI_ = new QGraphicsSimpleTextItem("C");
 	// TODO set font
 
@@ -25,6 +25,6 @@ BombicCreatureGenerator::BombicCreatureGenerator(
 /**
  * @return Typ objektu, ktery generuje.
  */
-BombicMapObject::Type BombicCreatureGenerator::type() {
+BombicMapObject::Type CreatureGenerator::type() {
 	return BombicMapObject::Creature;
 }

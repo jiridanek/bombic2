@@ -15,7 +15,7 @@
 
 class BombicMapBackground;
 class BombicMapObject;
-class BombicMapObjectGenerator;
+class MapObjectGenerator;
 
 /** Mapa hry Bombic.
  * Udrzuje strukturu mapy, rozlozeni objektu mapy.
@@ -60,10 +60,10 @@ class BombicMap: public QObject {
 		const ObjectListT & objectsOnField(const BombicMap::Field & field);
 
 		/// Generator beden na policku.
-		BombicMapObjectGenerator * boxGenerator(
+		MapObjectGenerator * boxGenerator(
 				const BombicMap::Field & field);
 		/// Generator priser na policku.
-		BombicMapObjectGenerator * creatureGenerator(
+		MapObjectGenerator * creatureGenerator(
 				const BombicMap::Field & field);
 
 		/// Vsechny boxy, ktere se v mape nahodne generuji.
@@ -100,9 +100,9 @@ class BombicMap: public QObject {
 		/// Mnozina reprezentujici jedno policko.
 		typedef struct {
 			/// Generator beden.
-			BombicMapObjectGenerator * boxGen;
+			MapObjectGenerator * boxGen;
 			/// Generator priser.
-			BombicMapObjectGenerator * creatureGen;
+			MapObjectGenerator * creatureGen;
 			/// Seznam pevnych objektu.
 			ObjectListT objList;
 		} FieldSetT;

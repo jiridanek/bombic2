@@ -1,6 +1,6 @@
 /** @file map_object_generator.h
  * Informace o tom, zda lze na policku generovat nejaky objekt,
- * nese trida BombicMapObjectGenerator. Uchovava take generovane objekty.
+ * nese trida MapObjectGenerator. Uchovava take generovane objekty.
  */
 
 #ifndef MAP_OBJECT_GENERATOR_H_GUARD_
@@ -27,15 +27,15 @@ class QGraphicsItem;
  * odstrani tyto objekty a vyvola signal, ktere objekty generoval
  * a nyni nemuze.
  */
-class BombicMapObjectGenerator: public QObject {
+class MapObjectGenerator: public QObject {
 
 	Q_OBJECT
 
 	public:
 		/// Konstrukce.
-		BombicMapObjectGenerator(const BombicMap::Field & field);
+		MapObjectGenerator(const BombicMap::Field & field);
 		/// Destrukce.
-		~BombicMapObjectGenerator();
+		~MapObjectGenerator();
 
 		/// Typ generovanych objektu.
 		virtual BombicMapObject::Type type() =0;

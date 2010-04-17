@@ -161,7 +161,7 @@ void MapScene::insertObjectsGraphicsItems() {
  * @param zDiff hodnota ktera bude pridana k souradnici Z pri pozicovani
  */
 void MapScene::insertGeneratorGraphicsItem(
-		BombicMapObjectGenerator * generator, qreal zDiff) {
+		MapObjectGenerator * generator, qreal zDiff) {
 
 	QGraphicsItem * item = generator->graphicsItem();
 	if(item->scene()!=this) {
@@ -200,7 +200,7 @@ void MapScene::initObjectGenerators() {
  * @param addGeneratedObjectMethod mistni slot pro pridani generovaneho objektu
  */
 void MapScene::initObjectGenerator(
-		BombicMapObjectGenerator * generator,
+		MapObjectGenerator * generator,
 		ObjectGeneratorsT & availableGenerators,
 		const char * registerGeneratorChangeMethod,
 		const char * addGeneratedObjectMethod ) {
@@ -219,7 +219,7 @@ void MapScene::initObjectGenerator(
  */
 void MapScene::registerBoxGeneratorChange() {
 	registerGeneratorChange(
-		qobject_cast<BombicMapObjectGenerator *>(sender()),
+		qobject_cast<MapObjectGenerator *>(sender()),
 		boxesGeneratingTools_);
 }
 
@@ -228,7 +228,7 @@ void MapScene::registerBoxGeneratorChange() {
  */
 void MapScene::registerCreatureGeneratorChange() {
 	registerGeneratorChange(
-		qobject_cast<BombicMapObjectGenerator *>(sender()),
+		qobject_cast<MapObjectGenerator *>(sender()),
 		creaturesGeneratingTools_);
 }
 
@@ -239,7 +239,7 @@ void MapScene::registerCreatureGeneratorChange() {
  * @param tools pomucky pro vygenerovani
  */
 void MapScene::registerGeneratorChange(
-		BombicMapObjectGenerator * generator,
+		MapObjectGenerator * generator,
 		ObjectGeneratingToolsT & tools) {
 	if(!generator) {
 		return;
@@ -375,7 +375,7 @@ void MapScene::generateObjects(ObjectGeneratingToolsT & tools) {
 		// get object and generator
 		BombicMapObject * mapObj =
 			takeRandomObject(tools.toGenerate);
-		BombicMapObjectGenerator * generator =
+		MapObjectGenerator * generator =
 			getRandomGenerator(tools.availableGenerators);
 		// add the graphics
 		QGraphicsItem * gi = mapObj->situateGraphicsItem(
@@ -399,7 +399,7 @@ void MapScene::generateObjects(ObjectGeneratingToolsT & tools) {
  * @param generators generatory, z nichz nahodne vybirame
  * @return Nahodne vybrany generator.
  */
-BombicMapObjectGenerator * MapScene::getRandomGenerator(
+MapObjectGenerator * MapScene::getRandomGenerator(
 		ObjectGeneratorsT & generators) {
 	if(generators.isEmpty()) {
 		return 0;

@@ -337,7 +337,7 @@ bool ResourceHandler::loadMapNoboxes(const QDomElement & dontGenerateEl,
 		if(!getAttrsXY(noboxEl, field.rx(), field.ry())) {
 			return false;
 		}
-		BombicMapObjectGenerator * generator =
+		MapObjectGenerator * generator =
 			map->boxGenerator(field);
 		if(generator) {
 			generator->disallow();
@@ -357,7 +357,7 @@ bool ResourceHandler::loadMapNocreatures(const QDomElement & dontGenerateEl,
 		if(!getAttrsXY(nocreatureEl, field.rx(), field.ry())) {
 			return false;
 		}
-		BombicMapObjectGenerator * generator =
+		MapObjectGenerator * generator =
 			map->creatureGenerator(field);
 		if(generator) {
 			generator->disallow();

@@ -17,7 +17,7 @@ class MapFieldView;
 class QGraphicsRectItem;
 class BombicMapBackground;
 class BombicMapObject;
-class BombicMapObjectGenerator;
+class MapObjectGenerator;
 class GeneratedObjectsWizard;
 
 /** Scena (vyzobrazeni) mapy a interakce s uzivatelem.
@@ -116,7 +116,7 @@ class MapScene: public QGraphicsScene {
 		void removeGeneratedObjectsFromMap();
 
 		/// Typ mnoziny generatoru.
-		typedef QSet<BombicMapObjectGenerator *> ObjectGeneratorsT;
+		typedef QSet<MapObjectGenerator *> ObjectGeneratorsT;
 
 		/// Pomucky pro generovani objektu.
 		typedef struct {
@@ -130,19 +130,19 @@ class MapScene: public QGraphicsScene {
 
 		/// Vlozit graficky prvek generatoru.
 		void insertGeneratorGraphicsItem(
-				BombicMapObjectGenerator * generator,
+				MapObjectGenerator * generator,
 				qreal zDiff);
 		/// Inicializovat generatory objektu.
 		void initObjectGenerators();
 		/// Inicializovat generator objektu.
 		void initObjectGenerator(
-				BombicMapObjectGenerator * generator,
+				MapObjectGenerator * generator,
 				ObjectGeneratorsT & availableGenerators,
 				const char * registerGeneratorChangeMethod,
 				const char * addGeneratedObjectMethod );
 		/// Zaznamenat zmenu generatoru.
 		void registerGeneratorChange(
-				BombicMapObjectGenerator * generator,
+				MapObjectGenerator * generator,
 				ObjectGeneratingToolsT & tools);
 		/// Pridat generovany objekt.
 		void addGeneratedObject( BombicMapObject * mapObj,
@@ -155,7 +155,7 @@ class MapScene: public QGraphicsScene {
 		/// Generovat objekty k vygenerovani.
 		void generateObjects(ObjectGeneratingToolsT & tools);
 		/// Ziskat nahodny generator.
-		BombicMapObjectGenerator * getRandomGenerator(
+		MapObjectGenerator * getRandomGenerator(
 				ObjectGeneratorsT & generators);
 		/// Ziskat nahodny objekt.
 		BombicMapObject * takeRandomObject(

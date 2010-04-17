@@ -81,7 +81,7 @@ void MapFieldView::update(MapScene * scene) {
  * @param objGen generator objektu, ktery chceme napojit na tlacitko
  */
 QCheckBox * MapFieldView::createCheckbox(const QString & checkboxName,
-		BombicMapObjectGenerator * objGen) {
+		MapObjectGenerator * objGen) {
 	QCheckBox * checkbox = new QCheckBox(checkboxName, this);
 	checkbox->setChecked(objGen->allowed());
 	connect(checkbox, SIGNAL(stateChanged(int)),
