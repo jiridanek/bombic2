@@ -53,7 +53,7 @@ void MainWindow::addMapView(QWidget * mapViewWidget) {
 
 void MainWindow::addMapFieldView(QWidget * mapFieldViewWidget) {
 	addDock(tr("Map field detail"), mapFieldViewWidget,
-		Qt::TopDockWidgetArea );
+		Qt::BottomDockWidgetArea );
 }
 
 void MainWindow::addWorkingObjectLabel(QWidget * workingObjectLabel) {
@@ -65,7 +65,7 @@ void MainWindow::addWorkingObjectLabel(QWidget * workingObjectLabel) {
 }
 
 void MainWindow::addZoomWidget(QWidget * zoomWidget) {
-	addDock(tr("Zoom the map"), zoomWidget, Qt::BottomDockWidgetArea);
+	addDock(tr("Zoom the map"), zoomWidget, Qt::RightDockWidgetArea);
 }
 
 void MainWindow::addDock(const QString & name, QWidget * widget,

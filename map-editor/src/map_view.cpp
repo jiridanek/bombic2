@@ -1,6 +1,7 @@
 
 #include "map_view.h"
 
+#include <QApplication>
 #include <QGraphicsView>
 #include <QGridLayout>
 #include <QLabel>
@@ -45,8 +46,8 @@ MapView::MapView(QWidget * parent):
 	gridLayout()->addWidget(viewport_);
 
 	MAIN_WINDOW->addMapView(this);
-	MAIN_WINDOW->addMapFieldView(fieldView_);
 	MAIN_WINDOW->addWorkingObjectLabel(workingObjectLabel_);
+	MAIN_WINDOW->addMapFieldView(fieldView_);
 	MAIN_WINDOW->addZoomWidget(zoomWidget_);
 	// and also connect them
 	connect(zoomWidget_, SIGNAL(zoomChanged(qreal)),
@@ -87,7 +88,10 @@ QGridLayout * MapView::gridLayout() {
  * pak je tedy prace se scenou mnohem rychlejsi (netransformuje se).
  * @param zoomQuotient novy transformacni kvocient
  */
+ #include <QDebug>
 void MapView::setZoom(qreal zoomQuotient) {
+	// it can take a while
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	if(zoomQuotient==1.0) {
 		// no zoom - reset for responsibility
 		viewport_->resetTransform();
@@ -96,8 +100,11 @@ void MapView::setZoom(qreal zoomQuotient) {
 		qreal dz = zoomQuotient/lastZoomQuotient_;
 		// and scale last zoomed viewport
 		viewport_->scale(dz, dz);
+		// wait for repaint (to show the cursor)
+		viewport_->repaint();
 	}
 	lastZoomQuotient_ = zoomQuotient;
+	QApplication::restoreOverrideCursor();
 }
 
 /** @details
