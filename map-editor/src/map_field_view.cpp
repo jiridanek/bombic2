@@ -23,8 +23,20 @@ MapFieldView::MapFieldView(QWidget * parent):
 
 	scrollArea_ = new QScrollArea(this);
 	scrollArea_->setWidgetResizable(true);
+	scrollArea_->hide();
 
 	layout->addWidget(scrollArea_);
+
+	boxesWidget_ = new QWidget(this);
+	boxesWidget_->hide();
+	QLayout * boxesLayout = new QVBoxLayout(boxesWidget_);
+
+	generateBox_ = new QCheckBox(tr("generate &Box"), this);
+	boxesLayout->addWidget(generateBox_);
+	generateCreature_ = new QCheckBox(tr("generate &Creature"), this);
+	boxesLayout->addWidget(generateCreature_);
+
+	hide();
 }
 
 /** @details
@@ -34,6 +46,8 @@ MapFieldView::MapFieldView(QWidget * parent):
  * @param scene scena mapy, jejiz policko chceme zobrazit
  */
 void MapFieldView::update(MapScene * scene) {
+	// disconnect old connections
+	disconnectCheckboxes();
 	// get field of map
 	BombicMap * map = scene->map_;
 	BombicMap::Field field = scene->selectedField_;
@@ -44,22 +58,18 @@ void MapFieldView::update(MapScene * scene) {
 		hide();
 		return;
 	}
+	// connect checkboxes to new field
+	connectCheckboxes(map, field);
 
 	// create new clean scrolled widget
 	QWidget * scrollWidget = new QWidget(this);
 	QLayout * scrollLayout = new FlowLayout(scrollWidget);
 	// add checkboxes of generators
-	QWidget * boxesWidget = new QWidget(this);
-	QLayout * boxesLayout = new QVBoxLayout(boxesWidget);
-	boxesLayout->addWidget( createCheckbox(
-		tr("generate &Box"), map->boxGenerator(field) ) );
-	boxesLayout->addWidget( createCheckbox(
-		tr("generate &Creature"), map->creatureGenerator(field) ) );
-	scrollLayout->addWidget(boxesWidget);
+	boxesWidget_->show();
+	scrollLayout->addWidget(boxesWidget_);
 
 	// add objects to scrolled widget
-	foreach(BombicMapObject * mapObj,
-			map->objectsOnField(field)) {
+	foreach(BombicMapObject * mapObj, map->objectsOnField(field)) {
 		scrollLayout->addWidget(
 			new MapFieldViewObject(mapObj, this) );
 	}
@@ -71,20 +81,37 @@ void MapFieldView::update(MapScene * scene) {
 	oldScrollWidget_ = scrollArea_->takeWidget();
 	scrollArea_->setWidget(scrollWidget);
 	// and show it
-	scrollWidget->show();
+	scrollArea_->show();
 	show();
 }
 
 /** @details
- * Alokuje, nastavi a pripoji tlacitko na generator objektu @p objGen.
- * @param checkboxName popisek tlacitka
+ * Odpoji oba checkboxy manipulujici s generatory objektu.
+ */
+void MapFieldView::disconnectCheckboxes() {
+	generateBox_->disconnect();
+	generateCreature_->disconnect();
+}
+
+/** @details
+ * Pripoji oba checkboxy manipulujici s generatory objektu.
+ * @param map mapa jejiz policko chceme propojit
+ * @param field policko mapy, jehoz generatory objektu chceme pripojit
+ */
+void MapFieldView::connectCheckboxes(BombicMap * map,
+		const BombicMap::Field & field) {
+	connectCheckbox(generateBox_, map->boxGenerator(field));
+	connectCheckbox(generateCreature_, map->creatureGenerator(field));
+}
+
+/** @details
+ * Nastavi a pripoji @p checkbox na generator objektu @p objGen.
+ * @param checkbox tlacitko manipulujici s generatorem objektu.
  * @param objGen generator objektu, ktery chceme napojit na tlacitko
  */
-QCheckBox * MapFieldView::createCheckbox(const QString & checkboxName,
+void MapFieldView::connectCheckbox(QCheckBox * checkbox,
 		MapObjectGenerator * objGen) {
-	QCheckBox * checkbox = new QCheckBox(checkboxName, this);
 	checkbox->setChecked(objGen->allowed());
 	connect(checkbox, SIGNAL(stateChanged(int)),
 		objGen, SLOT(toggleAllowance()));
-	return checkbox;
 }
