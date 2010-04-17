@@ -4,8 +4,8 @@
 #include "map_background.h"
 #include "map_object.h"
 #include "wall.h"
-#include "box_generator.h"
-#include "creature_generator.h"
+#include "../generators/box_generator.h"
+#include "../generators/creature_generator.h"
 
 /** @details
  * Zkonstruuje mapu o rozmerech @p width, @p height s pozadim @p background.
@@ -36,6 +36,7 @@ BombicMap::BombicMap(int width, int height,
 	}
 	// background walls
 	insertBackgroundWalls();
+
 }
 
 /** @details

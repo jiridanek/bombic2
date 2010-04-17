@@ -3,8 +3,8 @@
  * nese trida BombicMapObjectGenerator. Uchovava take generovane objekty.
  */
 
-#ifndef BOMBIC_MAP_OBJECT_GENERATOR_H_GUARD_
-#define BOMBIC_MAP_OBJECT_GENERATOR_H_GUARD_
+#ifndef MAP_OBJECT_GENERATOR_H_GUARD_
+#define MAP_OBJECT_GENERATOR_H_GUARD_
 
 #include <QObject>
 #include "map.h"

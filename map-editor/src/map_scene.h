@@ -18,6 +18,7 @@ class QGraphicsRectItem;
 class BombicMapBackground;
 class BombicMapObject;
 class BombicMapObjectGenerator;
+class GeneratedObjectsWizard;
 
 /** Scena (vyzobrazeni) mapy a interakce s uzivatelem.
  * Scena mapy je zobrazena v MapView, zpracovava uzivateluv vstup
@@ -117,6 +118,16 @@ class MapScene: public QGraphicsScene {
 		/// Typ mnoziny generatoru.
 		typedef QSet<BombicMapObjectGenerator *> ObjectGeneratorsT;
 
+		/// Pomucky pro generovani objektu.
+		typedef struct {
+			/// Objekty k vygenerovani.
+			BombicMap::ObjectListT toGenerate;
+			/// Generatory, ktere aktualne mohou generovat.
+			ObjectGeneratorsT availableGenerators;
+			/// Pruvodce nastavenim generovanych objektu.
+			GeneratedObjectsWizard * generatedObjectsWizard;
+		} ObjectGeneratingToolsT;
+
 		/// Vlozit graficky prvek generatoru.
 		void insertGeneratorGraphicsItem(
 				BombicMapObjectGenerator * generator,
@@ -132,22 +143,17 @@ class MapScene: public QGraphicsScene {
 		/// Zaznamenat zmenu generatoru.
 		void registerGeneratorChange(
 				BombicMapObjectGenerator * generator,
-				BombicMap::ObjectListT & objectsToGenerate,
-				ObjectGeneratorsT & availableGenerators);
+				ObjectGeneratingToolsT & tools);
 		/// Pridat generovany objekt.
 		void addGeneratedObject( BombicMapObject * mapObj,
-				BombicMap::ObjectListT & objectsToGenerate,
-				ObjectGeneratorsT & availableGenerators);
+				ObjectGeneratingToolsT & tools);
 		/// Odstranit generovany objekt.
 		void removeGeneratedObject( BombicMapObject * mapObj,
-				BombicMap::ObjectListT & objectsToGenerate,
-				ObjectGeneratorsT & availableGenerators);
+				ObjectGeneratingToolsT & tools);
 		/// Generovat objekty k vygenerovani.
 		void generateObjects();
 		/// Generovat objekty k vygenerovani.
-		void generateObjects(
-				BombicMap::ObjectListT & objectsToGenerate,
-				ObjectGeneratorsT & availableGenerators);
+		void generateObjects(ObjectGeneratingToolsT & tools);
 		/// Ziskat nahodny generator.
 		BombicMapObjectGenerator * getRandomGenerator(
 				ObjectGeneratorsT & generators);
@@ -179,15 +185,10 @@ class MapScene: public QGraphicsScene {
 		BombicMap::Field selectedField_;
 		#define MAP_SCENE_FIELD_NOT_SELECTED BombicMap::Field(-1, -1);
 
-		/// Bedny k vygenerovani.
-		BombicMap::ObjectListT boxesToGenerate_;
-		/// Prisery k vygenerovani.
-		BombicMap::ObjectListT creaturesToGenerate_;
-
-		/// Generatory beden, ktere aktualne mohou generovat.
-		ObjectGeneratorsT availableBoxGenerators_;
-		/// Generatory priser, ktere aktualne mohou generovat.
-		ObjectGeneratorsT availableCreatureGenerators_;
+		/// Pomucky pro generovani beden.
+		ObjectGeneratingToolsT boxesGeneratingTools_;
+		/// Pomucky pro generovani priser.
+		ObjectGeneratingToolsT creaturesGeneratingTools_;
 
 		/// Zda-li je aktualne stisknuto tlacitko mysi,
 		/// na ktere se da navazat uvolnenim za vzniku kliknuti.

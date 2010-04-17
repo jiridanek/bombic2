@@ -11,6 +11,7 @@
 #include <QPoint>
 #include <QRectF>
 #include <QAction>
+#include <QWizard>
 
 #include <constants.h>
 
@@ -21,7 +22,9 @@
 #include "bombic/map.h"
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
-#include "bombic/map_object_generator.h"
+#include "generators/map_object_generator.h"
+#include "generators/generated_boxes_wizard.h"
+#include "generators/generated_creatures_wizard.h"
 
 /** @details
  * Vytvori scenu mapy @p map. Prebira vlastnictvi @p map a pri ruseni tuto mapu
@@ -36,10 +39,18 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 				QGraphicsScene(parent), map_(map), workingObject_(0),
 				insertionHelperItem_(new QGraphicsRectItem),
 				selectedFieldHelperItem_(new QGraphicsRectItem),
-				boxesToGenerate_(map->generatedBoxes()),
-				creaturesToGenerate_(map->generatedCreatures()),
 				mousePressed_(false), mouseClicked_(false),
 				doObjectGenerating_(true) {
+	// init tools
+	boxesGeneratingTools_.toGenerate =
+		map->generatedBoxes();
+	boxesGeneratingTools_.generatedObjectsWizard =
+		new GeneratedBoxesWizard(map, MAIN_WINDOW);
+	creaturesGeneratingTools_.toGenerate =
+		map->generatedCreatures();
+	creaturesGeneratingTools_.generatedObjectsWizard =
+		new GeneratedCreaturesWizard(map, MAIN_WINDOW);
+
 	// set the scene
 	setSceneRect(QRect(QPoint(0, 0), map_->fieldsRect().size()*CELL_SIZE));
 	setBackgroundBrush(map_->background()->ambientColor());
@@ -78,6 +89,15 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	generateObjectsAction->setChecked(doObjectGenerating_);
 	connect(generateObjectsAction, SIGNAL(toggled(bool)),
 		this, SLOT(toggleObjectGenerating()) );
+
+	connect(MAIN_WINDOW->action(MainWindow::GeneratedBoxesAction),
+		SIGNAL(triggered()),
+		boxesGeneratingTools_.generatedObjectsWizard,
+		SLOT(show()) );
+	connect(MAIN_WINDOW->action(MainWindow::GeneratedCreaturesAction),
+		SIGNAL(triggered()),
+		creaturesGeneratingTools_.generatedObjectsWizard,
+		SLOT(show()) );
 
 	// init helper items as "insert item" and "item for selected field"
 	initHelperItems();
@@ -158,12 +178,12 @@ void MapScene::initObjectGenerators() {
 	MAP_SCENE_FOREACH_MAP_FIELD(f) {
 		initObjectGenerator(
 			map_->boxGenerator(f),
-			availableBoxGenerators_,
+			boxesGeneratingTools_.availableGenerators,
 			SLOT(registerBoxGeneratorChange()),
 			SLOT(addGeneratedBox(BombicMapObject *)) );
 		initObjectGenerator(
 			map_->creatureGenerator(f),
-			availableCreatureGenerators_,
+			creaturesGeneratingTools_.availableGenerators,
 			SLOT(registerCreatureGeneratorChange()),
 			SLOT(addGeneratedCreature(BombicMapObject *)) );
 	}
@@ -200,7 +220,7 @@ void MapScene::initObjectGenerator(
 void MapScene::registerBoxGeneratorChange() {
 	registerGeneratorChange(
 		qobject_cast<BombicMapObjectGenerator *>(sender()),
-		boxesToGenerate_, availableBoxGenerators_);
+		boxesGeneratingTools_);
 }
 
 /**
@@ -209,28 +229,26 @@ void MapScene::registerBoxGeneratorChange() {
 void MapScene::registerCreatureGeneratorChange() {
 	registerGeneratorChange(
 		qobject_cast<BombicMapObjectGenerator *>(sender()),
-		creaturesToGenerate_, availableCreatureGenerators_);
+		creaturesGeneratingTools_);
 }
 
 /** @details
  * Prida nebo odebere @p generator z @p availableGenerators.
  * Pokud jej pridal, zkusi vygenerovat objekty.
  * @param generator generator, ktery zmenu vyvolal
- * @param objectsToGenerate objekty pro vygenerovani
- * @param availableGenerators generatory, ktere mohou generovat
+ * @param tools pomucky pro vygenerovani
  */
 void MapScene::registerGeneratorChange(
 		BombicMapObjectGenerator * generator,
-		BombicMap::ObjectListT & objectsToGenerate,
-		ObjectGeneratorsT & availableGenerators) {
+		ObjectGeneratingToolsT & tools) {
 	if(!generator) {
 		return;
 	}
 	if(generator->canGenerate()) {
-		availableGenerators.insert(generator);
-		generateObjects(objectsToGenerate, availableGenerators);
+		tools.availableGenerators.insert(generator);
+		generateObjects(tools);
 	} else {
-		availableGenerators.remove(generator);
+		tools.availableGenerators.remove(generator);
 	}
 }
 
@@ -238,57 +256,49 @@ void MapScene::registerGeneratorChange(
  * @param mapObj objekt, ktery ma byt pridan
  */
 void MapScene::addGeneratedBox(BombicMapObject * mapObj) {
-	addGeneratedObject( mapObj,
-		boxesToGenerate_, availableBoxGenerators_);
+	addGeneratedObject(mapObj, boxesGeneratingTools_);
 }
 /**
  * @param mapObj objekt, ktery ma byt pridan
  */
 void MapScene::addGeneratedCreature(BombicMapObject * mapObj) {
-	addGeneratedObject( mapObj,
-		creaturesToGenerate_, availableCreatureGenerators_);
+	addGeneratedObject(mapObj, creaturesGeneratingTools_);
 }
 
 /**
  * @param mapObj objekt, ktery ma byt pridan
- * @param objectsToGenerate objekty k vygenerovani
- * @param availableGenerators generatory, ktere mohou generovat
+ * @param tools pomucky pro vygenerovani
  */
 void MapScene::addGeneratedObject( BombicMapObject * mapObj,
-		BombicMap::ObjectListT & objectsToGenerate,
-		ObjectGeneratorsT & availableGenerators) {
+		ObjectGeneratingToolsT & tools) {
 	// if the object was in map - update the old field
 	// if no - some other field will be updated but it doesn't matter
 	map_->updateGeneratorsBlocking(mapObj->field());
 
-	objectsToGenerate.append(mapObj);
-	generateObjects(objectsToGenerate, availableGenerators);
+	tools.toGenerate.append(mapObj);
+	generateObjects(tools);
 }
 
 /**
  * @param mapObj objekt, ktery ma byt odstranen
  */
 void MapScene::removeGeneratedBox(BombicMapObject * mapObj) {
-	removeGeneratedObject( mapObj,
-		boxesToGenerate_, availableBoxGenerators_);
+	removeGeneratedObject(mapObj, boxesGeneratingTools_);
 }
 /**
  * @param mapObj objekt, ktery ma byt odstranen
  */
 void MapScene::removeGeneratedCreature(BombicMapObject * mapObj) {
-	removeGeneratedObject( mapObj,
-		creaturesToGenerate_, availableCreatureGenerators_);
+	removeGeneratedObject(mapObj, creaturesGeneratingTools_);
 }
 
 /**
  * @param mapObj objekt, ktery ma byt odstranen
- * @param objectsToGenerate objekty k vygenerovani
- * @param availableGenerators generatory, ktere mohou generovat
+ * @param tools pomucky pro vygenerovani
  */
 void MapScene::removeGeneratedObject(BombicMapObject * mapObj,
-		BombicMap::ObjectListT & objectsToGenerate,
-		ObjectGeneratorsT & availableGenerators) {
-	if(!objectsToGenerate.contains(mapObj)) {
+		ObjectGeneratingToolsT & tools) {
+	if(!tools.toGenerate.contains(mapObj)) {
 		// temporally disable generating
 		bool oldDoObjectGenerating = doObjectGenerating_;
 		doObjectGenerating_ = false;
@@ -300,10 +310,10 @@ void MapScene::removeGeneratedObject(BombicMapObject * mapObj,
 		// turn back the object generating
 		doObjectGenerating_ = oldDoObjectGenerating;
 	}
-	Q_ASSERT(objectsToGenerate.contains(mapObj));
-	objectsToGenerate.removeAll(mapObj);
+	Q_ASSERT(tools.toGenerate.contains(mapObj));
+	tools.toGenerate.removeAll(mapObj);
 	// generate again the rest of removed
-	generateObjects(objectsToGenerate, availableGenerators);
+	generateObjects(tools);
 }
 
 /** @details
@@ -342,8 +352,8 @@ void MapScene::removeGeneratedObjectsFromMap() {
  * pokud nejake jsou.
  */
 void MapScene::generateObjects() {
-	generateObjects(boxesToGenerate_, availableBoxGenerators_);
-	generateObjects(creaturesToGenerate_, availableCreatureGenerators_);
+	generateObjects(boxesGeneratingTools_);
+	generateObjects(creaturesGeneratingTools_);
 }
 
 /** @details
@@ -352,24 +362,21 @@ void MapScene::generateObjects() {
  * Pokud nejake (objekty i generatory) jsou.
  * Pokud je generovani zakazano (@c doObjectGenerating_ neni nastaveno)
  * nedela nic.
- * @param objectsToGenerate objekty k vygenerovani
- * @param availableGenerators generatory, ktere mohou generovat
+ * @param tools pomucky pro vygenerovani
  */
-void MapScene::generateObjects(
-		BombicMap::ObjectListT & objectsToGenerate,
-		ObjectGeneratorsT & availableGenerators) {
+void MapScene::generateObjects(ObjectGeneratingToolsT & tools) {
 
 	if(!doObjectGenerating_) {
 		return;
 	}
 
-	while(!objectsToGenerate.isEmpty() &&
-			!availableGenerators.isEmpty()) {
+	while(!tools.toGenerate.isEmpty() &&
+			!tools.availableGenerators.isEmpty()) {
 		// get object and generator
 		BombicMapObject * mapObj =
-			takeRandomObject(objectsToGenerate);
+			takeRandomObject(tools.toGenerate);
 		BombicMapObjectGenerator * generator =
-			getRandomGenerator(availableGenerators);
+			getRandomGenerator(tools.availableGenerators);
 		// add the graphics
 		QGraphicsItem * gi = mapObj->situateGraphicsItem(
 			generator->field() * CELL_SIZE);
@@ -475,9 +482,12 @@ void MapScene::showCannotInsertItem(const QRect & objectRect) {
 }
 
 /** @details
+ * Dealokuje pruvodce nastaveni generovanych objektu.
  * Dealokuje mapu, ktera je ve scene zobrazena.
  */
 MapScene::~MapScene() {
+	delete boxesGeneratingTools_.generatedObjectsWizard;
+	delete creaturesGeneratingTools_.generatedObjectsWizard;
 	delete map_;
 }
 

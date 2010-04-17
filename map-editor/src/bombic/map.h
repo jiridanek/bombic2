@@ -81,9 +81,9 @@ class BombicMap: public QObject {
 		BombicMapBackground * background();
 
 	public slots:
-		/// Nastavi pocet boxu k nahodnemu vygenerovani.
+		/// Nastavit pocet boxu k nahodnemu vygenerovani.
 		void setGeneratedBoxesCount(BombicMapObject * box, int count);
-		/// Nastavi pocet priser k nahodnemu vygenerovani.
+		/// Nastavit pocet priser k nahodnemu vygenerovani.
 		void setGeneratedCreaturesCount(BombicMapObject * creature, int count);
 
 	signals:

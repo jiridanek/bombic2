@@ -111,6 +111,23 @@ BombicMapObject * MapObjectPalette::getObject(const QString & objectName) {
 }
 
 /** @details
+ * Vytvori seznam objektu palety daneho typu @p type.
+ * Zabere linearni cas k poctu objektu v cele palete.
+ * @param type pozadovany typ objektu
+ * @return Seznam objektu palety daneho typu.
+ */
+QList<BombicMapObject *> MapObjectPalette::getObjects(
+		BombicMapObject::Type type) {
+	QList<BombicMapObject *> objects;
+	foreach(BombicMapObject * o, objectPalette_) {
+		if(o->type() == type) {
+			objects.append(o);
+		}
+	}
+	return objects;
+}
+
+/** @details
  * Vlozi objekt @p object do odpovidajici stranky palety.
  * Prebira vlastnictvi objektu.
  * @param object pointer na vkladany objekt

@@ -2,8 +2,8 @@
  * Trida nesouci informace o generovani beden @c BombicBoxGenerator.
  */
 
-#ifndef BOMBIC_BOX_GENERATOR_H_GUARD_
-#define BOMBIC_BOX_GENERATOR_H_GUARD_
+#ifndef BOX_GENERATOR_H_GUARD_
+#define BOX_GENERATOR_H_GUARD_
 
 #include "map_object_generator.h"
 

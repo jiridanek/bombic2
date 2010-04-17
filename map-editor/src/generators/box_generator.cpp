@@ -40,3 +40,4 @@ void BombicBoxGenerator::addGeneratedObject(BombicMapObject * mapObject) {
 bool BombicBoxGenerator::blocksCreatureGenerating() {
 	return !generatedObjects_.isEmpty();
 }
+

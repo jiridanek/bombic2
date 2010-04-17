@@ -2,8 +2,8 @@
  * TODO Trida nesouci informace o generovani priser @c BombicCreatureGenerator.
  */
 
-#ifndef BOMBIC_CREATURE_GENERATOR_H_GUARD_
-#define BOMBIC_CREATURE_GENERATOR_H_GUARD_
+#ifndef CREATURE_GENERATOR_H_GUARD_
+#define CREATURE_GENERATOR_H_GUARD_
 
 #include "map_object_generator.h"
 

@@ -23,7 +23,7 @@ class QLayout;
 class QSignalMapper;
 class QPushButton;
 
-/** Paleta objektù mapy.
+/** Paleta objektï¿½ mapy.
  * Widget, ktery nabizi uzivateli k interakci
  * vsechny objekty mapy, ktere jiz byli nacteny.
  * Poskytuje take vstupni bod uzivatelskeho rozhrani
@@ -49,6 +49,10 @@ class MapObjectPalette: public QWidget {
 
 		/// Objekt podle jmena.
 		BombicMapObject * getObject(const QString & objectName);
+
+		/// Objekty podle typu.
+		QList<BombicMapObject *> getObjects(
+			BombicMapObject::Type type);
 
 		/// Pridat objekt.
 		void addObject(BombicMapObject * object);

@@ -10,7 +10,7 @@
 #include "bombic/map.h"
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
-#include "bombic/map_object_generator.h"
+#include "generators/map_object_generator.h"
 
 #include "resource_handlers/wall_resource_handler.h"
 #include "bombic/wall.h"

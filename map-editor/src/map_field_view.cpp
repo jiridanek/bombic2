@@ -10,7 +10,7 @@
 #include "map_field_view_object.h"
 #include "map_scene.h"
 #include "bombic/map.h"
-#include "bombic/map_object_generator.h"
+#include "generators/map_object_generator.h"
 #include "qt/flowlayout.h"
 
 /** @details
