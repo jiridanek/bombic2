@@ -197,15 +197,17 @@ QSize FlowLayout::minimumSize() const
  */
 int FlowLayout::doLayout(const QRect &rect, bool testOnly) const
 {
-    int x = rect.x();
-    int y = rect.y();
+    QRect marginRect = rect.adjusted(
+	margin(), margin(), margin(), margin());
+    int x = marginRect.x();
+    int y = marginRect.y();
     int lineHeight = 0;
 
     QLayoutItem *item;
     foreach (item, itemList) {
         int nextX = x + item->sizeHint().width() + spacing();
-        if (nextX - spacing() > rect.right() && lineHeight > 0) {
-            x = rect.x();
+        if (nextX - spacing() > marginRect.right() && lineHeight > 0) {
+            x = marginRect.x();
             y = y + lineHeight + spacing();
             nextX = x + item->sizeHint().width() + spacing();
             lineHeight = 0;
@@ -217,5 +219,5 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const
         x = nextX;
         lineHeight = qMax(lineHeight, item->sizeHint().height());
     }
-    return y + lineHeight - rect.y();
+    return y + lineHeight - marginRect.y();
 }

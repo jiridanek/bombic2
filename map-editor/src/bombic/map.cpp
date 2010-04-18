@@ -1,4 +1,6 @@
 
+#include <QApplication>
+
 #include "map.h"
 
 #include "map_background.h"
@@ -364,6 +366,9 @@ void BombicMap::setGeneratedCreaturesCount(BombicMapObject * creature,
  */
 void BombicMap::setGeneratedObjectsCount(ObjectListT & objList,
 		BombicMapObject * object, int count) {
+	// may take a while
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
 	// current count
 	ObjectListT objects;
 	foreach(BombicMapObject * o, objList) {
@@ -372,6 +377,7 @@ void BombicMap::setGeneratedObjectsCount(ObjectListT & objList,
 		}
 	}
 	int diffCount = count - objects.size();
+
 	if(diffCount < 0) {
 		// we need to remove some objects
 		for(int i = 0 ; i > diffCount ; --i) {
@@ -386,6 +392,8 @@ void BombicMap::setGeneratedObjectsCount(ObjectListT & objList,
 			addGeneratedMapObject(objList, object->createCopy());
 		}
 	}
+
+	QApplication::restoreOverrideCursor();
 }
 
 /** @details
@@ -414,7 +422,7 @@ void BombicMap::addGeneratedMapObject(ObjectListT & objList,
 }
 
 /** @details
- * Odstrani a dealokuje generovany objekt ze seznamu.
+ * Odstrani generovany objekt ze seznamu.
  * Vyvola signal generatedMapObjectRemoved().
  * @param objList seznam generovanych objektu
  * @param object odstranovany objekt
@@ -433,7 +441,6 @@ void BombicMap::removeGeneratedMapObject(ObjectListT & objList,
 				"unhandled object type");
 	}
 	objList.removeAll(object);
-	delete object;
 }
 
 

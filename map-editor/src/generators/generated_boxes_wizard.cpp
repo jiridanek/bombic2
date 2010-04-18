@@ -17,3 +17,8 @@ BombicMapObject::Type GeneratedBoxesWizardPage::type() {
 const BombicMap::ObjectListT & GeneratedBoxesWizardPage::generatedObjects() {
 	return map_->generatedBoxes();
 }
+
+void GeneratedBoxesWizardPage::setGeneratedObjectsCount(
+		BombicMapObject * object, int count) {
+	map_->setGeneratedBoxesCount(object, count);
+}

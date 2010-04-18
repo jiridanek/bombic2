@@ -1,7 +1,7 @@
 
 #include "map_scene.h"
 
-#include <QDebug>
+#include <QApplication>
 #include <QBrush>
 #include <QPen>
 #include <QGraphicsItem>
@@ -336,6 +336,9 @@ void MapScene::toggleObjectGenerating() {
  * aby se objekty opet nevygenerovali.
  */
 void MapScene::removeGeneratedObjectsFromMap() {
+	// may take a while
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
 	bool oldDoObjectGenerating = doObjectGenerating_;
 	doObjectGenerating_ = false;
 	MAP_SCENE_FOREACH_MAP_FIELD(f) {
@@ -345,6 +348,8 @@ void MapScene::removeGeneratedObjectsFromMap() {
 			->removeGeneratedObjects();
 	}
 	doObjectGenerating_ = oldDoObjectGenerating;
+
+	QApplication::restoreOverrideCursor();
 }
 
 /** @details
@@ -370,6 +375,9 @@ void MapScene::generateObjects(ObjectGeneratingToolsT & tools) {
 		return;
 	}
 
+	// may take a while
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
 	while(!tools.toGenerate.isEmpty() &&
 			!tools.availableGenerators.isEmpty()) {
 		// get object and generator
@@ -391,6 +399,8 @@ void MapScene::generateObjects(ObjectGeneratingToolsT & tools) {
 			sortGraphicsOnField(mapObj->field());
 		}
 	}
+
+	QApplication::restoreOverrideCursor();
 }
 
 /** @details

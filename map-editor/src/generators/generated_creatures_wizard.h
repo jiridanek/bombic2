@@ -22,6 +22,10 @@ class GeneratedCreaturesWizardPage: public GeneratedObjectsWizardPage {
 	protected:
 		/// Seznam generovanych objektu mapy.
 		virtual const BombicMap::ObjectListT & generatedObjects();
+
+		/// Nastavit (v mape) pocet objektu k vygenerovani.
+		virtual void setGeneratedObjectsCount(
+				BombicMapObject * object, int count);
 };
 
 /** Pruvodce nastavenim generovani priser.

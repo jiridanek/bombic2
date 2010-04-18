@@ -12,6 +12,7 @@
 #include "map_object.h"
 
 class QLayout;
+class QSpinBox;
 class BombicMap;
 
 /** Stranka pruvodce nastavenim generovani objektu.
@@ -41,14 +42,6 @@ class GeneratedObjectsWizardPage: public QWizardPage {
 		void setCountInMap();
 
 	protected:
-		void initObjects();
-		void addObjects();
-
-		/// Seznam generovanych objektu mapy.
-		virtual const BombicMap::ObjectListT & generatedObjects() =0;
-
-		/// The map.
-		BombicMap * map_;
 
 		/// Informace o generovanem objektu.
 		typedef struct {
@@ -56,10 +49,30 @@ class GeneratedObjectsWizardPage: public QWizardPage {
 			BombicMapObject * paletteObject;
 			/// Pocet generovanych objektu.
 			int count;
+			/// Prvek GUI na meneni poctu.
+			QSpinBox * spinBox;
 		} GeneratedObjectInfoT;
 
-		/// Generated objects by name.
-		QHash<QString, GeneratedObjectInfoT> objects_;
+		void initObjects();
+		void addObjects();
+		void initObjectInfo(GeneratedObjectInfoT & objectInfo,
+				BombicMapObject * object);
+
+		/// Seznam generovanych objektu mapy.
+		virtual const BombicMap::ObjectListT & generatedObjects() =0;
+
+		/// Nastavit (v mape) pocet objektu k vygenerovani.
+		virtual void setGeneratedObjectsCount(
+				BombicMapObject * object, int count) =0;
+
+		/// The map.
+		BombicMap * map_;
+
+
+		/// Informace o objektu podle jeho jmena.
+		typedef QHash<QString, GeneratedObjectInfoT> ObjectInfoByNameT;
+		/// Generovane objekty podle jmena.
+		ObjectInfoByNameT objects_;
 
 		/// Hlavni layout, do ktereho se pridavaji objekty.
 		QLayout * mainLayout_;

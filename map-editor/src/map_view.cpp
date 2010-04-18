@@ -2,8 +2,6 @@
 #include "map_view.h"
 
 #include <QApplication>
-#include <QGraphicsView>
-#include <QGridLayout>
 #include <QLabel>
 #include <QEvent>
 #include <QDrag>
@@ -32,8 +30,7 @@ SINGLETON_INIT(MapView);
  * @param parent rodicovsky widget
  */
 MapView::MapView(QWidget * parent):
-		QWidget(parent),
-		viewport_(new QGraphicsView), scene_(0),
+		QGraphicsView(parent), scene_(0),
 		lastZoomQuotient_(1.0),
 		zoomWidget_( new ZoomWidget(ZOOM_STEP,
 			ZOOM_MINIMUM_VALUE, ZOOM_MAXIMUM_VALUE) ),
@@ -41,9 +38,6 @@ MapView::MapView(QWidget * parent):
 		fieldView_(new MapFieldView) {
 
 	SINGLETON_CONSTRUCT;
-
-	// add subwidgets
-	gridLayout()->addWidget(viewport_);
 
 	MAIN_WINDOW->addMapView(this);
 	MAIN_WINDOW->addWorkingObjectLabel(workingObjectLabel_);
@@ -58,7 +52,7 @@ MapView::MapView(QWidget * parent):
 	if(defaultMap) {
 		// and scene for it
 		scene_ = new MapScene(defaultMap, this);
-		viewport_->setScene(scene_);
+		setScene(scene_);
 	}
 }
 
@@ -67,44 +61,72 @@ MapView::~MapView() {
 }
 
 /** @details
- * Widget MapView ma jako layout @c QGridLayout.
- * Abychom v kazde chvili meli k tomuto layoutu pristup,
- * slouzi tato fce @c gridLayout() jako getter. Zaroven,
- * pokud jeste layout nebyl vytvoren, novy layout vytvori.
- * @return Grid layout rodicovskeho widgetu.
- */
-QGridLayout * MapView::gridLayout() {
-	QLayout * myLayout = layout();
-	if(myLayout) {
-		return static_cast<QGridLayout *>( myLayout );
-	} else {
-		return new QGridLayout(this);
-	}
-}
-
-/** @details
  * Nastavi zoom pohledu na mapu.
  * Pokud je novy zoom 1, resetuje transformacni matici,
  * pak je tedy prace se scenou mnohem rychlejsi (netransformuje se).
  * @param zoomQuotient novy transformacni kvocient
  */
- #include <QDebug>
 void MapView::setZoom(qreal zoomQuotient) {
-	// it can take a while
+	// may take a while
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 	if(zoomQuotient==1.0) {
 		// no zoom - reset for responsibility
-		viewport_->resetTransform();
+		resetTransform();
 	} else {
 		// find the difference
 		qreal dz = zoomQuotient/lastZoomQuotient_;
 		// and scale last zoomed viewport
-		viewport_->scale(dz, dz);
+		scale(dz, dz);
 		// wait for repaint (to show the cursor)
-		viewport_->repaint();
+		repaint();
 	}
 	lastZoomQuotient_ = zoomQuotient;
 	QApplication::restoreOverrideCursor();
+}
+
+/** @details
+ * Tento slot byva napojen na @c QGraphicsScene::changed(), ktery je vyvolan
+ * po zmene sceny pri navrtu do event loop. To je sice vymysleno pekne,
+ * @c updateScene() se nevola kvuli kazde kravine a vse krasne funguje.
+ * Pri vetsich upravach se ale dostavame do podivne situace, kdy
+ * jednou vyvolany @c updateScene() dostane i nekolik milionu
+ * obdelniku (ktere jsou bud malinke nebo se hodne prekryvaji),
+ * a pro kazdy obdelnik nejspis tupe zavola obnoveni sceny.
+ * To muze trvat opravdu dlouho.
+ * Prisel jsem tedy s resenim, ktere situaci rozdeli do tri kategorii
+ * podle pomeru poctu obdelniku a velikosti sceny.
+ * Prvni (nejcastejsi) kategorie zpracuje obdelniky po staru, jeden po druhem.
+ * Druha, kdy uz mame obdelniku mezi obvodem @c w+h a obsahem @c w*h obdelnika
+ * sceny, sjednoti vsechny obdelniky do jednoho, zachovava tedy
+ * v urcitych pripadech alespon lokalitu.
+ * Treti kategorie, kdy uz mame obdelniku dokonce vice
+ * nez je pixelu v cele scene se s obdelniky nepracuje a obnovi se cela scena.
+ * @param rects obdelniky, ktere se maji obnovit
+ */
+void MapView::updateScene(const QList<QRectF> & rects) {
+	// get dimensions
+	qreal x, y, w, h;
+	sceneRect().getRect(&x, &y, &w, &h);
+
+	// edited rects
+	QList<QRectF> myRects;
+	if(rects.size() < w+h) {
+		// small amount of rects will be dealt original way
+		myRects = rects;
+	} else if(rects.size() < w*h) {
+		// I unite the rects to preserve locality
+		QRectF rect(rects.first());
+		for(QList<QRectF>::const_iterator it = rects.begin() ;
+				it != rects.end() ; ++it) {
+			rect |= *it;
+		}
+		myRects.append(rect);
+	} else {
+		// update the whole rect
+		myRects.append(sceneRect());
+	}
+
+	QGraphicsView::updateScene(myRects);
 }
 
 /** @details

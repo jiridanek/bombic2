@@ -5,10 +5,18 @@
 #include <QHBoxLayout>
 #include <QScrollArea>
 #include <QLabel>
+#include <QSpinBox>
 
 #include "../resource_handler.h"
 #include "../map_object_palette.h"
 
+#include "../qt/flowlayout.h"
+
+#define GENERATED_OBJECTS_WIZARD_MAX_COUNT 999
+
+#define GENERATED_OBJECTS_WIZARD_FOREACH_OBJECT(it) \
+	for( ObjectInfoByNameT::iterator it = objects_.begin() ; \
+		it != objects_.end() ; ++it )
 
 GeneratedObjectsWizard::GeneratedObjectsWizard(
 		GeneratedObjectsWizardPage * page, QWidget * parent):
@@ -36,7 +44,7 @@ GeneratedObjectsWizardPage::GeneratedObjectsWizardPage(BombicMap * map):
 	QWidget * scrollWidget = new QWidget;
 	scrollArea->setWidget(scrollWidget);
 
-	mainLayout_ = new QVBoxLayout(scrollWidget);
+	mainLayout_ = new FlowLayout(scrollWidget, 10, 15);
 }
 
 /**
@@ -46,7 +54,9 @@ void GeneratedObjectsWizardPage::initObjects() {
 	addObjects();
 	// count the generated objects
 	foreach(BombicMapObject * o, generatedObjects()) {
-		++objects_[o->name()].count;
+		GeneratedObjectInfoT & info = objects_[o->name()];
+		++info.count;
+		info.spinBox->setValue(info.count);
 	}
 }
 
@@ -55,17 +65,34 @@ void GeneratedObjectsWizardPage::addObjects() {
 	foreach(BombicMapObject * o,
 			MAP_OBJECT_PALETTE->getObjects(type()) ) {
 		if(!objects_.contains(o->name())) {
-			QLabel * objectLabel = new QLabel(this);
-			objectLabel->setPixmap(o->pixmap());
-			objectLabel->show();
-			mainLayout_->addWidget(objectLabel);
-
-			GeneratedObjectInfoT objInfo;
-			objInfo.paletteObject = o;
-			objInfo.count = 0;
-			objects_[o->name()] = objInfo;
+			initObjectInfo(objects_[o->name()], o);
 		}
 	}
+}
+
+void GeneratedObjectsWizardPage::initObjectInfo(
+		GeneratedObjectInfoT & objectInfo, BombicMapObject * object) {
+	// the properties
+	objectInfo.paletteObject = object;
+	objectInfo.count = 0;
+	objectInfo.spinBox = new QSpinBox(this);
+	objectInfo.spinBox->setMaximum(GENERATED_OBJECTS_WIZARD_MAX_COUNT);
+	objectInfo.spinBox->setSpecialValueText(tr("Not generated"));
+
+	// and a little cosmetics
+	QFrame * objectFrame = new QFrame(this);
+	objectFrame->setFrameStyle(QFrame::Panel | QFrame::Raised);
+	mainLayout_->addWidget(objectFrame);
+
+	QLayout * layout = new QVBoxLayout(objectFrame);
+
+	QLabel * objectLabel = new QLabel(this);
+	objectLabel->setPixmap(object->pixmap());
+	objectLabel->setAlignment(Qt::AlignHCenter);
+	objectLabel->setBuddy(objectInfo.spinBox);
+	layout->addWidget(objectLabel);
+
+	layout->addWidget(objectInfo.spinBox);
 }
 
 void GeneratedObjectsWizardPage::initializePage() {
@@ -73,9 +100,17 @@ void GeneratedObjectsWizardPage::initializePage() {
 }
 
 void GeneratedObjectsWizardPage::cleanupPage() {
-	// TODO foreach object here turn back the count
+	GENERATED_OBJECTS_WIZARD_FOREACH_OBJECT(infoIt) {
+		infoIt->spinBox->setValue(infoIt->count);
+	}
 }
 
 void GeneratedObjectsWizardPage::setCountInMap() {
-	// TODO foreach object here set the count in map
+	GENERATED_OBJECTS_WIZARD_FOREACH_OBJECT(infoIt) {
+		if(infoIt->count != infoIt->spinBox->value()) {
+			infoIt->count = infoIt->spinBox->value();
+			setGeneratedObjectsCount(
+				infoIt->paletteObject, infoIt->count);
+		}
+	}
 }

@@ -6,14 +6,14 @@
 #ifndef MAP_VIEW_H_GUARD_
 #define MAP_VIEW_H_GUARD_
 
-#include <QWidget>
+#include <QGraphicsView>
+#include <QList>
+#include <QRectF>
 #include <singleton.h>
 
 /// Zkratka pro ziskani instance singletonu MapView.
 #define MAP_VIEW SINGLETON_SHORTCUT(MapView)
 
-class QGraphicsView;
-class QGridLayout;
 class QEvent;
 class QLabel;
 class QMimeData;
@@ -30,7 +30,7 @@ class BombicMapObject;
  * a detail vybraneho policka.
  * V ramci MapView je podporovan drag and drop na objekty mapy.
  */
-class MapView: public QWidget {
+class MapView: public QGraphicsView {
 
 	Q_OBJECT
 
@@ -42,8 +42,6 @@ class MapView: public QWidget {
 		explicit MapView(QWidget * parent = 0);
 		/// Destruuje pohled.
 		~MapView();
-		/// Layout pohledu.
-		QGridLayout * gridLayout();
 
 		/// Zobrazit obrazek pracovniho objektu.
 		void showWorkingObjectLabel(BombicMapObject * object);
@@ -64,6 +62,8 @@ class MapView: public QWidget {
 	public slots:
 		/// Nastavi zoom mapy.
 		void setZoom(qreal zoomQuotient);
+		/// Obnovit oblast sceny.
+		void updateScene(const QList<QRectF> & rects);
 
 	signals:
 		/// Pohled opusten.
@@ -74,8 +74,6 @@ class MapView: public QWidget {
 		virtual void leaveEvent(QEvent * event);
 
 	private:
-		/// Pohled na scenu mapy.
-		QGraphicsView * viewport_;
 		/// Scena mapy.
 		MapScene * scene_;
 		/// Aktualni (posledni nastaveny) zoom.

@@ -277,7 +277,7 @@ bool ResourceHandler::loadMapBoxes(const QDomElement & boxesEl,
 		}
 		// insert the random generated
 		int randomGenerated = 0;
-		if(!getIntAttr(boxesEl, randomGenerated,
+		if(!getIntAttr(objEl, randomGenerated,
 				"random_generated", true)) {
 			return false;
 		}
@@ -314,7 +314,7 @@ bool ResourceHandler::loadMapCreatures(const QDomElement & creaturesEl,
 		}
 		// insert the random generated
 		int randomGenerated = 0;
-		if(!getIntAttr(creaturesEl, randomGenerated,
+		if(!getIntAttr(objEl, randomGenerated,
 				"random_generated", true)) {
 			return false;
 		}

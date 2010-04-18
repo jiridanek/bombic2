@@ -22,3 +22,8 @@ const BombicMap::ObjectListT &
 		GeneratedCreaturesWizardPage::generatedObjects() {
 	return map_->generatedCreatures();
 }
+
+void GeneratedCreaturesWizardPage::setGeneratedObjectsCount(
+		BombicMapObject * object, int count) {
+	map_->setGeneratedCreaturesCount(object, count);
+}
