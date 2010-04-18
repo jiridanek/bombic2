@@ -18,6 +18,10 @@ BombicMapObject::Type GeneratedCreaturesWizardPage::type() {
 	return BombicMapObject::Creature;
 }
 
+QString GeneratedCreaturesWizardPage::objectTypePlural() {
+	return tr("creatures");
+}
+
 const BombicMap::ObjectListT &
 		GeneratedCreaturesWizardPage::generatedObjects() {
 	return map_->generatedCreatures();

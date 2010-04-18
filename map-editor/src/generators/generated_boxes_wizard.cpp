@@ -3,6 +3,7 @@
 GeneratedBoxesWizard::GeneratedBoxesWizard(BombicMap * map, QWidget * parent):
 		GeneratedObjectsWizard(
 			new GeneratedBoxesWizardPage(map), parent) {
+
 }
 
 GeneratedBoxesWizardPage::GeneratedBoxesWizardPage(BombicMap * map):
@@ -12,6 +13,10 @@ GeneratedBoxesWizardPage::GeneratedBoxesWizardPage(BombicMap * map):
 
 BombicMapObject::Type GeneratedBoxesWizardPage::type() {
 	return BombicMapObject::Box;
+}
+
+QString GeneratedBoxesWizardPage::objectTypePlural() {
+	return tr("boxes");
 }
 
 const BombicMap::ObjectListT & GeneratedBoxesWizardPage::generatedObjects() {

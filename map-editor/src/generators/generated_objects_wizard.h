@@ -36,6 +36,8 @@ class GeneratedObjectsWizardPage: public QWizardPage {
 		/// Typ objektu, ktere chceme nastavovat.
 		virtual BombicMapObject::Type type() =0;
 
+		/// Mnozne cislo pojmenovani typu
+		virtual QString objectTypePlural();
 
 	public slots:
 		/// Nastavit pocty generovanych objektu v mape.
@@ -94,6 +96,8 @@ class GeneratedObjectsWizard: public QWizard {
 	public slots:
 		/// Zobrazit widget.
 		void show();
+		/// Nahrat novy objekt.
+		void loadMapObject();
 
 	protected:
 		GeneratedObjectsWizardPage * page_;

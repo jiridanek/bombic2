@@ -9,6 +9,7 @@
 
 #include "../resource_handler.h"
 #include "../map_object_palette.h"
+#include "../main_window.h"
 
 #include "../qt/flowlayout.h"
 
@@ -22,7 +23,24 @@ GeneratedObjectsWizard::GeneratedObjectsWizard(
 		GeneratedObjectsWizardPage * page, QWidget * parent):
 				QWizard(parent), page_(page) {
 
-	setOption(QWizard::NoBackButtonOnStartPage);
+	setWindowTitle(
+		tr("Generated") +" "+ page_->objectTypePlural() +
+			" | " + MAIN_WINDOW->windowTitle() );
+	page_->setTitle(tr("Random generated")+" "+
+		page_->objectTypePlural() );
+	page_->setSubTitle(
+		tr( "Change count of generated objects of some kinds and"
+			" confirm the settings. If there is not the object"
+			" you want, try load new object, but remember that"
+			" in this page are viewed only")+" "+
+		 page_->objectTypePlural() +".");
+
+	setOptions( QWizard::NoBackButtonOnStartPage |
+		QWizard::HaveCustomButton1);
+	setButtonText(QWizard::CustomButton1, tr("Load new map object"));
+	connect(this, SIGNAL(customButtonClicked(int)),
+		this, SLOT(loadMapObject()) );
+
 
 	addPage(page);
 	connect(this, SIGNAL(accepted()),
@@ -33,6 +51,14 @@ void GeneratedObjectsWizard::show() {
 	page_->initializePage();
 	QWidget::show();
 }
+
+void GeneratedObjectsWizard::loadMapObject() {
+	RESOURCE_HANDLER->loadMapObject();
+	page_->initializePage();
+}
+
+
+/********************** wizard page ***********************/
 
 GeneratedObjectsWizardPage::GeneratedObjectsWizardPage(BombicMap * map):
 		map_(map) {
@@ -93,6 +119,10 @@ void GeneratedObjectsWizardPage::initObjectInfo(
 	layout->addWidget(objectLabel);
 
 	layout->addWidget(objectInfo.spinBox);
+}
+
+QString GeneratedObjectsWizardPage::objectTypePlural() {
+	return tr("objects");
 }
 
 void GeneratedObjectsWizardPage::initializePage() {

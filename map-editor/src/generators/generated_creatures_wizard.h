@@ -19,6 +19,9 @@ class GeneratedCreaturesWizardPage: public GeneratedObjectsWizardPage {
 		/// Typ objektu, ktere chceme nastavovat.
 		virtual BombicMapObject::Type type();
 
+		/// Mnozne cislo pojmenovani typu
+		virtual QString objectTypePlural();
+
 	protected:
 		/// Seznam generovanych objektu mapy.
 		virtual const BombicMap::ObjectListT & generatedObjects();

@@ -14,6 +14,9 @@ MainWindow::MainWindow() {
 
 	SINGLETON_CONSTRUCT;
 
+	setWindowTitle(tr("Bombic Map Editor"));
+
+
 	setCorner(Qt::TopRightCorner, Qt::RightDockWidgetArea);
 	setCorner(Qt::BottomRightCorner, Qt::RightDockWidgetArea);
 
