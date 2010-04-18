@@ -28,6 +28,12 @@ MainWindow::MainWindow() {
 		menus_[ViewMenu]->addMenu(tr("&Docked components"));
 	menus_[HelpMenu] = menuBar()->addMenu(tr("&Help"));
 
+
+	addAction(SaveMapAction, tr("&Save map"),
+		false, Qt::CTRL + Qt::Key_S, FileMenu);
+	addAction(SaveMapAsAction, tr("Save map &as"),
+		false, Qt::CTRL + Qt::SHIFT + Qt::Key_S, FileMenu);
+
 	actions_[MapSizeAction] =
 		menus_[MapMenu]->addAction(tr("Map &size"));
 	actions_[MapBackgroundAction] =

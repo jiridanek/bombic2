@@ -90,6 +90,7 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	connect(generateObjectsAction, SIGNAL(toggled(bool)),
 		this, SLOT(toggleObjectGenerating()) );
 
+	// connect the menu actions
 	connect(MAIN_WINDOW->action(MainWindow::GeneratedBoxesAction),
 		SIGNAL(triggered()),
 		boxesGeneratingTools_.generatedObjectsWizard,
@@ -754,7 +755,7 @@ void MapScene::selectField(const QPointF & eventPos) {
 }
 
 void MapScene::unselectField() {
-	selectedField_ = MAP_SCENE_FIELD_NOT_SELECTED;
+	selectedField_ = MAP_FIELD_INVALID;
 
 	selectedFieldHelperItem_->hide();
 	MAP_VIEW->updateFieldView();

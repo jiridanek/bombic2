@@ -17,6 +17,8 @@ class BombicMapBackground;
 class BombicMapObject;
 class MapObjectGenerator;
 
+#define MAP_FIELD_INVALID BombicMap::Field(-1, -1);
+
 /** Mapa hry Bombic.
  * Udrzuje strukturu mapy, rozlozeni objektu mapy.
  * V mape, jak  je ulozena na disku jsou napevno umistene objekty
@@ -35,8 +37,8 @@ class BombicMap: public QObject {
 
 	public:
 		/// Konstrukce prazdne mapy.
-		BombicMap(int width, int height,
-				BombicMapBackground * background);
+		BombicMap(const QString & name, int width, int height,
+				BombicMapBackground * background, const QString & filename = "");
 		/// Destrukce mapy a jejich objektu.
 		~BombicMap();
 
@@ -73,6 +75,16 @@ class BombicMap: public QObject {
 
 		/// Obnovit blokovani generatoru policka.
 		void updateGeneratorsBlocking(const Field & field);
+
+		/// Jmeno mapy.
+		const QString & name();
+		/// Soubor, do ktereho se ma mapa ulozit.
+		const QString & filename();
+
+		/// Jmeno mapy.
+		void setName(const QString & name);
+		/// Soubor, do ktereho se ma mapa ulozit.
+		void setFilename(const QString & filename);
 
 		/// Obdelnik mapy (v jednotkach policek).
 		const QRect & fieldsRect();

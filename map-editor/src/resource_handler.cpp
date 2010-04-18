@@ -12,25 +12,32 @@
 #include "bombic/map_object.h"
 #include "generators/map_object_generator.h"
 
+#include "resource_handlers/map_resource_handler.h"
 #include "resource_handlers/wall_resource_handler.h"
 #include "bombic/wall.h"
 #include "map_object_palette.h"
+#include "main_window.h"
 
 /// Pocet hracu (deathmatche) nacitanych z mapy.
 #define RH_PLAYERS_COUNT 4
 
 SINGLETON_INIT(ResourceHandler);
 
+using namespace ResourceHandlerNS;
+
 /**
  * @param parent rodic - predany do QObject::QObject()
  */
 ResourceHandler::ResourceHandler(QObject * parent):
-		QObject(parent) {
+		QObject(parent), mapResourceHandler_(new MapResourceHandler) {
 	SINGLETON_CONSTRUCT;
 	MapObjectResourceHandler::initResourceHandlers();
+
 }
 
 ResourceHandler::~ResourceHandler() {
+	delete mapResourceHandler_;
+
 	SINGLETON_DESTROY;
 }
 
@@ -38,366 +45,24 @@ BombicMap * ResourceHandler::loadMap() {
 }
 
 /** @details
- * Vytvori mapu s defaultnim pozadim @c DEFAULT_MAP_BACKGROUND
- * a rozmery <code>DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT</code>.
  * Vlastnictvi nove naalokovane mapy prechazi na volajiciho.
+ * @see MapResourceHandler::createEmptyMap()
  * @return Nove alokovana prazdna mapa s pozadim.
  */
 BombicMap * ResourceHandler::loadEmptyMap() {
 	return loadMap("map_concrete_rings");
-	BombicMapBackground * defaultBg =
-		loadMapBackground(DEFAULT_MAP_BACKGROUND);
-	if(!defaultBg) {
-		return 0;
-	}
-	BombicMap * newMap = new BombicMap(
-		DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT, defaultBg);
-	if(!newMap) {
-		delete defaultBg;
-		return 0;
-	}
-	if(!loadMapPlayers(newMap)) {
-		delete newMap;
-		return 0;
-	}
-	return newMap;
+	return mapResourceHandler_->createEmptyMap();
 }
 
 /** @details
- * Pokusi se vytvorit mapu zadanou @p name a vlozit do ni
- * vsechny objekty.
  * @param name jmeno mapy (nebo primo cesta k souboru)
+ * @see MapResourceHandler::createMap()
  * @return Objekt mapy.
  * @retval 0 mapu se nepodarilo vyrobit
  */
 BombicMap * ResourceHandler::loadMap(const QString & name) {
-	QDomElement rootEl;
-	if(!loadXml(name, rootEl, true, "map")) {
-		return 0;
-	}
-	QString bgName;
-	if(!getStringAttr(rootEl, bgName, "background") ) {
-		return 0;
-	}
-	int w, h;
-	bool success =
-		getIntAttr(rootEl, w, "width") &&
-		getIntAttr(rootEl, h, "height");
-	if(!success) {
-		return 0;
-	}
-	BombicMapBackground * mapBg = loadMapBackground(bgName);
-	if(!mapBg) {
-		return 0;
-	}
-	BombicMap * map = new BombicMap(w, h, mapBg);
-	if(!map) {
-		delete mapBg;
-		return 0;
-	}
-
-	// load map objects
-	QDomElement el;
-	success =
-		getSubElement(rootEl, el, "players") &&
-		loadMapPlayers(el, map) &&
-		getSubElement(rootEl, el, "floorobjects", true) &&
-		loadMapFloorobjects(el, map) &&
-		getSubElement(rootEl, el, "walls", true) &&
-		loadMapWalls(el, map) &&
-		getSubElement(rootEl, el, "boxes", true) &&
-		loadMapBoxes(el, map) &&
-		getSubElement(rootEl, el, "creatures", true) &&
-		loadMapCreatures(el, map) &&
-		getSubElement(rootEl, el, "dont_generate", true) &&
-		loadMapNoboxes(el, map) &&
-		loadMapNocreatures(el, map);
-
-
-	if(!success) {
-		delete map;
-		return 0;
-	}
-
-	return map;
+	return mapResourceHandler_->createMap(name);
 }
-
-#define RH_FOREACH_SIBLING_ELEMENT(itEl, firstEl) \
-	for(QDomElement itEl = firstEl; \
-		!itEl.isNull() ; \
-		itEl = itEl.nextSiblingElement(firstEl.tagName()) )
-
-bool ResourceHandler::loadMapPlayers(BombicMap * map) {
-	// start of cooperative players
-	BombicMapObject * player =
-		loadMapObject(COOPERATIVE_PLAYERS_NAME);
-	if(!player) {
-		return false;
-	}
-	BombicMap::Field playersField;
-	// starting at 1,1 because of background walls
-	for(BombicMap::Field f(1, 1) ; f.x() < map->fieldsRect().right() ;
-			++f.rx()) {
-		for(f.ry() = 1 ; f.y() < map->fieldsRect().bottom() ;
-				++f.ry()) {
-			if(map->canInsert(player, f)) {
-				playersField = f;
-				break;
-			}
-		}
-		if(!playersField.isNull()) {
-			break;
-		}
-	}
-	Q_ASSERT(!playersField.isNull());
-	// OK - it can be inserted, so create copy and insert it
-	map->insert(player->createCopy(), playersField);
-
-	// start of deathmatch players
-	for(int i = 0 ; i < RH_PLAYERS_COUNT ; ++i) {
-		QString playerName = "player";
-		playerName += QString::number(i);
-		player = loadMapObject(playerName);
-		if(!player) {
-			return false;
-		}
-		map->insert(player->createCopy(), playersField);
-	}
-	// all players successfull loaded
-	return true;
-}
-
-bool ResourceHandler::loadMapPlayers(const QDomElement & playersEl,
-		BombicMap * map) {
-	// start of cooperative players
-	BombicMapObject * player =
-		loadMapObject(COOPERATIVE_PLAYERS_NAME);
-	if(!player) {
-		return false;
-	}
-	if(!insertMapObject(playersEl, player, map)) {
-		return false;
-	}
-	// start of deathmatch players
-	for(int i = 0 ; i < RH_PLAYERS_COUNT ; ++i) {
-		QString playerName = "player";
-		playerName += QString::number(i);
-		QDomElement playerEl;
-		if(!getSubElement(playersEl, playerEl, playerName)) {
-			return false;
-		}
-		player = loadMapObject(playerName);
-		if(!player) {
-			return false;
-		}
-		if(!insertMapObject(playerEl, player, map)) {
-			return false;
-		}
-	}
-	// all players successfull loaded
-	return true;
-}
-
-bool ResourceHandler::loadMapFloorobjects(const QDomElement & floorsEl,
-		BombicMap * map) {
-	// for all object prototypes
-	RH_FOREACH_SIBLING_ELEMENT(objEl, floorsEl) {
-		// object name
-		QString name;
-		if(!getStringAttr(objEl, name, "name")) {
-			return false;
-		}
-		// the object
-		BombicMapObject * obj = loadMapObject(name);
-		if(!obj) {
-			return false;
-		}
-		// first position element
-		QDomElement posEl;
-		if(!getSubElement(objEl, posEl, "floorobject")) {
-			return false;
-		}
-		if(!insertMapObjects(posEl, obj, map)) {
-			return false;
-		}
-	}
-	// all floor objects loaded
-	return true;
-}
-
-bool ResourceHandler::loadMapWalls(const QDomElement & wallsEl,
-		BombicMap * map) {
-	// for all object prototypes
-	RH_FOREACH_SIBLING_ELEMENT(objEl, wallsEl) {
-		// object name
-		QString name;
-		if(!getStringAttr(objEl, name, "name")) {
-			return false;
-		}
-		// the object
-		BombicMapObject * obj = loadMapObject(name);
-		if(!obj) {
-			return false;
-		}
-		// first position element
-		QDomElement posEl;
-		if(!getSubElement(objEl, posEl, "wall")) {
-			return false;
-		}
-		if(!insertMapObjects(posEl, obj, map)) {
-			return false;
-		}
-	}
-	// all walls loaded
-	return true;
-}
-
-bool ResourceHandler::loadMapBoxes(const QDomElement & boxesEl,
-		BombicMap * map) {
-	// for all object prototypes
-	RH_FOREACH_SIBLING_ELEMENT(objEl, boxesEl) {
-		// object name
-		QString name;
-		if(!getStringAttr(objEl, name, "name")) {
-			return false;
-		}
-		// the object
-		BombicMapObject * obj = loadMapObject(name);
-		if(!obj) {
-			return false;
-		}
-		// first position element
-		QDomElement posEl;
-		if(!getSubElement(objEl, posEl, "box", true)) {
-			return false;
-		}
-		// insert the positioned objects
-		if(!insertMapObjects(posEl, obj, map)) {
-			return false;
-		}
-		// insert the random generated
-		int randomGenerated = 0;
-		if(!getIntAttr(objEl, randomGenerated,
-				"random_generated", true)) {
-			return false;
-		}
-		if(randomGenerated > 0) {
-			map->setGeneratedBoxesCount(obj, randomGenerated);
-		}
-	}
-	// all boxes loaded
-	return true;
-}
-
-bool ResourceHandler::loadMapCreatures(const QDomElement & creaturesEl,
-		BombicMap * map) {
-	// for all object prototypes
-	RH_FOREACH_SIBLING_ELEMENT(objEl, creaturesEl) {
-		// object name
-		QString name;
-		if(!getStringAttr(objEl, name, "name")) {
-			return false;
-		}
-		// the object
-		BombicMapObject * obj = loadMapObject(name);
-		if(!obj) {
-			return false;
-		}
-		// first position element
-		QDomElement posEl;
-		if(!getSubElement(objEl, posEl, "creature", true)) {
-			return false;
-		}
-		// insert the positioned objects
-		if(!insertMapObjects(posEl, obj, map)) {
-			return false;
-		}
-		// insert the random generated
-		int randomGenerated = 0;
-		if(!getIntAttr(objEl, randomGenerated,
-				"random_generated", true)) {
-			return false;
-		}
-		if(randomGenerated > 0) {
-			map->setGeneratedCreaturesCount(obj, randomGenerated);
-		}
-	}
-	// all creatures loaded
-	return true;
-}
-
-bool ResourceHandler::loadMapNoboxes(const QDomElement & dontGenerateEl,
-		BombicMap * map) {
-	QDomElement firstNoboxEl;
-	if(!getSubElement(dontGenerateEl, firstNoboxEl, "nobox", true)) {
-		return false;
-	}
-	RH_FOREACH_SIBLING_ELEMENT(noboxEl, firstNoboxEl) {
-		BombicMap::Field field;
-		if(!getAttrsXY(noboxEl, field.rx(), field.ry())) {
-			return false;
-		}
-		MapObjectGenerator * generator =
-			map->boxGenerator(field);
-		if(generator) {
-			generator->disallow();
-		}
-	}
-	return true;
-}
-
-bool ResourceHandler::loadMapNocreatures(const QDomElement & dontGenerateEl,
-		BombicMap * map) {
-	QDomElement firstNocreatureEl;
-	if(!getSubElement(dontGenerateEl, firstNocreatureEl, "nocreature", true)) {
-		return false;
-	}
-	RH_FOREACH_SIBLING_ELEMENT(nocreatureEl, firstNocreatureEl) {
-		BombicMap::Field field;
-		if(!getAttrsXY(nocreatureEl, field.rx(), field.ry())) {
-			return false;
-		}
-		MapObjectGenerator * generator =
-			map->creatureGenerator(field);
-		if(generator) {
-			generator->disallow();
-		}
-	}
-	return true;
-}
-
-bool ResourceHandler::insertMapObjects(const QDomElement & positionEl,
-		BombicMapObject * insertedObject, BombicMap * map) {
-	// for all positions
-	RH_FOREACH_SIBLING_ELEMENT(posEl, positionEl) {
-		if(!insertMapObject(posEl, insertedObject, map)) {
-			return false;
-		}
-	}
-	// all positions inserted
-	return true;
-}
-
-bool ResourceHandler::insertMapObject(const QDomElement & posEl,
-		BombicMapObject * insertedObject, BombicMap * map) {
-	BombicMap::Field field;
-	if(!getAttrsXY(posEl, field.rx(), field.ry())) {
-		return false;
-	}
-	// try to insert
-	if(!map->canInsert(insertedObject, field)) {
-		showError(
-			tr("Object cannot be inserted to field") +"\n"+
-				"[" + QString::number(field.x()) +","+
-				QString::number(field.y()) + "]",
-			posEl );
-		return false;
-	}
-	// OK - it can be inserted, so create copy and insert it
-	map->insert(insertedObject->createCopy(), field);
-	return true;
-}
-
 
 /**
  * @param name jmeno pozadi (nebo souboru s pozadim)
@@ -517,11 +182,97 @@ BombicMapObject * ResourceHandler::loadMapObject(const QString & name) {
 	return obj;
 }
 
-void ResourceHandler::saveMap(BombicMap * bombicMap) {
+#include <QDebug>
+/** @details
+ * Pokud ma mapa prirazene jmeno souboru, ulozi mapu do tohoto souboru.
+ * Jinak necha vybrat uzivatele.
+ * @param map mapa, ktera se ma ulozit
+ */
+bool ResourceHandler::saveMap(BombicMap * map) {
+	const QString & filename = map->filename();
+	if(filename.isEmpty()) {
+		qDebug() << "save - empty";
+		return saveMapAs(map);
+	}
+	qDebug() << "saved";
+	return mapResourceHandler_->saveMap(map);
 }
 
-void ResourceHandler::saveMapAs(BombicMap * bombicMap) {
+/**
+ * Necha vybrat uzivatele nove jmeno souboru a mapu do nej ulozi.
+ * @param map mapa, ktera se ma ulozit
+ */
+bool ResourceHandler::saveMapAs(BombicMap * map) {
+	QString filename = QFileDialog::getSaveFileName(
+		MAIN_WINDOW, tr("Bombic Map"), map->filename(),
+		tr("Bombic map files")+" (*"XML_FILE_EXTENSION")" );
+	if(filename.isEmpty()) {
+		qDebug() << "save as - empty";
+		return false;
+	}
+	// add the extension if it is missing
+	filename = filenameFromName(filename);
+
+	qDebug() << "set filename"<<filename;
+	map->setFilename(filename);
+	map->setName(attrNameValueFromName(filename));
+	return saveMap(map);
 }
+
+/** @details
+ * Zdrojovy obrazek je vcelku velky, a je v nem ulozeno vice objektu.
+ * Proto ResourceHandler drzi naposledy nacteny zdrojovy obrazek,
+ * kdyby nekdo priste chtel ten samy, uz se nemusi hledat a nacitat.
+ * Tato funkce tedy z xml atributu @p attrName elementu @p el precte
+ * nazev zdrojoveho obrazku a pokud tento obrazek jiz ma nacteny,
+ * pouze tise uspeje. Pokud je posledni nacteny obrazek jiny,
+ * tento obrazek nacte a ulozi ho do @c sourcePixmap_.
+ * Pokud nastane chyba, sam zobrazuje relevantni informace.
+ * Zdrojovemu obrazku vytvori masku pruhlednosti podle pruhledne barvy.
+ * @param el element, ze ktereho se ma ziskat hodnota atributu
+ * @param attrName jmeno atributu, jehoz hodnota urci jmeno obrazku
+ * @return Uspech operace.
+ * @retval true obrazek byl nacten a ulozen do @c sourcePixmap_
+ * @retval false obrazek nenacten
+ */
+bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
+		const QString & attrName) {
+	// get name of pixmap
+	if(!el.hasAttribute(attrName)) {
+		showError(tr("Missing attribute")+" "+attrName, el);
+		return false;
+	}
+	QString name = el.attribute(attrName);
+	// load the pixmap
+	if(name==sourcePixmapName_) {
+		// the pixmap is loaded
+		return true;
+	}
+	// first locate the file TODO do it in ResourceHandlerRH
+	QString filename = name;
+	bool fileLocated = locateFile(filename);
+	if(!fileLocated) {
+		return false;
+	}
+	// load pixmap
+	QPixmap pixmap(filename);
+	if(pixmap.isNull()) {
+		showError(filename+"\n"+tr("couldn't be opened")+" "+
+			tr("or has unknown format"));
+		return false;
+	}
+	// store the pixmap and its name for future use
+	sourcePixmap_ = pixmap;
+	sourcePixmapName_ = name;
+
+	// set the pixmap transparent
+	sourcePixmap_.setMask(
+		sourcePixmap_.createMaskFromColor(Qt::magenta));
+
+	return true;
+}
+
+/************************ members of ResourceHandlerNS ******************/
 
 /** @details
  * Pokusi se najit zadany soubor v domovskem adresari,
@@ -534,7 +285,7 @@ void ResourceHandler::saveMapAs(BombicMap * bombicMap) {
  * @retval true Soubor nalezen (cesta ulozena v @p filename)
  * @retval false Soubor nenalezen.
  */
-bool ResourceHandler::locateFile(QString & filename) {
+bool ResourceHandlerNS::locateFile(QString & filename) {
 	if(filename.isEmpty()) {
 		showError(tr("Trying to locate file with empty name"));
 		// file cannot have empty name
@@ -586,7 +337,7 @@ bool ResourceHandler::locateFile(QString & filename) {
  * @retval true Soubor nalezen (cesta ulozena v @p filename)
  * @retval false Soubor nenalezen.
  */
-bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
+bool ResourceHandlerNS::locateFileInDir(const QDir & dir, QString & filename,
 		int depth) {
 
 	if(!dir.isReadable()) {
@@ -631,14 +382,11 @@ bool ResourceHandler::locateFileInDir(const QDir & dir, QString & filename,
  * @retval true dokument nacten (korenovy element ulozen v @p rootEl)
  * @retval false dokument nenacten
  */
-bool ResourceHandler::loadXml(const QString & name,
+bool ResourceHandlerNS::loadXml(const QString & name,
 		QDomElement & rootEl, bool checkAttrName,
 		const QString & rootElTagName) {
 
-	QString filename = name;
-	if(!filename.endsWith(XML_FILE_EXTENSION)) {
-		filename += XML_FILE_EXTENSION;
-	}
+	QString filename = filenameFromName(name);
 	bool fileLocated = locateFile(filename);
 	if(!fileLocated) {
 		return false;
@@ -686,12 +434,13 @@ bool ResourceHandler::loadXml(const QString & name,
 }
 
 /** @details
+ * Obecne jmeno muze byt jmeno objektu, souboru, nebo cela cesta.
  * Pokud obsahuje @p name priponu xml souboru nebo cestu,
  * tyto kusy se odstrani.
  * @param name jmeno objektu, souboru, nebo cela cesta
  * @return Predpokladane jmeno objektu.
  */
-QString ResourceHandler::attrNameValueFromName(const QString & name) {
+QString ResourceHandlerNS::attrNameValueFromName(const QString & name) {
 	QString attrNameValue = name;
 	// strip extension
 	QString ext = XML_FILE_EXTENSION;
@@ -707,56 +456,18 @@ QString ResourceHandler::attrNameValueFromName(const QString & name) {
 }
 
 /** @details
- * Zdrojovy obrazek je vcelku velky, a je v nem ulozeno vice objektu.
- * Proto ResourceHandler drzi naposledy nacteny zdrojovy obrazek,
- * kdyby nekdo priste chtel ten samy, uz se nemusi hledat a nacitat.
- * Tato funkce tedy z xml atributu @p attrName elementu @p el precte
- * nazev zdrojoveho obrazku a pokud tento obrazek jiz ma nacteny,
- * pouze tise uspeje. Pokud je posledni nacteny obrazek jiny,
- * tento obrazek nacte a ulozi ho do @c sourcePixmap_.
- * Pokud nastane chyba, sam zobrazuje relevantni informace.
- * Zdrojovemu obrazku vytvori masku pruhlednosti podle pruhledne barvy.
- * @param el element, ze ktereho se ma ziskat hodnota atributu
- * @param attrName jmeno atributu, jehoz hodnota urci jmeno obrazku
- * @return Uspech operace.
- * @retval true obrazek byl nacten a ulozen do @c sourcePixmap_
- * @retval false obrazek nenacten
+ * Obecne jmeno muze byt jmeno objektu, souboru, nebo cela cesta.
+ * V prvnim pripade se k @p name prida pripona xml souboru,
+ * jinak vraci @p name.
+ * @param name jmeno objektu, souboru, nebo cela cesta
+ * @return Predpokladane jmeno souboru.
  */
-bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
-		const QString & attrName) {
-	// get name of pixmap
-	if(!el.hasAttribute(attrName)) {
-		showError(tr("Missing attribute")+" "+attrName, el);
-		return false;
-	}
-	QString name = el.attribute(attrName);
-	// load the pixmap
-	if(name==sourcePixmapName_) {
-		// the pixmap is loaded
-		return true;
-	}
-	// first locate the file
+QString ResourceHandlerNS::filenameFromName(const QString & name) {
 	QString filename = name;
-	bool fileLocated = locateFile(filename);
-	if(!fileLocated) {
-		return false;
+	if(!filename.endsWith(XML_FILE_EXTENSION)) {
+		filename += XML_FILE_EXTENSION;
 	}
-	// load pixmap
-	QPixmap pixmap(filename);
-	if(pixmap.isNull()) {
-		showError(filename+"\n"+tr("couldn't be opened")+" "+
-			tr("or has unknown format"));
-		return false;
-	}
-	// store the pixmap and its name for future use
-	sourcePixmap_ = pixmap;
-	sourcePixmapName_ = name;
-
-	// set the pixmap transparent
-	sourcePixmap_.setMask(
-		sourcePixmap_.createMaskFromColor(Qt::magenta));
-
-	return true;
+	return filename;
 }
 
 /** @details
@@ -771,7 +482,7 @@ bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
  * @retval true podelement nalezen a vracen v @p subEl
  * @retval false podelement chybi
  */
-bool ResourceHandler::getSubElement(const QDomElement & el,
+bool ResourceHandlerNS::getSubElement(const QDomElement & el,
 		QDomElement & subEl, const QString & subElTagName,
 		bool successIfMissing) {
 
@@ -796,7 +507,7 @@ bool ResourceHandler::getSubElement(const QDomElement & el,
  *              (nebo chybi a @p successIfMissing je @c true )
  * @retval false chybi a @p successIfMissing je @c false
  */
-bool ResourceHandler::getStringAttr(const QDomElement & el,
+bool ResourceHandlerNS::getStringAttr(const QDomElement & el,
 		QString & attr, const QString & attrName,
 		bool successIfMissing) {
 
@@ -827,7 +538,7 @@ bool ResourceHandler::getStringAttr(const QDomElement & el,
  * @retval false hodnota atributu nelze interpretovat jako int
  *              (nebo chybi a @p successIfMissing je false)
  */
-bool ResourceHandler::getIntAttr(const QDomElement & el,
+bool ResourceHandlerNS::getIntAttr(const QDomElement & el,
 		int & attr, const QString & attrName, bool successIfMissing) {
 
 	QString stringAttr;
@@ -860,7 +571,7 @@ bool ResourceHandler::getIntAttr(const QDomElement & el,
  * @return Uspech operace.
  * @see getIntAttr()
  */
-bool ResourceHandler::getAttrsXY(const QDomElement & el, int & x, int & y) {
+bool ResourceHandlerNS::getAttrsXY(const QDomElement & el, int & x, int & y) {
 	return getIntAttr(el, x, "x") && getIntAttr(el, y, "y");
 }
 
@@ -869,7 +580,7 @@ bool ResourceHandler::getAttrsXY(const QDomElement & el, int & x, int & y) {
  * @param message textovy  popis chyby
  * @see QMessageBox::critical()
  */
-void ResourceHandler::showError(const QString & message) {
+void ResourceHandlerNS::showError(const QString & message) {
 	QMessageBox::critical(0, tr("Error in Bombic resource"),
 		message, QMessageBox::Ok);
 }
@@ -880,7 +591,7 @@ void ResourceHandler::showError(const QString & message) {
  * @param filename jmeno souboru, ve kterem se chyba vyskytla
  * @param el pripadne xml element, ve kterem chyba nastala
  */
-void ResourceHandler::showError(const QString & message,
+void ResourceHandlerNS::showError(const QString & message,
 		const QString & filename,
 		const QDomElement & el ) {
 
@@ -905,7 +616,7 @@ void ResourceHandler::showError(const QString & message,
  * @param pripadne jmeno souboru, ve kterem chyba nastala
  * @see nodePath()
  */
-void ResourceHandler::showError(const QString & message,
+void ResourceHandlerNS::showError(const QString & message,
 		const QDomElement & el,
 		const QString & filename) {
 	showError(message, filename, el);
@@ -919,7 +630,7 @@ void ResourceHandler::showError(const QString & message,
  * @param delimiter oddelovac jednotlivych elementu cesty
  * @return Zkonstruovana cesta uzlu.
  */
-QString ResourceHandler::nodePath(const QDomNode & node,
+QString ResourceHandlerNS::nodePath(const QDomNode & node,
 		const QString & delimiter) {
 	QString path = node.nodeName();
 	for(QDomNode n = node.parentNode() ;

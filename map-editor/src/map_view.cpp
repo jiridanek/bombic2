@@ -2,6 +2,7 @@
 #include "map_view.h"
 
 #include <QApplication>
+#include <QAction>
 #include <QLabel>
 #include <QEvent>
 #include <QDrag>
@@ -39,6 +40,7 @@ MapView::MapView(QWidget * parent):
 
 	SINGLETON_CONSTRUCT;
 
+	// add docked widgets to main window
 	MAIN_WINDOW->addMapView(this);
 	MAIN_WINDOW->addWorkingObjectLabel(workingObjectLabel_);
 	MAIN_WINDOW->addMapFieldView(fieldView_);
@@ -47,17 +49,42 @@ MapView::MapView(QWidget * parent):
 	connect(zoomWidget_, SIGNAL(zoomChanged(qreal)),
 		this, SLOT(setZoom(qreal)) );
 
+	// connect the menu actions
+	connect(MAIN_WINDOW->action(MainWindow::SaveMapAction),
+		SIGNAL(triggered()),
+		this, SLOT(saveMap()) );
+	connect(MAIN_WINDOW->action(MainWindow::SaveMapAsAction),
+		SIGNAL(triggered()),
+		this, SLOT(saveMapAs()) );
+
 	// create default (empty) map
-	BombicMap * defaultMap = RESOURCE_HANDLER->loadEmptyMap();
-	if(defaultMap) {
+	map_ = RESOURCE_HANDLER->loadEmptyMap();
+	if(map_) {
 		// and scene for it
-		scene_ = new MapScene(defaultMap, this);
+		scene_ = new MapScene(map_, this);
 		setScene(scene_);
 	}
 }
 
 MapView::~MapView() {
 	SINGLETON_DESTROY;
+}
+
+/// Ulozi mapu.
+void MapView::saveMap() {
+	if(!map_) {
+		return;
+	}
+	// TODO need save
+	RESOURCE_HANDLER->saveMap(map_);
+}
+
+/// Ulozi mapu do noveho umisteni.
+void MapView::saveMapAs() {
+	if(!map_) {
+		return;
+	}
+	RESOURCE_HANDLER->saveMapAs(map_);
 }
 
 /** @details

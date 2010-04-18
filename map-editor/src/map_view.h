@@ -20,7 +20,7 @@ class QMimeData;
 class ZoomWidget;
 class MapScene;
 class MapFieldView;
-class BombicMapBackground;
+class BombicMap;
 class BombicMapObject;
 
 /** Pohled na mapu a prilehle widgety.
@@ -65,6 +65,11 @@ class MapView: public QGraphicsView {
 		/// Obnovit oblast sceny.
 		void updateScene(const QList<QRectF> & rects);
 
+		/// Ulozi mapu.
+		void saveMap();
+		/// Ulozi mapu do noveho umisteni.
+		void saveMapAs();
+
 	signals:
 		/// Pohled opusten.
 		void leaved();
@@ -74,6 +79,8 @@ class MapView: public QGraphicsView {
 		virtual void leaveEvent(QEvent * event);
 
 	private:
+		/// Mapa.
+		BombicMap * map_;
 		/// Scena mapy.
 		MapScene * scene_;
 		/// Aktualni (posledni nastaveny) zoom.

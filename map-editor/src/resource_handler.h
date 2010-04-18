@@ -1,4 +1,4 @@
-/** @file resource_handler.h
+/** @file resource_handler.h TODO
  * Definice singletonu ResourceHandler, ktery se stara vnejsi prostredky.
  * Prevadi vnejsi prostredky (data), do vnitrne pouzivanych objektu.
  */
@@ -22,9 +22,10 @@ class BombicMap;
 class BombicMapBackground;
 class BombicMapObject;
 
+class MapResourceHandler;
 class MapObjectResourceHandler;
 
-/** Handler vnejsich prostredku.
+/** Handler vnejsich prostredku. TODO
  * ResourceHandler obstarava vnejsi prostredky (data)
  * a prevadi je na vnitrne pouzivane objekty.
  * Objekty registruje na prislusnych mistech.
@@ -42,6 +43,7 @@ class ResourceHandler: public QObject {
 
 	Q_OBJECT
 
+	friend class MapResourceHandler;
 	friend class MapObjectResourceHandler;
 
 	SINGLETON_DEFINITION(ResourceHandler)
@@ -57,9 +59,9 @@ class ResourceHandler: public QObject {
 		/// Nacte prazdnou mapu s defaultnim pozadim.
 		BombicMap * loadEmptyMap();
 		/// Ulozi mapu (do puvodniho umisteni).
-		void saveMap(BombicMap * bombicMap);
-		/// Ulozi mapu do noveho umisteni (vybere uzivatel)
-		void saveMapAs(BombicMap * bombicMap);
+		bool saveMap(BombicMap * map);
+		/// Ulozi mapu do noveho umisteni (vybere uzivatel).
+		bool saveMapAs(BombicMap * map);
 
 		/// Nacte pozadi mapy podle jmena.
 		BombicMapBackground * loadMapBackground(const QString & name);
@@ -73,91 +75,74 @@ class ResourceHandler: public QObject {
 		/// Nacte mapu podle jmena.
 		BombicMap * loadMap(const QString & name);
 
-		/// Nacte hrace mapy
-		bool loadMapPlayers(BombicMap * map);
-		bool loadMapPlayers(const QDomElement & playersEl,
-				BombicMap * map);
-		/// Nacte objekty na zemi v mape.
-		bool loadMapFloorobjects(const QDomElement & floorsEl,
-				BombicMap * map);
-		/// Nacte zdi mapy.
-		bool loadMapWalls(const QDomElement & wallsEl,
-				BombicMap * map);
-		/// Nacte bedny mapy.
-		bool loadMapBoxes(const QDomElement & boxesEl,
-				BombicMap * map);
-		/// Nacte prisery mapy.
-		bool loadMapCreatures(const QDomElement & creaturesEl,
-				BombicMap * map);
-
-		/// Nacte pole na kterych se nemaji generovat bedny.
-		bool loadMapNoboxes(const QDomElement & dontGenerateEl,
-				BombicMap * map);
-		/// Nacte pole na kterych se nemaji generovat prisery.
-		bool loadMapNocreatures(const QDomElement & dontGenerateEl,
-				BombicMap * map);
-
-		/// Vlozi do mapy objekt na urcite pozice.
-		bool insertMapObjects(const QDomElement & positionEl,
-				BombicMapObject * insertedObject, BombicMap * map);
-
-		/// Vlozi do mapy objekt na urcitou (jednu) pozici.
-		bool insertMapObject(const QDomElement & positionEl,
-				BombicMapObject * insertedObject, BombicMap * map);
-
 		/// Nacte objekt mapy podle jmena.
 		BombicMapObject * loadMapObject(const QString & name);
 
-		/// Najde soubor podle jmena.
-		static bool locateFile(QString & filename);
-		/// Najde soubor v adresari a podadresarich.
-		static bool locateFileInDir(const QDir & dir,
-				QString & filename, int depth = 0);
-
-		/// Nacte xml soubor podle jmena.
-		static bool loadXml(const QString & name,
-			QDomElement & rootEl, bool checkAttrName,
-			const QString & rootElTagName = "");
-		/// Prevede jmeno souboru na hodnotu predpokladanou v atributu name.
-		static QString attrNameValueFromName(const QString & name);
-
 		/// Nacte zdrojovy obrazek.
 		bool loadSourcePixmap(const QDomElement & el,
-				const QString & attrName = "src");
+			const QString & attrName = "src");
 
-		/// Najde podelement podle jmena.
-		static bool getSubElement(const QDomElement & el,
-			QDomElement & subEl,
-			const QString & subElTagName,
-			bool successIfMissing = false);
-		/// Precte stringovou hodnotu atributu.
-		static bool getStringAttr(const QDomElement & el,
-			QString & attr, const QString & attrName,
-			bool successIfMissing = false);
-		/// Precte integer hodnotu atributu.
-		static bool getIntAttr(const QDomElement & el,
-			int & attr, const QString & attrName,
-			bool successIfMissing = false);
-		/// Precte hodnotu atributu x,y.
-		static bool getAttrsXY(const QDomElement & el, int & x, int & y);
-
-		/// Zobrazi chybu.
-		static void showError(const QString & message);
-		/// Zobrazi chybu, ktera se vyskytla v elementu @p el.
-		static void showError(const QString & message,
-				const QDomElement & el,
-				const QString & filename = "");
-		/// Zobrazi chybu, ktera se vyskytla v souboru @p filename.
-		static void showError(const QString & message,
-				const QString & filename,
-				const QDomElement & el = QDomElement());
-		/// Zkostruuje cestu v xml souboru k elementu @p el.
-		static QString nodePath(const QDomNode & el,
-				const QString & delimiter = " > ");
 		/// Zdrojovy obrazek.
 		QPixmap sourcePixmap_;
 		/// Jmeno zdrojoveho obrazku v sourcePixmap_.
 		QString sourcePixmapName_;
+
+		/// Resource handler obstaravajici mapu.
+		MapResourceHandler * mapResourceHandler_;
 };
+
+namespace ResourceHandlerNS {
+
+	inline QString tr(const char * sourceText,
+			const char * comment = 0, int n = -1) {
+		return QObject::tr(sourceText, comment, n);
+	}
+
+	/// Najde soubor podle jmena.
+	bool locateFile(QString & filename);
+	/// Najde soubor v adresari a podadresarich.
+	bool locateFileInDir(const QDir & dir,
+			QString & filename, int depth = 0);
+
+	/// Nacte xml soubor podle jmena.
+	bool loadXml(const QString & name,
+		QDomElement & rootEl, bool checkAttrName,
+		const QString & rootElTagName = "");
+	/// Prevede obecne jmeno na hodnotu predpokladanou v atributu name.
+	QString attrNameValueFromName(const QString & name);
+	/// Prevede obecne jmeno na jmeno souboru.
+	QString filenameFromName(const QString & name);
+
+	/// Najde podelement podle jmena.
+	bool getSubElement(const QDomElement & el,
+		QDomElement & subEl,
+		const QString & subElTagName,
+		bool successIfMissing = false);
+	/// Precte stringovou hodnotu atributu.
+	bool getStringAttr(const QDomElement & el,
+		QString & attr, const QString & attrName,
+		bool successIfMissing = false);
+	/// Precte integer hodnotu atributu.
+	bool getIntAttr(const QDomElement & el,
+		int & attr, const QString & attrName,
+		bool successIfMissing = false);
+	/// Precte hodnotu atributu x,y.
+	bool getAttrsXY(const QDomElement & el, int & x, int & y);
+
+	/// Zobrazi chybu.
+	void showError(const QString & message);
+	/// Zobrazi chybu, ktera se vyskytla v elementu @p el.
+	void showError(const QString & message,
+			const QDomElement & el,
+			const QString & filename = "");
+	/// Zobrazi chybu, ktera se vyskytla v souboru @p filename.
+	void showError(const QString & message,
+			const QString & filename,
+			const QDomElement & el = QDomElement());
+	/// Zkostruuje cestu v xml souboru k elementu @p el.
+	QString nodePath(const QDomNode & el,
+			const QString & delimiter = " > ");
+
+}
 
 #endif

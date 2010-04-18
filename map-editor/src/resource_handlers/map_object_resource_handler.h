@@ -37,7 +37,7 @@ class MapObjectResourceHandler {
 		inline static bool getSubElement(
 				const QDomElement & el, QDomElement & subEl,
 				const QString & subElTagName = "img") {
-			return ResourceHandler::getSubElement(
+			return ResourceHandlerNS::getSubElement(
 				el, subEl, subElTagName);
 		}
 		/// Precte integer hodnotu atributu.
@@ -45,14 +45,14 @@ class MapObjectResourceHandler {
 				const QDomElement & el,
 				int & attr, const QString & attrName,
 				bool successIfMissing = false) {
-			return ResourceHandler::getIntAttr(
+			return ResourceHandlerNS::getIntAttr(
 				el, attr, attrName, successIfMissing);
 		}
 		/// Precte hodnotu atributu x,y.
 		inline static bool getAttrsXY(
 				const QDomElement & el,
 				int & x, int & y) {
-			return ResourceHandler::getAttrsXY(el, x, y);
+			return ResourceHandlerNS::getAttrsXY(el, x, y);
 		}
 		/// Zdrojovy obrazek.
 		inline static const QPixmap & sourcePixmap() {

@@ -19,10 +19,11 @@
  * @param height vyska mapy v polickach
  * @param background pointer na pozadi
  */
-BombicMap::BombicMap(int width, int height,
-		BombicMapBackground * background):
-			fieldsRect_(0, 0, width, height),
-			background_(background) {
+BombicMap::BombicMap(const QString & name, int width, int height,
+		BombicMapBackground * background, const QString & filename):
+				name_(name), filename_(filename),
+				fieldsRect_(0, 0, width, height),
+				background_(background) {
 	// construct fields area
 	FieldsT::value_type::value_type emptyFieldSet;
 	FieldsT::value_type column(height, emptyFieldSet);
@@ -443,6 +444,33 @@ void BombicMap::removeGeneratedMapObject(ObjectListT & objList,
 	objList.removeAll(object);
 }
 
+/**
+ * @return Jmeno mapy.
+ */
+const QString & BombicMap::name() {
+	return name_;
+}
+
+/**
+ * @return Soubor, do ktereho mapu ulozit.
+ */
+const QString & BombicMap::filename() {
+	return filename_;
+}
+
+/**
+ * @param name nove jmeno mapy
+ */
+void BombicMap::setName(const QString & name) {
+	name_ = name;
+}
+
+/**
+ * @param filename nove jmeno souboru
+ */
+void BombicMap::setFilename(const QString & filename) {
+	filename_ = filename;
+}
 
 /**
  * @return Obdelnik mapy (v jednotkach policek).

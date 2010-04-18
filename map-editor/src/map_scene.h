@@ -183,7 +183,6 @@ class MapScene: public QGraphicsScene {
 		QGraphicsRectItem * selectedFieldHelperItem_;
 		/// Vybrane (oznacene) policko.
 		BombicMap::Field selectedField_;
-		#define MAP_SCENE_FIELD_NOT_SELECTED BombicMap::Field(-1, -1);
 
 		/// Pomucky pro generovani beden.
 		ObjectGeneratingToolsT boxesGeneratingTools_;
