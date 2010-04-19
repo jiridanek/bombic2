@@ -34,6 +34,8 @@ class BombicMapBackground {
 			Top, Bottom, Left, Right
 		};
 
+		/// Nazev pozadi.
+		const QString & name();
 		/// Obrazek pozadi policka.
 		const QPixmap & texture();
 		/// Barva pozadi okolo mapy.

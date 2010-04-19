@@ -18,6 +18,51 @@
 
 using namespace ResourceHandlerNS;
 
+
+QString MapResourceHandler::objectsElName(
+		BombicMapObject::Type objectType) {
+	switch(objectType) {
+		case BombicMapObject::Wall:
+			return "walls";
+		case BombicMapObject::Box:
+			return "boxes";
+		case BombicMapObject::Player:
+			return "players";
+		case BombicMapObject::Creature:
+			return "creatures";
+		case BombicMapObject::Floorobject:
+			return "floorobjects";
+		default:
+			Q_ASSERT_X(false,
+				"in MapResourceHandler::objectsElName",
+				"Unhandled object type");
+			return "";
+	}
+}
+
+QString MapResourceHandler::positionElName(
+		BombicMapObject::Type objectType) {
+	switch(objectType) {
+		case BombicMapObject::Wall:
+			return "wall";
+		case BombicMapObject::Box:
+			return "box";
+		case BombicMapObject::Player:
+			return "player";
+		case BombicMapObject::Creature:
+			return "creature";
+		case BombicMapObject::Floorobject:
+			return "floorobject";
+		default:
+			Q_ASSERT_X(false,
+				"in MapResourceHandler::positionElName",
+				"Unhandled object type");
+			return "";
+	}
+}
+
+/********************** loading **********************/
+
 /** @details
  * Vytvori mapu s defaultnim pozadim @c DEFAULT_MAP_BACKGROUND
  * a rozmery <code>DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT</code>.
@@ -387,25 +432,169 @@ bool MapResourceHandler::insertMapObject(const QDomElement & posEl,
 	return true;
 }
 
+/**************************** saving **************************/
+
 bool MapResourceHandler::saveMap(BombicMap * map) {
-	/*
-	MapToSaveT mapToSave(map);
-	if(!initMapToSave(mapToSave,))
-QDomDocument doc("MyML");
- QDomElement root = doc.createElement("MyML");
- doc.appendChild(root);
+	MapDataT mapData;
+	initMapDataToSave(mapData, map);
 
- QDomElement tag = doc.createElement("Greeting");
- root.appendChild(tag);
+	QDomDocument doc;
+	QDomElement rootEl = doc.createElement("map");
+	doc.appendChild(rootEl);
 
- QDomText t = doc.createTextNode("Hello World");
- tag.appendChild(t);
+	mapDataToXml(mapData, rootEl);
 
- QString xml = doc.toString();
-
-	QFile file(filename);
-
-	*/
-
-	return true;
+	return saveXml(map->filename(), doc);
 }
+
+/** Smycka pres vsechny policka mapy.
+ * Iteruje pres vsechny policka mapy @p map promennou cyklu @p field
+ * Zacina v hornim levem rohu, pokracuje pres vsechny sloupce
+ * a v kazdem sloupci postupuje dolu.
+ * Promenna cyklu @p field by nemela byt definovana, protoze je definovana
+ * a inicializovana zde.
+ * @param map mapa, jejiz policka prochazime.
+ * @param field jmeno promenne cyklu
+ */
+#define MRH_FOREACH_FIELD(map, field) \
+	for(BombicMap::Field field = map->fieldsRect().topLeft() ; \
+			field.x() <= map->fieldsRect().right() ; \
+			++field.rx()) \
+		for(field.ry() = map->fieldsRect().top() ; \
+				field.y() <= map->fieldsRect().bottom() ; \
+				++field.ry())
+
+#define MRH_FOREACH_OBJECT_KIND(typeIt, kindIt, objectsByType) \
+	for( ObjectsByTypeT::const_iterator typeIt = objectsByType.begin() ; \
+			typeIt != objectsByType.end() ; ++typeIt) \
+		for( ObjectsByNameT::const_iterator kindIt = typeIt->begin() ; \
+				kindIt != typeIt->end() ; ++kindIt)
+
+#define MRH_FOREACH_PLAYER(it, players) \
+	for( ObjectsByNameT::const_iterator it = players.begin() ; \
+			it != players.end() ; ++it)
+
+void MapResourceHandler::initMapDataToSave(MapDataT & mapData,
+		BombicMap * map) {
+	// init the map properties
+	mapData.name = map->name();
+	mapData.width = map->fieldsRect().width();
+	mapData.height = map->fieldsRect().height();
+	mapData.background = map->background()->name();
+
+	// collect information from fields
+	MRH_FOREACH_FIELD(map, f) {
+		if(!map->boxGenerator(f)->allowed()) {
+			mapData.noBoxes.append(f);
+		}
+		if(!map->creatureGenerator(f)->allowed()) {
+			mapData.noCreatures.append(f);
+		}
+		foreach(BombicMapObject * o, map->objectsOnField(f)) {
+			registerPlacedObject(mapData, o, f);
+		}
+	}
+	// count the generated objects
+	countGeneratedObjects(mapData.objects, map->generatedBoxes());
+	countGeneratedObjects(mapData.objects, map->generatedCreatures());
+}
+
+void MapResourceHandler::registerPlacedObject(MapDataT & mapData,
+		BombicMapObject * object, BombicMap::Field field) {
+	if(object->field() != field) {
+		// the object starts somewhere else
+		return;
+	}
+	if(object->type() == BombicMapObject::Wall) {
+		BombicWall * wall = static_cast<BombicWall *>(object);
+		if(wall->isBackground()) {
+			// the object is background wall
+			return;
+		}
+	}
+	if(object->type() == BombicMapObject::Player) {
+		mapData.players[object->name()].positions.append(field);
+		return;
+	}
+
+	// add the object position
+	mapData.objects[object->type()][object->name()]
+		.positions.append(field);
+}
+
+void MapResourceHandler::countGeneratedObjects(ObjectsByTypeT & objects,
+		const BombicMap::ObjectListT & generatedObjects) {
+	foreach(BombicMapObject * o, generatedObjects) {
+		++ objects[o->type()][o->name()].generated;
+	}
+}
+
+void MapResourceHandler::mapDataToXml(const MapDataT & mapData,
+		QDomElement & rootEl) {
+	// map attributes
+	rootEl.setAttribute("name", mapData.name);
+	rootEl.setAttribute("width", mapData.width);
+	rootEl.setAttribute("height", mapData.height);
+	rootEl.setAttribute("background", mapData.background);
+
+	QDomDocument doc = rootEl.ownerDocument();
+
+	// players
+	QDomElement playersEl = doc.createElement(
+		objectsElName(BombicMapObject::Player) );
+	rootEl.appendChild(playersEl);
+	MRH_FOREACH_PLAYER(p, mapData.players) {
+		// right one position of each player is needed
+		Q_ASSERT(p->positions.size() == 1);
+		if(p.key() == "allplayers") {
+			BombicMap::Field position = p->positions.first();
+			playersEl.setAttribute("x", position.x());
+			playersEl.setAttribute("y", position.y());
+		} else {
+			positionsToXml(p->positions, playersEl, p.key());
+		}
+	}
+
+	// objects
+	MRH_FOREACH_OBJECT_KIND(type, kind, mapData.objects) {
+		QDomElement objectsEl = doc.createElement(
+			objectsElName(type.key()) );
+		rootEl.appendChild(objectsEl);
+
+		objectsEl.setAttribute("name", kind.key());
+		if(kind->generated != 0) {
+			objectsEl.setAttribute(
+				"random_generated", kind->generated);
+		}
+		positionsToXml(kind->positions, objectsEl,
+			positionElName(type.key()) );
+	}
+
+	// dont generate fields
+	if(!mapData.noBoxes.isEmpty() || !mapData.noCreatures.isEmpty()) {
+		QDomElement noObjectsEl = doc.createElement("dont_generate");
+		rootEl.appendChild(noObjectsEl);
+		positionsToXml(mapData.noBoxes, noObjectsEl, "nobox");
+		positionsToXml(mapData.noCreatures, noObjectsEl, "nocreature");
+	}
+}
+
+void MapResourceHandler::positionsToXml(const PositionsT & positions,
+		QDomElement & parentEl, const QString & positionElName) {
+
+	QDomDocument doc = parentEl.ownerDocument();
+
+	foreach(BombicMap::Field f, positions) {
+		QDomElement posEl = doc.createElement(positionElName);
+		parentEl.appendChild(posEl);
+
+		posEl.setAttribute("x", f.x());
+		posEl.setAttribute("y", f.y());
+	}
+}
+
+
+
+
+
+

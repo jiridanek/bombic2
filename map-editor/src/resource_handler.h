@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QPixmap>
 #include <QString>
+#include <QDomDocument>
 #include <QDomElement>
 #include <QDomNode>
 #include <QDir>
@@ -104,10 +105,13 @@ namespace ResourceHandlerNS {
 	bool locateFileInDir(const QDir & dir,
 			QString & filename, int depth = 0);
 
-	/// Nacte xml soubor podle jmena.
+	/// Nacist xml soubor podle jmena.
 	bool loadXml(const QString & name,
-		QDomElement & rootEl, bool checkAttrName,
-		const QString & rootElTagName = "");
+			QDomElement & rootEl, bool checkAttrName,
+			const QString & rootElTagName = "");
+	/// Ulozit xml dokument.
+	bool saveXml(const QString & filename,
+			const QDomDocument & doc);
 	/// Prevede obecne jmeno na hodnotu predpokladanou v atributu name.
 	QString attrNameValueFromName(const QString & name);
 	/// Prevede obecne jmeno na jmeno souboru.

@@ -3,6 +3,8 @@
 #include <QBitmap>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
 #include <constants.h>
 
 #include "resource_handler.h"
@@ -393,12 +395,13 @@ bool ResourceHandlerNS::loadXml(const QString & name,
 	}
 
 	QFile file(filename);
-	if(!file.open(QIODevice::ReadOnly)) {
-		showError(filename+"\n"+tr("couldn't be opened"));
+	bool opened = file.open(QIODevice::ReadOnly | QIODevice::Text);
+	if(!opened) {
+		showError(filename+"\n"+tr("couldn't be opened for reading."));
 		return false;
 	}
 
-	QDomDocument doc(filename);
+	QDomDocument doc;
 	QString errMsg;
 	int errRow;
 	int errCol;
@@ -430,6 +433,33 @@ bool ResourceHandlerNS::loadXml(const QString & name,
 		}
 	}
 
+	return true;
+}
+
+/** @details
+ * Pokusi se otevrit a vyprazdnit soubor @p filename.
+ * Pote do nej vypise xml dokument @p doc.
+ * Pokud nastane chyba, sam zobrazuje relevantni informace.
+ * @param filename cesta k souboru
+ * @param doc xml dokument, ktery ma byt ulozen
+ * @return Uspech operace.
+ * @retval true dokument ulozen
+ * @retval false dokument nelze ulozit
+ */
+bool ResourceHandlerNS::saveXml(const QString & filename,
+		const QDomDocument & doc) {
+
+	QFile file(filename);
+	bool opened = file.open(
+		QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text );
+	if(!opened) {
+		showError(filename+"\n"+tr("couldn't be opened for writing."));
+		return false;
+	}
+
+	QTextStream(&file)
+		<< "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+		<< doc.toString();
 	return true;
 }
 

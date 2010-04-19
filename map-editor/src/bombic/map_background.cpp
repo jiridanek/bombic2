@@ -25,11 +25,20 @@ BombicMapBackground::~BombicMapBackground() {
 }
 
 /**
+ * @return Nazev pozadi.
+ */
+const QString & BombicMapBackground::name() {
+	return name_;
+}
+
+
+/**
  * @return Obrazek pozadi policka.
  */
 const QPixmap & BombicMapBackground::texture() {
 	return texture_;
 }
+
 /**
  * @return Barvu pozadi okolo mapy.
  */
