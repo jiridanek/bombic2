@@ -26,29 +26,21 @@ class MapResourceHandler {
 		bool saveMap(BombicMap * map);
 
 	private:
-		/// Nazev definujiciho xml elementu podle typu objektu.
+		/// Nazev definujiciho elementu podle typu objektu.
 		QString objectsElName(BombicMapObject::Type objectType);
-		/// Nazev pozicniho xml elementu podle typu objektu.
+		/// Nazev pozicniho elementu podle typu objektu.
 		QString positionElName(BombicMapObject::Type objectType);
 
 		/******** loading *********/
 
-		/// Nacte hrace mapy
+		/// Nacte hrace mapy.
 		bool loadMapPlayers(BombicMap * map);
+		/// Nacte hrace mapy.
 		bool loadMapPlayers(const QDomElement & playersEl,
 				BombicMap * map);
-		/// Nacte objekty na zemi v mape.
-		bool loadMapFloorobjects(const QDomElement & floorsEl,
-				BombicMap * map);
-		/// Nacte zdi mapy.
-		bool loadMapWalls(const QDomElement & wallsEl,
-				BombicMap * map);
-		/// Nacte bedny mapy.
-		bool loadMapBoxes(const QDomElement & boxesEl,
-				BombicMap * map);
-		/// Nacte prisery mapy.
-		bool loadMapCreatures(const QDomElement & creaturesEl,
-				BombicMap * map);
+		/// Nacte objekty mapy daneho typu.
+		bool loadMapObjects(const QDomElement & rootEl,
+				BombicMapObject::Type type, BombicMap * map);
 
 		/// Nacte pole na kterych se nemaji generovat bedny.
 		bool loadMapNoboxes(const QDomElement & dontGenerateEl,
@@ -108,19 +100,19 @@ class MapResourceHandler {
 			PositionsT noCreatures;
 		} MapDataT;
 
-
+		/// Inicializovat data mapy pro ulozeni.
 		void initMapDataToSave(MapDataT & mapData, BombicMap * map);
-
+		/// Zaregistrovat umisteny objekt do dat mapy.
 		void registerPlacedObject(MapDataT & mapData,
 				BombicMapObject * object,
 				BombicMap::Field field);
-
+		/// Spocitat generovane objekty mapy.
 		void countGeneratedObjects(ObjectsByTypeT & objects,
 				const BombicMap::ObjectListT & generatedObjects);
-
+		/// Zkonvertovat data mapy do xml.
 		void mapDataToXml(const MapDataT & mapData,
 				QDomElement & rootEl);
-
+		/// Zkonvertovat umisteni objektu do xml.
 		void positionsToXml(const PositionsT & positions,
 				QDomElement & parentEl,
 				const QString & positionElTagName);

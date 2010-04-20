@@ -1,9 +1,9 @@
 
-
-#include <QLinkedList>
 #include <constants.h>
 
 #include "map_resource_handler.h"
+
+#include "resource_handler_functions.h"
 
 #include "../resource_handler.h"
 #include "../bombic/map.h"
@@ -16,11 +16,14 @@
 /// Pocet hracu (deathmatche) nacitanych z mapy.
 #define MRH_PLAYERS_COUNT 4
 
-using namespace ResourceHandlerNS;
+using namespace ResourceHandlerFunctions;
 
 
-QString MapResourceHandler::objectsElName(
-		BombicMapObject::Type objectType) {
+/**
+ * @param objectType typ objektu, ktery je elementem definovat
+ * @return Jmeno elementu, ktery definuje dany typ.
+ */
+QString MapResourceHandler::objectsElName(BombicMapObject::Type objectType) {
 	switch(objectType) {
 		case BombicMapObject::Wall:
 			return "walls";
@@ -40,8 +43,11 @@ QString MapResourceHandler::objectsElName(
 	}
 }
 
-QString MapResourceHandler::positionElName(
-		BombicMapObject::Type objectType) {
+/**
+ * @param objectType typ objektu, ktery je elementem pozicovan
+ * @return Jmeno elementu, ktery pozicuje dany typ.
+ */
+QString MapResourceHandler::positionElName(BombicMapObject::Type objectType) {
 	switch(objectType) {
 		case BombicMapObject::Wall:
 			return "wall";
@@ -66,21 +72,25 @@ QString MapResourceHandler::positionElName(
 /** @details
  * Vytvori mapu s defaultnim pozadim @c DEFAULT_MAP_BACKGROUND
  * a rozmery <code>DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT</code>.
+ * Vlozi do mapy hrace na prvni vhodnou pozici.
  * Vlastnictvi nove naalokovane mapy prechazi na volajiciho.
  * @return Nove alokovana prazdna mapa s pozadim.
  */
 BombicMap * MapResourceHandler::createEmptyMap() {
+	// create background
 	BombicMapBackground * defaultBg =
 		RESOURCE_HANDLER->loadMapBackground(DEFAULT_MAP_BACKGROUND);
 	if(!defaultBg) {
 		return 0;
 	}
+	// create map
 	BombicMap * newMap = new BombicMap("unnamed",
 		DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT, defaultBg);
 	if(!newMap) {
 		delete defaultBg;
 		return 0;
 	}
+	// insert players
 	if(!loadMapPlayers(newMap)) {
 		delete newMap;
 		return 0;
@@ -102,11 +112,12 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 	if(!locateFile(filename)) {
 		return 0;
 	}
+	// get the xml definition of map
 	QDomElement rootEl;
 	if(!loadXml(filename, rootEl, true, "map")) {
 		return 0;
 	}
-
+	// and its properties
 	QString bgName;
 	if(!getStringAttr(rootEl, bgName, "background") ) {
 		return 0;
@@ -118,11 +129,13 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 	if(!success) {
 		return 0;
 	}
+	// create background
 	BombicMapBackground * mapBg =
 		RESOURCE_HANDLER->loadMapBackground(bgName);
 	if(!mapBg) {
 		return 0;
 	}
+	// and the map
 	BombicMap * map = new BombicMap(
 		rootEl.attribute("name"), w, h, mapBg, filename);
 	if(!map) {
@@ -135,14 +148,10 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 	success =
 		getSubElement(rootEl, el, "players") &&
 		loadMapPlayers(el, map) &&
-		getSubElement(rootEl, el, "floorobjects", true) &&
-		loadMapFloorobjects(el, map) &&
-		getSubElement(rootEl, el, "walls", true) &&
-		loadMapWalls(el, map) &&
-		getSubElement(rootEl, el, "boxes", true) &&
-		loadMapBoxes(el, map) &&
-		getSubElement(rootEl, el, "creatures", true) &&
-		loadMapCreatures(el, map) &&
+		loadMapObjects(rootEl, BombicMapObject::Floorobject, map) &&
+		loadMapObjects(rootEl, BombicMapObject::Wall, map) &&
+		loadMapObjects(rootEl, BombicMapObject::Box, map) &&
+		loadMapObjects(rootEl, BombicMapObject::Creature, map) &&
 		getSubElement(rootEl, el, "dont_generate", true) &&
 		loadMapNoboxes(el, map) &&
 		loadMapNocreatures(el, map);
@@ -156,11 +165,26 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 	return map;
 }
 
+/** Cyklus pres vsechny sousedni elementy stejneho jmena.
+ * Vytvori cyklus zacinajici @p firstEl, ktery postupne
+ * projde vsechny sousedni (sibling) elementy stejneho jmena ( @c tagName() )
+ * jako @p firstEl.
+ * Promenna cyklu @p itEl by nemela byt definovana, protoze je definovana
+ * a inicializovana zde.
+ * @param itEl jmeno iteracni promenne cyklu
+ * @param firstEl prvni (inicializacni) element
+ */
 #define MRH_FOREACH_SIBLING_ELEMENT(itEl, firstEl) \
 	for(QDomElement itEl = firstEl; \
 		!itEl.isNull() ; \
 		itEl = itEl.nextSiblingElement(firstEl.tagName()) )
 
+/** @details
+ * Nacte hrace mapy a vlozi je na prvni vhodne misto.
+ * Hodi se zejmena pro vytvareni prazdne mapy.
+ * @param map mapa, do ktere chceme hrace vlozit
+ * @return Uspech akce.
+ */
 bool MapResourceHandler::loadMapPlayers(BombicMap * map) {
 	// start of cooperative players
 	BombicMapObject * player =
@@ -201,6 +225,13 @@ bool MapResourceHandler::loadMapPlayers(BombicMap * map) {
 	return true;
 }
 
+/** @details
+ * Nacte hrace mapy a vlozi je do mapy.
+ * Misto vlozeni definuje @p playersEl.
+ * @param playersEl element definujici pozice hracu
+ * @param map mapa, do ktere chceme hrace vlozit
+ * @return Uspech akce.
+ */
 bool MapResourceHandler::loadMapPlayers(const QDomElement & playersEl,
 		BombicMap * map) {
 	// start of cooperative players
@@ -232,37 +263,21 @@ bool MapResourceHandler::loadMapPlayers(const QDomElement & playersEl,
 	return true;
 }
 
-bool MapResourceHandler::loadMapFloorobjects(const QDomElement & floorsEl,
-		BombicMap * map) {
-	// for all object prototypes
-	MRH_FOREACH_SIBLING_ELEMENT(objEl, floorsEl) {
-		// object name
-		QString name;
-		if(!getStringAttr(objEl, name, "name")) {
-			return false;
-		}
-		// the object
-		BombicMapObject * obj = RESOURCE_HANDLER->loadMapObject(name);
-		if(!obj) {
-			return false;
-		}
-		// first position element
-		QDomElement posEl;
-		if(!getSubElement(objEl, posEl, "floorobject")) {
-			return false;
-		}
-		if(!insertMapObjects(posEl, obj, map)) {
-			return false;
-		}
+/** @details
+ * Nacte objekty mapy daneho typu a vlozi je do mapy.
+ * @param rootEl korenovy element definice mapy
+ * @param type typ objektu
+ * @param map mapa, do ktere chceme objekty vlozit
+ * @return Uspech akce.
+ */
+bool MapResourceHandler::loadMapObjects(const QDomElement & rootEl,
+		BombicMapObject::Type type, BombicMap * map) {
+	QDomElement objectsEl;
+	if(!getSubElement(rootEl, objectsEl, objectsElName(type), true)) {
+		return false;
 	}
-	// all floor objects loaded
-	return true;
-}
-
-bool MapResourceHandler::loadMapWalls(const QDomElement & wallsEl,
-		BombicMap * map) {
 	// for all object prototypes
-	MRH_FOREACH_SIBLING_ELEMENT(objEl, wallsEl) {
+	MRH_FOREACH_SIBLING_ELEMENT(objEl, objectsEl) {
 		// object name
 		QString name;
 		if(!getStringAttr(objEl, name, "name")) {
@@ -275,102 +290,61 @@ bool MapResourceHandler::loadMapWalls(const QDomElement & wallsEl,
 		}
 		// first position element
 		QDomElement posEl;
-		if(!getSubElement(objEl, posEl, "wall")) {
+		if(!getSubElement(objEl, posEl, positionElName(type), true)) {
 			return false;
 		}
 		if(!insertMapObjects(posEl, obj, map)) {
 			return false;
 		}
-	}
-	// all walls loaded
-	return true;
-}
 
-bool MapResourceHandler::loadMapBoxes(const QDomElement & boxesEl,
-		BombicMap * map) {
-	// for all object prototypes
-	MRH_FOREACH_SIBLING_ELEMENT(objEl, boxesEl) {
-		// object name
-		QString name;
-		if(!getStringAttr(objEl, name, "name")) {
-			return false;
-		}
-		// the object
-		BombicMapObject * obj = RESOURCE_HANDLER->loadMapObject(name);
-		if(!obj) {
-			return false;
-		}
-		// first position element
-		QDomElement posEl;
-		if(!getSubElement(objEl, posEl, "box", true)) {
-			return false;
-		}
-		// insert the positioned objects
-		if(!insertMapObjects(posEl, obj, map)) {
-			return false;
-		}
-		// insert the random generated
+		// get random generated count
 		int randomGenerated = 0;
 		if(!getIntAttr(objEl, randomGenerated,
 				"random_generated", true)) {
 			return false;
 		}
 		if(randomGenerated > 0) {
-			map->setGeneratedBoxesCount(obj, randomGenerated);
+			// insert random generated
+			switch(type) {
+				case BombicMapObject::Box:
+					map->setGeneratedBoxesCount(
+						obj, randomGenerated);
+					break;
+				case BombicMapObject::Creature:
+					map->setGeneratedCreaturesCount(
+						obj, randomGenerated);
+					break;
+				default:
+					// do nothing - other types cannot be generated
+					break;
+			}
 		}
 	}
-	// all boxes loaded
+	// all objects loaded
 	return true;
 }
 
-bool MapResourceHandler::loadMapCreatures(const QDomElement & creaturesEl,
-		BombicMap * map) {
-	// for all object prototypes
-	MRH_FOREACH_SIBLING_ELEMENT(objEl, creaturesEl) {
-		// object name
-		QString name;
-		if(!getStringAttr(objEl, name, "name")) {
-			return false;
-		}
-		// the object
-		BombicMapObject * obj = RESOURCE_HANDLER->loadMapObject(name);
-		if(!obj) {
-			return false;
-		}
-		// first position element
-		QDomElement posEl;
-		if(!getSubElement(objEl, posEl, "creature", true)) {
-			return false;
-		}
-		// insert the positioned objects
-		if(!insertMapObjects(posEl, obj, map)) {
-			return false;
-		}
-		// insert the random generated
-		int randomGenerated = 0;
-		if(!getIntAttr(objEl, randomGenerated,
-				"random_generated", true)) {
-			return false;
-		}
-		if(randomGenerated > 0) {
-			map->setGeneratedCreaturesCount(obj, randomGenerated);
-		}
-	}
-	// all creatures loaded
-	return true;
-}
-
+/** @details
+ * Zakaze v mape policka, na ktery se nesmi generovat bedny.
+ * @param dontGenerateEl element definice zakazanych policek
+ * @param map mapa, ve ktere chceme generovani zakazovat
+ * @return Uspech akce.
+ */
 bool MapResourceHandler::loadMapNoboxes(const QDomElement & dontGenerateEl,
 		BombicMap * map) {
+	// the first nobox
 	QDomElement firstNoboxEl;
 	if(!getSubElement(dontGenerateEl, firstNoboxEl, "nobox", true)) {
 		return false;
 	}
+	// over all noboxes
 	MRH_FOREACH_SIBLING_ELEMENT(noboxEl, firstNoboxEl) {
+		// get the field
 		BombicMap::Field field;
 		if(!getAttrsXY(noboxEl, field.rx(), field.ry())) {
 			return false;
 		}
+		// and disallow the generator
 		MapObjectGenerator * generator =
 			map->boxGenerator(field);
 		if(generator) {
@@ -380,17 +354,27 @@ bool MapResourceHandler::loadMapNoboxes(const QDomElement & dontGenerateEl,
 	return true;
 }
 
+/** @details
+ * Zakaze v mape policka, na ktery se nesmi generovat prisery.
+ * @param dontGenerateEl element definice zakazanych policek
+ * @param map mapa, ve ktere chceme generovani zakazovat
+ * @return Uspech akce.
+ */
 bool MapResourceHandler::loadMapNocreatures(const QDomElement & dontGenerateEl,
 		BombicMap * map) {
+	// the first nobox
 	QDomElement firstNocreatureEl;
 	if(!getSubElement(dontGenerateEl, firstNocreatureEl, "nocreature", true)) {
 		return false;
 	}
+	// over all noboxes
 	MRH_FOREACH_SIBLING_ELEMENT(nocreatureEl, firstNocreatureEl) {
+		// get the field
 		BombicMap::Field field;
 		if(!getAttrsXY(nocreatureEl, field.rx(), field.ry())) {
 			return false;
 		}
+		// and disallow the generator
 		MapObjectGenerator * generator =
 			map->creatureGenerator(field);
 		if(generator) {
@@ -400,6 +384,14 @@ bool MapResourceHandler::loadMapNocreatures(const QDomElement & dontGenerateEl,
 	return true;
 }
 
+/** @details
+ * Na pozice (zacinajici @p positionEl a dalsi)
+ * vlozi kopie objektu (pokud to lze).
+ * @param positionEl prvni pozicni element
+ * @param insertedObject prototyp vkladaneho objektu
+ * @param map mapa, do ktere chceme objekty umistit
+ * @return Uspech akce.
+ */
 bool MapResourceHandler::insertMapObjects(const QDomElement & positionEl,
 		BombicMapObject * insertedObject, BombicMap * map) {
 	// for all positions
@@ -412,6 +404,14 @@ bool MapResourceHandler::insertMapObjects(const QDomElement & positionEl,
 	return true;
 }
 
+/** @details
+ * Na pozici urcenou @p posEl vlozi kopii objektu (pokud to lze).
+ * Pokud nelze objekt vlozit, zobrazi chybove hlaseni a selze.
+ * @param posEl pozicni element
+ * @param insertedObject prototyp vkladaneho objektu
+ * @param map mapa, do ktere chceme objekt umistit
+ * @return Uspech akce.
+ */
 bool MapResourceHandler::insertMapObject(const QDomElement & posEl,
 		BombicMapObject * insertedObject, BombicMap * map) {
 	BombicMap::Field field;
@@ -434,6 +434,13 @@ bool MapResourceHandler::insertMapObject(const QDomElement & posEl,
 
 /**************************** saving **************************/
 
+/** @details
+ * Ulozi mapu do jejiho souboru ( BombicMap::filename() ).
+ * Z mapy ziska data pro ulozeni, vytvori xml dokument a ten nasledne
+ * ulozi do souboru.
+ * @param map mapa, kterou chceme ulozit
+ * @return Uspech akce.
+ */
 bool MapResourceHandler::saveMap(BombicMap * map) {
 	MapDataT mapData;
 	initMapDataToSave(mapData, map);
@@ -464,16 +471,46 @@ bool MapResourceHandler::saveMap(BombicMap * map) {
 				field.y() <= map->fieldsRect().bottom() ; \
 				++field.ry())
 
+/** Smycka pres vsechny druhy objektu.
+ * Iteruje pres vsechny typy objektu v @p objectsByType (promenna @p typeIt )
+ * a v kazdem typu pres vsechny druhy objektu (ridici promenna @p kindIt ).
+ * Promenne cyklu @p typeIt a @p kindIt by nemely byt definovany,
+ * protoze jsou definovany a inicializovana zde. Jsou definovany jako
+ * iteratory do hash tabulky, takze pouzijte nasledujici konstrukce:
+ *	* typ objektu: @c typeIt.key()
+ *	* druh (jmeno) objektu: @c kindIt.key()
+ *	* pozice umisteni objektu: @c kindIt->positions
+ *	* pocet generovanych objektu: @c kindIt->generated
+ * @param typeIt jmeno ridici promenne prvniho cyklu pres typy objektu
+ * @param kindIt jmeno ridici promenne druheho cyklu pres druhy objektu
+ * @param objectsByTyp struktura objektu podle typu pres kterou iterujeme
+ */
 #define MRH_FOREACH_OBJECT_KIND(typeIt, kindIt, objectsByType) \
 	for( ObjectsByTypeT::const_iterator typeIt = objectsByType.begin() ; \
 			typeIt != objectsByType.end() ; ++typeIt) \
 		for( ObjectsByNameT::const_iterator kindIt = typeIt->begin() ; \
 				kindIt != typeIt->end() ; ++kindIt)
 
+/** Smycka pres vsechny hrace.
+ * Iteruje pres vsechny hrace v @p players
+ * Promenna cyklu @p it by nemela byt definovana,
+ * protoze je definovana a inicializovana zde. Je definovana jako
+ * iterator do hash tabulky, takze pouzijte nasledujici konstrukce:
+ *	* druh (jmeno) hrace: @c it.key()
+ *	* pozice (seznam) umisteni objektu: @c it->positions
+ *	* pozice (jedna) umisteni objektu: @c it->positions.first()
+ * @param it jmeno ridici promenne
+ * @param players hraci podle jmena, pres ktere iterujeme
+ */
 #define MRH_FOREACH_PLAYER(it, players) \
 	for( ObjectsByNameT::const_iterator it = players.begin() ; \
 			it != players.end() ; ++it)
 
+/** @details
+ * Ziska z mapy @p map relevantni data a ulozi je do @p mapData.
+ * @param[out] mapData data mapy pro ulozeni
+ * @param map mapa, kterou chceme ulozit
+ */
 void MapResourceHandler::initMapDataToSave(MapDataT & mapData,
 		BombicMap * map) {
 	// init the map properties
@@ -499,6 +536,13 @@ void MapResourceHandler::initMapDataToSave(MapDataT & mapData,
 	countGeneratedObjects(mapData.objects, map->generatedCreatures());
 }
 
+/** @details
+ * Pokud je to vhodne, zaregistruje umisteni objektu @p object na policko @p field.
+ * Resi problem rozlehlych objektu, obvodovych zdi a hracu (ty uklada jinam).
+ * @param[out] mapData data mapy pro ulozeni
+ * @param object objekt, ktery registrujeme
+ * @param field policko, na ktere jej pripadne registrujeme
+ */
 void MapResourceHandler::registerPlacedObject(MapDataT & mapData,
 		BombicMapObject * object, BombicMap::Field field) {
 	if(object->field() != field) {
@@ -522,6 +566,11 @@ void MapResourceHandler::registerPlacedObject(MapDataT & mapData,
 		.positions.append(field);
 }
 
+/** @details
+ * Nastavi pocty generovanych objektu.
+ * @param[out] objects objekty mapy
+ * @param generatedObjects seznam generovanych objektu mapy
+ */
 void MapResourceHandler::countGeneratedObjects(ObjectsByTypeT & objects,
 		const BombicMap::ObjectListT & generatedObjects) {
 	foreach(BombicMapObject * o, generatedObjects) {
@@ -529,6 +578,12 @@ void MapResourceHandler::countGeneratedObjects(ObjectsByTypeT & objects,
 	}
 }
 
+/** @details
+ * Nastavi atributy a vytvori podstrom korenoveho elementu definice mapy.
+ * @p rootEl by mel byt inicializovan a mel by patrit do platneho dokumentu.
+ * @param mapData data mapy k ulozeni
+ * @param[in/out] rootEl korenovy element definice mapy
+ */
 void MapResourceHandler::mapDataToXml(const MapDataT & mapData,
 		QDomElement & rootEl) {
 	// map attributes
@@ -579,6 +634,14 @@ void MapResourceHandler::mapDataToXml(const MapDataT & mapData,
 	}
 }
 
+/** @details
+ * Vytvori podstrom pozic elementu definujiciho objekt.
+ * @p parentEl by mel byt inicializovan a mel by patrit do platneho dokumentu.
+ * @param positions seznam pozic objektu
+ * @param mapData data mapy k ulozeni
+ * @param[in/out] parentEl element definujici objekt mapy
+ * @param positionElName nazev elementu pozice
+ */
 void MapResourceHandler::positionsToXml(const PositionsT & positions,
 		QDomElement & parentEl, const QString & positionElName) {
 
@@ -592,9 +655,3 @@ void MapResourceHandler::positionsToXml(const PositionsT & positions,
 		posEl.setAttribute("y", f.y());
 	}
 }
-
-
-
-
-
-

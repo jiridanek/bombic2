@@ -11,6 +11,8 @@
 #include "../bombic/map_object.h"
 #include "../resource_handler.h"
 
+#include "resource_handler_functions.h"
+
 /** Obecny abstraktni handler pro vytvareni objektu mapy.
  * Definuje API, kterym lze vytvaret objekt mapy.
  */
@@ -37,7 +39,7 @@ class MapObjectResourceHandler {
 		inline static bool getSubElement(
 				const QDomElement & el, QDomElement & subEl,
 				const QString & subElTagName = "img") {
-			return ResourceHandlerNS::getSubElement(
+			return ResourceHandlerFunctions::getSubElement(
 				el, subEl, subElTagName);
 		}
 		/// Precte integer hodnotu atributu.
@@ -45,14 +47,14 @@ class MapObjectResourceHandler {
 				const QDomElement & el,
 				int & attr, const QString & attrName,
 				bool successIfMissing = false) {
-			return ResourceHandlerNS::getIntAttr(
+			return ResourceHandlerFunctions::getIntAttr(
 				el, attr, attrName, successIfMissing);
 		}
 		/// Precte hodnotu atributu x,y.
 		inline static bool getAttrsXY(
 				const QDomElement & el,
 				int & x, int & y) {
-			return ResourceHandlerNS::getAttrsXY(el, x, y);
+			return ResourceHandlerFunctions::getAttrsXY(el, x, y);
 		}
 		/// Zdrojovy obrazek.
 		inline static const QPixmap & sourcePixmap() {
