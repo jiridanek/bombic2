@@ -14,7 +14,6 @@
 		<wall x="1" y="9" />
 		<wall x="4" y="9" />
 		<wall x="7" y="9" />
-		<wall x="10" y="9" />
 	</walls>
 	<floorobjects name="floor_deadbody">
 		<floorobject x="2" y="9" />

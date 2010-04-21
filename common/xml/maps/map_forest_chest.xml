@@ -2,10 +2,10 @@
 <map name="map_forest_chest" height="12" width="16" background="bg_forest">
 
 	<players x="1" y="2">
-		<player0 x="9" y="2" />
-		<player1 x="9" y="10" />
-		<player2 x="13" y="8" />
-		<player3 x="13" y="4" />
+		<player0 x="1" y="2" />
+		<player1 x="6" y="2" />
+		<player2 x="4" y="2" />
+		<player3 x="3" y="2" />
 	</players>
 
 	<walls name="wall_cave">
@@ -34,7 +34,6 @@
 		<wall x="7" y="8" />
 		<wall x="7" y="9" />
 		<wall x="7" y="10" />
-		<wall x="7" y="8" />
 
 	</walls>
 	<boxes name="box_barrel">

@@ -2,10 +2,10 @@
 <map name="map_concrete_final" width="25" height="12" background="bg_concrete">
 
 	<players x="1" y="2">
-		<player0 x="22" y="4" />
-		<player1 x="22" y="8" />
-		<player2 x="22" y="6" />
-		<player3 x="20" y="6" />
+		<player0 x="7" y="5" />
+		<player1 x="7" y="7" />
+		<player2 x="7" y="4" />
+		<player3 x="7" y="8" />
 	</players>
 
 	<walls name="wall_redlight" >
