@@ -51,6 +51,9 @@ class MapView: public QGraphicsView {
 		/// Obnovi policko v detailnim zobrazeni.
 		void updateFieldView();
 
+		/// Zavre editaci mapy.
+		bool closeMap();
+
 		/// Vytvorit mime data, ktera prenasi objekt.
 		static QMimeData * createMimeData(BombicMapObject * object);
 		/// Ziskat objekt z mime dat, ktera ho prenasi.
@@ -79,6 +82,9 @@ class MapView: public QGraphicsView {
 		virtual void leaveEvent(QEvent * event);
 
 	private:
+		/// Vytvorit dotaz co s mapou pri zavirani.
+		bool askToCancelModifiedMap();
+
 		/// Mapa.
 		BombicMap * map_;
 		/// Scena mapy.

@@ -92,6 +92,11 @@ class BombicMap: public QObject {
 		/// Pozadi mapy.
 		BombicMapBackground * background();
 
+		/// Jestli je treba mapu ulozit.
+		bool needSave();
+		/// Mapa ulozena.
+		void saved();
+
 	public slots:
 		/// Nastavit pocet boxu k nahodnemu vygenerovani.
 		void setGeneratedBoxesCount(BombicMapObject * box, int count);
@@ -107,6 +112,9 @@ class BombicMap: public QObject {
 		void generatedBoxRemoved(BombicMapObject * object);
 		/// Odstranena generovana bedna.
 		void generatedCreatureRemoved(BombicMapObject * object);
+
+	private slots:
+		void edited();
 
 	private:
 		/// Mnozina reprezentujici jedno policko.
@@ -156,7 +164,8 @@ class BombicMap: public QObject {
 		/// Matice policek mapy, velikost odpovida @p fieldsRect_.
 		FieldsT fields_;
 
-
+		/// Jestli je mapa editovana.
+		bool edited_;
 };
 
 #endif

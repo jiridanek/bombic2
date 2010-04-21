@@ -15,6 +15,7 @@
 class QWidget;
 class QMenu;
 class QAction;
+class QCloseEvent;
 
 /// Zkratka, pro pristup k singletonu MainWindow.
 #define MAIN_WINDOW SINGLETON_SHORTCUT(MainWindow)
@@ -52,6 +53,9 @@ class MainWindow: public QMainWindow {
 		void addMapFieldView(QWidget * mapFieldViewWidget);
 		void addWorkingObjectLabel(QWidget * workingObjectLabel);
 		void addZoomWidget(QWidget * zoomWidget);
+
+	protected:
+		virtual void closeEvent(QCloseEvent * event);
 
 	private:
 		void addDock(const QString & name, QWidget * widget,

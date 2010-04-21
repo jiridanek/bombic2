@@ -4,9 +4,11 @@
 #include <QMenuBar>
 #include <QMenu>
 #include <QAction>
-
+#include <QCloseEvent>
 
 #include "main_window.h"
+
+#include "map_view.h"
 
 SINGLETON_INIT(MainWindow);
 
@@ -108,4 +110,12 @@ QAction * MainWindow::action(Action action) {
 		return 0;
 	}
 	return actions_[action];
+}
+
+void MainWindow::closeEvent(QCloseEvent * event) {
+	if(MAP_VIEW->closeMap()) {
+		event->accept();
+	} else {
+		event->ignore();
+	}
 }

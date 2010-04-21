@@ -88,6 +88,8 @@ class MapObjectGenerator: public QObject {
 
 	signals:
 		/// Zmenena schopnost generovat dalsi objekt.
+		void allowanceChanged();
+		/// Zmenena schopnost generovat dalsi objekt.
 		void canGenerateChanged();
 		/// Odstranovani generovaneho objektu.
 		void removingGeneratedObject(BombicMapObject * object);

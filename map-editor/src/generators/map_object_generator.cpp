@@ -83,6 +83,7 @@ void MapObjectGenerator::setAllowance(bool allow) {
 		return;
 	}
 	allowed_ = allow;
+	emit allowanceChanged();
 	emit canGenerateChanged();
 	updateLabelVisibility();
 	// if allowed_ changed to true

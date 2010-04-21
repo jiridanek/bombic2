@@ -7,6 +7,7 @@
 #include <QEvent>
 #include <QDrag>
 #include <QMimeData>
+#include <QMessageBox>
 
 #include <constants.h>
 
@@ -70,12 +71,52 @@ MapView::~MapView() {
 	SINGLETON_DESTROY;
 }
 
+/// Zavre editaci mapy.
+#include <QDebug>
+bool MapView::closeMap() {
+	if(!map_) {
+		// map is already closed
+		return true;
+	}
+	if(map_->needSave() && !askToCancelModifiedMap()) {
+		return false;
+	}
+
+	// realy close and deallocate the scene (and its map)
+	delete scene_;
+	map_ = 0;
+	scene_ = 0;
+	return true;
+}
+
+bool MapView::askToCancelModifiedMap() {
+	QMessageBox::StandardButton result =
+		QMessageBox::warning(this,
+			tr("Close the map - Bombic map editor"),
+			tr("The map")+" "+map_->name()+" "+
+				tr("has been modified.")+"\n"+
+				tr("Do you want to save your changes?"),
+			QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+	switch(result) {
+		case QMessageBox::Save:
+			return RESOURCE_HANDLER->saveMap(map_);
+		case QMessageBox::Discard:
+			return true;
+		case QMessageBox::Cancel:
+			return false;
+		default:
+			Q_ASSERT_X(false, "askToCancelModifiedMap()",
+				"unhandled result button");
+			return false;
+	}
+}
+
+
 /// Ulozi mapu.
 void MapView::saveMap() {
-	if(!map_) {
+	if(!map_ || !map_->needSave()) {
 		return;
 	}
-	// TODO need save
 	RESOURCE_HANDLER->saveMap(map_);
 }
 

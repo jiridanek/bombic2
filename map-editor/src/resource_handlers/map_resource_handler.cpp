@@ -74,6 +74,7 @@ QString MapResourceHandler::positionElName(BombicMapObject::Type objectType) {
  * a rozmery <code>DEFAULT_MAP_WIDTH, DEFAULT_MAP_HEIGHT</code>.
  * Vlozi do mapy hrace na prvni vhodnou pozici.
  * Vlastnictvi nove naalokovane mapy prechazi na volajiciho.
+ * Nastavi mape ze byla ulozena (nebyla editovana).
  * @return Nove alokovana prazdna mapa s pozadim.
  */
 BombicMap * MapResourceHandler::createEmptyMap() {
@@ -95,12 +96,15 @@ BombicMap * MapResourceHandler::createEmptyMap() {
 		delete newMap;
 		return 0;
 	}
+	// to aviod need save at closing
+	newMap->saved();
 	return newMap;
 }
 
 /** @details
  * Pokusi se vytvorit mapu zadanou @p name a vlozit do ni
  * vsechny objekty.
+ * Nastavi mape ze byla ulozena (nebyla editovana).
  * @param name jmeno mapy (nebo primo cesta k souboru)
  * @return Objekt mapy.
  * @retval 0 mapu se nepodarilo vyrobit
@@ -162,6 +166,8 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 		return 0;
 	}
 
+	// to aviod need save at closing
+	map->saved();
 	return map;
 }
 
@@ -437,7 +443,7 @@ bool MapResourceHandler::insertMapObject(const QDomElement & posEl,
 /** @details
  * Ulozi mapu do jejiho souboru ( BombicMap::filename() ).
  * Z mapy ziska data pro ulozeni, vytvori xml dokument a ten nasledne
- * ulozi do souboru.
+ * ulozi do souboru. Pokud se akce povede, nastavi mape ze byla ulozena.
  * @param map mapa, kterou chceme ulozit
  * @return Uspech akce.
  */
@@ -451,7 +457,12 @@ bool MapResourceHandler::saveMap(BombicMap * map) {
 
 	mapDataToXml(mapData, rootEl);
 
-	return saveXml(map->filename(), doc);
+	if(saveXml(map->filename(), doc)) {
+		map->saved();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 /** Smycka pres vsechny policka mapy.
