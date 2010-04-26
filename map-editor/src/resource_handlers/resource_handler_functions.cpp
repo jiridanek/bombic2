@@ -190,7 +190,7 @@ bool ResourceHandlerFunctions::saveXml(const QString & filename,
 	// and write the xml content to it
 	QTextStream(&file)
 		<< "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
-		<< doc.toString();
+		<< doc.toString(4 /* spaces indentation */ );
 
 	// I know, it would be closed automaticaly
 	// but it is good habit visualy close the opened

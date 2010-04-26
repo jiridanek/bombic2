@@ -54,6 +54,7 @@ class MapFieldView: public QWidget {
 		/// nez je ve skutecnosti zobrazovan.
 		QWidget * oldScrollWidget_;
 
+		/// Obecny widget, ve kterem jsou umisteny checkboxy pro generovani.
 		QWidget * boxesWidget_;
 		/// Tlacitko manipulujici s generovanou bednou policka.
 		QCheckBox * generateBox_;

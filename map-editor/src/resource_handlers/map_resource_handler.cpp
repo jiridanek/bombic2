@@ -97,7 +97,7 @@ BombicMap * MapResourceHandler::createEmptyMap() {
 		return 0;
 	}
 	// to aviod need save at closing
-	newMap->saved();
+	newMap->setModified(false);
 	return newMap;
 }
 
@@ -167,7 +167,7 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 	}
 
 	// to aviod need save at closing
-	map->saved();
+	map->setModified(false);
 	return map;
 }
 
@@ -431,7 +431,7 @@ bool MapResourceHandler::insertMapObject(const QDomElement & posEl,
 				"[" + QString::number(field.x()) +","+
 				QString::number(field.y()) + "]",
 			posEl );
-		return false;
+// 		return false;
 	}
 	// OK - it can be inserted, so create copy and insert it
 	map->insert(insertedObject->createCopy(), field);
@@ -458,7 +458,7 @@ bool MapResourceHandler::saveMap(BombicMap * map) {
 	mapDataToXml(mapData, rootEl);
 
 	if(saveXml(map->filename(), doc)) {
-		map->saved();
+		map->setModified(false);
 		return true;
 	} else {
 		return false;

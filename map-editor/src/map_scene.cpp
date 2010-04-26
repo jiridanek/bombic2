@@ -493,10 +493,12 @@ void MapScene::showCannotInsertItem(const QRect & objectRect) {
 }
 
 /** @details
+ * Odoznaci policko.
  * Dealokuje pruvodce nastaveni generovanych objektu.
  * Dealokuje mapu, ktera je ve scene zobrazena.
  */
 MapScene::~MapScene() {
+	unselectField();
 	delete boxesGeneratingTools_.generatedObjectsWizard;
 	delete creaturesGeneratingTools_.generatedObjectsWizard;
 	delete map_;

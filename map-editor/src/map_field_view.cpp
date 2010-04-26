@@ -35,8 +35,6 @@ MapFieldView::MapFieldView(QWidget * parent):
 	boxesLayout->addWidget(generateBox_);
 	generateCreature_ = new QCheckBox(tr("generate &Creature"), this);
 	boxesLayout->addWidget(generateCreature_);
-
-	hide();
 }
 
 /** @details
@@ -55,7 +53,7 @@ void MapFieldView::update(MapScene * scene) {
 		// the field in not in map
 		// the current field view is not valid
 		// and view of new field cannot be created
-		hide();
+		scrollArea_->hide();
 		return;
 	}
 	// connect checkboxes to new field
@@ -82,7 +80,6 @@ void MapFieldView::update(MapScene * scene) {
 	scrollArea_->setWidget(scrollWidget);
 	// and show it
 	scrollArea_->show();
-	show();
 }
 
 /** @details

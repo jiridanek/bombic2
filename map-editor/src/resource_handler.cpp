@@ -39,7 +39,22 @@ ResourceHandler::~ResourceHandler() {
 	SINGLETON_DESTROY;
 }
 
+/** @details
+ * Necha uzivatele vybrat mapu a tu pote nacte.
+ * Vlastnictvi nove naalokovane mapy prechazi na volajiciho.
+ * @see MapResourceHandler::createMap()
+ * @return Objekt mapy.
+ * @retval 0 Mapa nebyla nactena.
+ */
 BombicMap * ResourceHandler::loadMap() {
+	QString filename = QFileDialog::getOpenFileName(
+		MAIN_WINDOW, tr("Open map"), "",
+		tr("Bombic map files")+" (*"XML_FILE_EXTENSION")" );
+	if(filename.isEmpty()) {
+		return 0;
+	} else {
+		return loadMap(filename);
+	}
 }
 
 /** @details
@@ -48,7 +63,6 @@ BombicMap * ResourceHandler::loadMap() {
  * @return Nove alokovana prazdna mapa s pozadim.
  */
 BombicMap * ResourceHandler::loadEmptyMap() {
-	return loadMap("map_concrete_rings");
 	return mapResourceHandler_->createEmptyMap();
 }
 
@@ -205,7 +219,7 @@ bool ResourceHandler::saveMap(BombicMap * map) {
  */
 bool ResourceHandler::saveMapAs(BombicMap * map) {
 	QString filename = QFileDialog::getSaveFileName(
-		MAIN_WINDOW, tr("Bombic Map"), map->filename(),
+		MAIN_WINDOW, tr("Save map"), map->filename(),
 		tr("Bombic map files")+" (*"XML_FILE_EXTENSION")" );
 	if(filename.isEmpty()) {
 		return false;

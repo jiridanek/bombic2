@@ -23,7 +23,7 @@ BombicMap::BombicMap(const QString & name, int width, int height,
 		BombicMapBackground * background, const QString & filename):
 				name_(name), filename_(filename),
 				fieldsRect_(0, 0, width, height),
-				background_(background), edited_(true) {
+				background_(background), modified_(true) {
 	// construct fields area
 	FieldsT::value_type::value_type emptyFieldSet;
 	FieldsT::value_type column(height, emptyFieldSet);
@@ -35,12 +35,12 @@ BombicMap::BombicMap(const QString & name, int width, int height,
 				new BoxGenerator(Field(x, y));
 			connect(fields_[x][y].boxGen,
 				SIGNAL(allowanceChanged()),
-				this, SLOT(edited()) );
+				this, SLOT(setModified()) );
 			fields_[x][y].creatureGen =
 				new CreatureGenerator(Field(x, y));
 			connect(fields_[x][y].creatureGen,
 				SIGNAL(allowanceChanged()),
-				this, SLOT(edited()) );
+				this, SLOT(setModified()) );
 		}
 	}
 	// background walls
@@ -196,7 +196,7 @@ void BombicMap::insert(BombicMapObject * object,
 			}
 		}
 	}
-	edited_ = true;
+	modified_ = true;
 }
 
 /** @details
@@ -223,7 +223,7 @@ void BombicMap::remove(BombicMapObject * object) {
 			updateGeneratorsBlocking(fields_[x][y]);
 		}
 	}
-	edited_ = true;
+	modified_ = true;
 }
 
 /** @details
@@ -400,7 +400,7 @@ void BombicMap::setGeneratedObjectsCount(ObjectListT & objList,
 			addGeneratedMapObject(objList, object->createCopy());
 		}
 	}
-	edited_ = true;
+	modified_ = true;
 
 	QApplication::restoreOverrideCursor();
 }
@@ -471,7 +471,7 @@ const QString & BombicMap::filename() {
  */
 void BombicMap::setName(const QString & name) {
 	name_ = name;
-	edited_ = true;
+	modified_ = true;
 }
 
 /**
@@ -479,7 +479,7 @@ void BombicMap::setName(const QString & name) {
  */
 void BombicMap::setFilename(const QString & filename) {
 	filename_ = filename;
-	edited_ = true;
+	modified_ = true;
 }
 
 /**
@@ -498,22 +498,15 @@ BombicMapBackground * BombicMap::background() {
 }
 
 /**
- * @return Zda je treba mapu ulozit.
+ * @return Zda byla mapa zmenena.
  */
-bool BombicMap::needSave() {
-	return edited_;
+bool BombicMap::wasModified() {
+	return modified_;
 }
 
 /** @details
- * Nastavi ze byla mapa prave ulozena.
+ * @param modified jestli byla mapa zmenena (novy stav mapy)
  */
-void BombicMap::saved() {
-	edited_ = false;
-}
-
-/** @details
- * Nastavi ze byla mapa prave editovana.
- */
-void BombicMap::edited() {
-	edited_ = true;
+void BombicMap::setModified(bool modified) {
+	modified_ = modified;
 }

@@ -92,16 +92,17 @@ class BombicMap: public QObject {
 		/// Pozadi mapy.
 		BombicMapBackground * background();
 
-		/// Jestli je treba mapu ulozit.
-		bool needSave();
-		/// Mapa ulozena.
-		void saved();
+		/// Jestli byla mapa zmenena.
+		bool wasModified();
 
 	public slots:
 		/// Nastavit pocet boxu k nahodnemu vygenerovani.
 		void setGeneratedBoxesCount(BombicMapObject * box, int count);
 		/// Nastavit pocet priser k nahodnemu vygenerovani.
 		void setGeneratedCreaturesCount(BombicMapObject * creature, int count);
+
+		/// Nastavit jestli byla mapa zmenena.
+		void setModified(bool modified = true);
 
 	signals:
 		/// Pridana generovana bedna.
@@ -112,9 +113,6 @@ class BombicMap: public QObject {
 		void generatedBoxRemoved(BombicMapObject * object);
 		/// Odstranena generovana bedna.
 		void generatedCreatureRemoved(BombicMapObject * object);
-
-	private slots:
-		void edited();
 
 	private:
 		/// Mnozina reprezentujici jedno policko.
@@ -165,7 +163,7 @@ class BombicMap: public QObject {
 		FieldsT fields_;
 
 		/// Jestli je mapa editovana.
-		bool edited_;
+		bool modified_;
 };
 
 #endif

@@ -31,6 +31,10 @@ MainWindow::MainWindow() {
 	menus_[HelpMenu] = menuBar()->addMenu(tr("&Help"));
 
 
+	addAction(NewMapAction, tr("&New map"),
+		false, Qt::CTRL + Qt::Key_N, FileMenu);
+	addAction(OpenMapAction, tr("&Open map"),
+		false, Qt::CTRL + Qt::Key_O, FileMenu);
 	addAction(SaveMapAction, tr("&Save map"),
 		false, Qt::CTRL + Qt::Key_S, FileMenu);
 	addAction(SaveMapAsAction, tr("Save map &as"),

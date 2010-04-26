@@ -39,6 +39,7 @@ class MainWindow: public QMainWindow {
 		};
 
 		enum Action {
+			NewMapAction, OpenMapAction,
 			SaveMapAction, SaveMapAsAction,
 			MapSizeAction, MapBackgroundAction,
 			GeneratedBoxesAction, GeneratedCreaturesAction,

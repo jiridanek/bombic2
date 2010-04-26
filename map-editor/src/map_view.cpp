@@ -32,7 +32,7 @@ SINGLETON_INIT(MapView);
  * @param parent rodicovsky widget
  */
 MapView::MapView(QWidget * parent):
-		QGraphicsView(parent), scene_(0),
+		QGraphicsView(parent), map_(0), scene_(0),
 		lastZoomQuotient_(1.0),
 		zoomWidget_( new ZoomWidget(ZOOM_STEP,
 			ZOOM_MINIMUM_VALUE, ZOOM_MAXIMUM_VALUE) ),
@@ -51,13 +51,32 @@ MapView::MapView(QWidget * parent):
 		this, SLOT(setZoom(qreal)) );
 
 	// connect the menu actions
+	connect(MAIN_WINDOW->action(MainWindow::NewMapAction),
+		SIGNAL(triggered()),
+		this, SLOT(openEmptyMap()) );
+	connect(MAIN_WINDOW->action(MainWindow::OpenMapAction),
+		SIGNAL(triggered()),
+		this, SLOT(openMap()) );
 	connect(MAIN_WINDOW->action(MainWindow::SaveMapAction),
 		SIGNAL(triggered()),
 		this, SLOT(saveMap()) );
 	connect(MAIN_WINDOW->action(MainWindow::SaveMapAsAction),
 		SIGNAL(triggered()),
 		this, SLOT(saveMapAs()) );
+}
 
+MapView::~MapView() {
+	SINGLETON_DESTROY;
+}
+
+/** @details
+ * Pokusi se zavrit editaci prave otevrene mapy a otevre
+ * novou (defaultni prazdnou) mapu pro editaci.
+ */
+void MapView::openEmptyMap() {
+	if(!closeMap()) {
+		return;
+	}
 	// create default (empty) map
 	map_ = RESOURCE_HANDLER->loadEmptyMap();
 	if(map_) {
@@ -67,18 +86,41 @@ MapView::MapView(QWidget * parent):
 	}
 }
 
-MapView::~MapView() {
-	SINGLETON_DESTROY;
+/** @details
+ * Pokusi se zavrit editaci prave otevrene mapy a otevre
+ * novou mapu (vybranou uzivatelem) pro editaci.
+ */
+void MapView::openMap() {
+	if(!closeMap()) {
+		return;
+	}
+	// open new map
+	map_ = RESOURCE_HANDLER->loadMap();
+	if(map_) {
+		// and scene for it
+		scene_ = new MapScene(map_, this);
+		setScene(scene_);
+	}
 }
 
-/// Zavre editaci mapy.
-#include <QDebug>
+/** @details
+ * Kontroluje, zda byla mapa ulozena.
+ * Pokud ne, dotaze se uzivatele jestli mapu ulozit,
+ * zrusit zavirani mapy nebo zahodit zmeny.
+ * Pokud je tedy potom mozne editaci mapy ukoncit,
+ * dealokuje scenu a jeji mapu.
+ * @return Uspech ukonceni editace mapy.
+ * @retval true Editace mapy je uspesne ukoncena,
+ *              muzeme pokracovat nactenim jine mapy nebo ukoncit program.
+ * @retval false Editace mapy neukoncena, meli bychom uzivateli umoznit
+ *               pokracovat v editaci mapy.
+ */
 bool MapView::closeMap() {
 	if(!map_) {
 		// map is already closed
 		return true;
 	}
-	if(map_->needSave() && !askToCancelModifiedMap()) {
+	if(map_->wasModified() && !askToCloseModifiedMap()) {
 		return false;
 	}
 
@@ -89,7 +131,12 @@ bool MapView::closeMap() {
 	return true;
 }
 
-bool MapView::askToCancelModifiedMap() {
+/** @details
+ * Zobrazi dialog s moznostmi <em>ulozit, zahodit, zrusit</em>.
+ * Pokud uzivatel zvoli ulozit, pokusi se ulozit mapu.
+ * @return Zda muze byt editace mapy ukoncena.
+ */
+bool MapView::askToCloseModifiedMap() {
 	QMessageBox::StandardButton result =
 		QMessageBox::warning(this,
 			tr("Close the map - Bombic map editor"),
@@ -105,22 +152,27 @@ bool MapView::askToCancelModifiedMap() {
 		case QMessageBox::Cancel:
 			return false;
 		default:
-			Q_ASSERT_X(false, "askToCancelModifiedMap()",
+			Q_ASSERT_X(false, "askToCloseModifiedMap()",
 				"unhandled result button");
 			return false;
 	}
 }
 
-
-/// Ulozi mapu.
+/** @details
+ * Pokud je treba, ulozi mapu do jejiho umisteni.
+ * @see ResourceHandler::saveMap()
+ */
 void MapView::saveMap() {
-	if(!map_ || !map_->needSave()) {
+	if(!map_ || !map_->wasModified()) {
 		return;
 	}
 	RESOURCE_HANDLER->saveMap(map_);
 }
 
-/// Ulozi mapu do noveho umisteni.
+/** @details
+ * Ulozi mapu do noveho umisteni.
+ * @see ResourceHandler::saveMapAs()
+ */
 void MapView::saveMapAs() {
 	if(!map_) {
 		return;

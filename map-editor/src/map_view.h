@@ -68,6 +68,11 @@ class MapView: public QGraphicsView {
 		/// Obnovit oblast sceny.
 		void updateScene(const QList<QRectF> & rects);
 
+		/// Otevrit novou prazdnou mapu.
+		void openEmptyMap();
+		/// Otevrit novou mapu.
+		void openMap();
+
 		/// Ulozi mapu.
 		void saveMap();
 		/// Ulozi mapu do noveho umisteni.
@@ -83,7 +88,7 @@ class MapView: public QGraphicsView {
 
 	private:
 		/// Vytvorit dotaz co s mapou pri zavirani.
-		bool askToCancelModifiedMap();
+		bool askToCloseModifiedMap();
 
 		/// Mapa.
 		BombicMap * map_;
