@@ -40,8 +40,8 @@
 		<box x="3" y="5" />
 	</boxes>
 
-	<bonuses name="bonus_bomb" count="1" />
-	<bonuses name="bonus_speed" count="1" />
+	<bonuses name="bonus_bomb" random_generated="1" />
+	<bonuses name="bonus_speed" random_generated="1" />
 
 	<creatures name="creature_rat" random_generated="6" />
 </map>

@@ -11,7 +11,7 @@
 	<boxes 	name="box_container" random_generated="3">
 	</boxes>
 
-	<bonuses name="bonus_timer" count="3" />
+	<bonuses name="bonus_timer" random_generated="3" />
 
 	<creatures name="creature_slug" random_generated="1" />
 	<dont_generate>

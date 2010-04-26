@@ -94,9 +94,9 @@
 		<box x="16" y="7" />
 	</boxes>
 
-	<bonuses name="bonus_bomb" count="1" />
-	<bonuses name="bonus_slider" count="2" />
-	<bonuses name="bonus_megabomb" count="2" />
+	<bonuses name="bonus_bomb" random_generated="1" />
+	<bonuses name="bonus_slider" random_generated="2" />
+	<bonuses name="bonus_megabomb" random_generated="2" />
 
 	<creatures name="creature_cloud" random_generated="13" />
 	<creatures name="creature_trap_red" random_generated="20" />

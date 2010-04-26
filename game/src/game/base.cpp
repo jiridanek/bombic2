@@ -743,7 +743,7 @@ void GameBase::load_bonuses_(TiXmlElement *bonusEl){
 			try{
 				readAttr(bonusEl, "name", bonus_name);
 				filename = bonus_name;
-				readAttr(bonusEl, "count", count);
+				readAttr(bonusEl, "random_generated", count);
 			}
 			catch(const string & s){
 				TiXmlError("in element <bonus ...>: "+s);

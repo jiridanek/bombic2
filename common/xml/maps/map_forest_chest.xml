@@ -68,9 +68,9 @@
 		<box x="7" y="6" />
 	</boxes>
 
-	<bonuses name="bonus_kicker" count="2" />
-	<bonuses name="bonus_slider" count="2" />
-	<bonuses name="bonus_megabomb" count="2" />
+	<bonuses name="bonus_kicker" random_generated="2" />
+	<bonuses name="bonus_slider" random_generated="2" />
+	<bonuses name="bonus_megabomb" random_generated="2" />
 
 	<creatures name="creature_rat">
 		<creature x="8" y="2" />

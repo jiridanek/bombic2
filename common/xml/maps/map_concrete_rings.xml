@@ -268,9 +268,9 @@
 		<box x="28" y="19" />
 	</boxes>
 
-	<bonuses name="bonus_kicker" count="10" />
-	<bonuses name="bonus_timer" count="5" />
-	<bonuses name="bonus_megabomb" count="4" />
+	<bonuses name="bonus_kicker" random_generated="10" />
+	<bonuses name="bonus_timer" random_generated="5" />
+	<bonuses name="bonus_megabomb" random_generated="4" />
 
 	<creatures name="creature_trap" random_generated="44" />
 	<creatures name="creature_trap_red" random_generated="66" />

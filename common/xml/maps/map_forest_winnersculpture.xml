@@ -66,9 +66,9 @@
 
 	</boxes>
 
-	<bonuses name="bonus_bomb" count="1" />
-	<bonuses name="bonus_speed" count="1" />
-	<bonuses name="bonus_kicker" count="3" />
+	<bonuses name="bonus_bomb" random_generated="1" />
+	<bonuses name="bonus_speed" random_generated="1" />
+	<bonuses name="bonus_kicker" random_generated="3" />
 
 	<creatures name="creature_rat" random_generated="13" />
 	<creatures name="creature_slug" random_generated="7" />

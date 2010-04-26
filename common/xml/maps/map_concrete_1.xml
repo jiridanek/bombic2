@@ -57,7 +57,7 @@
 		<box x="13" y="4" />
 	</boxes>
 
-	<bonuses name="bonus_speed" count="2" />
+	<bonuses name="bonus_speed" random_generated="2" />
 
 	<creatures name="creature_slug" random_generated="8" />
 	<creatures name="creature_cloud" random_generated="4" />

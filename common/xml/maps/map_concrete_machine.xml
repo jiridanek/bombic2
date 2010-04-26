@@ -192,9 +192,9 @@
 		<box x="24" y="14" />
 	</boxes>
 
-	<bonuses name="bonus_kicker" count="4" />
-	<bonuses name="bonus_slider" count="4" />
-	<bonuses name="bonus_timer" count="4" />
+	<bonuses name="bonus_kicker" random_generated="4" />
+	<bonuses name="bonus_slider" random_generated="4" />
+	<bonuses name="bonus_timer" random_generated="4" />
 
 	<creatures name="creature_trap" random_generated="86" />
 </map>

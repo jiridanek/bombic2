@@ -78,6 +78,6 @@
 		zde jakekoli bonusy nastavovat -->
 	<!-- pro kazdy druh(name) bonusu jeden tag bonuses -->
 	<_bonuses 	name="jmeno bonusu"
-			count="maximalni pocet v cele mape"
+			random_generated="maximalni pocet v cele mape"
 			/>
 </map>
