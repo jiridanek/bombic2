@@ -63,6 +63,8 @@ class MapObjectGenerator: public QObject {
 		virtual bool blocksBoxGenerating();
 		/// Jestli objekt aktualne blokuje generovani priser.
 		virtual bool blocksCreatureGenerating();
+		/// Jestli objekt aktualne odblokovava generovani bonusu.
+		virtual bool unblocksBonusGenerating();
 
 	public slots:
 		/// Zobrazit popisek generatoru.

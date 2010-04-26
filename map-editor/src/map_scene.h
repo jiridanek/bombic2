@@ -57,15 +57,21 @@ class MapScene: public QGraphicsScene {
 		void registerBoxGeneratorChange();
 		/// Zaznamenat zmenu generatoru priser.
 		void registerCreatureGeneratorChange();
+		/// Zaznamenat zmenu generatoru bonusu.
+		void registerBonusGeneratorChange();
 
 		/// Pridat generovanou bednu.
 		void addGeneratedBox(BombicMapObject * mapObj);
 		/// Pridat generovanou priseru.
 		void addGeneratedCreature(BombicMapObject * mapObj);
+		/// Pridat generovany bonus.
+		void addGeneratedBonus(BombicMapObject * mapObj);
 		/// Odstranit generovanou bednu.
 		void removeGeneratedBox(BombicMapObject * mapObj);
 		/// Odstranit generovanou priseru.
 		void removeGeneratedCreature(BombicMapObject * mapObj);
+		/// Odstranit generovany bonus.
+		void removeGeneratedBonus(BombicMapObject * mapObj);
 
 	private slots:
 		/// Prepnout, zda generovat objekty ci ne.
@@ -188,6 +194,8 @@ class MapScene: public QGraphicsScene {
 		ObjectGeneratingToolsT boxesGeneratingTools_;
 		/// Pomucky pro generovani priser.
 		ObjectGeneratingToolsT creaturesGeneratingTools_;
+		/// Pomucky pro generovani bonusu.
+		ObjectGeneratingToolsT bonusesGeneratingTools_;
 
 		/// Zda-li je aktualne stisknuto tlacitko mysi,
 		/// na ktere se da navazat uvolnenim za vzniku kliknuti.

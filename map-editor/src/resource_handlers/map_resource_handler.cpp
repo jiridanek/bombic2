@@ -35,6 +35,8 @@ QString MapResourceHandler::objectsElName(BombicMapObject::Type objectType) {
 			return "creatures";
 		case BombicMapObject::Floorobject:
 			return "floorobjects";
+		case BombicMapObject::Bonus:
+			return "bonuses";
 		default:
 			Q_ASSERT_X(false,
 				"in MapResourceHandler::objectsElName",
@@ -59,6 +61,9 @@ QString MapResourceHandler::positionElName(BombicMapObject::Type objectType) {
 			return "creature";
 		case BombicMapObject::Floorobject:
 			return "floorobject";
+		case BombicMapObject::Bonus:
+			// bonus cannot be positioned
+			return "";
 		default:
 			Q_ASSERT_X(false,
 				"in MapResourceHandler::positionElName",
@@ -156,6 +161,7 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 		loadMapObjects(rootEl, BombicMapObject::Wall, map) &&
 		loadMapObjects(rootEl, BombicMapObject::Box, map) &&
 		loadMapObjects(rootEl, BombicMapObject::Creature, map) &&
+		loadMapObjects(rootEl, BombicMapObject::Bonus, map) &&
 		getSubElement(rootEl, el, "dont_generate", true) &&
 		loadMapNoboxes(el, map) &&
 		loadMapNocreatures(el, map);
@@ -318,6 +324,10 @@ bool MapResourceHandler::loadMapObjects(const QDomElement & rootEl,
 					break;
 				case BombicMapObject::Creature:
 					map->setGeneratedCreaturesCount(
+						obj, randomGenerated);
+					break;
+				case BombicMapObject::Bonus:
+					map->setGeneratedBonusesCount(
 						obj, randomGenerated);
 					break;
 				default:
@@ -545,6 +555,7 @@ void MapResourceHandler::initMapDataToSave(MapDataT & mapData,
 	// count the generated objects
 	countGeneratedObjects(mapData.objects, map->generatedBoxes());
 	countGeneratedObjects(mapData.objects, map->generatedCreatures());
+	countGeneratedObjects(mapData.objects, map->generatedBonuses());
 }
 
 /** @details

@@ -7,6 +7,7 @@
 #include "creature_resource_handler.h"
 #include "player_resource_handler.h"
 #include "floorobject_resource_handler.h"
+#include "bonus_resource_handler.h"
 
 MapObjectResourceHandler::RHListT MapObjectResourceHandler::resourceHandlers_;
 
@@ -26,6 +27,7 @@ void MapObjectResourceHandler::initResourceHandlers() {
 		resourceHandlers_.append(new className)
 
 	// {---  Register your additional handler here  ---} //
+	REGISTER_HANDLER(BonusResourceHandler);
 	REGISTER_HANDLER(FloorobjectResourceHandler);
 	REGISTER_HANDLER(PlayerResourceHandler);
 	REGISTER_HANDLER(CreatureResourceHandler);

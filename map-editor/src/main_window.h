@@ -43,6 +43,7 @@ class MainWindow: public QMainWindow {
 			SaveMapAction, SaveMapAsAction,
 			MapSizeAction, MapBackgroundAction,
 			GeneratedBoxesAction, GeneratedCreaturesAction,
+			GeneratedBonusesAction,
 			GenerateObjectsAction
 		};
 

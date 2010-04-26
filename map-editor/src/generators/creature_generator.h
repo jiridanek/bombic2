@@ -1,5 +1,5 @@
 /** @file creature_generator.h
- * TODO Trida nesouci informace o generovani priser @c CreatureGenerator.
+ * Trida nesouci informace o generovani priser @c CreatureGenerator.
  */
 
 #ifndef CREATURE_GENERATOR_H_GUARD_
@@ -8,7 +8,7 @@
 #include "map_object_generator.h"
 
 /** Generator priser.
- * TODO Trida  specializovana na vizualizaci generovani priser.
+ * Trida specializovana na generovani priser a jejich vizualizaci.
  */
 class CreatureGenerator: public MapObjectGenerator {
 

@@ -37,7 +37,7 @@ class BombicMapObject {
 
 		/// Vyctovy typ objektu.
 		enum Type {
-			Floorobject, Wall, Box, Creature, Player
+			Floorobject, Wall, Box, Creature, Player, Bonus
 		};
 
 		/// Typ objektu.
@@ -73,6 +73,8 @@ class BombicMapObject {
 		virtual bool blocksBoxGenerating();
 		/// Jestli objekt blokuje generovani priser.
 		virtual bool blocksCreatureGenerating();
+		/// Jestli objekt odblokovava generovani bonusu.
+		virtual bool unblocksBonusGenerating();
 		/// Jestli muze byt objekt premisten.
 		virtual bool canBeDragged();
 		/// Jestli muze byt objekt odstranen z mapy.

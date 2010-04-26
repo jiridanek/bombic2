@@ -22,7 +22,9 @@ MapObjectGenerator::MapObjectGenerator(
  * Dealokuje graficky prvek.
  */
 MapObjectGenerator::~MapObjectGenerator() {
-	delete labelGI_;
+	if(labelGI_) {
+		delete labelGI_;
+	}
 }
 
 void MapObjectGenerator::show() {
@@ -143,6 +145,7 @@ void MapObjectGenerator::removeGeneratedObjects() {
 
 /**
  * @return Graficky prvek popisku generatoru do sceny.
+ * @retval 0 graficky prvek neni (a nebude) pripraven
  */
 QGraphicsItem * MapObjectGenerator::graphicsItem() {
 	return labelGI_;
@@ -167,6 +170,10 @@ const BombicMap::ObjectListT & MapObjectGenerator::generatedObjects() {
  * vizualizace spjata s polickem, na ktere generuje.
  */
 void MapObjectGenerator::setLabelPos() {
+	if(!labelGI_) {
+		return;
+	}
+
 	// move to the field
 	labelGI_->setPos(field_ * CELL_SIZE);
 	// move by offset
@@ -178,8 +185,10 @@ void MapObjectGenerator::setLabelPos() {
  * Nastavi viditelnost grafickeho prvku podle aktualnich hodnot parametru.
  */
 void MapObjectGenerator::updateLabelVisibility() {
-	labelGI_->setVisible(
-		!hidden_ && allowed_ && !blocked_);
+	if(labelGI_) {
+		labelGI_->setVisible(
+			!hidden_ && allowed_ && !blocked_);
+	}
 }
 
 /**
@@ -192,5 +201,11 @@ bool MapObjectGenerator::blocksBoxGenerating() {
  * @return Zda blokuje generovani priser.
  */
 bool MapObjectGenerator::blocksCreatureGenerating() {
+	return false;
+}
+/**
+ * @return Zda odblokovava generovani bonusu.
+ */
+bool MapObjectGenerator::unblocksBonusGenerating() {
 	return false;
 }

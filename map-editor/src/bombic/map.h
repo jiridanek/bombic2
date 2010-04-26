@@ -67,11 +67,16 @@ class BombicMap: public QObject {
 		/// Generator priser na policku.
 		MapObjectGenerator * creatureGenerator(
 				const BombicMap::Field & field);
+		/// Generator bonusu na policku.
+		MapObjectGenerator * bonusGenerator(
+				const BombicMap::Field & field);
 
 		/// Vsechny boxy, ktere se v mape nahodne generuji.
 		const ObjectListT & generatedBoxes();
 		/// Vsechny prisery, ktere se v mape nahodne generuji.
 		const ObjectListT & generatedCreatures();
+		/// Vsechny bonusy, ktere se v mape nahodne generuji.
+		const ObjectListT & generatedBonuses();
 
 		/// Obnovit blokovani generatoru policka.
 		void updateGeneratorsBlocking(const Field & field);
@@ -100,6 +105,8 @@ class BombicMap: public QObject {
 		void setGeneratedBoxesCount(BombicMapObject * box, int count);
 		/// Nastavit pocet priser k nahodnemu vygenerovani.
 		void setGeneratedCreaturesCount(BombicMapObject * creature, int count);
+		/// Nastavit pocet bonusu k nahodnemu vygenerovani.
+		void setGeneratedBonusesCount(BombicMapObject * bonus, int count);
 
 		/// Nastavit jestli byla mapa zmenena.
 		void setModified(bool modified = true);
@@ -109,10 +116,14 @@ class BombicMap: public QObject {
 		void generatedBoxAdded(BombicMapObject * object);
 		/// Pridana generovana prisera.
 		void generatedCreatureAdded(BombicMapObject * object);
+		/// Pridan generovany bonus.
+		void generatedBonusAdded(BombicMapObject * object);
 		/// Odstranena generovana bedna.
 		void generatedBoxRemoved(BombicMapObject * object);
 		/// Odstranena generovana bedna.
 		void generatedCreatureRemoved(BombicMapObject * object);
+		/// Odstranen generovany bonus.
+		void generatedBonusRemoved(BombicMapObject * object);
 
 	private:
 		/// Mnozina reprezentujici jedno policko.
@@ -121,6 +132,8 @@ class BombicMap: public QObject {
 			MapObjectGenerator * boxGen;
 			/// Generator priser.
 			MapObjectGenerator * creatureGen;
+			/// Generator bonusu.
+			MapObjectGenerator * bonusGen;
 			/// Seznam pevnych objektu.
 			ObjectListT objList;
 		} FieldSetT;
@@ -155,6 +168,8 @@ class BombicMap: public QObject {
 		ObjectListT generatedBoxes_;
 		/// Seznam generovanych priser.
 		ObjectListT generatedCreatures_;
+		/// Seznam generovanych bonusu.
+		ObjectListT generatedBonuses_;
 
 		/// Pozadi mapy.
 		BombicMapBackground * background_;

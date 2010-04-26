@@ -48,6 +48,8 @@ MainWindow::MainWindow() {
 		menus_[MapMenu]->addAction(tr("Generated &boxes"));
 	actions_[GeneratedCreaturesAction] =
 		menus_[MapMenu]->addAction(tr("Generated &creatures"));
+	actions_[GeneratedBonusesAction] =
+		menus_[MapMenu]->addAction(tr("Generated bo&nuses"));
 
 	addAction(GenerateObjectsAction, tr("&Generate random objects"),
 		true, Qt::CTRL + Qt::Key_G, ViewMenu);

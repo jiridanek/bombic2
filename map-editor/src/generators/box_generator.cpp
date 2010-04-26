@@ -10,7 +10,7 @@
  * @param field policko mapy, pro ktere chceme vizualizovat
  */
 BoxGenerator::BoxGenerator(const BombicMap::Field & field):
-		MapObjectGenerator(field) {
+		MapObjectSingleGenerator(field) {
 	labelGI_ = new QGraphicsSimpleTextItem("B");
 	// TODO set font
 
@@ -25,19 +25,15 @@ BombicMapObject::Type BoxGenerator::type() {
 }
 
 /**
- * @return Zda lze aktualne generovat objekt.
+ * @return Zda aktualne blokuje generovani priser.
  */
-bool BoxGenerator::canGenerate() {
-	return MapObjectGenerator::canGenerate() &&
-		generatedObjects_.isEmpty();
-}
-
-void BoxGenerator::addGeneratedObject(BombicMapObject * mapObject) {
-	MapObjectGenerator::addGeneratedObject(mapObject);
-	emit canGenerateChanged();
-}
-
 bool BoxGenerator::blocksCreatureGenerating() {
 	return !generatedObjects_.isEmpty();
 }
 
+/**
+ * @return Zda odblokovava generovani bonusu.
+ */
+bool BoxGenerator::unblocksBonusGenerating() {
+	return !generatedObjects_.isEmpty();
+}

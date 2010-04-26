@@ -44,7 +44,7 @@ BombicMapObject::Type BombicBox::type() {
  * Graficky prvek do sceny je vytvaren zde on demand,
  * pozicovan tak, aby horni levy bod policka zabraneho bednou byl v bode
  * @p position na scene. Souradnice z (z value) je dana horni souradnici
- * spodniho zabraneho policka.
+ * horniho zabraneho policka.
  * @param position pozadovana pozice ve scene
  * @return Graficky prvek umisteny na zadanou pozici.
  */
@@ -56,8 +56,7 @@ QGraphicsItem * BombicBox::situateGraphicsItem(const QPointF & position) {
 		graphicsItem_->setOffset(0, -toplapping_*CELL_SIZE);
 	}
 	graphicsItem_->setPos(position);
-	graphicsItem_->setZValue(
-		position.y() + (rect_.height()-1)*CELL_SIZE );
+	graphicsItem_->setZValue(position.y());
 
 	/* DEBUG
 	foreach(QGraphicsItem * i, graphicsItem_->children()) {
@@ -68,4 +67,12 @@ QGraphicsItem * BombicBox::situateGraphicsItem(const QPointF & position) {
 	// */
 
 	return graphicsItem_;
+}
+
+/** @details
+ * Bedna odblokovava generovani bonusu.
+ * @return Zda odblokovava generovani bonusu.
+ */
+bool BombicBox::unblocksBonusGenerating() {
+	return true;
 }

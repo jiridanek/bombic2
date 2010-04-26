@@ -138,6 +138,14 @@ bool BombicMapObject::blocksCreatureGenerating() {
 }
 
 /** @details
+ * Defaultne objekt neodblokovava generovani bonusu.
+ * @return Zda odblokovava generovani bonusu.
+ */
+bool BombicMapObject::unblocksBonusGenerating() {
+	return false;
+}
+
+/** @details
  * Defaultne objekt muze byt presouvan.
  * @return Zda muze byt presouvan.
  */

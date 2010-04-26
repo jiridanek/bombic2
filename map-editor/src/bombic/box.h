@@ -28,6 +28,8 @@ class BombicBox: public BombicMapObject {
 		/// Umistit graficky prvek.
 		virtual QGraphicsItem * situateGraphicsItem(
 				const QPointF & position);
+		/// Jestli objekt odblokovava generovani bonusu.
+		virtual bool unblocksBonusGenerating();
 };
 
 #endif

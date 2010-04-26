@@ -8,6 +8,7 @@
 #include "wall.h"
 #include "../generators/box_generator.h"
 #include "../generators/creature_generator.h"
+#include "../generators/bonus_generator.h"
 
 /** @details
  * Zkonstruuje mapu o rozmerech @p width, @p height s pozadim @p background.
@@ -29,20 +30,24 @@ BombicMap::BombicMap(const QString & name, int width, int height,
 	FieldsT::value_type column(height, emptyFieldSet);
 	fields_ = FieldsT(width, column);
 	// init generators
+	#define GENERATOR(className, fieldSetMember) \
+		do { \
+			fields_[x][y].fieldSetMember = \
+				new className(Field(x, y)); \
+			connect(fields_[x][y].fieldSetMember, \
+				SIGNAL(allowanceChanged()), \
+				this, SLOT(setModified()) ); \
+		} while(0)
+
 	for(int x = 0 ; x < width ; ++x) {
 		for(int y = 0 ; y < height ; ++y) {
-			fields_[x][y].boxGen =
-				new BoxGenerator(Field(x, y));
-			connect(fields_[x][y].boxGen,
-				SIGNAL(allowanceChanged()),
-				this, SLOT(setModified()) );
-			fields_[x][y].creatureGen =
-				new CreatureGenerator(Field(x, y));
-			connect(fields_[x][y].creatureGen,
-				SIGNAL(allowanceChanged()),
-				this, SLOT(setModified()) );
+			GENERATOR(BoxGenerator, boxGen);
+			GENERATOR(CreatureGenerator, creatureGen);
+			GENERATOR(BonusGenerator, bonusGen);
 		}
 	}
+	#undef GENERATOR
+
 	// background walls
 	insertBackgroundWalls();
 
@@ -109,6 +114,7 @@ BombicMap::~BombicMap() {
 			}
 			delete fields_[x][y].boxGen;
 			delete fields_[x][y].creatureGen;
+			delete fields_[x][y].bonusGen;
 		}
 	}
 	// generated objects
@@ -116,6 +122,9 @@ BombicMap::~BombicMap() {
 		delete o;
 	}
 	foreach(BombicMapObject * o, generatedCreatures_) {
+		delete o;
+	}
+	foreach(BombicMapObject * o, generatedBonuses_) {
 		delete o;
 	}
 	// background
@@ -194,6 +203,9 @@ void BombicMap::insert(BombicMapObject * object,
 			if(object->blocksCreatureGenerating()) {
 				fields_[x][y].creatureGen->block();
 			}
+			if(object->unblocksBonusGenerating()) {
+				fields_[x][y].bonusGen->unblock();
+			}
 		}
 	}
 	modified_ = true;
@@ -247,10 +259,16 @@ void BombicMap::updateGeneratorsBlocking(const FieldSetT & fieldSet) {
 	// check if some generator is blocking some other one
 	bool blockBoxes =
 		fieldSet.boxGen->blocksBoxGenerating() ||
-		fieldSet.creatureGen->blocksBoxGenerating();
+		fieldSet.creatureGen->blocksBoxGenerating() ||
+		fieldSet.bonusGen->blocksBoxGenerating();
 	bool blockCreatures =
 		fieldSet.boxGen->blocksCreatureGenerating() ||
-		fieldSet.creatureGen->blocksCreatureGenerating();
+		fieldSet.creatureGen->blocksCreatureGenerating() ||
+		fieldSet.bonusGen->blocksCreatureGenerating();
+	bool unblockBonuses =
+		fieldSet.boxGen->unblocksBonusGenerating() ||
+		fieldSet.creatureGen->unblocksBonusGenerating() ||
+		fieldSet.bonusGen->unblocksBonusGenerating();
 	// find the blocker
 	foreach(BombicMapObject * o, fieldSet.objList) {
 		if(o->blocksBoxGenerating()) {
@@ -259,9 +277,13 @@ void BombicMap::updateGeneratorsBlocking(const FieldSetT & fieldSet) {
 		if(o->blocksCreatureGenerating()) {
 			blockCreatures = true;
 		}
+		if(o->unblocksBonusGenerating()) {
+			unblockBonuses = true;
+		}
 	}
 	fieldSet.boxGen->setBlocking(blockBoxes);
 	fieldSet.creatureGen->setBlocking(blockCreatures);
+	fieldSet.bonusGen->setBlocking(!unblockBonuses);
 }
 
 /** @details
@@ -328,6 +350,22 @@ MapObjectGenerator * BombicMap::creatureGenerator(
 	return fields_[field.x()][field.y()].creatureGen;
 }
 
+/** @details
+ * Na kazdem policku vedeme zaznam o tom, zda lze na tomto
+ * policku generovat bonusy. Toto je dotaz na strukturu konkretniho policka.
+ * Vracena struktura zustava ve vlastnictvi mapy.
+ * @param field policko, o nemz chceme informace
+ * @return Generator bonusu.
+ * @retval 0 Zadane policko neni v mape.
+ */
+MapObjectGenerator * BombicMap::bonusGenerator(
+		const BombicMap::Field & field) {
+	if(!fieldsRect_.contains(field)) {
+		return 0;
+	}
+	return fields_[field.x()][field.y()].bonusGen;
+}
+
 /**
  * @return Seznam vsech beden, ktere maji byt v mape generovany.
  */
@@ -340,6 +378,12 @@ const BombicMap::ObjectListT & BombicMap::generatedBoxes() {
 const BombicMap::ObjectListT & BombicMap::generatedCreatures() {
 	return generatedCreatures_;
 }
+/**
+ * @return Seznam vsech bonusu, ktere maji byt v mape generovany.
+ */
+const BombicMap::ObjectListT & BombicMap::generatedBonuses() {
+	return generatedBonuses_;
+}
 
 /** @details
  * Nastavi pocet beden stejneho druhu jako @p box pro generovani.
@@ -351,7 +395,6 @@ const BombicMap::ObjectListT & BombicMap::generatedCreatures() {
 void BombicMap::setGeneratedBoxesCount(BombicMapObject * box, int count) {
 	setGeneratedObjectsCount(generatedBoxes_, box, count);
 }
-
 /** @details
  * Nastavi pocet priser stejneho druhu jako @p creature pro generovani.
  * Tento pocet se tedy tyka priser,
@@ -362,6 +405,16 @@ void BombicMap::setGeneratedBoxesCount(BombicMapObject * box, int count) {
 void BombicMap::setGeneratedCreaturesCount(BombicMapObject * creature,
 		int count) {
 	setGeneratedObjectsCount(generatedCreatures_, creature, count);
+}
+/** @details
+ * Nastavi pocet bonusu stejneho druhu jako @p bonus pro generovani.
+ * Tento pocet se tedy tyka bonusu,
+ * ktere maji shodny @c BombicMapObject::name().
+ * @param bonus prototyp bonusu, jehoz pocet pro generovani nastavujeme
+ * @param count novy pocet generovanych bonusu zadaneho druhu
+ */
+void BombicMap::setGeneratedBonusesCount(BombicMapObject * bonus, int count) {
+	setGeneratedObjectsCount(generatedBonuses_, bonus, count);
 }
 
 /** @details
@@ -424,6 +477,9 @@ void BombicMap::addGeneratedMapObject(ObjectListT & objList,
 		case BombicMapObject::Creature:
 			emit generatedCreatureAdded(object);
 			break;
+		case BombicMapObject::Bonus:
+			emit generatedBonusAdded(object);
+			break;
 		default:
 			Q_ASSERT_X(false, "addGeneratedMapObject",
 				"unhandled object type");
@@ -444,6 +500,9 @@ void BombicMap::removeGeneratedMapObject(ObjectListT & objList,
 			break;
 		case BombicMapObject::Creature:
 			emit generatedCreatureRemoved(object);
+			break;
+		case BombicMapObject::Bonus:
+			emit generatedBonusRemoved(object);
 			break;
 		default:
 			Q_ASSERT_X(false, "removeGeneratedMapObject",

@@ -158,6 +158,10 @@ void MapObjectPalette::addObject(BombicMapObject * object) {
 			// nothing to do with player
 			// user cannot see it as button in palette
 			return;
+		case BombicMapObject::Bonus:
+			// nothing to do with bonus
+			// user cannot see it as button in palette
+			return;
 		default:
 			Q_ASSERT_X(false, "MapObjectPalette::addObject",
 				"adding unexpected object type");

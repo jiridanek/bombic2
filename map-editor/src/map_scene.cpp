@@ -25,6 +25,7 @@
 #include "generators/map_object_generator.h"
 #include "generators/generated_boxes_wizard.h"
 #include "generators/generated_creatures_wizard.h"
+#include "generators/generated_bonuses_wizard.h"
 
 /** @details
  * Vytvori scenu mapy @p map. Prebira vlastnictvi @p map a pri ruseni tuto mapu
@@ -42,14 +43,26 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 				mousePressed_(false), mouseClicked_(false),
 				doObjectGenerating_(true) {
 	// init tools
-	boxesGeneratingTools_.toGenerate =
-		map->generatedBoxes();
-	boxesGeneratingTools_.generatedObjectsWizard =
-		new GeneratedBoxesWizard(map, MAIN_WINDOW);
-	creaturesGeneratingTools_.toGenerate =
-		map->generatedCreatures();
-	creaturesGeneratingTools_.generatedObjectsWizard =
-		new GeneratedCreaturesWizard(map, MAIN_WINDOW);
+	#define GENERATING_TOOLS(tools, generatedObjects, wizardClassName, \
+			menuAction) \
+		do { \
+			tools.toGenerate = \
+				map->generatedObjects(); \
+			tools.generatedObjectsWizard = \
+				new wizardClassName(map, MAIN_WINDOW); \
+			connect( \
+				MAIN_WINDOW->action(MainWindow::menuAction), \
+				SIGNAL(triggered()), \
+				tools.generatedObjectsWizard, \
+				SLOT(show()) ); \
+		} while(0)
+	GENERATING_TOOLS(boxesGeneratingTools_, generatedBoxes,
+		GeneratedBoxesWizard, GeneratedBoxesAction);
+	GENERATING_TOOLS(creaturesGeneratingTools_, generatedCreatures,
+		GeneratedCreaturesWizard, GeneratedCreaturesAction);
+	GENERATING_TOOLS(bonusesGeneratingTools_, generatedBonuses,
+		GeneratedBonusesWizard, GeneratedBonusesAction);
+	#undef GENERATING_TOOLS
 
 	// set the scene
 	setSceneRect(QRect(QPoint(0, 0), map_->fieldsRect().size()*CELL_SIZE));
@@ -64,14 +77,21 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	generateObjects();
 
 	// connect map to scene
-	connect(map, SIGNAL(generatedBoxAdded(BombicMapObject *)),
-		this, SLOT(addGeneratedBox(BombicMapObject *)) );
-	connect(map, SIGNAL(generatedCreatureAdded(BombicMapObject *)),
-		this, SLOT(addGeneratedCreature(BombicMapObject *)) );
-	connect(map, SIGNAL(generatedBoxRemoved(BombicMapObject *)),
-		this, SLOT(removeGeneratedBox(BombicMapObject *)) );
-	connect(map, SIGNAL(generatedCreatureRemoved(BombicMapObject *)),
-		this, SLOT(removeGeneratedCreature(BombicMapObject *)) );
+	#define CONNECT_MAP(addedSignal, addSlot, removedSignal, removeSlot) \
+		do { \
+			connect(map_, \
+				SIGNAL(addedSignal(BombicMapObject *)), \
+				this, SLOT(addSlot(BombicMapObject *)) ); \
+			connect(map_, \
+				SIGNAL(removedSignal(BombicMapObject *)), \
+				this, SLOT(removeSlot(BombicMapObject *)) ); \
+		} while(0)
+	CONNECT_MAP(generatedBoxAdded, addGeneratedBox,
+		generatedBoxRemoved, removeGeneratedBox);
+	CONNECT_MAP(generatedCreatureAdded, addGeneratedCreature,
+		generatedCreatureRemoved, removeGeneratedCreature);
+	CONNECT_MAP(generatedBonusAdded, addGeneratedBonus,
+		generatedBonusRemoved, removeGeneratedBonus);
 
 	// connect palette to scene
 	connect(MAP_OBJECT_PALETTE, SIGNAL(objectUnselected()),
@@ -89,16 +109,6 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	generateObjectsAction->setChecked(doObjectGenerating_);
 	connect(generateObjectsAction, SIGNAL(toggled(bool)),
 		this, SLOT(toggleObjectGenerating()) );
-
-	// connect the menu actions
-	connect(MAIN_WINDOW->action(MainWindow::GeneratedBoxesAction),
-		SIGNAL(triggered()),
-		boxesGeneratingTools_.generatedObjectsWizard,
-		SLOT(show()) );
-	connect(MAIN_WINDOW->action(MainWindow::GeneratedCreaturesAction),
-		SIGNAL(triggered()),
-		creaturesGeneratingTools_.generatedObjectsWizard,
-		SLOT(show()) );
 
 	// init helper items as "insert item" and "item for selected field"
 	initHelperItems();
@@ -145,6 +155,8 @@ void MapScene::insertObjectsGraphicsItems() {
 			map_->boxGenerator(f), 0.5 );
 		insertGeneratorGraphicsItem(
 			map_->creatureGenerator(f), 0.55 );
+		// bonus generator has no label
+
 		// stable items
 		foreach(BombicMapObject * o, map_->objectsOnField(f)) {
 			if(o->graphicsItem()->scene()!=this) {
@@ -187,6 +199,11 @@ void MapScene::initObjectGenerators() {
 			creaturesGeneratingTools_.availableGenerators,
 			SLOT(registerCreatureGeneratorChange()),
 			SLOT(addGeneratedCreature(BombicMapObject *)) );
+		initObjectGenerator(
+			map_->bonusGenerator(f),
+			bonusesGeneratingTools_.availableGenerators,
+			SLOT(registerBonusGeneratorChange()),
+			SLOT(addGeneratedBonus(BombicMapObject *)) );
 	}
 }
 
@@ -223,7 +240,6 @@ void MapScene::registerBoxGeneratorChange() {
 		qobject_cast<MapObjectGenerator *>(sender()),
 		boxesGeneratingTools_);
 }
-
 /**
  * @see registerGeneratorChange()
  */
@@ -231,6 +247,14 @@ void MapScene::registerCreatureGeneratorChange() {
 	registerGeneratorChange(
 		qobject_cast<MapObjectGenerator *>(sender()),
 		creaturesGeneratingTools_);
+}
+/**
+ * @see registerGeneratorChange()
+ */
+void MapScene::registerBonusGeneratorChange() {
+	registerGeneratorChange(
+		qobject_cast<MapObjectGenerator *>(sender()),
+		bonusesGeneratingTools_);
 }
 
 /** @details
@@ -265,6 +289,12 @@ void MapScene::addGeneratedBox(BombicMapObject * mapObj) {
 void MapScene::addGeneratedCreature(BombicMapObject * mapObj) {
 	addGeneratedObject(mapObj, creaturesGeneratingTools_);
 }
+/**
+ * @param mapObj objekt, ktery ma byt pridan
+ */
+void MapScene::addGeneratedBonus(BombicMapObject * mapObj) {
+	addGeneratedObject(mapObj, bonusesGeneratingTools_);
+}
 
 /**
  * @param mapObj objekt, ktery ma byt pridan
@@ -292,6 +322,12 @@ void MapScene::removeGeneratedBox(BombicMapObject * mapObj) {
 void MapScene::removeGeneratedCreature(BombicMapObject * mapObj) {
 	removeGeneratedObject(mapObj, creaturesGeneratingTools_);
 }
+/**
+ * @param mapObj objekt, ktery ma byt odstranen
+ */
+void MapScene::removeGeneratedBonus(BombicMapObject * mapObj) {
+	removeGeneratedObject(mapObj, bonusesGeneratingTools_);
+}
 
 /**
  * @param mapObj objekt, ktery ma byt odstranen
@@ -308,13 +344,15 @@ void MapScene::removeGeneratedObject(BombicMapObject * mapObj,
 			->removeGeneratedObjects();
 		map_->creatureGenerator(mapObj->field())
 			->removeGeneratedObjects();
+		map_->bonusGenerator(mapObj->field())
+			->removeGeneratedObjects();
 		// turn back the object generating
 		doObjectGenerating_ = oldDoObjectGenerating;
 	}
 	Q_ASSERT(tools.toGenerate.contains(mapObj));
 	tools.toGenerate.removeAll(mapObj);
 	// generate again the rest of removed
-	generateObjects(tools);
+	generateObjects();
 }
 
 /** @details
@@ -347,6 +385,8 @@ void MapScene::removeGeneratedObjectsFromMap() {
 			->removeGeneratedObjects();
 		map_->creatureGenerator(f)
 			->removeGeneratedObjects();
+		map_->bonusGenerator(f)
+			->removeGeneratedObjects();
 	}
 	doObjectGenerating_ = oldDoObjectGenerating;
 
@@ -360,6 +400,7 @@ void MapScene::removeGeneratedObjectsFromMap() {
 void MapScene::generateObjects() {
 	generateObjects(boxesGeneratingTools_);
 	generateObjects(creaturesGeneratingTools_);
+	generateObjects(bonusesGeneratingTools_);
 }
 
 /** @details
@@ -501,6 +542,7 @@ MapScene::~MapScene() {
 	unselectField();
 	delete boxesGeneratingTools_.generatedObjectsWizard;
 	delete creaturesGeneratingTools_.generatedObjectsWizard;
+	delete bonusesGeneratingTools_.generatedObjectsWizard;
 	delete map_;
 }
 
