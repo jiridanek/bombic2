@@ -1,65 +1,65 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<map name="map_concrete_1" height="12" width="16" background="bg_concrete">
-
-	<players x="1" y="2">
-		<player0 x="1" y="2" />
-		<player1 x="13" y="10" />
-		<player2 x="1" y="10" />
-		<player3 x="13" y="2" />
-	</players>
-
-	<walls name="wall_rift">
-		<wall x="3" y="0" />
-	</walls>
-	<walls name="wall_oblong">
-		<wall x="8" y="0" />
-		<wall x="13" y="0" />
-	</walls>
-
-	<walls 	name="wall_block_single">
-		<wall x="2" y="3" />
-		<wall x="2" y="5" />
-		<wall x="2" y="7" />
-		<wall x="2" y="9" />
-		<wall x="4" y="3" />
-		<wall x="4" y="5" />
-		<wall x="4" y="7" />
-		<wall x="4" y="9" />
-		<wall x="6" y="3" />
-		<wall x="6" y="5" />
-		<wall x="6" y="7" />
-		<wall x="6" y="9" />
-		<wall x="8" y="3" />
-		<wall x="8" y="5" />
-		<wall x="8" y="7" />
-		<wall x="8" y="9" />
-		<wall x="10" y="3" />
-		<wall x="10" y="5" />
-		<wall x="10" y="7" />
-		<wall x="10" y="9" />
-		<wall x="12" y="3" />
-		<wall x="12" y="5" />
-		<wall x="12" y="7" />
-		<wall x="12" y="9" />
-		<wall x="14" y="3" />
-		<wall x="14" y="5" />
-		<wall x="14" y="7" />
-		<wall x="14" y="9" />
-	</walls>
-	<boxes 	name="box_container" random_generated="32">
-		<box x="3" y="2" />
-		<box x="1" y="4" />
-		<box x="13" y="8" />
-		<box x="11" y="10" />
-		<box x="1" y="8" />
-		<box x="3" y="10" />
-		<box x="11" y="2" />
-		<box x="13" y="4" />
-	</boxes>
-
-	<bonuses name="bonus_speed" random_generated="2" />
-
-	<creatures name="creature_slug" random_generated="8" />
-	<creatures name="creature_cloud" random_generated="4" />
-	<creatures name="creature_rat" random_generated="4" />
+<map width="17" height="12" name="map_concrete_1" background="bg_concrete" >
+    <players x="2" y="2" >
+        <player1 x="14" y="10" />
+        <player2 x="2" y="10" />
+        <player3 x="14" y="2" />
+        <player0 x="2" y="2" />
+    </players>
+    <walls name="wall_oblong" >
+        <wall x="5" y="0" />
+        <wall x="9" y="0" />
+        <wall x="13" y="0" />
+    </walls>
+    <walls name="wall_block_single" >
+        <wall x="1" y="3" />
+        <wall x="1" y="5" />
+        <wall x="1" y="7" />
+        <wall x="1" y="9" />
+        <wall x="3" y="3" />
+        <wall x="3" y="5" />
+        <wall x="3" y="7" />
+        <wall x="3" y="9" />
+        <wall x="5" y="3" />
+        <wall x="5" y="5" />
+        <wall x="5" y="7" />
+        <wall x="5" y="9" />
+        <wall x="7" y="3" />
+        <wall x="7" y="5" />
+        <wall x="7" y="7" />
+        <wall x="7" y="9" />
+        <wall x="9" y="3" />
+        <wall x="9" y="5" />
+        <wall x="9" y="7" />
+        <wall x="9" y="9" />
+        <wall x="11" y="3" />
+        <wall x="11" y="5" />
+        <wall x="11" y="7" />
+        <wall x="11" y="9" />
+        <wall x="13" y="3" />
+        <wall x="13" y="5" />
+        <wall x="13" y="7" />
+        <wall x="13" y="9" />
+        <wall x="15" y="3" />
+        <wall x="15" y="5" />
+        <wall x="15" y="7" />
+        <wall x="15" y="9" />
+    </walls>
+    <walls name="wall_rift" >
+        <wall x="2" y="0" />
+    </walls>
+    <boxes random_generated="32" name="box_container" >
+        <box x="2" y="4" />
+        <box x="2" y="8" />
+        <box x="4" y="2" />
+        <box x="4" y="10" />
+        <box x="12" y="2" />
+        <box x="12" y="10" />
+        <box x="14" y="4" />
+        <box x="14" y="8" />
+    </boxes>
+    <creatures random_generated="4" name="creature_cloud" />
+    <creatures random_generated="8" name="creature_slug" />
+    <creatures random_generated="4" name="creature_rat" />
+    <bonuses random_generated="2" name="bonus_speed" />
 </map>
