@@ -40,7 +40,7 @@ MapView::MapView(QWidget * parent):
 			ZOOM_MINIMUM_VALUE, ZOOM_MAXIMUM_VALUE) ),
 		workingObjectLabel_(new QLabel),
 		fieldView_(new MapFieldView),
-		mapSizeWizard_(0) {
+		mapSizeWizard_(0), mapBackgroundWizard_(0) {
 
 	SINGLETON_CONSTRUCT;
 
@@ -200,7 +200,6 @@ void MapView::saveMapAs() {
 	RESOURCE_HANDLER->saveMapAs(map_);
 }
 
-#include <QDebug>
 void MapView::changeSize() {
 	if(!map_) {
 		return;
@@ -218,6 +217,14 @@ void MapView::changeBackground() {
 	if(!map_) {
 		return;
 	}
+	if(!mapBackgroundWizard_) {
+		mapBackgroundWizard_ = new MapBackgroundWizard;
+		connect(mapBackgroundWizard_,
+			SIGNAL(mapBackgroundChanged(BombicMap *)),
+			this, SLOT(changeMap(BombicMap *)) );
+	}
+	mapBackgroundWizard_->setMap(map_);
+	mapBackgroundWizard_->show();
 }
 
 

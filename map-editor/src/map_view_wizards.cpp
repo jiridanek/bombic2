@@ -6,11 +6,17 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QSize>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QFileDialog>
+
+#include <constants.h>
 
 #include "bombic/map.h"
+#include "bombic/map_background.h"
 #include "main_window.h"
 
-
+#include "resource_handlers/resource_handler_functions.h"
 
 /******************* MapSizeWizard ****************/
 
@@ -67,5 +73,67 @@ void MapSizeWizard::accept() {
 		newSize.width(), newSize.height());
 	if(newMap) {
 		emit mapResized(newMap);
+	}
+}
+
+/******************* MapBackgroundWizard ****************/
+
+MapBackgroundWizard::MapBackgroundWizard():
+		map_(0) {
+	QWizardPage * page = new QWizardPage;
+
+	setOptions(QWizard::NoBackButtonOnStartPage);
+	setWindowTitle(
+		tr("Map background") + " | " + MAIN_WINDOW->windowTitle() );
+	page->setTitle(tr("Map background"));
+	page->setSubTitle(
+		tr("Change map background - the background of fields"
+			" and peripheral walls.\n"
+			" If the new background takes bigger area, you have to remove"
+			" objects in the taken area." ) );
+
+	addPage(page);
+
+	QGridLayout * layout = new QGridLayout(page);
+
+	bgName_ = new QLineEdit(this);
+	QLabel * label = new QLabel(tr("Map back&ground:"), this);
+	label->setBuddy(bgName_);
+
+	QPushButton * browseButton = new QPushButton(tr("&Browse ..."), this);
+	connect(browseButton, SIGNAL(clicked()),
+		this, SLOT(browse()) );
+
+	layout->addWidget(label, 0, 0);
+	layout->addWidget(bgName_, 0, 1);
+	layout->addWidget(browseButton, 0, 2);
+}
+
+void MapBackgroundWizard::setMap(BombicMap * map) {
+	map_ = map;
+	bgName_->setText(map->background()->name());
+}
+
+void MapBackgroundWizard::accept() {
+	QWizard::accept();
+
+	if(map_->background()->name() == bgName_->text()) {
+		return;
+	}
+
+	BombicMap * newMap = map_->createCopy(bgName_->text());
+	if(newMap) {
+		emit mapBackgroundChanged(newMap);
+	}
+}
+
+void MapBackgroundWizard::browse() {
+	QString filename = QFileDialog::getOpenFileName(
+		MAIN_WINDOW, tr("Choose background"), "",
+		tr("Bombic map background files")+" (*"XML_FILE_EXTENSION")" );
+	if(!filename.isEmpty()) {
+		bgName_->setText(
+			ResourceHandlerFunctions::attrNameValueFromName(
+				filename ) );
 	}
 }

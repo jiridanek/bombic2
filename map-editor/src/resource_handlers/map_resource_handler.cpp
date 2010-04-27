@@ -739,24 +739,3 @@ BombicMap * MapResourceHandler::createMapCopy(BombicMap * oldMap,
 	return newMap;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

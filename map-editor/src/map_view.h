@@ -23,6 +23,7 @@ class MapFieldView;
 class BombicMap;
 class BombicMapObject;
 class MapSizeWizard;
+class MapBackgroundWizard;
 
 /** Pohled na mapu a prilehle widgety.
  * Centralnim prvkem je QGraphicsView, ktere zobrazuje mapu.
@@ -114,6 +115,7 @@ class MapView: public QGraphicsView {
 		MapFieldView * fieldView_;
 
 		MapSizeWizard * mapSizeWizard_;
+		MapBackgroundWizard * mapBackgroundWizard_;
 };
 
 #endif

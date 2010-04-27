@@ -12,6 +12,7 @@
 
 class BombicMap;
 class QSpinBox;
+class QLineEdit;
 
 class MapSizeWizard: public QWizard {
 
@@ -32,6 +33,29 @@ class MapSizeWizard: public QWizard {
 		BombicMap * map_;
 		QSpinBox * width_;
 		QSpinBox * height_;
+};
+
+class MapBackgroundWizard: public QWizard {
+
+	Q_OBJECT
+
+	public:
+		MapBackgroundWizard();
+
+		void setMap(BombicMap * map);
+
+	public slots:
+		virtual void accept();
+
+	signals:
+		void mapBackgroundChanged(BombicMap * newMap);
+
+	private slots:
+		void browse();
+
+	private:
+		BombicMap * map_;
+		QLineEdit * bgName_;
 };
 
 #endif
