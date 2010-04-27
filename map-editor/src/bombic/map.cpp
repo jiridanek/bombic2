@@ -10,6 +10,8 @@
 #include "../generators/creature_generator.h"
 #include "../generators/bonus_generator.h"
 
+#include "../resource_handlers/map_resource_handler.h"
+
 /** @details
  * Zkonstruuje mapu o rozmerech @p width, @p height s pozadim @p background.
  * Nova mapa se stava vlastnikem @p background a to bude dealokovano
@@ -51,6 +53,29 @@ BombicMap::BombicMap(const QString & name, int width, int height,
 	// background walls
 	insertBackgroundWalls();
 
+}
+
+/**
+ * @param newBackground nazev noveho pozadi
+ * @return Nove alokovana mapa s novym pozadim.
+ * @retval 0 Mapu nebylo mozne vytvorit.
+ */
+BombicMap * BombicMap::createCopy(const QString & newBackground) {
+	MapResourceHandler mapRH;
+	return mapRH.createMapCopy(this,
+		fieldsRect_.width(), fieldsRect_.height(), newBackground);
+}
+
+/**
+ * @param newWidth nova sirka mapy
+ * @param newHeight nova vyska mapy
+ * @return Nove alokovana mapa s novymi rozmery.
+ * @retval 0 Mapu nebylo mozne vytvorit.
+ */
+BombicMap * BombicMap::createCopy(int newWidth, int newHeight) {
+	MapResourceHandler mapRH;
+	return mapRH.createMapCopy(this,
+		newWidth, newHeight, background_->name());
 }
 
 /** @details
@@ -108,9 +133,10 @@ BombicMap::~BombicMap() {
 	for(int x = fieldsRect_.left() ; x <= fieldsRect_.right() ; ++x) {
 		for(int y = fieldsRect_.top() ; y <= fieldsRect_.bottom() ; ++y) {
 			foreach(BombicMapObject * o, fields_[x][y].objList) {
-				// remove first the object from all fields
-				remove(o);
-				delete o;
+				// delete it on the last (bottom-right) field
+				if(o->rect().bottomRight() == Field(x, y)) {
+					delete o;
+				}
 			}
 			delete fields_[x][y].boxGen;
 			delete fields_[x][y].creatureGen;

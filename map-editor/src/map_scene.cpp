@@ -540,10 +540,10 @@ void MapScene::showCannotInsertItem(const QRect & objectRect) {
  */
 MapScene::~MapScene() {
 	unselectField();
+	delete map_;
 	delete boxesGeneratingTools_.generatedObjectsWizard;
 	delete creaturesGeneratingTools_.generatedObjectsWizard;
 	delete bonusesGeneratingTools_.generatedObjectsWizard;
-	delete map_;
 }
 
 /** @details

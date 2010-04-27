@@ -126,7 +126,29 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 	if(!loadXml(filename, rootEl, true, "map")) {
 		return 0;
 	}
-	// and its properties
+
+	BombicMap * map = createMap(rootEl);
+	if(!map) {
+		return 0;
+	}
+
+	map->setFilename(filename);
+	// to aviod need save at closing
+	map->setModified(false);
+	return map;
+}
+
+
+/** @details
+ * Pokusi se vytvorit mapu zadanou @p name a vlozit do ni
+ * vsechny objekty.
+ * Nastavi mape ze byla ulozena (nebyla editovana).
+ * @param name jmeno mapy (nebo primo cesta k souboru)
+ * @return Objekt mapy.
+ * @retval 0 mapu se nepodarilo vyrobit
+ */
+BombicMap * MapResourceHandler::createMap(const QDomElement & rootEl) {
+
 	QString bgName;
 	if(!getStringAttr(rootEl, bgName, "background") ) {
 		return 0;
@@ -146,7 +168,7 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 	}
 	// and the map
 	BombicMap * map = new BombicMap(
-		rootEl.attribute("name"), w, h, mapBg, filename);
+		rootEl.attribute("name"), w, h, mapBg);
 	if(!map) {
 		delete mapBg;
 		return 0;
@@ -166,14 +188,11 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 		loadMapNoboxes(el, map) &&
 		loadMapNocreatures(el, map);
 
-
 	if(!success) {
 		delete map;
 		return 0;
 	}
 
-	// to aviod need save at closing
-	map->setModified(false);
 	return map;
 }
 
@@ -437,11 +456,12 @@ bool MapResourceHandler::insertMapObject(const QDomElement & posEl,
 	// try to insert
 	if(!map->canInsert(insertedObject, field)) {
 		showError(
-			tr("Object cannot be inserted to field") +"\n"+
+			tr("Object")+" "+insertedObject->name()+" "+
+			tr("cannot be inserted to field") +"\n"+
 				"[" + QString::number(field.x()) +","+
 				QString::number(field.y()) + "]",
 			posEl );
-// 		return false;
+		return false;
 	}
 	// OK - it can be inserted, so create copy and insert it
 	map->insert(insertedObject->createCopy(), field);
@@ -677,3 +697,66 @@ void MapResourceHandler::positionsToXml(const PositionsT & positions,
 		posEl.setAttribute("y", f.y());
 	}
 }
+
+/******************* copying ******************/
+
+/** @details
+ * Vytvori novou mapu s novymi parametry a pokusi se do ni prekopirovat
+ * vsechny objekty ve stare mape. Pokud nelze vsechny objekty prekopirovat,
+ * vypisuje relevantni informace a selze.
+ * @param oldMap mapa, od ktere chceme kopii
+ * @param newWidth nova sirka mapy
+ * @param newHeight nova vyska mapy
+ * @param newBackground nazev noveho pozadi
+ * @return Nove alokovana mapa s novymi parametry.
+ * @retval 0 Mapu nebylo mozne vytvorit.
+ */
+BombicMap * MapResourceHandler::createMapCopy(BombicMap * oldMap,
+		int newWidth, int newHeight,
+		const QString & newBackground) {
+	// first create data to faked saving
+	MapDataT mapData;
+	initMapDataToSave(mapData, oldMap);
+	mapData.width = newWidth;
+	mapData.height = newHeight;
+	mapData.background = newBackground;
+
+	// now create faked xml document
+	QDomDocument doc;
+	QDomElement rootEl = doc.createElement("map");
+	doc.appendChild(rootEl);
+	// and fill it in
+	mapDataToXml(mapData, rootEl);
+
+	// create new map from faked document
+	BombicMap * newMap = createMap(rootEl);
+	if(!newMap) {
+		return 0;
+	}
+
+	newMap->setFilename(oldMap->filename());
+
+	return newMap;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -20,6 +20,8 @@
 #include "bombic/map_background.h"
 #include "bombic/map_object.h"
 
+#include "map_view_wizards.h"
+
 /// Nazev vlastnosti mime dat uchovavajici pointer na tazeny objekt.
 #define MAP_VIEW_DRAGGED_OBJECT_PROPERTY "draggedBombicMapObject"
 
@@ -37,7 +39,8 @@ MapView::MapView(QWidget * parent):
 		zoomWidget_( new ZoomWidget(ZOOM_STEP,
 			ZOOM_MINIMUM_VALUE, ZOOM_MAXIMUM_VALUE) ),
 		workingObjectLabel_(new QLabel),
-		fieldView_(new MapFieldView) {
+		fieldView_(new MapFieldView),
+		mapSizeWizard_(0) {
 
 	SINGLETON_CONSTRUCT;
 
@@ -63,6 +66,13 @@ MapView::MapView(QWidget * parent):
 	connect(MAIN_WINDOW->action(MainWindow::SaveMapAsAction),
 		SIGNAL(triggered()),
 		this, SLOT(saveMapAs()) );
+
+	connect(MAIN_WINDOW->action(MainWindow::MapSizeAction),
+		SIGNAL(triggered()),
+		this, SLOT(changeSize()) );
+	connect(MAIN_WINDOW->action(MainWindow::MapBackgroundAction),
+		SIGNAL(triggered()),
+		this, SLOT(changeBackground()) );
 }
 
 MapView::~MapView() {
@@ -101,6 +111,16 @@ void MapView::openMap() {
 		scene_ = new MapScene(map_, this);
 		setScene(scene_);
 	}
+}
+
+void MapView::changeMap(BombicMap * newMap) {
+	if(map_) {
+		delete scene_;
+	}
+
+	map_ = newMap;
+	scene_ = new MapScene(map_, this);
+	setScene(scene_);
 }
 
 /** @details
@@ -179,6 +199,27 @@ void MapView::saveMapAs() {
 	}
 	RESOURCE_HANDLER->saveMapAs(map_);
 }
+
+#include <QDebug>
+void MapView::changeSize() {
+	if(!map_) {
+		return;
+	}
+	if(!mapSizeWizard_) {
+		mapSizeWizard_ = new MapSizeWizard;
+		connect(mapSizeWizard_, SIGNAL(mapResized(BombicMap *)),
+			this, SLOT(changeMap(BombicMap *)) );
+	}
+	mapSizeWizard_->setMap(map_);
+	mapSizeWizard_->show();
+}
+
+void MapView::changeBackground() {
+	if(!map_) {
+		return;
+	}
+}
+
 
 /** @details
  * Nastavi zoom pohledu na mapu.

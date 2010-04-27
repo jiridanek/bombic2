@@ -39,6 +39,13 @@ class BombicMap: public QObject {
 		/// Konstrukce prazdne mapy.
 		BombicMap(const QString & name, int width, int height,
 				BombicMapBackground * background, const QString & filename = "");
+
+		/// Vytvorit kopii mapy s jinym pozadim.
+		BombicMap * createCopy(const QString & newBackground);
+		/// Vytvorit kopii mapy s jinymi rozmery.
+		BombicMap * createCopy(int newWidth, int newHeight);
+
+
 		/// Destrukce mapy a jejich objektu.
 		~BombicMap();
 

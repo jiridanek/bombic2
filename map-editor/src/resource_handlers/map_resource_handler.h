@@ -18,12 +18,17 @@
 class MapResourceHandler {
 
 	public:
-		/// Vytvori novou prazdnou mapu.
+		/// Vytvorit novou prazdnou mapu.
 		BombicMap * createEmptyMap();
-		/// Vytvori novou mapu.
+		/// Vytvorit novou mapu.
 		BombicMap * createMap(const QString & name);
-		/// Ulozi mapu.
+		/// Ulozit mapu.
 		bool saveMap(BombicMap * map);
+
+		/// Vytvorit kopii mapy se zmenenymi parametry.
+		BombicMap * createMapCopy(BombicMap * oldMap,
+				int newWidth, int newHeight,
+				const QString & newBackground);
 
 	private:
 		/// Nazev definujiciho elementu podle typu objektu.
@@ -32,6 +37,9 @@ class MapResourceHandler {
 		QString positionElName(BombicMapObject::Type objectType);
 
 		/******** loading *********/
+
+		/// Vytvorit novou mapu.
+		BombicMap * createMap(const QDomElement & rootEl);
 
 		/// Nacte hrace mapy.
 		bool loadMapPlayers(BombicMap * map);

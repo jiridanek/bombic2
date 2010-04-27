@@ -22,6 +22,7 @@ class MapScene;
 class MapFieldView;
 class BombicMap;
 class BombicMapObject;
+class MapSizeWizard;
 
 /** Pohled na mapu a prilehle widgety.
  * Centralnim prvkem je QGraphicsView, ktere zobrazuje mapu.
@@ -73,10 +74,15 @@ class MapView: public QGraphicsView {
 		/// Otevrit novou mapu.
 		void openMap();
 
-		/// Ulozi mapu.
+		/// Ulozit mapu.
 		void saveMap();
-		/// Ulozi mapu do noveho umisteni.
+		/// Ulozit mapu do noveho umisteni.
 		void saveMapAs();
+
+		/// Zmenit velikost mapy.
+		void changeSize();
+		/// Zmenit pozadi mapy.
+		void changeBackground();
 
 	signals:
 		/// Pohled opusten.
@@ -85,6 +91,10 @@ class MapView: public QGraphicsView {
 	protected:
 		/// Handler oppusteni pohledu.
 		virtual void leaveEvent(QEvent * event);
+
+	private slots:
+		/// Vymenit mapu.
+		void changeMap(BombicMap * newMap);
 
 	private:
 		/// Vytvorit dotaz co s mapou pri zavirani.
@@ -102,6 +112,8 @@ class MapView: public QGraphicsView {
 		QLabel * workingObjectLabel_;
 		/// Detailni pohled na jedno policko mapy.
 		MapFieldView * fieldView_;
+
+		MapSizeWizard * mapSizeWizard_;
 };
 
 #endif
