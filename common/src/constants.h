@@ -69,5 +69,14 @@
 #define SELECTED_FIELD_ITEM_BRUSH \
 	QBrush(QColor(255, 255, 255, 52))
 
+/// Velikost podbarveni graficke polozky generatoru.
+#define GENERATOR_BACKGROUND_SIZE (CELL_SIZE/2)
+/// Barva podbarveni graficke polozky generatoru (prvni barva prechodu).
+#define GENERATOR_BACKGROUND_FROM_COLOR \
+	QColor(255, 255, 255, 128)
+/// Barva podbarveni graficke polozky generatoru (druha barva prechodu).
+#define GENERATOR_BACKGROUND_TO_COLOR \
+	QColor(255, 255, 255, 0)
+
 
 #endif
