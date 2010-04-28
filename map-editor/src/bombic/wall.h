@@ -1,5 +1,5 @@
 /** @file wall.h
- * Objekt mapy typu zed je predstavovan tridou BombicWall.
+ * Objekt mapy typu zed je predstavovan tridou @c BombicWall.
  */
 
 #ifndef BOMBIC_WALL_H_GUARD_

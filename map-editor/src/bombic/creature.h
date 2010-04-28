@@ -1,5 +1,5 @@
 /** @file creature.h
- * Objekt mapy typu prisera je predstavovan tridou BombicCreature.
+ * Objekt mapy typu prisera je predstavovan tridou @c BombicCreature.
  */
 
 #ifndef BOMBIC_CREATURE_H_GUARD_

@@ -36,9 +36,9 @@ BombicMapObject::Type BombicPlayer::type() {
 
 /** @details
  * Graficky prvek do sceny je vytvaren zde on demand,
- * pozicovan tak, aby horni levy bod policka zabraneho TODO byl v bode
- * @p position na scene. Souradnice z (z value) je dana horni souradnici
- * spodniho zabraneho policka.
+ * pozicovan tak, aby byl ve stredu policka jehoz levy horni bod je bode
+ * @p position na scene. Souradnice z (z value) je dana y-novou souradnici
+ * @p position.
  * @param position pozadovana pozice ve scene
  * @return Graficky prvek umisteny na zadanou pozici.
  */

@@ -1,5 +1,6 @@
 /** @file resource_handler_functions.h
- *
+ * Zakladni funkce pro zpracovani xml dat
+ * pouzivane tridou @c ResourceHandler.
  */
 
 #ifndef RESOURCE_HANDLER_FUNCTIONS_H_GUARD_
@@ -15,12 +16,12 @@
 
 
 /** Funkce pro resource handlery.
- * Nekolik funkci zamerenych na zpracovani XML, souboru na disku,
- * a hlaseni chyb.
+ * Nekolik funkci zamerenych na zpracovani XML,
+ * souboru na disku a hlaseni chyb.
  * Mezi hlavni casti patri:
  * - hledani souboru
  * - parsovani xml
- * - nacitaci obrazku
+ * - ukladani xml
  * - hlaseni chyb
  */
 namespace ResourceHandlerFunctions {

@@ -1,5 +1,5 @@
 /** @file bonus_resource_handler.h
- * Resource handler specializovany na bonus BonusResourceHandler
+ * Resource handler specializovany na bonus @c BonusResourceHandler
  * umi zpracovat dokument a vytvorit objekt mapy typu bonus.
  */
 

@@ -14,6 +14,8 @@
 
 /** Handler vnejsich prostredku mapy.
  * Obstarava nacitani a ukladani mapy.
+ * Take vytvari kopii mapy s pozmenenymi zasadnimy parametry
+ * jako je rozmer mapy nebo pozadi.
  */
 class MapResourceHandler {
 
@@ -22,6 +24,7 @@ class MapResourceHandler {
 		BombicMap * createEmptyMap();
 		/// Vytvorit novou mapu.
 		BombicMap * createMap(const QString & name);
+
 		/// Ulozit mapu.
 		bool saveMap(BombicMap * map);
 

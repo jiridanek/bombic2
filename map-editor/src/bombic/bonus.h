@@ -1,5 +1,5 @@
 /** @file bonus.h
- * Objekt mapy typu bonus je predstavovan tridou BombicBonus.
+ * Objekt mapy typu bonus je predstavovan tridou @c BombicBonus.
  */
 
 #ifndef BOMBIC_BONUS_H_GUARD_

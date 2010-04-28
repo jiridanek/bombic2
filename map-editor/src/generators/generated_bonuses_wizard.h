@@ -1,5 +1,5 @@
 /** @file generated_bonuses_wizard.h
- * Pruvodce nastavenim generovani beden @c GeneratedBonusesWizard.
+ * Pruvodce nastavenim generovani bonusu @c GeneratedBonusesWizard.
  */
 
 #ifndef GENERATED_BONUSES_WIZARD_H_GUARD_
@@ -7,7 +7,7 @@
 
 #include "generated_objects_wizard.h"
 
-/** Stranka pruvodce nastavenim generovani beden.
+/** Stranka pruvodce nastavenim generovani bonusu.
  */
 class GeneratedBonusesWizardPage: public GeneratedObjectsWizardPage {
 
@@ -36,6 +36,7 @@ class GeneratedBonusesWizardPage: public GeneratedObjectsWizardPage {
 class GeneratedBonusesWizard: public GeneratedObjectsWizard {
 
 	public:
+		/// Konstrukce pruvodce.
 		explicit GeneratedBonusesWizard(BombicMap * map,
 				QWidget * parent = 0);
 };

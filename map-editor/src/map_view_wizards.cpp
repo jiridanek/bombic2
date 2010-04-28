@@ -20,6 +20,11 @@
 
 /******************* MapSizeWizard ****************/
 
+/** @details
+ * Vytvori pruvodce zmenou rozmeru mapy,
+ * vytvori jedinou stranku tohoto pruvodce a policka pro
+ * zmenu rozmeru mapy.
+ */
 MapSizeWizard::MapSizeWizard():
 		map_(0) {
 	QWizardPage * page = new QWizardPage;
@@ -54,12 +59,20 @@ MapSizeWizard::MapSizeWizard():
 
 }
 
+/** @details
+ * Nastavi policka pro zmenu rozmeru mapy na aktualni rozmery mapy @p map.
+ * @param map mapa, pro kterou chceme pruvodce
+ */
 void MapSizeWizard::setMap(BombicMap * map) {
 	map_ = map;
 	width_->setValue(map_->fieldsRect().width());
 	height_->setValue(map_->fieldsRect().height());
 }
 
+/** @details
+ * Vytvori kopii mapy s novymi rozmery.
+ * Vyvola signal @c mapResized() s nove vytvorenou mapou.
+ */
 void MapSizeWizard::accept() {
 	QWizard::accept();
 
@@ -73,11 +86,17 @@ void MapSizeWizard::accept() {
 		newSize.width(), newSize.height());
 	if(newMap) {
 		emit mapResized(newMap);
+		map_ = 0;
 	}
 }
 
 /******************* MapBackgroundWizard ****************/
 
+/** @details
+ * Vytvori pruvodce zmenou pozadi mapy,
+ * vytvori jedinou stranku tohoto pruvodce a policko pro
+ * zmenu pozadi mapy.
+ */
 MapBackgroundWizard::MapBackgroundWizard():
 		map_(0) {
 	QWizardPage * page = new QWizardPage;
@@ -109,11 +128,19 @@ MapBackgroundWizard::MapBackgroundWizard():
 	layout->addWidget(browseButton, 0, 2);
 }
 
+/** @details
+ * Nastavi policko pro zmenu pozadi na aktualni pozadi mapy @p map.
+ * @param map mapa, pro kterou chceme pruvodce
+ */
 void MapBackgroundWizard::setMap(BombicMap * map) {
 	map_ = map;
 	bgName_->setText(map->background()->name());
 }
 
+/** @details
+ * Vytvori kopii mapy s novym pozadim.
+ * Vyvola signal @c mapBackgroundChanged() s nove vytvorenou mapou.
+ */
 void MapBackgroundWizard::accept() {
 	QWizard::accept();
 
@@ -124,9 +151,14 @@ void MapBackgroundWizard::accept() {
 	BombicMap * newMap = map_->createCopy(bgName_->text());
 	if(newMap) {
 		emit mapBackgroundChanged(newMap);
+		map_ = 0;
 	}
 }
 
+/** @details
+ * Necha uzivatele vybrat soubor s definici pozadi a nazev tohoto pozadi
+ * vyplni do policka @c bgName_.
+ */
 void MapBackgroundWizard::browse() {
 	QString filename = QFileDialog::getOpenFileName(
 		MAIN_WINDOW, tr("Choose background"), "",

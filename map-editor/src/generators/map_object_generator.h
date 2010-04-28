@@ -1,6 +1,6 @@
 /** @file map_object_generator.h
  * Informace o tom, zda lze na policku generovat nejaky objekt,
- * nese trida MapObjectGenerator. Uchovava take generovane objekty.
+ * nese trida @c MapObjectGenerator. Uchovava take generovane objekty.
  */
 
 #ifndef MAP_OBJECT_GENERATOR_H_GUARD_

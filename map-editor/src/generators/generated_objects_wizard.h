@@ -55,8 +55,11 @@ class GeneratedObjectsWizardPage: public QWizardPage {
 			QSpinBox * spinBox;
 		} GeneratedObjectInfoT;
 
+		/// Primarni nastaveni generovanych objektu.
 		void initObjects();
+		/// Doplneni generovanych objektu.
 		void addObjects();
+		/// Inicializace informace o generovanem objektu.
 		void initObjectInfo(GeneratedObjectInfoT & objectInfo,
 				BombicMapObject * object);
 
@@ -89,6 +92,7 @@ class GeneratedObjectsWizard: public QWizard {
 	Q_OBJECT
 
 	public:
+		/// Konstrukce pruvodce.
 		explicit GeneratedObjectsWizard(
 				GeneratedObjectsWizardPage * page,
 				QWidget * parent = 0);
@@ -100,6 +104,7 @@ class GeneratedObjectsWizard: public QWizard {
 		void loadMapObject();
 
 	protected:
+		/// Stranka pruvodce.
 		GeneratedObjectsWizardPage * page_;
 };
 

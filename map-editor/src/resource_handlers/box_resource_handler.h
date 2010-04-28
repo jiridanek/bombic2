@@ -1,5 +1,5 @@
 /** @file box_resource_handler.h
- * Resource handler specializovany na bedny BoxResourceHandler
+ * Resource handler specializovany na bedny @c BoxResourceHandler
  * umi zpracovat dokument a vytvorit objekt mapy typu bedna.
  */
 

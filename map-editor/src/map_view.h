@@ -1,6 +1,6 @@
 /** @file map_view.h
- * Pohled na mapu MapView je widget,
- * ktery zastresuje praci s mapou.
+ * Pohled na mapu @c MapView je widget,
+ * ktery zastresuje praci s mapou a jeji vizualizaci.
  */
 
 #ifndef MAP_VIEW_H_GUARD_
@@ -26,11 +26,13 @@ class MapSizeWizard;
 class MapBackgroundWizard;
 
 /** Pohled na mapu a prilehle widgety.
- * Centralnim prvkem je QGraphicsView, ktere zobrazuje mapu.
+ * Centralnim prvkem je @c QGraphicsView, ktere zobrazuje mapu.
  * Dale jsou pripojeny widgety pro interakci s uzivatelem.
  * Pohled lze zoomovat, zobrazuje aktualni pracovni objekt
  * a detail vybraneho policka.
  * V ramci MapView je podporovan drag and drop na objekty mapy.
+ * Provadi komplexni akce s mapou, kdy je z hlediska implementace nutne mapu
+ * vytvorit celou znova jako je zmena velikosti mapy a zmena pozadi.
  */
 class MapView: public QGraphicsView {
 
@@ -114,7 +116,9 @@ class MapView: public QGraphicsView {
 		/// Detailni pohled na jedno policko mapy.
 		MapFieldView * fieldView_;
 
+		/// Pruvodce zmenou velikosti mapy.
 		MapSizeWizard * mapSizeWizard_;
+		/// Pruvodce zmenou pozadi mapy.
 		MapBackgroundWizard * mapBackgroundWizard_;
 };
 

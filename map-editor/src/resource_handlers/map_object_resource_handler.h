@@ -1,5 +1,5 @@
 /** @file map_object_resource_handler.h
- * Obecny resource handler pro objekt mapy MapObjectResourceHandler
+ * Obecny resource handler pro objekt mapy @c MapObjectResourceHandler
  * predstavuje jednotne api pro nacitani objektu mapy.
  */
 
@@ -15,6 +15,11 @@
 
 /** Obecny abstraktni handler pro vytvareni objektu mapy.
  * Definuje API, kterym lze vytvaret objekt mapy.
+ * Sam drzi instance vsech handleru specializovanych
+ * na jednotlive typy objektu a pomoci sofistikovaneho mechanismu
+ * vybere podle korenoveho elementu dokumentu, ktery specifikuje nejaky
+ * objekt mapy, resource handler, ktery umi tento dokument zpracovat
+ * a vytvorit odpovidajici objekt.
  */
 class MapObjectResourceHandler {
 

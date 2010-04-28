@@ -37,6 +37,7 @@ class GeneratedCreaturesWizardPage: public GeneratedObjectsWizardPage {
 class GeneratedCreaturesWizard: public GeneratedObjectsWizard {
 
 	public:
+		/// Konstrukce pruvodce.
 		explicit GeneratedCreaturesWizard(BombicMap * map,
 				QWidget * parent = 0);
 };

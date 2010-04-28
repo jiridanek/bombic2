@@ -1,5 +1,5 @@
 /** @file map_scene.h
- * Scena mapy MapScene zobrazuje mapu a zprostredkovava
+ * Scena mapy @c MapScene zobrazuje mapu a zprostredkovava
  * uzivatelske akce v mape.
  */
 
@@ -86,8 +86,6 @@ class MapScene: public QGraphicsScene {
 		virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
 		/// Handler dvojiteho kliknuti.
 		virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event);
-		/// Handler vstupu tazeni mysi.
-		virtual void dragEnterEvent(QGraphicsSceneDragDropEvent * event);
 		/// Handler pohybu tazeni mysi.
 		virtual void dragMoveEvent(QGraphicsSceneDragDropEvent * event);
 		/// Handler vystupu tazeni mysi.

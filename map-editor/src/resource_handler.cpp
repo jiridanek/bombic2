@@ -261,7 +261,7 @@ bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 		// the pixmap is loaded
 		return true;
 	}
-	// first locate the file TODO do it in ResourceHandlerRH
+	// first locate the file
 	QString filename = name;
 	bool fileLocated = locateFile(filename);
 	if(!fileLocated) {

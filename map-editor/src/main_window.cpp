@@ -12,6 +12,10 @@
 
 SINGLETON_INIT(MainWindow);
 
+/** @details
+ * Vytvori hlavni okno aplikace, vsechny menu do panelu,
+ * Vytvori polozky techto menu.
+ */
 MainWindow::MainWindow() {
 
 	SINGLETON_CONSTRUCT;
@@ -59,20 +63,32 @@ MainWindow::~MainWindow() {
 	SINGLETON_DESTROY;
 }
 
+/**
+ * @param paletteWidget paleta objektu
+ */
 void MainWindow::addMapObjectPalette(QWidget * paletteWidget) {
 	addDock(tr("Map object palette"), paletteWidget,
 		Qt::RightDockWidgetArea);
 }
 
+/**
+ * @param mapViewWidget pohled na mapu
+ */
 void MainWindow::addMapView(QWidget * mapViewWidget) {
 	setCentralWidget(mapViewWidget);
 }
 
+/**
+ * @param mapFieldViewWidget detailni pohled na policko
+ */
 void MainWindow::addMapFieldView(QWidget * mapFieldViewWidget) {
 	addDock(tr("Map field detail"), mapFieldViewWidget,
 		Qt::BottomDockWidgetArea );
 }
 
+/**
+ * @param workingObjectLabel popisek (znazorneni) pracovniho objektu
+ */
 void MainWindow::addWorkingObjectLabel(QWidget * workingObjectLabel) {
 	QWidget * dockWidget = new QWidget(this);
 	QLayout * dockLayout = new QVBoxLayout(dockWidget);
@@ -81,10 +97,18 @@ void MainWindow::addWorkingObjectLabel(QWidget * workingObjectLabel) {
 	addDock(tr("Working object"), dockWidget, Qt::BottomDockWidgetArea);
 }
 
+/**
+ * @param zoomWidget nastroj na zoomovani mapy
+ */
 void MainWindow::addZoomWidget(QWidget * zoomWidget) {
 	addDock(tr("Zoom the map"), zoomWidget, Qt::RightDockWidgetArea);
 }
 
+/**
+ * @param name nazev (nadpis) dokovaneho widgetu
+ * @param widget dokovany widget
+ * @param area pozice doku
+ */
 void MainWindow::addDock(const QString & name, QWidget * widget,
 		Qt::DockWidgetArea area) {
 	QDockWidget * dock =
@@ -95,6 +119,13 @@ void MainWindow::addDock(const QString & name, QWidget * widget,
 	menus_[DocksMenu]->addAction(dock->toggleViewAction());
 }
 
+/**
+ * @param action identifikator akce (polozky menu)
+ * @param name nazev akce
+ * @param checkable zda ma byt zaklikavaci
+ * @param shortcut klavesova zkratka akce
+ * @param menu identifikator menu, do ktereho chceme akci pridat
+ */
 void MainWindow::addAction(Action action, const QString & name,
 		bool checkable, const QKeySequence & shortcut, Menu menu) {
 	QAction * act = new QAction(name, this);
@@ -104,6 +135,11 @@ void MainWindow::addAction(Action action, const QString & name,
 	menus_[menu]->addAction(act);
 }
 
+/**
+ * @param menu identifikator menu, ktere chceme ziskat
+ * @return Vytvorene menu.
+ * @retval 0 Menu jeste nebylo vytvoreno.
+ */
 QMenu * MainWindow::menu(Menu menu) {
 	if(!menus_.contains(menu)) {
 		return 0;
@@ -111,6 +147,11 @@ QMenu * MainWindow::menu(Menu menu) {
 	return menus_[menu];
 }
 
+/**
+ * @param menu identifikator akce, kterou chceme ziskat
+ * @return Vytvorena akce.
+ * @retval 0 Akce jeste nebyla vytvorena.
+ */
 QAction * MainWindow::action(Action action) {
 	if(!actions_.contains(action)) {
 		return 0;
@@ -118,6 +159,12 @@ QAction * MainWindow::action(Action action) {
 	return actions_[action];
 }
 
+/** @details
+ * Pokusi se zavrit editovanou mapu.
+ * Vyjimku prijme (ukonci program)
+ * pouze pokud se podari editovanou mapu zavrit.
+ * @param event udalost, ktera handler vyvolala
+ */
 void MainWindow::closeEvent(QCloseEvent * event) {
 	if(MAP_VIEW->closeMap()) {
 		event->accept();

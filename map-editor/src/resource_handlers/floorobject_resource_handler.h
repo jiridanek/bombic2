@@ -1,6 +1,6 @@
 /** @file floorobject_resource_handler.h
  * Resource handler specializovany na objekty na zemi
- * FloorobjectResourceHandler umi zpracovat dokument
+ * @c FloorobjectResourceHandler umi zpracovat dokument
  * a vytvorit objekt mapy typu objekt na zemi.
  */
 

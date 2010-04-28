@@ -20,8 +20,8 @@ class QCloseEvent;
 /// Zkratka, pro pristup k singletonu MainWindow.
 #define MAIN_WINDOW SINGLETON_SHORTCUT(MainWindow)
 
-
-/**
+/** Hlavni okno editoru map.
+ * Spravuje hlavni menu programu a dokovatelne widgety.
  */
 class MainWindow: public QMainWindow {
 
@@ -30,14 +30,18 @@ class MainWindow: public QMainWindow {
 	SINGLETON_DEFINITION(MainWindow)
 
 	public:
+		/// Konstrukce okna.
 		MainWindow();
+		/// Destrukce okna.
 		~MainWindow();
 
+		/// Identifikatory jednotlivych menu.
 		enum Menu {
 			FileMenu, MapMenu, EditMenu,
 			ViewMenu, DocksMenu, HelpMenu
 		};
 
+		/// Identifikatory jednotlivych akci menu.
 		enum Action {
 			NewMapAction, OpenMapAction,
 			SaveMapAction, SaveMapAsAction,
@@ -46,28 +50,39 @@ class MainWindow: public QMainWindow {
 			GeneratedBonusesAction,
 			GenerateObjectsAction
 		};
-
+		
+		/// Vytvorene menu podle identifikatoru.
 		QMenu * menu(Menu menu);
+		/// Vytvorena akce podle identifikatoru.
 		QAction * action(Action action);
 
+		/// Pridat do okna paletu objektu.
 		void addMapObjectPalette(QWidget * paletteWidget);
+		/// Pridat do okna pohled na mapu.
 		void addMapView(QWidget * mapViewWidget);
+		/// Pridat do okna detailni pohled na policko.
 		void addMapFieldView(QWidget * mapFieldViewWidget);
+		/// Pridat do okna popisek pracovniho objektu.
 		void addWorkingObjectLabel(QWidget * workingObjectLabel);
+		/// Pridat do okna zoomovaci nastroj.
 		void addZoomWidget(QWidget * zoomWidget);
 
 	protected:
+		/// Handler zavreni okna.
 		virtual void closeEvent(QCloseEvent * event);
 
 	private:
+		/// Pridat do okna dokovatelny widget.
 		void addDock(const QString & name, QWidget * widget,
 				Qt::DockWidgetArea area);
+		/// Pridat do menu akci jako polozku.
 		void addAction(Action action,
 				const QString & name, bool checkable,
 				const QKeySequence & shortcut, Menu menu);
 
+		/// Vytvorene menu.
 		QHash<Menu, QMenu *> menus_;
-
+		/// Vytvorene akce menu.
 		QHash<Action, QAction *> actions_;
 };
 

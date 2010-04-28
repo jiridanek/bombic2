@@ -1,5 +1,5 @@
 /** @file floorobject.h
- * Objekt mapy typu floorobject je predstavovan tridou BombicFloorobject.
+ * Objekt mapy typu floorobject je predstavovan tridou @c BombicFloorobject.
  */
 
 #ifndef BOMBIC_FLOOROBJECT_H_GUARD_

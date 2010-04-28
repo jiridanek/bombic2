@@ -1,5 +1,5 @@
 /** @file player.h
- * Objekt mapy typu hrac je predstavovan tridou BombicPlayer.
+ * Objekt mapy typu hrac je predstavovan tridou @c BombicPlayer.
  */
 
 #ifndef BOMBIC_PLAYER_H_GUARD_
@@ -7,13 +7,13 @@
 
 #include "map_object.h"
 
-/** Hrac, tak jak ho zname ze hry.
+/** Hrac tak, jak ho zname ze hry.
  * Hrac je zvlastni objekt mapy, ktery zabira vzdy jedno policko.
  * Objekt v map-editoru reprezentuje startovni policko hrace,
  * nebo hracu kooperative modu.
  * V mape musi byt presne dany pocet hracu. To je zajisteno tim,
  * ze jsou do mapy jisti hraci pridani pri vygenerovani mapy a nemohou
- * z ni byt odstraneni. Mohou se premistovat.
+ * z ni byt odstraneni. Mohou se pouze premistovat.
  * Hrac muze byt na policku s dalsimi hraci nebo objektem na zemi.
  */
 class BombicPlayer: public BombicMapObject {

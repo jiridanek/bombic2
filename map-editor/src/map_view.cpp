@@ -113,6 +113,12 @@ void MapView::openMap() {
 	}
 }
 
+/** @details
+ * Vymeni aktualni editovanou mapu za novou.
+ * Nekontroluje, jestli je editovana mapa modifikovana.
+ * Nevytvari dotaz na uzivatele, jestli chce editovanou mapu ulozit.
+ * @param newMap mapa, kterou chceme nove nastavit
+ */
 void MapView::changeMap(BombicMap * newMap) {
 	if(map_) {
 		delete scene_;
@@ -200,6 +206,9 @@ void MapView::saveMapAs() {
 	RESOURCE_HANDLER->saveMapAs(map_);
 }
 
+/** @details
+ * Zobrazi pruvodce zmenou rozmeru mapy.
+ */
 void MapView::changeSize() {
 	if(!map_) {
 		return;
@@ -213,6 +222,9 @@ void MapView::changeSize() {
 	mapSizeWizard_->show();
 }
 
+/** @details
+ * Zobrazi pruvodce zmenou pozadi mapy.
+ */
 void MapView::changeBackground() {
 	if(!map_) {
 		return;

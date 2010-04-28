@@ -36,6 +36,7 @@ class GeneratedBoxesWizardPage: public GeneratedObjectsWizardPage {
 class GeneratedBoxesWizard: public GeneratedObjectsWizard {
 
 	public:
+		/// Konstrukce pruvodce.
 		explicit GeneratedBoxesWizard(BombicMap * map,
 				QWidget * parent = 0);
 };

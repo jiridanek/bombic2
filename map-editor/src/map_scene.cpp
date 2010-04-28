@@ -92,6 +92,7 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 		generatedCreatureRemoved, removeGeneratedCreature);
 	CONNECT_MAP(generatedBonusAdded, addGeneratedBonus,
 		generatedBonusRemoved, removeGeneratedBonus);
+	#undef CONNECT_MAP
 
 	// connect palette to scene
 	connect(MAP_OBJECT_PALETTE, SIGNAL(objectUnselected()),
@@ -117,13 +118,13 @@ MapScene::MapScene(BombicMap * map, QObject * parent):
 	MAP_OBJECT_PALETTE->unselectObject();
 }
 
-/** Loop over all fields of scene map.
- * Iterates with @p field over all fields of scene map.
- * Starting in top left goes over all columns and in every column
- * goes to bottom.
- * The loop variable @p field shouldn't be defined, because
- * it will be defined (and initialized) here.
- * @param field name of loop variable
+/** Smycka pres vsechny policka mapy ve scene.
+ * Iteruje pres vsechny policka mapy @c map_ promennou cyklu @p field
+ * Zacina v hornim levem rohu, pokracuje pres vsechny sloupce
+ * a v kazdem sloupci postupuje dolu.
+ * Promenna cyklu @p field by nemela byt definovana, protoze je definovana
+ * a inicializovana zde.
+ * @param field jmeno promenne cyklu
  */
 #define MAP_SCENE_FOREACH_MAP_FIELD(field) \
 	for(BombicMap::Field field = map_->fieldsRect().topLeft() ; \
@@ -641,7 +642,6 @@ void MapScene::mouseMoveEvent(QGraphicsSceneMouseEvent * event) {
 }
 
 /** @details
- * TODO
  * @param event udalost, ktera handler vyvolala
  */
 void MapScene::mousePressEvent(QGraphicsSceneMouseEvent * event) {
@@ -798,6 +798,10 @@ void MapScene::selectField(const QPointF & eventPos) {
 	MAP_VIEW->updateFieldView();
 }
 
+/** @details
+ * Odoznaci pripadne vybrane policko.
+ * Zrusi zobrazeni policka v @c MapFieldView.
+ */
 void MapScene::unselectField() {
 	selectedField_ = MAP_FIELD_INVALID;
 
@@ -805,13 +809,6 @@ void MapScene::unselectField() {
 	MAP_VIEW->updateFieldView();
 }
 
-/** @details
- * TODO vyhodit - nedela nic
- * @param event udalost, ktera handler vyvolala
- */
-void MapScene::dragEnterEvent(QGraphicsSceneDragDropEvent * event) {
-	Q_UNUSED(event);
-}
 /** @details
  * Mame-li nejaky tazeny objekt, zobrazi zastupny prvek ve spravne velikosti
  * podle toho jestli lze na tuto pozici mysi tazeny objekt premistit ci nikoli.

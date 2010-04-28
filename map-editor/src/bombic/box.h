@@ -1,5 +1,5 @@
 /** @file box.h
- * Objekt mapy typu bedna je predstavovan tridou BombicBox.
+ * Objekt mapy typu bedna je predstavovan tridou @c BombicBox.
  */
 
 #ifndef BOMBIC_BOX_H_GUARD_

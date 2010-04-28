@@ -1,5 +1,5 @@
 /** @file creature_resource_handler.h
- * Resource handler specializovany na prisery CreatureResourceHandler
+ * Resource handler specializovany na prisery @c CreatureResourceHandler
  * umi zpracovat dokument a vytvorit objekt mapy typu prisera.
  */
 

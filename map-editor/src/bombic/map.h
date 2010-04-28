@@ -1,6 +1,6 @@
 /** @file map.h
  * Struktura mapy tak, jak je pouzita ve hre.
- * Trida BombicMap reprezentuje mapu hry a resi spravnost polozeni objektu.
+ * Trida @c BombicMap reprezentuje mapu hry a resi spravnost polozeni objektu.
  */
 
 #ifndef BOMBIC_MAP_H_GUARD_
@@ -21,14 +21,13 @@ class MapObjectGenerator;
 
 /** Mapa hry Bombic.
  * Udrzuje strukturu mapy, rozlozeni objektu mapy.
- * V mape, jak  je ulozena na disku jsou napevno umistene objekty
+ * V mape, jak je ulozena na disku jsou napevno umistene objekty
  * a objekty, ktere se pri konstrukci mapy ve hre nahodne vygeneruji.
  * V mape lze urcit, na ktera policka lze tyto objekty generovat,
- * a na ktera ne. Vzhledem k tomu, ze lze generovat pouze prisery a bedny,
+ * a na ktera ne. Vzhledem k tomu, ze lze generovat pouze prisery, bedny a bonusy,
  * je implementace primo zamerena na tento konkretni pripad.
- * U kazdeho policka jsou tedy vedeny generatory
- * (jeden pro bednu a jeden pro prisery), kazdy z nich rika, zda-li lze na
- * policku objekt generovat.
+ * U kazdeho policka jsou tedy vedeny generatory, kazdy z nich rika,
+ * zda-li lze na policku objekt generovat.
  * Nasledne je BombicMap vizualizovana skrze @c MapScene.
  */
 class BombicMap: public QObject {

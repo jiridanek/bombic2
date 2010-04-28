@@ -1,6 +1,9 @@
-/** @file resource_handler.h TODO
- * Definice singletonu ResourceHandler, ktery se stara vnejsi prostredky.
+/** @file resource_handler.h
+ * Definice singletonu @c ResourceHandler, ktery se stara o vnejsi prostredky.
  * Prevadi vnejsi prostredky (data), do vnitrne pouzivanych objektu.
+ * Vyuziva k tomu funkce definovane v prostoru jmen @c ResourceHandlerFunctions
+ * a dalsi specializovane resource handlery jako napriklad MapResourceHandler
+ * nebo system potomku od MapObjectResourceHandler.
  */
 
 #ifndef RESOURCE_HANDLER_H_GUARD_
@@ -15,7 +18,6 @@
 /// Zkratka, pro pristup k singletonu ResourceHandler.
 #define RESOURCE_HANDLER SINGLETON_SHORTCUT(ResourceHandler)
 
-
 class BombicMap;
 class BombicMapBackground;
 class BombicMapObject;
@@ -26,12 +28,10 @@ class MapObjectResourceHandler;
 /** Handler vnejsich prostredku.
  * ResourceHandler obstarava vnejsi prostredky (data)
  * a prevadi je na vnitrne pouzivane objekty.
- * Objekty registruje na prislusnych mistech.
- * Konstrukci rozlicnych objektu mapy prenechava
- * specializovanym resource handlerum.
- * Mezi hlavni casti patri:
- * - nacitaci obrazku
- * - konstrukce objektu ze ziskanych dat
+ * Objekty mapy registruje v palete objektu,
+ * jejich konstrukci vsak prenechava specializovanym resource handlerum.
+ * Poskytuje hlavnim castem programu takovou miru abstrakce,
+ * ze mimo system resource handleru neni treba pracovat s daty na disku.
  * Vyuziva funkce z namespace @c ResourceHandlerFunctions.
  */
 class ResourceHandler: public QObject {
@@ -64,7 +64,6 @@ class ResourceHandler: public QObject {
 	public slots:
 		/// Nacte objekt mapy (vybrany uzivatelem).
 		void loadMapObject();
-
 
 	protected:
 		/// Nacte mapu podle jmena.

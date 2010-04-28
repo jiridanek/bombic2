@@ -1,5 +1,5 @@
 /** @file map_object.h
- * Obecny predek vsech objektu mapy BombicMapObject.
+ * Obecny predek vsech objektu mapy @c BombicMapObject.
  */
 
 #ifndef BOMBIC_MAP_OBJECT_H_GUARD_
@@ -21,6 +21,7 @@ class QGraphicsPixmapItem;
  * Objekt mapy ma obrazek a rozmery v polickach, ktera zabira.
  * Ma dany typ, drzi graficky prvek zobrazitelny ve scene.
  * Definuje, ktere akce s nim lze provadet.
+ * Obecne muze byt objekt napevno umisten v mape nebo nahodne vygenerovan.
  */
 class BombicMapObject {
 

@@ -1,5 +1,5 @@
 /** @file map_background.h
- * Pozadi mapy (pozadi policek a obvodove zdi).
+ * Pozadi mapy (pozadi policek a obvodove zdi) @c BombicMapBackground.
  */
 
 #ifndef BOMBIC_MAP_BACKGROUND_H_GUARD_

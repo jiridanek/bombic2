@@ -8,6 +8,8 @@
 #include "map_object_generator.h"
 
 /** Generator, ktery umoznuje generovat jen jeden objekt.
+ * Omezuje obecny @c MapObjectGenerator na generovani pouze jednoho
+ * kusu objektu.
  */
 class MapObjectSingleGenerator: public MapObjectGenerator {
 
