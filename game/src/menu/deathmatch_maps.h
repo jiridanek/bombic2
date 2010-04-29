@@ -1,4 +1,4 @@
-/** @file menu_deathmatch_maps.h
+/** @file deathmatch_maps.h
  * Soubor obsahuje třídu obsluhující menu map deathmatche.
  */
 

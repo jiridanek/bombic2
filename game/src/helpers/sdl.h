@@ -1,6 +1,6 @@
-/** @file SDL_lib.h
- * SDL_lib
- * je nadstavba nad knihovnou SDL, SDL_image, SDL_ttf
+/** @file sdl.h
+ * Obsahuje tridy a fce jako
+ * nadstavbu nad knihovnou SDL, SDL_image, SDL_ttf
  * vykresluje jednoduché geometrické útvary, písmo, načítá obrázky, animace...
  */
 

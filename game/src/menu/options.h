@@ -1,4 +1,4 @@
-/** @file menu_options.h
+/** @file options.h
  * Soubor obsahuje třídu obsluhující menu nastavení hry.
  */
 

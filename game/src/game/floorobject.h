@@ -1,6 +1,6 @@
-/** @file game_floorobject.h
+/** @file floorobject.h
  * Objekt na zemi.
- * Game_floorobject.h obsahuje třídu obstarávající objekty na zemi.
+ * Obsahuje třídu Floorobject obstarávající objekty na zemi.
  */
 #ifndef GAME_FLOOROBJECT_H
 #define GAME_FLOOROBJECT_H

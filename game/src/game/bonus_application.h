@@ -1,6 +1,6 @@
-/** @file game_bonus_application.h
+/** @file bonus_application.h
  * Aplikace bonusu na hráče.
- * Game_bonus_application.h obsahuje třídy obstarávající aplikaci bonusu na hráče.
+ * Obsahuje třídu @c BonusApplication a jeji potomky obstarávající aplikaci bonusu na hráče.
  * Pro přidání bonusu s jménem NAME je třeba udělat následující kroky:
  *	* přidat položku NAME do BonusApplication::TYPE
  *	* přidat do BonusApplication::new_bonus() větev s BonusNAME

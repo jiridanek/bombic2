@@ -1,4 +1,4 @@
-/** @file menu_credits.h
+/** @file credits.h
  * Soubor obsahuje třídu obsluhující modul menu pro zobrazení informaci o autorech.
  */
 

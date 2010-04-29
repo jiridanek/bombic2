@@ -12,7 +12,7 @@
  * az do hloubky SEARCH_DEPTH.
  * Preskakuje skryte adresare.
  * Pokud nastane chyba, sam zobrazuje relevantni informace.
- * @param[in/out] filename jmeno souboru nebo uplna cesta
+ * @param[in,out] filename jmeno souboru nebo uplna cesta
  * @return Uspech operace.
  * @retval true Soubor nalezen (cesta ulozena v @p filename)
  * @retval false Soubor nenalezen.
@@ -63,7 +63,7 @@ bool ResourceHandlerFunctions::locateFile(QString & filename) {
  * a vsech podadresarich az do hloubky SEARCH_DEPTH.
  * Preskakuje skryte adresare.
  * @param dir soubor, ktery se ma prohledat
- * @param[in/out] filename jmeno souboru
+ * @param[in,out] filename jmeno souboru
  * @param depth dosazena hloubka
  * @return Uspech operace.
  * @retval true Soubor nalezen (cesta ulozena v @p filename)
@@ -110,6 +110,7 @@ bool ResourceHandlerFunctions::locateFileInDir(const QDir & dir,
  * @param[out] rootEl korenovy element nove otevreneho xml dokumentu
  * @param checkAttrName zda se ma kontrolovat hodnota atributu name
  *                      podle @p name (viz attrNameValueFromName())
+ * @param rootElTagName predpokladane jmeno korenoveho elementu
  * @return Uspech operace.
  * @retval true dokument nacten (korenovy element ulozen v @p rootEl)
  * @retval false dokument nenacten
@@ -379,7 +380,7 @@ void ResourceHandlerFunctions::showError(const QString & message,
  * Vypisuje cestu k elementu.
  * @param message textovy popis chyby
  * @param el xml element, ve kterem chyba nastala
- * @param pripadne jmeno souboru, ve kterem chyba nastala
+ * @param filename pripadne jmeno souboru, ve kterem chyba nastala
  * @see nodePath()
  */
 void ResourceHandlerFunctions::showError(const QString & message,

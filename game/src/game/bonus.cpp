@@ -9,6 +9,7 @@
 
 
 /**
+ * @param bonus_name jméno bonusu
  * @param anim animace normálního stavu
  * @param x souřadnice levého rohu v pixelech
  * @param y souřadnice horního rohu v pixelech
@@ -55,6 +56,7 @@ bool Bonus::move(){
 
 /**
  * @param window surface okna pro vykreslení
+ * @param rect obdelnik mapy v okne
  */
 void Bonus::draw(SDL_Surface *window, const SDL_Rect & rect){
 	if(visible_)

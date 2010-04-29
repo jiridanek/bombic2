@@ -96,7 +96,12 @@ isTypeOf isTypeOf::isWallBoxBombFlamePresumption(
 
 /** @details
  * Inicializuje vnitřní strukturu, přidá typ.
- * @param type Typ který chceme přidat.
+ * @param type1 Typ který chceme přidat.
+ * @param type2 Typ který chceme přidat.
+ * @param type3 Typ který chceme přidat.
+ * @param type4 Typ který chceme přidat.
+ * @param type5 Typ který chceme přidat.
+ * @param type6 Typ který chceme přidat.
  * @see clear(), addType()
  */
 isTypeOf::isTypeOf(OBJECT_TYPES type1, OBJECT_TYPES type2,

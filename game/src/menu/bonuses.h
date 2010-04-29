@@ -1,4 +1,4 @@
-/** @file menu_bonuses.h
+/** @file bonuses.h
  * Soubor obsahuje třídu obsluhující modul menu pro zobrazení informací o bonusech.
  */
 

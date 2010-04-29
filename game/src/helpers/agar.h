@@ -1,4 +1,4 @@
-/** @file agar_helper.h
+/** @file agar.h
  * Soubor obsahující pomocné funkce ke knihovně agar-gui.
  */
 

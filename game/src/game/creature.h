@@ -1,6 +1,6 @@
-/** @file game_creature.h
+/** @file creature.h
  * Nestvůra.
- * Game_creature.h obsahuje třídu obstarávající nestvůry.
+ * Obsahuje třídu @c Creature obstarávající nestvůry.
  */
 #ifndef GAME_CREATURE_H
 #define GAME_CREATURE_H

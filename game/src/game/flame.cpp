@@ -26,6 +26,7 @@ bool Flame::move(){
 
 /**
  * @param window surface okna pro vykreslení
+ * @param rect obdelnik mapy v okne
  */
 void Flame::draw(SDL_Surface *window, const SDL_Rect & rect){
 	anim_.draw(window, x_ +rect.x, y_ +rect.y);

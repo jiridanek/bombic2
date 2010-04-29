@@ -1,6 +1,6 @@
-/** @file game_bonus.h
+/** @file bonus.h
  * Herní bonus.
- * Game_bonus.h obsahuje třídu obstarávající bonusy.
+ * Obsahuje třídu @c Bonus obstarávající bonusy v mape.
  */
 #ifndef GAME_BONUS_H
 #define GAME_BONUS_H

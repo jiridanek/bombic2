@@ -1,4 +1,4 @@
-/** @file menu_deathmatch.h
+/** @file deathmatch.h
  * Soubor obsahuje třídu obsluhující menu vytvoření deathmatche.
  */
 

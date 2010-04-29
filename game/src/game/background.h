@@ -1,6 +1,6 @@
-/** @file game_background.h
+/** @file background.h
  * Pozadí mapy.
- * Game_background.h obsahuje třídu obstarávající pozadí mapy.
+ * Obsahuje třídu @c Background obstarávající pozadí mapy.
  */
 #ifndef GAME_BACKGROUND_H
 #define GAME_BACKGROUND_H

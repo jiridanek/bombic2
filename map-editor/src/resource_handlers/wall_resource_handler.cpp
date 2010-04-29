@@ -44,7 +44,7 @@ BombicMapObject * WallResourceHandler::createMapObject(
  * nebo elementum obvodovych zdi v definici pozadi.
  * Predpoklada jiz nacteny zdrojovy obrazek v @c ResourceHandler.
  * @param name jmeno vytvarene zdi
- * @param rootEl element obsahujici parametry zdi
+ * @param imgEl element obsahujici parametry zdi
  * @return Nove vytvoreny prototyp zdi (volajici se stava vlastnikem).
  * @retval 0 Doslo k chybe, zed nemuze byt vytvorena.
  */

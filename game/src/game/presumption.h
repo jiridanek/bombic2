@@ -1,6 +1,6 @@
-/** @file game_presumption.h
+/** @file presumption.h
  * Předvídání plamene.
- * Game_presumption.h obsahuje třídu obstarávající předvídání plamene.
+ * Obsahuje třídu @p Presumption obstarávající předvídání plamene.
  */
 #ifndef GAME_PRESUMPTION_H
 #define GAME_PRESUMPTION_H

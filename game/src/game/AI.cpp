@@ -63,7 +63,6 @@ AI::AI(Creature *creature): creature_(creature) {
 
 /** @details
  * Vloží tolik pozic, aby bylo dost pro další použití.
- * @param position_min_count minimální počet pozic pro další použití
  */
 void AI::initPositions(){
 	if(positions_.size() < POS_LAST) {
@@ -1171,6 +1170,7 @@ bool AI_fromKeyboard::trySetPosition_(Player * player, position_t & position) {
  * Vytváří a vkládá do mapy bomby.
  * Řeší firemana, megabomby a posílání bomb.
  * @param player hráč, pro nějž handler voláme
+ * @param playerMoved zda je hráč právě v pohybu
  */
 void AI_fromKeyboard::handlePlantKey_(Player * player, bool playerMoved){
 	Uint16 num = player->player_num();

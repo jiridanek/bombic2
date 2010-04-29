@@ -1,6 +1,6 @@
-/** @file game_player.h
+/** @file player.h
  * Postava bombiče.
- * Game_player.h obsahuje třídu obstarávající objekt hráče bombiče.
+ * Obsahuje třídu @c Player obstarávající objekt hráče bombiče.
  */
 #ifndef GAME_PLAYER_H
 #define GAME_PLAYER_H
@@ -11,7 +11,7 @@
 
 /// Doba mezi odpaly.
 #define TIMER_PERIOD 300
-/// Maximaální velikost plamene.
+/// Maximální velikost plamene.
 #define FLAMESIZE_MAX Uint16(10)
 
 class BonusApplication;

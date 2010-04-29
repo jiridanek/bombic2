@@ -1,4 +1,4 @@
-/** @file menu_options_controls.h
+/** @file options_controls.h
  * Soubor obsahuje třídu obsluhující menu nestavení kláves.
  */
 

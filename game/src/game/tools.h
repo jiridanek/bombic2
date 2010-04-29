@@ -1,13 +1,11 @@
-/** @file game_base.h
+/** @file tools.h
  * Nahrávání věcí pro hru z xml souborů.
- * Game_tools.h obsahuje třídu připravující věci pro hru z xml souborů.
+ * Obsahuje třídu GameTools připravující věci pro hru z xml souborů.
  */
 
 #ifndef GAME_TOOLS_H
 #define GAME_TOOLS_H
 
-// #include <iostream>
-// #include <list>
 #include <vector>
 #include <string>
 #include <map>

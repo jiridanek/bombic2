@@ -27,6 +27,7 @@ Uint16 Floorobject::getZ() const {
 
 /**
  * @param window surface okna pro vykreslení
+ * @param rect obdelnik mapy v okne
  */
 void Floorobject::draw(SDL_Surface* window, const SDL_Rect & rect){
 	if(rect.w >= x_+anim_.width()

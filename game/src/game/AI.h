@@ -1,6 +1,6 @@
-/** @file game_AI.h
+/** @file AI.h
  * Umělá inteligence.
- * Game_AI.h obsahuje třídy obstarávající umělou inteligenci.
+ * Třídy obstarávající umělou inteligenci.
  */
 #ifndef GAME_AI_H
 #define GAME_AI_H

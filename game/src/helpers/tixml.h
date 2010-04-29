@@ -1,4 +1,4 @@
-/** @file tixml_helper.h
+/** @file tixml.h
  * Soubor obsahující pomocné třídy a funkce ke knihovně tinyXML.
  */
 

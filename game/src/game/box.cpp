@@ -78,6 +78,7 @@ void Box::update(){
 
 /**
  * @param window surface okna pro vykreslení
+ * @param rect obdelnik mapy v okne
  */
 void Box::draw(SDL_Surface *window, const SDL_Rect & rect){
 	if(burning_ && !burned_

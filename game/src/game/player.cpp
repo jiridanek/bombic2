@@ -17,8 +17,10 @@ Player::Player(const Animation & anim_up, const Animation & anim_right,
 			const Animation & anim_down, const Animation & anim_left,
 			const Animation & anim_burned, Uint16 x, Uint16 y,
 			Uint16 speed, Uint16 num):
-	Creature(anim_up, anim_right, anim_down, anim_left, anim_burned, x, y, speed, 1, -1),
-	num_(num), flamesize_(1), bombs_(1), megabombs_(0), boots_(0), next_timer_(0),
+	Creature(anim_up, anim_right, anim_down, anim_left,
+		anim_burned, x, y, speed, 1, -1),
+	num_(num), flamesize_(1), bombs_(1), megabombs_(0),
+	boots_(0), next_timer_(0),
 	bonus_kicker_(false), bonus_slider_(false),
 	bonus_timer_(false), bonus_fireman_(false){
 
@@ -32,8 +34,9 @@ Player::Player(const Animation & anim_up, const Animation & anim_right,
  */
 Player::Player(const Player & player, Uint16 x, Uint16 y):
 	Creature(player, x, y), num_(player.num_),
-	flamesize_(std::min(player.flamesize_, FLAMESIZE_MAX)), bombs_(player.bombs_),
-	megabombs_(0), boots_(player.boots_), next_timer_(0),
+	flamesize_(std::min(player.flamesize_, FLAMESIZE_MAX)),
+	bombs_(player.bombs_), megabombs_(0),
+	boots_(player.boots_), next_timer_(0),
 	bonus_kicker_(false), bonus_slider_(false),
 	bonus_timer_(false), bonus_fireman_(false) {}
 
@@ -44,6 +47,7 @@ Player::~Player(){
 }
 
 /**
+ * @param prop vlastnosti hráče, které mu chceme nastavit
  */
 void Player::set_properties(const PlayerProperties & prop){
 	lives_ = prop.lives;
@@ -58,6 +62,7 @@ void Player::set_properties(const PlayerProperties & prop){
 }
 
 /**
+ * @param[out] prop vlastnosti hráče, které chceme vyplnit
  */
 void Player::get_properties(PlayerProperties & prop) {
 	// zrusit bonusy (muzou mit prsty v mych atributech)
@@ -127,6 +132,7 @@ void Player::update(){
 /** @details
  * Vykreslí svůj panel a všechny svoje bonusy a jejich hodnoty do něj.
  * @param window surface okna pro vykreslení
+ * @param rect obdelnik mapy v okne
  */
 void Player::draw_panel(SDL_Surface *window, const SDL_Rect & rect){
 	// vykreslit svuj panel

@@ -31,8 +31,11 @@ SINGLETON_INIT(Game);
 
 
 /**
- * @param players_count počet hráčů
- * @param mapname název mapy
+ * @param base zaklad hry
+ * @param gameTools pomucky pro hru
+ * @param deathmatch zda se jedna o deathmatch (nebo cooperative mode)
+ * @param bombsatend zda se maji na konci (v deathmatchi) zacit objevovat bomby
+ *                   zatim neimplementovano
  */
 Game::Game(const GameBase & base, GameTools * gameTools,
 				bool deathmatch, bool bombsatend):
@@ -106,9 +109,7 @@ void Game::load_placed_MOs_(const GameBase::base_array_t & base_array){
 
 /** @details
  * Vygeneruje v pořadí bedny, bonusy a příšery.
- * @param generatedMOs hezky seřazený seznam objektů k vygenerování
- * @throw string Chybové hlášení, pokud není seznam hezky seřazený,
- * nebo obsahuje něco, co nemá.
+ * @param base základ hry, ze kterého se mají generované objekty použít
  */
 void Game::load_generated_MOs_(const GameBase & base){
 	GameBase::generatedMOs_t::const_iterator
@@ -141,7 +142,9 @@ void Game::load_generated_MOs_(const GameBase & base){
 	generate_bonuses_(it_first, it_second);
 
 	if(it_second!=end_it)
-		throw string("in Game::load_generated_MOs_(): unexpected object type to generate or objects in wrong order.");
+		throw string("in Game::load_generated_MOs_(): "
+			"unexpected object type to generate "
+			"or objects in wrong order.");
 }
 
 /** @details
@@ -666,6 +669,7 @@ void Game::draw_one_view_(SDL_Surface* window){
 
 /** @details
  * Vykreslí část mapy v pohledu.
+ * @param bg jestli se má kreslit jen pozadí (nebo jen popředí)
  * @param window surface okna pro vykreslení
  * @param map_view pohled
  * @param from_x x-ová souřadnice počátku vykreslování
@@ -843,6 +847,7 @@ Uint16 Game::winner(){
 /**
  * @param x x-ová souřadnice políčka
  * @param y y-ová souřadnice políčka
+ * @param check_bomb zda se mají také kontrolovat bomby
  * @return Vrací TRUE pokud lze zadané políčko přejít (není na něm zed ani bedna).
  */
 bool Game::field_canGoOver(Uint16 x, Uint16 y, bool check_bomb){
@@ -853,7 +858,7 @@ bool Game::field_canGoOver(Uint16 x, Uint16 y, bool check_bomb){
 /**
  * @param x x-ová souřadnice políčka
  * @param y y-ová souřadnice políčka
- * @param objectType typ objektu, na který se ptáme
+ * @param isType predikat typu objektu, na který se ptáme
  * @return Vrací TRUE pokud je na zadaném políčku objekt zadaného typu.
  */
 bool Game::field_withObject(Uint16 x, Uint16 y, const isTypeOf & isType){
@@ -868,7 +873,7 @@ bool Game::field_withObject(Uint16 x, Uint16 y, const isTypeOf & isType){
 /**
  * @param x x-ová souřadnice políčka
  * @param y y-ová souřadnice políčka
- * @param objectType typ objektu, na který se ptáme
+ * @param isType predikat typu objektu, na který se ptáme
  * @return Vrací pointer na první objekt splnující náš požadavek,
  * pokud na zadaném políčku takový objekt není, vrací 0.
  */

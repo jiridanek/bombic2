@@ -8,6 +8,7 @@
  * @param anim animace
  * @param x souřadnice levého rohu políčka v pixelech
  * @param y souřadnice horního rohu v pixelech
+ * @param to_flame počet period, než se místo presumpce objeví plamen
  */
 Presumption::Presumption(Animation * anim, Uint16 x, Uint16 y,
 				Uint16 to_flame):
@@ -25,6 +26,7 @@ bool Presumption::move(){
 
 /**
  * @param window surface okna pro vykreslení
+ * @param rect obdelnik mapy v okne
  */
 void Presumption::draw(SDL_Surface *window, const SDL_Rect & rect){
 	if(CONFIG->visible_presumption())

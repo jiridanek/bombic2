@@ -1,4 +1,4 @@
-/** @file menu_deathmatch_bonuses.h
+/** @file deathmatch_bonuses.h
  * Soubor obsahuje třídu obsluhující menu bonusů deathmatche.
  */
 

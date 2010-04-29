@@ -1,6 +1,6 @@
-/** @file game_base.h
+/** @file game/base.h
  * Nahrávání hry z xml souborů.
- * Game_base.h obsahuje třídy připravující hru a zejména mapu hry z xml souborů.
+ * Obsahuje třídy @c GameBaseLoader a @c GameBase připravující hru a zejména mapu hry z xml souborů.
  * Postup vytvoření hry je takový, že se jednou naloadují struktury z xml souborů,
  * pevně umístěné objekty se umístí do mapy, náhodně umísťované objekty se připraví mimo.
  * Až poté (a to už se řeěí v game_intro.h) se z této předpřipravené struktury vygeneruje hra a její mapa

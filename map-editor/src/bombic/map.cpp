@@ -18,9 +18,11 @@
  * pri destrukci mapy.
  * Nove zkonstruovana mapa obsahuje pouze obvodove zdi pozadi a inicializovane
  * generatory objektu (vsechna policka povolena pro generovani).
+ * @param name nazev mapy
  * @param width sirska mapy v polickach
  * @param height vyska mapy v polickach
  * @param background pointer na pozadi
+ * @param filename soubor, do ktereho se ma mapa ulozit
  */
 BombicMap::BombicMap(const QString & name, int width, int height,
 		BombicMapBackground * background, const QString & filename):

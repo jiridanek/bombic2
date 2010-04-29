@@ -1,4 +1,4 @@
-/** @file menu_base.h
+/** @file menu/base.h
  * Soubor obsahuje třídy,
  * na kterých jsou postaveny jednotlivá menu.
  */

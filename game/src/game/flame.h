@@ -1,6 +1,6 @@
-/** @file game_flame.h
+/** @file flame.h
  * Plamen.
- * Game_flame.h obsahuje třídu obstarávající plamen bomby.
+ * Obsahuje třídu @c Flame obstarávající plamen bomby.
  */
 #ifndef GAME_FLAME_H
 #define GAME_FLAME_H

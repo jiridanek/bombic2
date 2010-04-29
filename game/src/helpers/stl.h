@@ -1,4 +1,4 @@
-/** @file stl_helper.h
+/** @file stl.h
  * Soubor obsahující pomocné třídy a funkce na obecné úrovni.
  */
 

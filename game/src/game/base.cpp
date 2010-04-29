@@ -130,7 +130,8 @@ SDL_Surface* GameBaseLoader::load_src_surface(TiXmlElement *El,
 
 /*************** class GameBase ******************************/
 
-/**
+/** @details
+ * Vytvori zaklad hry pro kooperativ mod.
  * @param players_count počet hráčů
  * @param mapname název mapy
  * @see load_map_()
@@ -141,8 +142,11 @@ GameBase::GameBase(Uint16 players_count, const std::string & mapname){
 }
 
 /** @details
+ * Vytvori zaklad hry pro deathmatch.
  * @param players_count počet hráčů
  * @param mapname název mapy
+ * @param bonuses seznam bonusu k vygenerovani
+ * @param creatures jestli se maji vkladat prisery
  * @see load_map_(), load_bonuses_()
  */
 GameBase::GameBase(Uint16 players_count, const std::string & mapname,
@@ -523,7 +527,7 @@ void GameBase::load_walls_(TiXmlElement *wallsEl){
 
 /** @details
  * Načte z XML a vloží do mapy objekty na zemi.
- * @param floorEl element v XML souboru specifikující objekt na zemi
+ * @param floorsEl element v XML souboru specifikující objekt na zemi
  */
 void GameBase::load_floorobjects_(TiXmlElement *floorsEl){
 	// nenalezen nepovinny tag floorobjects
@@ -901,6 +905,8 @@ void GameBase::insert_background_(const Animation & anim,
  * které nezabírají místo v mapě
  * @param x souřadnice políčka pro levý roh zdi v mapě
  * @param y souřadnice políčka pro horní roh zdi v mapě
+ * @param w šířka zdi v políčkách
+ * @param h výška zdi v políčkách
  */
 void GameBase::insert_wall_(const Animation & anim,
 				Uint16 toplapping, Uint16 x, Uint16 y, Uint16 w, Uint16 h){
@@ -934,6 +940,8 @@ void GameBase::insert_wall_(const Animation & anim,
  * @param anim animace vkládaného objektu
  * @param x souřadnice políčka pro levý roh objektu v mapě
  * @param y souřadnice políčka pro horní roh objektu v mapě
+ * @param w šířka objektu v políčkách
+ * @param h výška objektu v políčkách
  */
 void GameBase::insert_floorobject_(const Animation & anim,
 			Uint16 x, Uint16 y, Uint16 w, Uint16 h){
@@ -984,6 +992,8 @@ void GameBase::insert_box_(const Animation & anim, const Animation & anim_burnin
  * které nezabírají místo v mapě
  * @param x souřadnice políčka pro levý roh bedny v mapě
  * @param y souřadnice políčka pro horní roh bedny v mapě
+ * @param w šířka bedny v políčkách
+ * @param h výška bedny v políčkách
  */
 void GameBase::insert_box_(const Animation & anim, const Animation & anim_burning,
 				Uint16 toplapping, Uint16 x, Uint16 y, Uint16 w, Uint16 h){
@@ -1092,7 +1102,6 @@ void GameBase::insert_creature_(
  * @param x souřadnice hráče v mapě
  * @param y souřadnice hráče v mapě
  * @param speed rychlost v pixelech za jednu časovou jednotku
- * @param lives počet životů
  * @param num číslo (pořadí) hráče
  */
 void GameBase::insert_player_(

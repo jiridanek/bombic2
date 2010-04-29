@@ -311,10 +311,6 @@ void Bomb::update_presumptions_from_field_(const field_t & start_field,
 	}
 }
 
-/** @details
- * @param x
- * @param y
- */
 field_t Bomb::find_target_field_() const {
 	// nastavi startovni pozici
 	field_t curr_field(x_/CELL_SIZE, y_/CELL_SIZE);
@@ -387,7 +383,7 @@ field_t Bomb::find_target_field_() const {
 }
 
 /**
- * @param time_to_end počet period do výbuchu bomby
+ * @param periods_to_end počet period do výbuchu bomby
  * @return Vzdálenost, kterou je bomba schopna maximálně ujet, než vybuchne.
  */
 Uint16 Bomb::count_distance_(Uint16 periods_to_end) const{
@@ -467,7 +463,7 @@ bool Bomb::is_danger_presumption_(const field_t & field,
  * Převezme od předchozí bomby cíl a
  * posune ho o jedna proti směru pohybu.
  * @note bomb_b je bomb_before
- * @param bomb_before předcházející bomba
+ * @param bomb_b předcházející bomba
  * @return Vrací svůj cíl.
  */
 field_t Bomb::take_target_from_bomb_before_(Bomb * bomb_b) const{
@@ -570,6 +566,7 @@ void Bomb::remove_presumptions_(){
 
 /**
  * @param window surface okna pro vykreslení
+ * @param rect obdelnik mapy v okne
  */
 void Bomb::draw(SDL_Surface *window, const SDL_Rect & rect){
 	anim_.draw(window,

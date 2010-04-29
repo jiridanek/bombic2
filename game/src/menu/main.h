@@ -1,4 +1,4 @@
-/** @file menu_main.h
+/** @file main.h
  * Soubor obsahuje třídu obsluhující hlavní menu aplikace.
  */
 

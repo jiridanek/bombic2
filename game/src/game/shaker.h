@@ -1,6 +1,6 @@
-/** @file game_shaker.h
+/** @file shaker.h
  * Třesení hrou.
- * Game_shaker.h obsahuje třídu obstarávající třesení hrou.
+ * Obsahuje třídu GameShaker obstarávající třesení hrou.
  */
 
 #ifndef GAME_SHAKER_H

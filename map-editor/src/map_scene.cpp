@@ -785,7 +785,7 @@ void MapScene::removeClickedObject(QGraphicsSceneMouseEvent * event) {
 /** @details
  * Zkontroluje je-li pod mysi nejake policko a pripadne jej oznaci
  * jako vybrane a zobrazi jej v detailu v @c MapFieldView.
- * @param event udalost, ktera handler vyvolala
+ * @param eventPos pozice udalosti (mysi) ve scene
  */
 void MapScene::selectField(const QPointF & eventPos) {
 	selectedField_ = getField(eventPos);

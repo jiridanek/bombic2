@@ -1,4 +1,4 @@
-/** @file menu_creatures.h
+/** @file creatures.h
  * Soubor obsahuje třídu obsluhující modul menu pro zobrazení informací o nestvůrách.
  */
 

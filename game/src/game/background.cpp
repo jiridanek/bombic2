@@ -30,6 +30,7 @@ Background::Background(const Background & background, Uint16 x, Uint16 y):
 
 /**
  * @param window surface okna pro vykreslení
+ * @param rect obdelnik mapy v okne
  */
 void Background::draw(SDL_Surface* window, const SDL_Rect & rect){
 	if(burned_)

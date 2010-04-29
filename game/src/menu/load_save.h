@@ -1,4 +1,4 @@
-/** @file menu_load_save.h
+/** @file load_save.h
  * Soubor obsahuje třídy obsluhující menu pro ukládání a loadování hry.
  */
 

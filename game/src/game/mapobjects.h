@@ -1,8 +1,8 @@
-/** @file game_mapobjects.h
+/** @file mapobjects.h
  * Statické a dynamické objekty mapy.
- * Game_mapObjects.h obsahuje čistě virtuální třídy objektů mapy.
+ * Obsahuje čistě virtuální třídy objektů mapy.
  * Velmi obecně implementuje, rozhraní objektů.
- * MapObject je nejobecnější představa objektu, dále jsou zde třídy DynamicMO a StaticMO.
+ * @c MapObject je nejobecnější představa objektu, dále jsou zde třídy @c DynamicMO a @c StaticMO.
  */
 #ifndef GAME_MAPOBJECTS_H
 #define GAME_MAPOBJECTS_H

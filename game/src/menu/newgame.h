@@ -1,4 +1,4 @@
-/** @file menu_newgame.h
+/** @file newgame.h
  * Soubor obsahuje třídu obsluhující menu vytvoření nové hry.
  */
 

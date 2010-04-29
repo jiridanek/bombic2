@@ -1,6 +1,6 @@
-/** @file game_wall.h
+/** @file wall.h
  * Zeď.
- * Game_wall.h obsahuje třídu obstarávající objekty hry typu zeď.
+ * Obsahuje třídu @c Wall obstarávající objekty hry typu zeď.
  */
 #ifndef GAME_WALL_H
 #define GAME_WALL_H

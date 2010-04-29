@@ -148,7 +148,7 @@ QMenu * MainWindow::menu(Menu menu) {
 }
 
 /**
- * @param menu identifikator akce, kterou chceme ziskat
+ * @param action identifikator akce, kterou chceme ziskat
  * @return Vytvorena akce.
  * @retval 0 Akce jeste nebyla vytvorena.
  */

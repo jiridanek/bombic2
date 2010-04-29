@@ -1,6 +1,6 @@
-/** @file game_bomb.h
+/** @file bomb.h
  * Bomba.
- * Game_bomb.h obsahuje třídy obstarávající bomby.
+ * Obsahuje třídy @c Bomb a @c MegaBomb obstarávající bomby.
  */
 #ifndef GAME_BOMB_H
 #define GAME_BOMB_H

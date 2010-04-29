@@ -1,6 +1,6 @@
-/** @file game_box.h
+/** @file box.h
  * Bedna.
- * Game_box.h obsahuje třídu obstarávající bednu.
+ * Obsahuje třídu @c Box obstarávající bednu.
  */
 #ifndef GAME_BOX_H
 #define GAME_BOX_H

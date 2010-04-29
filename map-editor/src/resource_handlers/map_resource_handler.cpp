@@ -140,10 +140,9 @@ BombicMap * MapResourceHandler::createMap(const QString & name) {
 
 
 /** @details
- * Pokusi se vytvorit mapu zadanou @p name a vlozit do ni
- * vsechny objekty.
- * Nastavi mape ze byla ulozena (nebyla editovana).
- * @param name jmeno mapy (nebo primo cesta k souboru)
+ * Pokusi se vytvorit mapu definovanou korenovym elementem @p rootEl
+ * a vlozit do ni vsechny objekty.
+ * @param rootEl korenovy element definice mapy
  * @return Objekt mapy.
  * @retval 0 mapu se nepodarilo vyrobit
  */
@@ -524,7 +523,7 @@ bool MapResourceHandler::saveMap(BombicMap * map) {
  *	* pocet generovanych objektu: @c kindIt->generated
  * @param typeIt jmeno ridici promenne prvniho cyklu pres typy objektu
  * @param kindIt jmeno ridici promenne druheho cyklu pres druhy objektu
- * @param objectsByTyp struktura objektu podle typu pres kterou iterujeme
+ * @param objectsByType struktura objektu podle typu pres kterou iterujeme
  */
 #define MRH_FOREACH_OBJECT_KIND(typeIt, kindIt, objectsByType) \
 	for( ObjectsByTypeT::const_iterator typeIt = objectsByType.begin() ; \
@@ -624,7 +623,7 @@ void MapResourceHandler::countGeneratedObjects(ObjectsByTypeT & objects,
  * Nastavi atributy a vytvori podstrom korenoveho elementu definice mapy.
  * @p rootEl by mel byt inicializovan a mel by patrit do platneho dokumentu.
  * @param mapData data mapy k ulozeni
- * @param[in/out] rootEl korenovy element definice mapy
+ * @param rootEl korenovy element definice mapy
  */
 void MapResourceHandler::mapDataToXml(const MapDataT & mapData,
 		QDomElement & rootEl) {
@@ -680,8 +679,7 @@ void MapResourceHandler::mapDataToXml(const MapDataT & mapData,
  * Vytvori podstrom pozic elementu definujiciho objekt.
  * @p parentEl by mel byt inicializovan a mel by patrit do platneho dokumentu.
  * @param positions seznam pozic objektu
- * @param mapData data mapy k ulozeni
- * @param[in/out] parentEl element definujici objekt mapy
+ * @param parentEl element definujici objekt mapy
  * @param positionElName nazev elementu pozice
  */
 void MapResourceHandler::positionsToXml(const PositionsT & positions,
