@@ -37,8 +37,8 @@ class MainWindow: public QMainWindow {
 
 		/// Identifikatory jednotlivych menu.
 		enum Menu {
-			FileMenu, MapMenu, EditMenu,
-			ViewMenu, DocksMenu, HelpMenu
+			FileMenu, MapMenu, LoadMenu,
+			ViewMenu, DocksMenu, AboutMenu
 		};
 
 		/// Identifikatory jednotlivych akci menu.
@@ -50,7 +50,7 @@ class MainWindow: public QMainWindow {
 			GeneratedBonusesAction,
 			GenerateObjectsAction
 		};
-		
+
 		/// Vytvorene menu podle identifikatoru.
 		QMenu * menu(Menu menu);
 		/// Vytvorena akce podle identifikatoru.
@@ -66,6 +66,11 @@ class MainWindow: public QMainWindow {
 		void addWorkingObjectLabel(QWidget * workingObjectLabel);
 		/// Pridat do okna zoomovaci nastroj.
 		void addZoomWidget(QWidget * zoomWidget);
+
+		/// Pridat polozku menu pro nacteni vsech sad.
+		QAction * addLoadAllSetsAction();
+		/// Pridat polozku menu pro nacteni sady.
+		QAction * addLoadSetAction(const QString & setName);
 
 	protected:
 		/// Handler zavreni okna.

@@ -28,11 +28,11 @@ MainWindow::MainWindow() {
 
 	menus_[FileMenu] = menuBar()->addMenu(tr("&File"));
 	menus_[MapMenu] = menuBar()->addMenu(tr("&Map"));
-	menus_[EditMenu] = menuBar()->addMenu(tr("&Edit"));
+	menus_[LoadMenu] = menuBar()->addMenu(tr("&Load"));
 	menus_[ViewMenu] = menuBar()->addMenu(tr("&View"));
 	menus_[DocksMenu] =
 		menus_[ViewMenu]->addMenu(tr("&Docked components"));
-	menus_[HelpMenu] = menuBar()->addMenu(tr("&Help"));
+	menus_[AboutMenu] = menuBar()->addMenu(tr("&About"));
 
 
 	addAction(NewMapAction, tr("&New map"),
@@ -118,6 +118,26 @@ void MainWindow::addDock(const QString & name, QWidget * widget,
 
 	menus_[DocksMenu]->addAction(dock->toggleViewAction());
 }
+
+/**
+ * @return Nove vytvorena polozka menu.
+ */
+QAction * MainWindow::addLoadAllSetsAction() {
+	QAction * act = new QAction(tr("Load &all sets"), this);
+	menus_[LoadMenu]->addAction(act);
+	return act;
+}
+
+/**
+ * @param setName nazev nacitane sady objektu
+ * @return Nove vytvorena polozka menu.
+ */
+QAction * MainWindow::addLoadSetAction(const QString & setName) {
+	QAction * act = new QAction(tr("Load set ")+setName, this);
+	menus_[LoadMenu]->addAction(act);
+	return act;
+}
+
 
 /**
  * @param action identifikator akce (polozky menu)

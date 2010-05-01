@@ -66,6 +66,9 @@ void MapObjectPalette::tabsConstruct() {
 	connect(loadButton, SIGNAL(clicked()),
 		RESOURCE_HANDLER, SLOT(loadMapObject()));
 	layout->addWidget(loadButton);
+
+	// autoload
+	RESOURCE_HANDLER->autoLoadObjects();
 }
 
 /** @details

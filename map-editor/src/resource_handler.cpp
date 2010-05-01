@@ -1,6 +1,8 @@
 
 #include <QBitmap>
 #include <QFileDialog>
+#include <QSignalMapper>
+#include <QAction>
 #include <constants.h>
 
 #include "resource_handler.h"
@@ -23,6 +25,9 @@ SINGLETON_INIT(ResourceHandler);
 
 using namespace ResourceHandlerFunctions;
 
+/// Nazev souboru, ve kterem jsou systemova data pro map editor.
+#define RESOURCE_HANDLER_EDITOR_FILE "map-editor"
+
 /**
  * @param parent rodic - predany do QObject::QObject()
  */
@@ -31,6 +36,11 @@ ResourceHandler::ResourceHandler(QObject * parent):
 	SINGLETON_CONSTRUCT;
 	MapObjectResourceHandler::initResourceHandlers();
 
+	loadSetsSignalMapper_ = new QSignalMapper(this);
+	connect(loadSetsSignalMapper_, SIGNAL(mapped(QString)),
+		this, SLOT(loadSetByName(QString)) );
+
+	parseEditorFile();
 }
 
 ResourceHandler::~ResourceHandler() {
@@ -283,4 +293,165 @@ bool ResourceHandler::loadSourcePixmap(const QDomElement & el,
 		sourcePixmap_.createMaskFromColor(Qt::magenta));
 
 	return true;
+}
+
+
+/** @details
+ * Pokusi se najit souboru, ve kterem jsou systemova data
+ * a z nich inicializuje nacitaci sady a seznam automaticky nacitanych objektu.
+ */
+void ResourceHandler::parseEditorFile() {
+	QString filename = RESOURCE_HANDLER_EDITOR_FILE;
+	QDomElement rootEl;
+	if(!loadXml(filename, rootEl, false, "editor")) {
+		return;
+	}
+	initAutoLoadObjects(rootEl);
+	initLoadSets(rootEl);
+}
+
+/** Cyklus pres vsechny podelementy zadaneho jmena.
+ * Vytvori cyklus zacinajici prvnim podelementem, ktery postupne
+ * projde vsechny sousedni (sibling) elementy stejneho jmena.
+ * Promenna cyklu @p itEl by nemela byt definovana, protoze je definovana
+ * a inicializovana zde.
+ * @param itEl jmeno iteracni promenne cyklu
+ * @param name nazev elementu
+ * @param parentEl rodicovsky element
+ */
+#define RH_FOREACH_SUB_ELEMENT(itEl, name, parentEl) \
+	for(QDomElement itEl = parentEl.namedItem(name).toElement(); \
+		!itEl.isNull() ; \
+		itEl = itEl.nextSiblingElement(name) )
+
+/** @details
+ * Inicializuje seznam automaticky nacitanych objektu.
+ * @param rootEl korenovy element definice editoru
+ */
+void ResourceHandler::initAutoLoadObjects(const QDomElement & rootEl) {
+	QDomElement autoLoadEl;
+	getSubElement(rootEl, autoLoadEl, "autoload", true);
+
+	xmlObjectNamesToList(autoLoadEl, autoLoadObjects_);
+}
+
+/** @details
+ * Inicializuje seznam sad, ktere se nacitaji spolecne.
+ * @param rootEl korenovy element definice editoru
+ */
+void ResourceHandler::initLoadSets(const QDomElement & rootEl) {
+
+	// connect the menu action to load all
+	QAction * loadAction = MAIN_WINDOW->addLoadAllSetsAction();
+	connect(loadAction, SIGNAL(triggered()),
+		this, SLOT(loadAllSets()) );
+
+	// init all sets
+	QDomElement loadSetsEl;
+	getSubElement(rootEl, loadSetsEl, "loadsets", true);
+
+	RH_FOREACH_SUB_ELEMENT(loadSetEl, "loadset", loadSetsEl) {
+		if(loadSetEl.hasAttribute("name")) {
+			// name of the set
+			QString name = loadSetEl.attribute("name");
+			// add and connect the menu action
+			QAction * loadAction = MAIN_WINDOW->addLoadSetAction(name);
+			connect(loadAction, SIGNAL(triggered()),
+				loadSetsSignalMapper_, SLOT(map()) );
+			loadSetsSignalMapper_->setMapping(
+				loadAction, name);
+
+			// init the background and object lists
+			xmlBackgroundNamesToList(loadSetEl,
+				loadSets_[name].backgrounds);
+			xmlObjectNamesToList(loadSetEl,
+				loadSets_[name].objects);
+		}
+	}
+}
+
+/**
+ * @param parentEl rodicovsky element seznamu objektu
+ * @param objectNames seznam objektu, do ktereho se maji jmena objektu pridat
+ */
+void ResourceHandler::xmlObjectNamesToList(const QDomElement & parentEl,
+		ObjectNamesT & objectNames) {
+	RH_FOREACH_SUB_ELEMENT(objEl, "object", parentEl) {
+		if(objEl.hasAttribute("name")) {
+			objectNames.append(objEl.attribute("name"));
+		}
+	}
+}
+
+/**
+ * @param parentEl rodicovsky element seznamu pozadi
+ * @param backgrounds seznam pozadi, do ktereho se maji jmena pozadi pridat
+ */
+void ResourceHandler::xmlBackgroundNamesToList(const QDomElement & parentEl,
+		BackgroundNamesT & backgrounds) {
+	RH_FOREACH_SUB_ELEMENT(bgEl, "background", parentEl) {
+		if(bgEl.hasAttribute("name")) {
+			backgrounds.insert(bgEl.attribute("name"));
+		}
+	}
+}
+
+
+/** @details
+ * Nacte objekty, ktere jsou vedene jako automaticky nacitane.
+ */
+void ResourceHandler::autoLoadObjects() {
+	foreach(QString objName, autoLoadObjects_) {
+		if(!loadMapObject(objName)) {
+			showError(
+				tr("Autoloaded object")+" "+
+					objName+" "+tr("cannot be loaded.") );
+		}
+	}
+}
+
+/** @details
+ * Nacte objekty, ktere jsou vedene v sade pojmenovane jako @p setName.
+ * @param setName nazev sady, kterou chceme nacist
+ */
+void ResourceHandler::loadSetByName(const QString & setName) {
+	if(loadSets_.contains(setName)) {
+		loadSet(loadSets_.value(setName));
+	}
+}
+
+/** @details
+ * Pokusi se najit sadu podle daneho pozadi.
+ * Objekty v sade nacte.
+ * @param bgName nazev pozadi
+ */
+void ResourceHandler::loadSetByBackground(const QString & bgName) {
+	foreach(LoadSetT set, loadSets_) {
+		if(set.backgrounds.contains(bgName)) {
+			loadSet(set);
+			return;
+		}
+	}
+}
+
+/** @details
+ * Nacte postupne vsechny dostupne sady objektu.
+ */
+void ResourceHandler::loadAllSets() {
+	foreach(LoadSetT set, loadSets_) {
+		loadSet(set);
+	}
+}
+
+/**
+ * @param set sada, jejiz objekty chceme nacist
+ */
+void ResourceHandler::loadSet(const LoadSetT & set) {
+	foreach(QString objName, set.objects) {
+		if(!loadMapObject(objName)) {
+			showError(
+				tr("Object")+" "+objName+" "+
+				tr("in loaded set cannot be loaded.") );
+		}
+	}
 }

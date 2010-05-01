@@ -12,11 +12,15 @@
 #include <QObject>
 #include <QPixmap>
 #include <QString>
+#include <QSet>
+#include <QList>
 #include <QDomElement>
 #include <singleton.h>
 
 /// Zkratka, pro pristup k singletonu ResourceHandler.
 #define RESOURCE_HANDLER SINGLETON_SHORTCUT(ResourceHandler)
+
+class QSignalMapper;
 
 class BombicMap;
 class BombicMapBackground;
@@ -33,6 +37,7 @@ class MapObjectResourceHandler;
  * Poskytuje hlavnim castem programu takovou miru abstrakce,
  * ze mimo system resource handleru neni treba pracovat s daty na disku.
  * Vyuziva funkce z namespace @c ResourceHandlerFunctions.
+ * Nacita automaticky objekty a resi nacitani objektu podle loadsetů.
  */
 class ResourceHandler: public QObject {
 
@@ -61,9 +66,20 @@ class ResourceHandler: public QObject {
 		/// Nacte pozadi mapy podle jmena.
 		BombicMapBackground * loadMapBackground(const QString & name);
 
+		/// Nacte objekty, ktere maji byt automaticky nacteny.
+		void autoLoadObjects();
+
+		/// Nacte sadu objektu podle jmena pozadi.
+		void loadSetByBackground(const QString & bgName);
+
 	public slots:
 		/// Nacte objekt mapy (vybrany uzivatelem).
 		void loadMapObject();
+
+		/// Nacte sadu objektu podle jmena.
+		void loadSetByName(const QString & setName);
+		/// Nacte vsechny sady objektu.
+		void loadAllSets();
 
 	protected:
 		/// Nacte mapu podle jmena.
@@ -75,6 +91,49 @@ class ResourceHandler: public QObject {
 		/// Nacte zdrojovy obrazek.
 		bool loadSourcePixmap(const QDomElement & el,
 			const QString & attrName = "src");
+
+		typedef QList<QString> ObjectNamesT;
+		typedef QSet<QString> BackgroundNamesT;
+
+		/** Mnozina objektu, ktere se nacitaji soucasne.
+		 * Objekty tvori (ne nutne disjunktni) mnoziny,
+		 * ktere je vhodne nacitat najednou,
+		 * napriklad podle nacitaneho pozadi.
+		 */
+		typedef struct {
+			/// Nazvy pozadi, pri jejichz nacteni
+			/// se maji nacist objekty.
+			BackgroundNamesT backgrounds;
+			/// Objekty, ktere se maji nacist.
+			ObjectNamesT objects;
+		} LoadSetT;
+
+		/// Parsovat data v souboru editoru a ulozit je.
+		void parseEditorFile();
+
+		/// Inicializovat automaticky nacitane objekty.
+		void initAutoLoadObjects(const QDomElement & rootEl);
+		/// Inicializovat nacitaci sady.
+		void initLoadSets(const QDomElement & rootEl);
+
+		/// Vlozit jmena objektu z xml do seznamu.
+		void xmlObjectNamesToList(const QDomElement & parentEl,
+				ObjectNamesT & objectNames);
+		/// Vlozit jmena pozadi z xml do seznamu.
+		void xmlBackgroundNamesToList(const QDomElement & parentEl,
+				BackgroundNamesT & backgrounds);
+
+		/// Nacist sadu objektu.
+		void loadSet(const LoadSetT & set);
+
+		/// Mapovani nacitacich polozek menu na sady.
+		QSignalMapper * loadSetsSignalMapper_;
+
+		/// Nacitaci sady.
+		QHash<QString, LoadSetT> loadSets_;
+
+		/// Objekty, ktere maji byt nacteny automaticky.
+		ObjectNamesT autoLoadObjects_;
 
 		/// Zdrojovy obrazek.
 		QPixmap sourcePixmap_;

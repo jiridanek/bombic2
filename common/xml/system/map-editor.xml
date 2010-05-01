@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<editor>
+	<autoload>
+		<object name="bonus_flame" />
+		<object name="bonus_bomb" />
+		<object name="bonus_megabomb" />
+		<object name="bonus_speed" />
+		<object name="bonus_timer" />
+		<object name="bonus_slider" />
+		<object name="bonus_kicker" />
+		<object name="bonus_shield" />
+		<object name="bonus_live" />
+	</autoload>
+	<loadsets>
+		<loadset name="forest">
+			<background name="bg_forest" />
+			<object name="box_barrel" />
+			<object name="floor_deadbody" />
+			<object name="wall_stone" />
+			<object name="wall_chest" />
+			<object name="wall_hut" />
+			<object name="wall_winnersculpture" />
+			<object name="wall_cave" />
+			<object name="wall_rock" />
+			<object name="wall_cabin" />
+		</loadset>
+		<loadset name="concrete">
+			<background name="bg_concrete" />
+			<object name="box_container" />
+			<object name="wall_block_single" />
+			<object name="wall_block_l" />
+			<object name="wall_block_r" />
+			<object name="wall_block_lr" />
+			<object name="wall_block_t" />
+			<object name="wall_block_b" />
+			<object name="wall_block_tb" />
+			<object name="wall_block_c" />
+			<object name="wall_hole" />
+			<object name="wall_chest_1" />
+			<object name="wall_chest_2" />
+			<object name="wall_chest_3" />
+			<object name="wall_oblong" />
+			<object name="wall_rift" />
+			<object name="wall_redlight" />
+			<object name="wall_machine" />
+		</loadset>
+		<loadset name="dream">
+			<background name="bg_dream" />
+			<object name="box_glass" />
+			<object name="wall_becher" />
+		</loadset>
+		<loadset name="all_creatures">
+			<object name="creature_cloud" />
+			<object name="creature_ghost" />
+			<object name="creature_moon" />
+			<object name="creature_rat_red" />
+			<object name="creature_rat" />
+			<object name="creature_slug" />
+			<object name="creature_trap_red" />
+			<object name="creature_trap" />
+			<object name="creature_tv" />
+		</loadset>
+	</loadsets>
+</editor>

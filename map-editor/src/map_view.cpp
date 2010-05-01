@@ -95,6 +95,9 @@ void MapView::openEmptyMap() {
 		// and scene for it
 		scene_ = new MapScene(map_, this);
 		setScene(scene_);
+
+		RESOURCE_HANDLER->loadSetByBackground(
+			map_->background()->name());
 	}
 }
 
@@ -112,6 +115,9 @@ void MapView::openMap() {
 		// and scene for it
 		scene_ = new MapScene(map_, this);
 		setScene(scene_);
+
+		RESOURCE_HANDLER->loadSetByBackground(
+			map_->background()->name());
 	}
 }
 
@@ -129,6 +135,9 @@ void MapView::changeMap(BombicMap * newMap) {
 	map_ = newMap;
 	scene_ = new MapScene(map_, this);
 	setScene(scene_);
+
+	RESOURCE_HANDLER->loadSetByBackground(
+		map_->background()->name());
 }
 
 /** @details
