@@ -69,8 +69,6 @@ class MapView: public QGraphicsView {
 	public slots:
 		/// Nastavi zoom mapy.
 		void setZoom(qreal zoomQuotient);
-		/// Obnovit oblast sceny.
-		void updateScene(const QList<QRectF> & rects);
 
 		/// Otevrit novou prazdnou mapu.
 		void openEmptyMap();

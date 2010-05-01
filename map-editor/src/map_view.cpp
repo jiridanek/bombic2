@@ -44,6 +44,8 @@ MapView::MapView(QWidget * parent):
 
 	SINGLETON_CONSTRUCT;
 
+	setViewportUpdateMode(SmartViewportUpdate);
+
 	// add docked widgets to main window
 	MAIN_WINDOW->addMapView(this);
 	MAIN_WINDOW->addWorkingObjectLabel(workingObjectLabel_);
@@ -264,7 +266,8 @@ void MapView::setZoom(qreal zoomQuotient) {
 	QApplication::restoreOverrideCursor();
 }
 
-/** @details
+/* * @details
+ * **************** NAHRAZENO setViewportUpdateMode ********************
  * Tento slot byva napojen na @c QGraphicsScene::changed(), ktery je vyvolan
  * po zmene sceny pri navrtu do event loop. To je sice vymysleno pekne,
  * @c updateScene() se nevola kvuli kazde kravine a vse krasne funguje.
@@ -282,7 +285,7 @@ void MapView::setZoom(qreal zoomQuotient) {
  * Treti kategorie, kdy uz mame obdelniku dokonce vice
  * nez je pixelu v cele scene se s obdelniky nepracuje a obnovi se cela scena.
  * @param rects obdelniky, ktere se maji obnovit
- */
+ *
 void MapView::updateScene(const QList<QRectF> & rects) {
 	// get dimensions
 	qreal x, y, w, h;
@@ -308,6 +311,7 @@ void MapView::updateScene(const QList<QRectF> & rects) {
 
 	QGraphicsView::updateScene(myRects);
 }
+*/
 
 /** @details
  * Evokuje signal leaved().
