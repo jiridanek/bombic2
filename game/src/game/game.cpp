@@ -41,7 +41,8 @@ Game::Game(const GameBase & base, GameTools * gameTools,
 				bool deathmatch, bool bombsatend):
 			tools(gameTools), remaining_creatures_(0),
 			remaining_periods_(500),
-			deathmatch_(deathmatch), bombsatend_(bombsatend) {
+			deathmatch_(deathmatch), bombsatend_(bombsatend),
+			split_screen_(CONFIG->split_screen()) {
 
 	SINGLETON_CONSTRUCT;
 	// zkusit nahrat umistene a vygenerovat ostatni objekty
@@ -358,6 +359,7 @@ void Game::play(SDL_Surface* window){
 	int last_time = SDL_GetTicks(),
 		time_to_use = 0, this_time=last_time;
 	bool at_end=false;
+
 	set_players_view_(window);
 	// iterace dokud neni vyvolano zavreni okna
 	SDLKey key;
@@ -379,6 +381,7 @@ void Game::play(SDL_Surface* window){
 		SDL_PumpEvents();// obnoveni stavu klavesnice
 
 		// vykresleni scen pro jednotlive hrace
+		check_players_view_(window);
 		draw_(window);
 		// cekani - chceme maximalni pocet obrazku za sekundu
 // 		fps_last= SDL_fps(fps_last, fps);
@@ -412,13 +415,95 @@ void Game::play(SDL_Surface* window){
 }
 
 /** @details
+ * Podle nastavení v configu, počtu a pozice hráčů
+ * zkontroluje, jestli není potřeba rozdělit či sloučit obrazovku.
+ * @param window surface okna, které rozděluji
+ */
+void Game::check_players_view_(SDL_Surface* window) {
+	if(CONFIG->split_screen()) {
+		// pohled musi byt vzdy rozdeleny
+		if(!split_screen_) {
+			split_screen_ = true;
+			set_players_view_(window);
+		}
+		return;
+	}
+	// obdelnik jedineho pohledu na mapu
+	SDL_Rect win_view;
+	set_one_win_view_(win_view, window);
+
+	// posunuti mapy
+	Sint16 shift_x, shift_y;
+	count_players_average_(shift_x, shift_y);
+
+	shift_x = count_rect_shift_(shift_x,
+			win_view.w/2, map_width()*CELL_SIZE),
+	shift_y = count_rect_shift_(shift_y,
+			win_view.h/2, map_height()*CELL_SIZE);
+
+	// velikost hranicni oblasti
+	Uint16 split_border;
+	if(split_screen_) {
+		// zjistujeme jestli obrazovku sloucit
+		// neslucujme obrazovku predcasne
+		split_border = CELL_SIZE/2*3;
+	} else {
+		// zjistujeme jestli obrazovku rozdelit
+		split_border = CELL_SIZE;
+	}
+
+	// hranicni souradnice
+	Uint16 from_x = shift_x + split_border;
+	Uint16 from_y = shift_y + split_border;
+	Uint16 to_x = shift_x + win_view.w - split_border;
+	Uint16 to_y = shift_y + win_view.h - split_border;
+
+
+	bool old_split_screen = split_screen_;
+	split_screen_ = false;
+
+	for(players_it it = players_.begin() ; it!=players_.end() ; ++it){
+		bool player_out =
+			from_x > it->second.player->getX() ||
+			to_x < it->second.player->getX() ||
+			from_y > it->second.player->getY() ||
+			to_y < it->second.player->getY();
+		if(player_out) {
+			split_screen_ = true;
+		}
+	}
+	if(split_screen_ != old_split_screen) {
+		set_players_view_(window);
+	}
+}
+
+/** @details
+ * Nastavi obdelnik @p win_view, ktery bude pouzit jako jediny pohled v okne.
+ * Typicky přes celé okno, velikost je však omezena.
+ * @param[out] win_view obdelnik pohledu
+ * @param window surface okna, které rozděluji
+ */
+void Game::set_one_win_view_(SDL_Rect & win_view, SDL_Surface * window) {
+	Uint16 win_w = window->w, win_h = window->h,
+		map_w = CELL_SIZE*
+			min( GAME_PLAYER_VIEW_MAX_WIDTH, map_width() ),
+		map_h = CELL_SIZE*
+			min( GAME_PLAYER_VIEW_MAX_HEIGHT, map_height() );
+
+	win_view.w = min(win_w, map_w);
+	win_view.h = min(win_h, map_h);
+	win_view.x = map_w < win_w ? (win_w-map_w)/2 : 0;
+	win_view.y = map_h < win_h ? (win_h-map_h)/2 : 0;
+}
+
+/** @details
  * Podle nastavení v configu a počtu hráčů
  * rozdělí hrací plochu do několika pohledů.
  * @param window surface okna, které rozděluji
  */
 void Game::set_players_view_(SDL_Surface* window){
 	clear_surface(Color::black, window);
-	switch(CONFIG->split_screen() ? players_.size() : 1){
+	switch(split_screen_ ? players_.size() : 1){
 		case 0: break;
 		case 1:
 			set_players_view_1_(window);
@@ -439,16 +524,8 @@ void Game::set_players_view_(SDL_Surface* window){
  * @param window surface okna, které rozděluji
  */
 void Game::set_players_view_1_(SDL_Surface * window){
-	Uint16 win_w = window->w, win_h = window->h,
-		map_w = CELL_SIZE*
-			min( GAME_PLAYER_VIEW_MAX_WIDTH, map_width() ),
-		map_h = CELL_SIZE*
-			min( GAME_PLAYER_VIEW_MAX_HEIGHT, map_height() );
-	SDL_Rect & win_view = players_.begin()->second.win_view;
-	win_view.w = min(win_w, map_w);
-	win_view.h = min(win_h, map_h);
-	win_view.x = map_w < win_w ? (win_w-map_w)/2 : 0;
-	win_view.y = map_h < win_h ? (win_h-map_h)/2 : 0;
+	set_one_win_view_(
+		players_.begin()->second.win_view, window );
 }
 
 /** @details
@@ -568,6 +645,23 @@ Uint16 Game::count_rect_shift_(Uint16 player_coor,
 }
 
 /** @details
+ * Spocita posunuti mapy aby byl prumer pozic hracu uprostred.
+ * @param[out] shift_x posunuti po ose x
+ * @param[out] shift_y posunuti po ose y
+ */
+void Game::count_players_average_(Sint16 & shift_x, Sint16 & shift_y) {
+	shift_x = 0;
+	shift_y = 0;
+
+	for(players_it it = players_.begin() ; it!=players_.end() ; ++it){
+		shift_x += it->second.player->getX();
+		shift_y += it->second.player->getY();
+	}
+
+	shift_x /= players_.size();
+	shift_y /= players_.size();
+}
+/** @details
  * Vykreslí pohledy a panely hráčů.
  * @param window surface, do kterého máme kreslit
  */
@@ -575,7 +669,7 @@ void Game::draw_(SDL_Surface* window){
 	if(players_.empty()) return;
 
 	SDL_Rect * p_view = 0;
-	if(!CONFIG->split_screen()){
+	if(!split_screen_){
 		// p_view je jeden nemenny
 		p_view = &players_.begin()->second.win_view;
 		SDL_SetClipRect(window, p_view);
@@ -584,7 +678,7 @@ void Game::draw_(SDL_Surface* window){
 	}
 	for(players_it player_it = players_.begin() ;
 			player_it!=players_.end() ; ++player_it){
-		if(CONFIG->split_screen()){
+		if(split_screen_){
 			// p_view je pro kazdeho hrace jiny
 			p_view = &player_it->second.win_view;
 			SDL_SetClipRect(window, p_view);
@@ -638,33 +732,32 @@ void Game::draw_players_view_(SDL_Surface* window, Uint16 player_num){
  * vykresluje prvně vše v pozadí, pak vše v popředí.
  * @param window surface, do kterého máme kreslit
  */
+ #include <iostream>
 void Game::draw_one_view_(SDL_Surface* window){
 	// obnovim map_view
-	Sint16 i, shift_x=0, shift_y=0;
-
-	for(players_it it = players_.begin() ; it!=players_.end() ; ++it){
-		shift_x += it->second.player->getX();
-		shift_y += it->second.player->getY();
-	}
+	Sint16 shift_x, shift_y;
 	player_t & game_player = players_.begin()->second;
-	shift_x = count_rect_shift_(shift_x / players_.size(),
+
+	count_players_average_(shift_x, shift_y);
+
+	shift_x = count_rect_shift_(shift_x + game_player.shaker.getDiffX(),
 			game_player.win_view.w/2, map_width()*CELL_SIZE),
-	shift_y = count_rect_shift_(shift_y / players_.size(),
+	shift_y = count_rect_shift_(shift_y + game_player.shaker.getDiffY(),
 			game_player.win_view.h/2, map_height()*CELL_SIZE);
-
-	shift_x += game_player.shaker.getDiffX();
-	shift_y += game_player.shaker.getDiffY();
-
 
 	game_player.map_view.x= game_player.win_view.x - shift_x;
 	game_player.map_view.y= game_player.win_view.y - shift_y;
+
+	Uint16 from_x = shift_x / CELL_SIZE;
+	Uint16 from_y = shift_y / CELL_SIZE;
+	Uint16 to_x = (shift_x+game_player.win_view.w) / CELL_SIZE;
+	Uint16 to_y = (shift_y+game_player.win_view.h) / CELL_SIZE;
+
 	// vykreslim pozadi a pak prisery
-	for(i=0 ; i<2 ; ++i){
-		draw_map_(i==0, window, game_player.map_view,
-			shift_x/CELL_SIZE, shift_y/CELL_SIZE,
-			(shift_x+game_player.win_view.w)/CELL_SIZE,
-			(shift_y+game_player.win_view.h)/CELL_SIZE );
-	}
+	draw_map_(true, window, game_player.map_view,
+		from_x, from_y, to_x, to_y);
+	draw_map_(false, window, game_player.map_view,
+		from_x, from_y, to_x, to_y);
 }
 
 /** @details

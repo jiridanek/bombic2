@@ -143,6 +143,14 @@ class Game {
 		/// Dvourozměrné pole mapy, na každém políčku seznam objektů na něm položených.
 		map_array_t map_array_;
 
+
+
+		/// Nastavení obdélníku jako jedíného pohledu na obrazovce.
+		void set_one_win_view_(SDL_Rect & win_view, SDL_Surface * window);
+
+		/// Zkontrolovat není-li třeba rozdělit či sloučit obrazovku.
+		void check_players_view_(SDL_Surface* window);
+
 		/// Nastavení pohledů pro hráče.
 		void set_players_view_(SDL_Surface *window);
 		/// Nastavení pohledů - jeden pohled na obrazovce.
@@ -155,6 +163,8 @@ class Game {
 		/// Spočítá posun mapy podle pozice hráče.
 		Uint16 count_rect_shift_(Uint16 player_coor,
 				Uint16 rect_half_size, Uint16 map_size) const;
+		void count_players_average_(Sint16 & shift_x, Sint16 & shift_y);
+
 		/// Vykreslení obrazovky.
 		void draw_(SDL_Surface * window);
 		/// Vykreslení pohledu hráče.
@@ -220,6 +230,8 @@ class Game {
 		/// Hráči hry.
 		players_t players_;
 
+		/// Jestli je aktualne rozdelena obrazovka.
+		bool split_screen_;
 };
 
 #endif
