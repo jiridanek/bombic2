@@ -56,9 +56,9 @@ MenuOptions::MenuOptions():
 	AG_AddEvent(items_.back(), "window-mousebuttondown", handlerToggleFullscreen, 0);
 	AG_AddEvent(checkbox, "window-mousebuttondown", handlerToggleFullscreen, 0);
 
-	// zvuk
-	createCheckboxItem(LANG_MENU(LANG_OPTIONS, LANG_SOUND),
-		&sound_);
+	// zvuk - neni implementovano
+// 	createCheckboxItem(LANG_MENU(LANG_OPTIONS, LANG_SOUND),
+// 		&sound_);
 
 	// back
 	item = createItem(LANG_MENU(LANG_OPTIONS, LANG_SAVE));

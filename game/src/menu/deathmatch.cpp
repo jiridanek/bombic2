@@ -56,9 +56,9 @@ MenuDeathmatch::MenuDeathmatch(){
 	// prisery
 	createCheckboxItem(LANG_MENU(LANG_DEATHMATCH, LANG_CREATURES),
 		&creatures);
-	// bomby na konci kola
-	createCheckboxItem(LANG_MENU(LANG_DEATHMATCH, LANG_BOMBS),
-		&bombs_at_end);
+	// bomby na konci kola - neni zatim implementovano
+// 	createCheckboxItem(LANG_MENU(LANG_DEATHMATCH, LANG_BOMBS),
+// 		&bombs_at_end);
 	// back
 	item = createItem(LANG_MENU(LANG_DEATHMATCH, LANG_BACK));
 	AG_SetEvent(item, "window-mousebuttondown", handlerBack, 0);
