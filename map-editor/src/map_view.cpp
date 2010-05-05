@@ -45,6 +45,7 @@ MapView::MapView(QWidget * parent):
 	SINGLETON_CONSTRUCT;
 
 	setViewportUpdateMode(SmartViewportUpdate);
+	setMouseTracking(true);
 
 	// add docked widgets to main window
 	MAIN_WINDOW->addMapView(this);
