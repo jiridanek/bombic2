@@ -75,8 +75,7 @@ bool is_dir(const std::string & path){
 	AG_FileInfo file_info;
 	if(AG_GetFileInfo(path.c_str(), &file_info)==-1)
 		return false;
-	return file_info.type==AG_FILE_DIRECTORY
-		&& file_info.perms & AG_FILE_READABLE;
+	return file_info.type==AG_FILE_DIRECTORY;
 }
 
 bool is_file(const std::string &path){

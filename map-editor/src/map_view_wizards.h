@@ -16,7 +16,7 @@ class QLineEdit;
 
 /** Pruvodce zmenou rozmeru mapy.
  * Zmena rozmeru mapy je z implementacniho hlediska velmi slozita operace.
- * Pokud mapu zmensujeme, musime navic dbat na to, aby uzivatel neprisel
+ * Pokud mapu zmensujeme, musime navic dbat na to, aby uzivatel neprisel o
  * rozdelanou praci, kdyby mapu zmensil vice nez chce.
  * Z tohoto duvodu je zde pruvodce, kde uzivatel nastavi nove rozmery mapy,
  * je vytvorena nova mapa s novymi rozmery a objekty ze stare mapy jsou

@@ -43,6 +43,10 @@ MainWindow::MainWindow() {
 		false, Qt::CTRL + Qt::Key_S, FileMenu);
 	addAction(SaveMapAsAction, tr("Save map &as"),
 		false, Qt::CTRL + Qt::SHIFT + Qt::Key_S, FileMenu);
+	
+	connect(menus_[FileMenu]->addAction(tr("&Quit")),
+		SIGNAL(triggered()),
+		this, SLOT(close()) );
 
 	actions_[MapSizeAction] =
 		menus_[MapMenu]->addAction(tr("Map &size"));
