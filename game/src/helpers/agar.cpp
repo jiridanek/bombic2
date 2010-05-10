@@ -14,10 +14,9 @@ void agar_init(SDL_Surface * window,
 		cerr << AG_GetError() << endl;
 		throw 1;
 	}
-	AG_SetString(agConfig, "font.path", font_path);
+	AG_SetString(agConfig, "font-path", font_path);
 	AG_SetString(agConfig, "font.face", font_face);
 	AG_SetInt(agConfig, "font.size", font_size);
-
 	/* Initialize Agar-GUI. */
 	if(AG_InitVideoSDL(window, 0) == -1) {
 		cerr << AG_GetError() << endl;
