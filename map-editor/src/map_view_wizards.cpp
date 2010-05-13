@@ -6,15 +6,17 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QSize>
-#include <QLineEdit>
+#include <QComboBox>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QtAlgorithms>
 
 #include <constants.h>
 
 #include "bombic/map.h"
 #include "bombic/map_background.h"
 #include "main_window.h"
+#include "resource_handler.h"
 
 #include "resource_handlers/resource_handler_functions.h"
 
@@ -99,6 +101,7 @@ void MapSizeWizard::accept() {
  */
 MapBackgroundWizard::MapBackgroundWizard():
 		map_(0) {
+	// set the wizard and its page
 	QWizardPage * page = new QWizardPage;
 
 	setOptions(QWizard::NoBackButtonOnStartPage);
@@ -113,9 +116,13 @@ MapBackgroundWizard::MapBackgroundWizard():
 
 	addPage(page);
 
+	// create page widgets
 	QGridLayout * layout = new QGridLayout(page);
 
-	bgName_ = new QLineEdit(this);
+	bgName_ = new QComboBox(this);
+	bgName_->setEditable(true);
+	bgName_->addItems(RESOURCE_HANDLER->backgroundsInSets().toList());
+
 	QLabel * label = new QLabel(tr("Map back&ground:"), this);
 	label->setBuddy(bgName_);
 
@@ -123,6 +130,7 @@ MapBackgroundWizard::MapBackgroundWizard():
 	connect(browseButton, SIGNAL(clicked()),
 		this, SLOT(browse()) );
 
+	// and add them to the layout
 	layout->addWidget(label, 0, 0);
 	layout->addWidget(bgName_, 0, 1);
 	layout->addWidget(browseButton, 0, 2);
@@ -134,7 +142,7 @@ MapBackgroundWizard::MapBackgroundWizard():
  */
 void MapBackgroundWizard::setMap(BombicMap * map) {
 	map_ = map;
-	bgName_->setText(map->background()->name());
+	selectBgName(map->background()->name());
 }
 
 /** @details
@@ -144,11 +152,11 @@ void MapBackgroundWizard::setMap(BombicMap * map) {
 void MapBackgroundWizard::accept() {
 	QWizard::accept();
 
-	if(map_->background()->name() == bgName_->text()) {
+	if(map_->background()->name() == bgName_->currentText()) {
 		return;
 	}
 
-	BombicMap * newMap = map_->createCopy(bgName_->text());
+	BombicMap * newMap = map_->createCopy(bgName_->currentText());
 	if(newMap) {
 		emit mapBackgroundChanged(newMap);
 		map_ = 0;
@@ -164,8 +172,26 @@ void MapBackgroundWizard::browse() {
 		MAIN_WINDOW, tr("Choose background"), "",
 		tr("Bombic map background files")+" (*"XML_FILE_EXTENSION")" );
 	if(!filename.isEmpty()) {
-		bgName_->setText(
+		selectBgName(
 			ResourceHandlerFunctions::attrNameValueFromName(
 				filename ) );
 	}
+}
+
+/** @details
+ * Pokud jmeno pozadi zatim ve vyberu neni,
+ * jmeno prida.
+ * Kazdopadne toto pozadi vybere.
+ * @param name jmeno vybiraneho pozadi
+ */
+void MapBackgroundWizard::selectBgName(const QString & name) {
+	// index of the name
+	int index = bgName_->findText(name);
+	if(index == -1) {
+		// the name is not in box - insert it
+		index = bgName_->count();
+		bgName_->addItem(name);
+	}
+	// select the item
+	bgName_->setCurrentIndex(index);
 }

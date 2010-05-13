@@ -12,7 +12,7 @@
 
 class BombicMap;
 class QSpinBox;
-class QLineEdit;
+class QComboBox;
 
 /** Pruvodce zmenou rozmeru mapy.
  * Zmena rozmeru mapy je z implementacniho hlediska velmi slozita operace.
@@ -85,10 +85,13 @@ class MapBackgroundWizard: public QWizard {
 		void browse();
 
 	private:
+		/// Vybrat jmeno pozadi.
+		void selectBgName(const QString & name);
+
 		/// Mapa, pro kterou aktualne delame pruvodce.
 		BombicMap * map_;
 		/// Policko pro nastaveni pozadi mapy.
-		QLineEdit * bgName_;
+		QComboBox * bgName_;
 };
 
 #endif

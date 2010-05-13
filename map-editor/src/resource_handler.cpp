@@ -396,6 +396,18 @@ void ResourceHandler::xmlBackgroundNamesToList(const QDomElement & parentEl,
 	}
 }
 
+/** @details
+ * Ziska z nacitacich sad jmena pozadi.
+ * @return Jmena pozadi z nacitacich sad.
+ */
+ResourceHandler::BackgroundNamesT ResourceHandler::backgroundsInSets() {
+	BackgroundNamesT backgrounds;
+	// unite backgrounds from all sets
+	foreach(LoadSetT set, loadSets_) {
+		backgrounds.unite(set.backgrounds);
+	}
+	return backgrounds;
+}
 
 /** @details
  * Nacte objekty, ktere jsou vedene jako automaticky nacitane.

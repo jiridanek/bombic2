@@ -72,6 +72,12 @@ class ResourceHandler: public QObject {
 		/// Nacte sadu objektu podle jmena pozadi.
 		void loadSetByBackground(const QString & bgName);
 
+		typedef QList<QString> ObjectNamesT;
+		typedef QSet<QString> BackgroundNamesT;
+
+		/// Jmena pozadi ulozena v nacitacich sadach.
+		BackgroundNamesT backgroundsInSets();
+
 	public slots:
 		/// Nacte objekt mapy (vybrany uzivatelem).
 		void loadMapObject();
@@ -91,9 +97,6 @@ class ResourceHandler: public QObject {
 		/// Nacte zdrojovy obrazek.
 		bool loadSourcePixmap(const QDomElement & el,
 			const QString & attrName = "src");
-
-		typedef QList<QString> ObjectNamesT;
-		typedef QSet<QString> BackgroundNamesT;
 
 		/** Mnozina objektu, ktere se nacitaji soucasne.
 		 * Objekty tvori (ne nutne disjunktni) mnoziny,
