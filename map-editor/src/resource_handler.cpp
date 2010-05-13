@@ -420,6 +420,7 @@ void ResourceHandler::autoLoadObjects() {
 					objName+" "+tr("cannot be loaded.") );
 		}
 	}
+	MAP_OBJECT_PALETTE->unselectObject();
 }
 
 /** @details
@@ -466,4 +467,5 @@ void ResourceHandler::loadSet(const LoadSetT & set) {
 				tr("in loaded set cannot be loaded.") );
 		}
 	}
+	MAP_OBJECT_PALETTE->unselectObject();
 }

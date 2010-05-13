@@ -10,6 +10,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QtAlgorithms>
+#include <QMessageBox>
 
 #include <constants.h>
 
@@ -89,6 +90,11 @@ void MapSizeWizard::accept() {
 	if(newMap) {
 		emit mapResized(newMap);
 		map_ = 0;
+	} else {
+		QMessageBox::warning(this, tr("Map can't be resized"),
+			tr("Map can't be resized,\n"
+				"you should move or remove all objects "
+				"from stripped area.") );
 	}
 }
 
@@ -111,7 +117,8 @@ MapBackgroundWizard::MapBackgroundWizard():
 	page->setSubTitle(
 		tr("Change map background - the background of fields"
 			" and peripheral walls.\n"
-			" If the new background takes bigger area, you have to remove"
+			" If the bounding walls of new background"
+			" take bigger area, you have to remove"
 			" objects in the taken area." ) );
 
 	addPage(page);
@@ -160,6 +167,11 @@ void MapBackgroundWizard::accept() {
 	if(newMap) {
 		emit mapBackgroundChanged(newMap);
 		map_ = 0;
+	} else {
+		QMessageBox::warning(this, tr("Map background can't be replaced"),
+			tr("Background of map can't be replaced,\n"
+				"you should move or remove all objects "
+				"from area of new bounding walls.") );
 	}
 }
 

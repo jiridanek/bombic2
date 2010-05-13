@@ -1,5 +1,6 @@
 
 #include <QApplication>
+#include <QAction>
 
 #include "map.h"
 
@@ -11,6 +12,8 @@
 #include "../generators/bonus_generator.h"
 
 #include "../resource_handlers/map_resource_handler.h"
+
+#include "../main_window.h"
 
 /** @details
  * Zkonstruuje mapu o rozmerech @p width, @p height s pozadim @p background.
@@ -236,7 +239,7 @@ void BombicMap::insert(BombicMapObject * object,
 			}
 		}
 	}
-	modified_ = true;
+	setModified();
 }
 
 /** @details
@@ -263,7 +266,7 @@ void BombicMap::remove(BombicMapObject * object) {
 			updateGeneratorsBlocking(fields_[x][y]);
 		}
 	}
-	modified_ = true;
+	setModified();
 }
 
 /** @details
@@ -481,7 +484,7 @@ void BombicMap::setGeneratedObjectsCount(ObjectListT & objList,
 			addGeneratedMapObject(objList, object->createCopy());
 		}
 	}
-	modified_ = true;
+	setModified();
 
 	QApplication::restoreOverrideCursor();
 }
@@ -558,7 +561,7 @@ const QString & BombicMap::filename() {
  */
 void BombicMap::setName(const QString & name) {
 	name_ = name;
-	modified_ = true;
+	setModified();
 }
 
 /**
@@ -566,7 +569,7 @@ void BombicMap::setName(const QString & name) {
  */
 void BombicMap::setFilename(const QString & filename) {
 	filename_ = filename;
-	modified_ = true;
+	setModified();
 }
 
 /**
@@ -596,4 +599,5 @@ bool BombicMap::wasModified() {
  */
 void BombicMap::setModified(bool modified) {
 	modified_ = modified;
+	MAIN_WINDOW->action(MainWindow::SaveMapAction)->setEnabled(modified);
 }

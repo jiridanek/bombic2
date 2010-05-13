@@ -2,6 +2,7 @@
 #include <QDockWidget>
 #include <QVBoxLayout>
 #include <QMenuBar>
+#include <QToolBar>
 #include <QMenu>
 #include <QAction>
 #include <QCloseEvent>
@@ -43,7 +44,7 @@ MainWindow::MainWindow() {
 		false, Qt::CTRL + Qt::Key_S, FileMenu);
 	addAction(SaveMapAsAction, tr("Save map &as"),
 		false, Qt::CTRL + Qt::SHIFT + Qt::Key_S, FileMenu);
-	
+
 	connect(menus_[FileMenu]->addAction(tr("&Quit")),
 		SIGNAL(triggered()),
 		this, SLOT(close()) );
@@ -61,6 +62,14 @@ MainWindow::MainWindow() {
 
 	addAction(GenerateObjectsAction, tr("&Generate random objects"),
 		true, Qt::CTRL + Qt::Key_G, ViewMenu);
+
+
+	QToolBar * fileToolBar = addToolBar(tr("File"));
+	fileToolBar->addAction(actions_[OpenMapAction]);
+	fileToolBar->addAction(actions_[SaveMapAction]);
+
+	QToolBar * viewToolBar = addToolBar(tr("View"));
+	viewToolBar->addAction(actions_[GenerateObjectsAction]);
 
 }
 MainWindow::~MainWindow() {
