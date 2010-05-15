@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Bombic 2
+Name[cs]=Bombič 2
+GenericName=Bombic game with creatures and bonuses
+Comment=Be the mistic hero and fight with creatures only using bombs.
+Icon=bombic.png
+Exec=bombic
+Terminal=false
+StartupNotify=false
+Categories=Game;ActionGame;
+

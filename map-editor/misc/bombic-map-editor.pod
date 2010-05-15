@@ -1,0 +1,27 @@
+=head1 NAME
+
+Bombic 2 map editor - editor of maps for game Bombic 2
+
+=head1 SYNOPSIS
+
+bombic-map-editor
+
+=head1 DESCRIPTION
+
+Change some old or create your own map intuitively.
+It is very intuitive graphics editor for cooperative mode as deathmatch maps
+(since there is no different between them).
+
+=head1 OPTIONS
+
+No options are relevant.
+
+=head1 SEE ALSO
+
+Homepage of the game (and the editor too) is http://bombic2.sourceforge.net/.
+
+=head1 AUTHOR
+
+This manual page (as the editor) was written by
+Karel Fiser <Karl.von.Bahnhof@centrum.cz>
+

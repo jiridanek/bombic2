@@ -1,22 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<map name="map_concrete_test" height="12" width="16" background="bg_concrete">
-
-	<players x="1" y="2">
-		<player0 x="1" y="2" />
-		<player1 x="7" y="10" />
-		<player2 x="7" y="3" />
-		<player3 x="3" y="10" />
-	</players>
-
-	<boxes 	name="box_container" random_generated="3">
-	</boxes>
-
-	<bonuses name="bonus_timer" random_generated="3" />
-
-	<creatures name="creature_slug" random_generated="1" />
-	<dont_generate>
-		<nocreature x="1" y="4" />
-		<nocreature x="1" y="14" />
-	</dont_generate>
-
+<map width="16" height="12" name="map_concrete_test" background="bg_concrete" >
+    <players x="1" y="2" >
+        <player1 x="7" y="10" />
+        <player2 x="3" y="3" />
+        <player3 x="3" y="10" />
+        <player0 x="1" y="2" />
+    </players>
+    <boxes random_generated="3" name="box_container" />
+    <creatures random_generated="1" name="creature_slug" />
+    <bonuses random_generated="3" name="bonus_timer" />
+    <dont_generate>
+        <nocreature x="1" y="4" />
+    </dont_generate>
 </map>

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Bombic 2 - map editor
+Name[cs]=Bombič 2 - editor map
+GenericName=Editor to view, change and create maps to game Bombic 2.
+Comment=Change some old or create your own map intuitively for cooperative mode even for deathmatch.
+Icon=bombic-map-editor.png
+Exec=bombic-map-editor
+Terminal=false
+StartupNotify=false
+Categories=Game;ActionGame;
+

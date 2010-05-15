@@ -1,0 +1,27 @@
+=head1 NAME
+
+Bombic 2 - another Dyna Blaster remake
+
+=head1 SYNOPSIS
+
+bombic
+
+=head1 DESCRIPTION
+
+Bombic 2 is action real-time game with lot of bonuses and creature.
+It provides cooperative mode for 1 to 4 players on one PC.
+Also you can play deathmatch in 2, 3 or 4 players.
+
+=head1 OPTIONS
+
+No options are relevant.
+
+=head1 SEE ALSO
+
+Homepage of the game is http://bombic2.sourceforge.net/.
+
+=head1 AUTHOR
+
+This manual page (as the game) was written by
+Karel Fiser <Karl.von.Bahnhof@centrum.cz>
+
