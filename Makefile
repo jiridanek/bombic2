@@ -7,14 +7,24 @@
 # DESTDIR is also used when creating a deb package!
 DESTDIR=/usr/local
 
-# DATADIR=games  install to  /usr/local/share/games/bombic
-# DATADIR=.      install to  /usr/local/share/bombic
+# DATADIR=games  install to  DESTDIR/share/games/TARGETDIR
+# DATADIR=.      install to  DESTDIR/share/TARGETDIR
 DATADIR=games
 
-TARGET=bombic
+TARGETDIR=bombic2
+
+# Path to directory for installed data.
+INSTALLPATH=$(DESTDIR)/share/$(DATADIR)/$(TARGETDIR)
+
+# Define the install directory for data to sources
+# but if you are not planning the instalation
+# let it empty to point data relatively from binaries
+# INSTALLDIR_DEFINE=INSTALL_DIR=\\\"$(INSTALLPATH)\\\"
+INSTALLDIR_DEFINE=DEFAULT_INSTALL_DIR
 
 MAKE_IN=make -C
-QT_PROJECT=qmake -project INCLUDEPATH+=../common/src QT+=xml -o bombic-map-editor.pro
+QT_PROJECT=qmake -project -o bombic-map-editor.pro \
+	INCLUDEPATH+=../common/src QT+=xml DEFINES+='$(INSTALLDIR_DEFINE)'
 QT_MAKEFILE=qmake -makefile bombic-map-editor.pro
 CD=cd
 DOXYGEN=doxygen
@@ -28,7 +38,7 @@ all: game map-editor
 
 # Build game
 game:
-	$(MAKE_IN) game
+	$(MAKE_IN) game DEFINES=-D$(INSTALLDIR_DEFINE)
 
 # Build map-editor
 map-editor:
@@ -52,14 +62,14 @@ install: misc
 	mkdir -p '$(DESTDIR)/share/applications' 
 	mkdir -p '$(DESTDIR)/share/pixmaps'
 	mkdir -p '$(DESTDIR)/share/man/man6'
-	mkdir -p '$(DESTDIR)/share/$(DATADIR)/$(TARGET)/common'
-	mkdir -p '$(DESTDIR)/share/$(DATADIR)/$(TARGET)/game'
+	mkdir -p '$(INSTALLPATH)/common'
+	mkdir -p '$(INSTALLPATH)/game'
 	install -D -m755 game/bombic  '$(DESTDIR)/bin'
 	install -D -m644 game/misc/bombic.desktop '$(DESTDIR)/share/applications'
 	install -D -m644 game/misc/bombic.png     '$(DESTDIR)/share/pixmaps'
 	install -D -m644 game/misc/bombic.6.gz    '$(DESTDIR)/share/man/man6'
-	cp -r common/xml common/img '$(DESTDIR)/share/$(DATADIR)/$(TARGET)/common'
-	cp -r game/fonts game/misc/bombic.acs '$(DESTDIR)/share/$(DATADIR)/$(TARGET)/game'
+	cp -r common/xml common/img '$(INSTALLPATH)/common'
+	cp -r game/fonts game/misc/bombic.acs '$(INSTALLPATH)/game'
 	if [ -f map-editor/bombic-map-editor ] ;then \
 		install -D -m755 map-editor/bombic-map-editor  '$(DESTDIR)/bin'; \
 		install -D -m644 map-editor/misc/bombic-map-editor.desktop '$(DESTDIR)/share/applications'; \
@@ -68,7 +78,7 @@ install: misc
 	fi
 
 uninstall:
-	rm -rf '$(DESTDIR)/share/$(DATADIR)/$(TARGET)'
+	rm -rf '$(INSTALLPATH)'
 	rm -f  '$(DESTDIR)/bin/bombic'
 	rm -f  '$(DESTDIR)/bin/bombic-map-editor'
 	rm -f  '$(DESTDIR)/share/applications/bombic.desktop'

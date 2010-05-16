@@ -1,6 +1,8 @@
+AGAR_CONFIG= agar-config
+
 #OPTIMATION=-O3
-LIBS=`agar-config --libs` $(OPTIMATION) -lSDL_ttf -lSDL_image
-CFLAGS= `agar-config --cflags ` $(OPTIMATION) -Wall -I./libs/tinyxml -I./src -I../common/src
+LIBS=`$(AGAR_CONFIG) --libs` $(OPTIMATION) -lSDL_ttf -lSDL_image
+CFLAGS= `$(AGAR_CONFIG) --cflags ` $(OPTIMATION) -Wall -I./libs/tinyxml -I./src -I../common/src $(DEFINES)
 CC= ccache g++
 #CC= g++
 
