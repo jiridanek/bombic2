@@ -69,3 +69,8 @@ for compile the game only or
 for compile the game and map editor too.
 If you configured INSTALLPATH into INSTALL_DIR you can install it typing
  $ make install
+
+5. Author
+==========
+This project was imlemented by Karel Fiser <Karl.von.Bahnhof@centrum.cz>
+and is hosted at sourceforge.net with homepage at http://bombic2.sourceforge.net.
