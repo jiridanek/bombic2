@@ -18,7 +18,7 @@ INSTALLPATH=$(DESTDIR)/share/$(DATADIR)/$(TARGETDIR)
 
 # Define the install directory for data to sources
 # but if you are not planning the instalation
-# let it empty to point data relatively from binaries
+# let the INSTAL_DIR undefined to point data relatively from binaries
 # INSTALLDIR_DEFINE=INSTALL_DIR=\\\"$(INSTALLPATH)\\\"
 INSTALLDIR_DEFINE=DEFAULT_INSTALL_DIR
 
