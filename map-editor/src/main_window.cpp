@@ -6,6 +6,8 @@
 #include <QMenu>
 #include <QAction>
 #include <QCloseEvent>
+#include <QApplication>
+#include <QMessageBox>
 
 #include "main_window.h"
 
@@ -63,6 +65,13 @@ MainWindow::MainWindow() {
 	addAction(GenerateObjectsAction, tr("&Generate random objects"),
 		true, Qt::CTRL + Qt::Key_G, ViewMenu);
 
+
+	menus_[AboutMenu]->addAction(tr("&Shortcuts and gestures"),
+		this, SLOT(gesturesOverview()) );
+	menus_[AboutMenu]->addAction(tr("&About editor"),
+		this, SLOT(about()) );
+	menus_[AboutMenu]->addAction(tr("About &Qt"),
+		qApp, SLOT(aboutQt()) );
 
 	QToolBar * fileToolBar = addToolBar(tr("File"));
 	fileToolBar->addAction(actions_[OpenMapAction]);
@@ -204,4 +213,71 @@ void MainWindow::closeEvent(QCloseEvent * event) {
 	} else {
 		event->ignore();
 	}
+}
+
+/** @details
+ * Zobrazi informace o programu,
+ */
+void MainWindow::about() {
+	QMessageBox::about(this, tr("About Bombic map editor"),
+		tr("The <b>Bombic map editor</b> provides to create new "
+		"or modify any existing map for Bombic game. "
+		"To open new empty map select <em>New map</em>, "
+		"for editing existing map select <em>Open map</em> and find "
+		"its definition file on the disk." ) );
+}
+
+/** @details
+ * souhrnne zobrazuje vsechny klavesove zkratky
+ * a ovladaci gesta.
+ */
+void MainWindow::gesturesOverview() {
+	QMessageBox::about(this,
+		tr("Shortcuts and gestures | Bombic map editor"),
+		tr("<h3>Overview of program shortcuts and gestures</h3>"
+		"<h4>Gestures</h4>"
+		"You can do the map editing by mouse. Following mouse gestures "
+		"applyed on the map scene or fields detail view "
+		" do the noted actions."
+		"<table><tr>"
+			"<th>Gesture</th>"
+			"<th>Map scene</th><th>Field detail</th>"
+		"</tr><tr>"
+			"<td>Left click</td>"
+			"<td>insert working object (if any)</td><td>nothing</td>"
+		"</tr><tr>"
+			"<td>Left double click</td>"
+			"<td>delete object on top of field</td>"
+			"<td>delete object under mouse pointer</td>"
+		"</tr><tr>"
+			"<td>Drag (left press and move)</td>"
+			"<td>start moving object on top of field</td>"
+			"<td>start moving object under mouse pointer</td>"
+		"</tr><tr>"
+			"<td>Drop (after drag the release)</td>"
+			"<td>place dragged object on target field</td>"
+			"<td>nothing</td>"
+		"</tr></table>"
+		"In the object palette are objects on buttons. "
+		"Pressing the button you check it and set the object as working "
+		"and you can insert it to the map scene. "
+		"Pressing another object will be the old one unchecked "
+		"and the pressed will be checked and set as working. "
+		"To unselect working object you must uncheck the checked button. "
+		"<h4>Shortcuts</h4>"
+		"You can use menu to provide some action with map or editor. "
+		"Some menu items has own shortcuts that do the same:"
+		"<table><tr>"
+			"<th>Action</th><th>Shortcut</th>"
+		"</tr><tr>"
+			"<td>New map</td><td>Ctrl + N</td>"
+		"</tr><tr>"
+			"<td>Open map</td><td>Ctrl + O</td>"
+		"</tr><tr>"
+			"<td>Save map</td><td>Ctrl + S</td>"
+		"</tr><tr>"
+			"<td>Save map as</td><td>Ctrl + Shift + S</td>"
+		"</tr><tr>"
+			"<td>Generate random objects</td><td>Ctrl + G</td>"
+		"</tr></table>" ) );
 }

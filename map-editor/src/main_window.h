@@ -72,6 +72,12 @@ class MainWindow: public QMainWindow {
 		/// Pridat polozku menu pro nacteni sady.
 		QAction * addLoadSetAction(const QString & setName);
 
+	public slots:
+		/// Zobrazit přehled gest a klávesových zkratek.
+		void gesturesOverview();
+		/// Zobrazit informace o programu.
+		void about();
+
 	protected:
 		/// Handler zavreni okna.
 		virtual void closeEvent(QCloseEvent * event);
