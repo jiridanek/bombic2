@@ -3,18 +3,17 @@
 #
 
 # For installation
-# DESTDIR is for choosing /usr or /usr/local
-# DESTDIR is also used when creating a deb package!
-DESTDIR=/usr/local
+# PREFIX is for choosing /usr or /usr/local
+PREFIX=/usr/local
 
-# DATADIR=games  install to  DESTDIR/share/games/TARGETDIR
-# DATADIR=.      install to  DESTDIR/share/TARGETDIR
+# DATADIR=games  install to  PREFIX/share/games/TARGETDIR
+# DATADIR=.      install to  PREFIX/share/TARGETDIR
 DATADIR=games
 
 TARGETDIR=bombic2
 
 # Path to directory for installed data.
-INSTALLPATH=$(DESTDIR)/share/$(DATADIR)/$(TARGETDIR)
+INSTALLPATH=$(PREFIX)/share/$(DATADIR)/$(TARGETDIR)
 
 # Define the install directory for data to sources
 # but if you are not planning the instalation
@@ -58,33 +57,33 @@ misc:
 
 #### Instalation ####
 install: misc
-	mkdir -p '$(DESTDIR)/bin'
-	mkdir -p '$(DESTDIR)/share/applications' 
-	mkdir -p '$(DESTDIR)/share/pixmaps'
-	mkdir -p '$(DESTDIR)/share/man/man6'
+	mkdir -p '$(PREFIX)/bin'
+	mkdir -p '$(PREFIX)/share/applications' 
+	mkdir -p '$(PREFIX)/share/pixmaps'
+	mkdir -p '$(PREFIX)/share/man/man6'
 	mkdir -p '$(INSTALLPATH)/common'
 	mkdir -p '$(INSTALLPATH)/game'
-	install -D -m755 game/bombic  '$(DESTDIR)/bin'
-	install -D -m644 game/misc/bombic.desktop '$(DESTDIR)/share/applications'
-	install -D -m644 game/misc/bombic.png     '$(DESTDIR)/share/pixmaps'
-	install -D -m644 game/misc/bombic.6.gz    '$(DESTDIR)/share/man/man6'
+	install -D -m755 game/bombic  '$(PREFIX)/bin'
+	install -D -m644 game/misc/bombic.desktop '$(PREFIX)/share/applications'
+	install -D -m644 game/misc/bombic.png     '$(PREFIX)/share/pixmaps'
+	install -D -m644 game/misc/bombic.6.gz    '$(PREFIX)/share/man/man6'
 	cp -r common/xml common/img '$(INSTALLPATH)/common'
 	cp -r game/fonts game/misc/bombic.acs '$(INSTALLPATH)/game'
 	if [ -f map-editor/bombic-map-editor ] ;then \
-		install -D -m755 map-editor/bombic-map-editor  '$(DESTDIR)/bin'; \
-		install -D -m644 map-editor/misc/bombic-map-editor.desktop '$(DESTDIR)/share/applications'; \
-		install -D -m644 map-editor/misc/bombic-map-editor.png     '$(DESTDIR)/share/pixmaps'; \
-		install -D -m644 map-editor/misc/bombic-map-editor.6.gz    '$(DESTDIR)/share/man/man6'; \
+		install -D -m755 map-editor/bombic-map-editor  '$(PREFIX)/bin'; \
+		install -D -m644 map-editor/misc/bombic-map-editor.desktop '$(PREFIX)/share/applications'; \
+		install -D -m644 map-editor/misc/bombic-map-editor.png     '$(PREFIX)/share/pixmaps'; \
+		install -D -m644 map-editor/misc/bombic-map-editor.6.gz    '$(PREFIX)/share/man/man6'; \
 	fi
 
 uninstall:
 	rm -rf '$(INSTALLPATH)'
-	rm -f  '$(DESTDIR)/bin/bombic'
-	rm -f  '$(DESTDIR)/bin/bombic-map-editor'
-	rm -f  '$(DESTDIR)/share/applications/bombic.desktop'
-	rm -f  '$(DESTDIR)/share/pixmaps/bombic.png'
-	rm -f  '$(DESTDIR)/share/man/man6/bombic.6.gz'
-	rm -f  '$(DESTDIR)/share/applications/bombic-map-editor.desktop'
-	rm -f  '$(DESTDIR)/share/pixmaps/bombic-map-editor.png'
-	rm -f  '$(DESTDIR)/share/man/man6/bombic-map-editor.6.gz'
+	rm -f  '$(PREFIX)/bin/bombic'
+	rm -f  '$(PREFIX)/bin/bombic-map-editor'
+	rm -f  '$(PREFIX)/share/applications/bombic.desktop'
+	rm -f  '$(PREFIX)/share/pixmaps/bombic.png'
+	rm -f  '$(PREFIX)/share/man/man6/bombic.6.gz'
+	rm -f  '$(PREFIX)/share/applications/bombic-map-editor.desktop'
+	rm -f  '$(PREFIX)/share/pixmaps/bombic-map-editor.png'
+	rm -f  '$(PREFIX)/share/man/man6/bombic-map-editor.6.gz'
 

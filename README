@@ -8,15 +8,15 @@
 
 1. What is it
 ==============
-Is action real-time game full of creatures and bonuses.
-You can go through levels, kill creatures using bombs and imvrove yourself
-collecting bonuses.
-The Bombic 2 offers also cooperative mode up to 4 players on one computer,
-and deathmatch on one PC.
+Bombic 2 is action real-time game full of creatures and bonuses.
+You can go through levels, kill creatures using bombs and improve yourself
+by collecting bonuses.
+The Bombic 2 offers also cooperative mode and deathmatch
+for up to 4 players on one computer.
 
 2. Dependencies
 ================
-There are some libraries, that should be installed in.
+There are some libraries, that should be installed.
 
 2.1 SDL
 --------
@@ -27,7 +27,7 @@ to install SDL, SDL_ttf, SDL_image.
 2.2 Agar
 ---------
 Bombic 2 - the game - needs AGAR library for its menu.
-I distribute agar-1.3.3 a little pached with it.
+I distribute agar-1.3.3 with a little pach with it.
 For installation please go to the game/libs/agar like this
  $ cd game/libs/agar
 unpack and configure it using prepared configure file
@@ -37,13 +37,13 @@ compile and install it
 
 If you are not the root or you cannot install it to your system
 you can use --prefix option of ``make install'' to install it anywhere you want.
-But don't forget specify in game/Makefile path to executable ``agar-config''
-if it isn't in $PATH.
+But don't forget to specify path to executable ``agar-config''
+in game/Makefile if it is not already in your $PATH.
 
 2.3 Qt
 -------
 Map editor for Bombic 2 uses Qt library.
-If you plan compile also the map editor, please install the Qt SDK
+If you plan to compile also the map editor, please install the Qt SDK
 according to http://qt.nokia.com/products.
 
 3. Configuration
@@ -52,25 +52,25 @@ If your ``agar-config'' is not in path (try ``where agar-config'')
 define absolute path to it in game/Makefile.
 
 Now please open the main Makefile and fill in some variables.
-DESTDIR - absolute path, where you want to install
+PREFIX - absolute path, where you want to install
 INSTALLDIR_DEFINE - definition of macro that holds absolute path
-	of installed data. Let it be if you are planning install
+	of installed data. Leave it alone if you are planning to install
 	the game or map-editor. If you are not, let define here
 	something else (for instance DEFAULT_INSTALL_DIR) and let the
 	macro INSTALL_DIR undefined to point data relatively from binary.
-	In that case you mustn't install or uninstall it.
+	In that case you shouldn't install or uninstall it.
 
 4. Compilation and installation
 ================================
 Now simply type
  $ make
-for compile the game only or
+to compile the game only or
  $ make all
-for compile the game and map editor too.
+to compile the game and map editor too.
 If you configured INSTALLPATH into INSTALL_DIR you can install it typing
  $ make install
 
 5. Author
 ==========
-This project was imlemented by Karel Fiser <Karl.von.Bahnhof@centrum.cz>
+This project was implemented by Karel Fiser <Karl.von.Bahnhof@centrum.cz>
 and is hosted at sourceforge.net with homepage at http://bombic2.sourceforge.net.
