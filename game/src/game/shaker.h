@@ -18,6 +18,10 @@
  * kdykoli získat souřadnice posunutí pohledu hráče,
  * často (ale pravidelně) tyto souřadnice měnit,
  * a tím docílit efektu třesení hry.
+ *
+ * Tento efekt je buď spuštěn jednorázově po nějakou (krátkou) dobu,
+ * nebo je spuštěn až do následného zastavení. Tyto metody se mezi sebou mohou
+ * kombinovat.
  */
 class GameShaker {
 	public:
@@ -25,8 +29,12 @@ class GameShaker {
 		GameShaker();
 		/// Obnovení souřadnic.
 		void update();
-		/// Zatřesení hrou.
+		/// Jednorázové zatřesení hrou.
 		void shake(Uint16 delay);
+		/// Spuštění třesení.
+		void start();
+		/// Zastavení třesení.
+		void stop();
 		/// Souřadnice posunutí pohledu.
 		Sint16 getDiffX();
 		/// Souřadnice posunutí pohledu.
@@ -36,6 +44,8 @@ class GameShaker {
 	private:
 		/// Doba, po kterou se ještě bude třást.
 		Uint16 delay_;
+		/// Jestli je dlouhodobé třesení spuštěno.
+		bool started_;
 		/// Souřadnice posunutí.
 		Sint16 diff_x_;
 		/// Souřadnice posunutí.

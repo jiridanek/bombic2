@@ -121,6 +121,12 @@ class Game {
 		/// Třesení pohledy
 		void shake_views();
 
+		/// Spustit třesení pohledem
+		void start_view_shaking(Uint16 player_num);
+
+		/// Zastavit třesení pohledem
+		void stop_view_shaking(Uint16 player_num);
+
 		/// Výška mapy.
 		Uint16 map_height() const;
 		/// Šířka mapy.

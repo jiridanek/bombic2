@@ -138,7 +138,7 @@ void Player::draw_panel(SDL_Surface *window, const SDL_Rect & rect){
 	// vykreslit svuj panel
 	GAME->tools->draw_panel_player(
 		window, rect, num_,
-		lives_, flamesize_, bombs_ - GAME->count_bombs(num_),
+		lives_, flamesize_, bombs_,
 		megabombs_, bonus_slider_, bonus_kicker_);
 	// do nej svoje bonusy
 	bonuses_t::iterator it;

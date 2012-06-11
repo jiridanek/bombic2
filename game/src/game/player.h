@@ -49,6 +49,9 @@ class Player: public Creature {
 	friend class BonusIllnessStop;
 	friend class BonusIllnessSlow;
 	friend class BonusIllnessFast;
+	friend class BonusIllnessPlantCannot;
+	friend class BonusIllnessPlantOne;
+	friend class BonusIllnessFlameOne;
 
 	public:
 		/// Vytvoří bombiče.

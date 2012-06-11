@@ -221,8 +221,10 @@ class BonusIllness: public BonusApplication {
 	#define BONUS_ILLNESS_PERIODS (15000/MOVE_PERIOD)
 	public:
 		static BonusIllness * new_illness(Player * player);
-		enum ILLNESS_TYPE { CONFUSED, NOBOMB, STOP, SLOW, FAST,
-			BERSERK, LAST_};
+		enum ILLNESS_TYPE {
+			CONFUSED, STOP, SLOW, FAST,
+			PLANT_CANNOT, PLANT_ONE, FLAME_ONE,
+			SHAKER, LAST_};
 
 		/// Vytvoření.
 		BonusIllness(Player * player);
@@ -266,8 +268,32 @@ class BonusIllnessFast: public BonusIllnessStop {
 	public:
 		BonusIllnessFast(Player * player);
 };
-// porad poklada - PlantAlways
-// nemuze pokladat - PlantCannot
-// zmatene posilani - PlantConfused
-//
+
+class BonusIllnessPlantCannot: public BonusIllness {
+	public:
+		BonusIllnessPlantCannot(Player * player);
+		virtual ~BonusIllnessPlantCannot();
+	protected:
+		Uint16 old_bombs_count_;
+};
+
+class BonusIllnessPlantOne: public BonusIllnessPlantCannot {
+	public:
+		BonusIllnessPlantOne(Player * player);
+};
+
+class BonusIllnessFlameOne: public BonusIllness {
+	public:
+		BonusIllnessFlameOne(Player * player);
+		virtual ~BonusIllnessFlameOne();
+	protected:
+		Uint16 old_flamesize_;
+};
+
+class BonusIllnessShaker: public BonusIllness {
+	public:
+		BonusIllnessShaker(Player * player);
+		virtual ~BonusIllnessShaker();
+};
+
 #endif

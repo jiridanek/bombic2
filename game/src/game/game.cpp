@@ -851,6 +851,20 @@ void Game::shake_views(){
 	}
 }
 
+void Game::start_view_shaking(Uint16 player_num){
+	players_it it = players_.find(player_num);
+	if(it != players_.end()) {
+		it->second.shaker.start();
+	}
+}
+
+void Game::stop_view_shaking(Uint16 player_num){
+	players_it it = players_.find(player_num);
+	if(it != players_.end()) {
+		it->second.shaker.stop();
+	}
+}
+
 /** @details
  * Projde všechny dynamické objekty hry a zavolá na nich fci move().
  * V průběhu shromažduje objekty, které nakonec vyhodí.

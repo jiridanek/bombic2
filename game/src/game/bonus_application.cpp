@@ -227,6 +227,10 @@ BonusIllness * BonusIllness::new_illness(Player * player){
 		case STOP: return new BonusIllnessStop(player);
 		case SLOW: return new BonusIllnessSlow(player);
 		case FAST: return new BonusIllnessFast(player);
+		case PLANT_CANNOT: return new BonusIllnessPlantCannot(player);
+		case PLANT_ONE: return new BonusIllnessPlantOne(player);
+		case FLAME_ONE: return new BonusIllnessFlameOne(player);
+		case SHAKER: return new BonusIllnessShaker(player);
 		default: return new BonusIllness(player);
 	}
 }
@@ -292,4 +296,38 @@ BonusIllnessSlow::BonusIllnessSlow(Player * player):
 BonusIllnessFast::BonusIllnessFast(Player * player):
 			BonusIllnessStop(player){
 	player_->speed_diff_ = old_speed_*3;
+}
+
+/****** bonus illness PLANT_CANNOT ************/
+BonusIllnessPlantCannot::BonusIllnessPlantCannot(Player * player):
+			BonusIllness(player), old_bombs_count_(player->bombs_) {
+	player_->bombs_ = 0;
+}
+BonusIllnessPlantCannot::~BonusIllnessPlantCannot(){
+	player_->bombs_ += old_bombs_count_;
+}
+/****** bonus illness PLANT_ONE ************/
+BonusIllnessPlantOne::BonusIllnessPlantOne(Player * player):
+			BonusIllnessPlantCannot(player){
+	--old_bombs_count_;
+	++player_->bombs_;
+}
+
+/****** bonus illness FLAME_ONE ************/
+BonusIllnessFlameOne::BonusIllnessFlameOne(Player * player):
+			BonusIllness(player), old_flamesize_(player->flamesize_) {
+	--old_flamesize_;
+	player_->flamesize_ = 1;
+}
+BonusIllnessFlameOne::~BonusIllnessFlameOne(){
+	player_->flamesize_ += old_flamesize_;
+}
+
+/****** bonus illness SHAKER ************/
+BonusIllnessShaker::BonusIllnessShaker(Player * player):
+			BonusIllness(player) {
+	GAME->start_view_shaking(player_->player_num());
+}
+BonusIllnessShaker::~BonusIllnessShaker(){
+	GAME->stop_view_shaking(player_->player_num());
 }
