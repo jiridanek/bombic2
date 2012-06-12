@@ -15,6 +15,7 @@
 #define FLAMESIZE_MAX Uint16(10)
 
 class BonusApplication;
+class BonusIllness;
 
 /** Konfigurace hráče.
  * Konfigurace obsahuje počet životů
@@ -103,6 +104,8 @@ class Player: public Creature {
 
 		typedef std::list< BonusApplication * > bonuses_t;
 		bonuses_t bonuses_;
+		
+		BonusIllness * getIllness();
 };
 
 #endif

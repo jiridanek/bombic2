@@ -92,6 +92,8 @@ bool Player::operator==(const Player & player) const {
 
 /** @details
  * Navíc hlídá, zda ho nesezrala nestvůra.
+ * Potká-li zdravý hráč (bez nemoci) nemocného hráče,
+ * nakazí se jeho nemocí.
  * @see Creature::move()
  * @return Vrací TRUE, pokud se má objekt zahodit.
  */
@@ -105,6 +107,21 @@ bool Player::move(){
 	if(GAME->field_withObject(x_/CELL_SIZE, y_/CELL_SIZE,
 					isTypeOf::isCreature) ){
 		die();
+	}
+	// sireni nemoci
+	MapObject * obj = GAME->field_getObject(
+		x_/CELL_SIZE, y_/CELL_SIZE, isTypeOf::isPlayer);
+	if(obj && obj!=this) {
+		Player * other = static_cast<Player *>(obj);
+		BonusIllness * myIllness = getIllness();
+		BonusIllness * othersIllness = other->getIllness();
+		if(myIllness == 0 && othersIllness != 0) {
+			// ja nemoc nemam, ale nakazim se
+			othersIllness->contaminate(this);
+		} else if(myIllness != 0 && othersIllness == 0) {
+			// ja nemoc uz mam a muzu nakazit nekoho jineho
+			myIllness->contaminate(other);
+		}
 	}
 	// pohyb jako prisera
 	return Creature::move();
@@ -145,4 +162,14 @@ void Player::draw_panel(SDL_Surface *window, const SDL_Rect & rect){
 	for(it = bonuses_.begin() ; it!=bonuses_.end() ; ++it){
 		(*it)->draw_panel(window, rect);
 	}
+}
+
+BonusIllness * Player::getIllness() {
+	bonuses_t::iterator end_it = bonuses_.end();
+	for(bonuses_t::iterator it = bonuses_.begin() ; it != end_it ; ++it) {
+		if((*it)->type() == BonusApplication::ILLNESS) {
+			return static_cast<BonusIllness *>(*it);
+		}
+	}
+	return 0;
 }

@@ -228,6 +228,10 @@ class BonusIllness: public BonusApplication {
 
 		/// Vytvoření.
 		BonusIllness(Player * player);
+		/// Kontaminace dalšího hráče.
+		virtual void contaminate(Player * player) const {
+			new BonusIllness(player);
+		}
 		/// Vykreslení do panelu.
 		virtual void draw_panel(SDL_Surface *window,
 				const SDL_Rect & rect) const;
@@ -248,12 +252,18 @@ class BonusIllness: public BonusApplication {
 class BonusIllnessConfused: public BonusIllness {
 	public:
 		BonusIllnessConfused(Player * player);
+		virtual void contaminate(Player * player) const {
+			new BonusIllnessConfused(player);
+		}
 		virtual ~BonusIllnessConfused();
 };
 
 class BonusIllnessStop: public BonusIllness {
 	public:
 		BonusIllnessStop(Player * player);
+		virtual void contaminate(Player * player) const {
+			new BonusIllnessStop(player);
+		}
 		virtual ~BonusIllnessStop();
 	protected:
 		Uint16 old_speed_;
@@ -262,16 +272,25 @@ class BonusIllnessStop: public BonusIllness {
 class BonusIllnessSlow: public BonusIllnessStop {
 	public:
 		BonusIllnessSlow(Player * player);
+		virtual void contaminate(Player * player) const {
+			new BonusIllnessSlow(player);
+		}
 };
 
 class BonusIllnessFast: public BonusIllnessStop {
 	public:
 		BonusIllnessFast(Player * player);
+		virtual void contaminate(Player * player) const {
+			new BonusIllnessFast(player);
+		}
 };
 
 class BonusIllnessPlantCannot: public BonusIllness {
 	public:
 		BonusIllnessPlantCannot(Player * player);
+		virtual void contaminate(Player * player) const {
+			new BonusIllnessPlantCannot(player);
+		}
 		virtual ~BonusIllnessPlantCannot();
 	protected:
 		Uint16 old_bombs_count_;
@@ -280,11 +299,17 @@ class BonusIllnessPlantCannot: public BonusIllness {
 class BonusIllnessPlantOne: public BonusIllnessPlantCannot {
 	public:
 		BonusIllnessPlantOne(Player * player);
+		virtual void contaminate(Player * player) const {
+			new BonusIllnessPlantOne(player);
+		}
 };
 
 class BonusIllnessFlameOne: public BonusIllness {
 	public:
 		BonusIllnessFlameOne(Player * player);
+		virtual void contaminate(Player * player) const {
+			new BonusIllnessFlameOne(player);
+		}
 		virtual ~BonusIllnessFlameOne();
 	protected:
 		Uint16 old_flamesize_;
@@ -293,6 +318,9 @@ class BonusIllnessFlameOne: public BonusIllness {
 class BonusIllnessShaker: public BonusIllness {
 	public:
 		BonusIllnessShaker(Player * player);
+		virtual void contaminate(Player * player) const {
+			new BonusIllnessShaker(player);
+		}
 		virtual ~BonusIllnessShaker();
 };
 
